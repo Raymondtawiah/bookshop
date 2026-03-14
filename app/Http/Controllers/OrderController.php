@@ -3,27 +3,26 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
-use App\Services\PdfWatermarkService;
+use App\Services\PaystackService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\OrderConfirmation;
 
 class OrderController extends Controller
 {
-    protected $pdfWatermarkService;
-
-    public function __construct(PdfWatermarkService $pdfWatermarkService)
-    {
-        $this->pdfWatermarkService = $pdfWatermarkService;
-    }
-
     /**
-     * Process checkout with customer name for personalization.
+     * Process checkout with customer details.
      */
     public function processCheckout(Request $request)
     {
         $request->validate([
             'customer_name' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'residence' => 'required|string|max:500',
+            'contact' => 'required|string|max:20',
+            'payment_method' => 'required|in:momo,bank',
         ]);
 
         $cartItems = \App\Models\Cart::where('user_id', Auth::id())->get();
@@ -36,64 +35,106 @@ class OrderController extends Controller
             return $item->product_price * $item->quantity;
         });
 
-        // Create order
+        $paymentMethod = $request->payment_method;
+        $reference = 'ORD-' . time() . rand(1000, 9999);
+
+        // Create order with pending payment status
         $order = Order::create([
             'user_id' => Auth::id(),
             'customer_name' => $request->customer_name,
+            'email' => $request->email,
+            'residence' => $request->residence,
+            'contact' => $request->contact,
+            'payment_method' => $paymentMethod,
             'total_amount' => $total,
-            'status' => 'confirmed',
+            'status' => 'pending',
+            'order_number' => $reference,
         ]);
 
-        // Check if any cart item has a PDF template and generate personalized PDF
-        foreach ($cartItems as $item) {
-            if ($item->book && $item->book->pdf_file) {
-                // Generate personalized PDF
-                $fileName = $this->pdfWatermarkService->generateFileName(
-                    $order->id,
-                    $request->customer_name
-                );
+        // Don't send email here - it will be sent after payment is confirmed in the callback
+        // This ensures we only send email when payment is actually successful
 
-                $pdfPath = $this->pdfWatermarkService->addWatermark(
-                    $item->book->pdf_file,
-                    $request->customer_name,
-                    $fileName
-                );
+        $paystack = new PaystackService();
 
-                // Update order with personalized PDF path (use the first one found)
-                if (!$order->personalized_pdf_path) {
-                    $order->update(['personalized_pdf_path' => $pdfPath]);
-                }
-                break; // Only generate PDF for one book
+        if ($paymentMethod === 'momo') {
+            // For Mobile Money - use Paystack checkout page with mobile money
+            // This redirects to Paystack where user can select mobile money as payment option
+            $result = $paystack->initializePayment(
+                $request->email,
+                $total,
+                $reference
+            );
+
+            Log::info('Paystack Payment Init Response for MoMo', ['result' => $result]);
+
+            if ($result['success']) {
+                // Clear cart
+                $cartItems->each->delete();
+
+                // Redirect to Paystack checkout
+                return redirect($result['authorization_url']);
             }
+
+            // Log the failure for debugging
+            Log::error('Paystack payment initialization failed', [
+                'result' => $result, 
+                'message' => $result['message'] ?? 'Unknown error'
+            ]);
+
+            return back()->with('error', 'Payment failed: ' . ($result['message'] ?? 'Please try again.'));
+
+        } elseif ($paymentMethod === 'bank') {
+            // For Bank Transfer - show bank details from config
+            $order->update([
+                'payment_status' => 'pending',
+                'status' => 'pending_payment',
+            ]);
+
+            // Clear cart
+            $cartItems->each->delete();
+
+            return view('cart.checkout', [
+                'order' => $order, 
+                'total' => $total,
+                'bankTransfer' => true,
+                'bankDetails' => config('paystack.bankDetails')
+            ]);
         }
 
-        // Clear cart
-        $cartItems->each->delete();
-
-        return view('cart.checkout', compact('order', 'total'));
+        return back()->with('error', 'Invalid payment method selected.');
     }
 
     /**
-     * Download personalized PDF.
+     * Detect mobile network from phone number
      */
-    public function downloadPdf(Order $order)
+    private function detectNetwork($phoneNumber)
     {
-        // Verify ownership
-        if ($order->user_id !== Auth::id()) {
-            abort(403, 'Unauthorized access');
-        }
-
-        if (!$order->personalized_pdf_path) {
-            abort(404, 'Personalized PDF not found');
-        }
-
-        $filePath = storage_path('app/public/' . $order->personalized_pdf_path);
+        // Remove any spaces or dashes
+        $phone = preg_replace('/[^0-9]/', '', $phoneNumber);
         
-        if (!file_exists($filePath)) {
-            abort(404, 'File not found');
+        // Get the first 3 digits after country code (233) or 0
+        if (strlen($phone) === 12 && substr($phone, 0, 3) === '233') {
+            $prefix = substr($phone, 3, 3);
+        } elseif (strlen($phone) === 10 && substr($phone, 0, 1) === '0') {
+            $prefix = substr($phone, 1, 3);
+        } else {
+            $prefix = substr($phone, 0, 3);
         }
 
-        return response()->download($filePath);
+        // MTN Ghana
+        if (in_array($prefix, ['540', '550', '560', '570', '580', '240', '250'])) {
+            return 'MTN';
+        }
+        // Vodafone Ghana
+        if (in_array($prefix, ['520', '530', '540', '200', '210'])) {
+            return 'VODAFONE';
+        }
+        // AirtelTigo
+        if (in_array($prefix, ['270', '280', '290', '570', '571'])) {
+            return 'AIRTELTIGO';
+        }
+
+        return 'MTN'; // Default to MTN
     }
 
     /**

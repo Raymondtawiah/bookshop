@@ -6,9 +6,10 @@
         <title>Orders - {{ config('app.name', 'Bookshop') }}</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     </head>
     <body class="bg-gray-50 font-sans">
+        <x-flash-message />
+        
         <!-- Header -->
         <header class="bg-white shadow-sm sticky top-0 z-50">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -43,9 +44,17 @@
                     </nav>
 
                     <div class="flex items-center gap-4">
+                        <a href="{{ route('cart') }}" class="relative p-2 text-gray-600 hover:text-indigo-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                        </a>
+                        
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                                {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+                            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                                </svg>
                             </div>
                             <div class="hidden sm:block">
                                 <p class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</p>
@@ -64,7 +73,7 @@
                 </div>
             </div>
         </header>
-
+ 
         <!-- Main Content -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="mb-8">
@@ -72,13 +81,110 @@
                 <p class="text-gray-500">Manage customer orders</p>
             </div>
 
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-12 text-center">
-                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
-                    </svg>
+            <!-- Orders Table -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                @if($orders->count() > 0)
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order #</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Delivery Address</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-200">
+                            @foreach($orders as $order)
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm font-medium text-indigo-600">#{{ $order->order_number ?? $order->id }}</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm font-medium text-gray-900">{{ $order->customer_name }}</div>
+                                    <div class="text-sm text-gray-500">{{ $order->email }}</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-900">{{ $order->contact }}</div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm text-gray-600 max-w-xs truncate">{{ $order->residence }}</div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="text-sm font-bold text-gray-900">₵{{ number_format($order->total_amount, 2) }}</span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                        @if($order->payment_status === 'completed' || $order->payment_status === 'paid') bg-green-100 text-green-800
+                                        @elseif($order->payment_status === 'pending') bg-yellow-100 text-yellow-800
+                                        @else bg-red-100 text-red-800 @endif">
+                                        {{ ucfirst($order->payment_status ?? 'pending') }}
+                                    </span>
+                                    <div class="text-xs text-gray-500 mt-1">
+                                        {{ $order->payment_method === 'momo' ? 'Mobile Money' : ($order->payment_method === 'bank' ? 'Bank Transfer' : 'Card') }}
+                                    </div>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
+                                        @if($order->status === 'paid' || $order->status === 'completed') bg-green-100 text-green-800
+                                        @elseif($order->status === 'pending') bg-yellow-100 text-yellow-800
+                                        @elseif($order->status === 'processing') bg-blue-100 text-blue-800
+                                        @else bg-gray-100 text-gray-800 @endif">
+                                        {{ ucfirst($order->status) }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $order->created_at->format('M j, Y') }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                                    <a href="{{ route('admin.orders.show', $order->id) }}" class="text-indigo-600 hover:text-indigo-900 mr-3" title="View Order">
+                                        <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                    </a>
+                                    <button type="button" onclick="openDeleteModal{{ $order->id }}()" class="text-red-600 hover:text-red-900" title="Delete Order">
+                                        <svg class="w-5 h-5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                        </svg>
+                                    </button>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
                 </div>
-                <p class="text-gray-500">Order management coming soon...</p>
+                
+                <!-- Delete Modals -->
+                @foreach($orders as $order)
+                <x-modal-delete 
+                    :id="$order->id" 
+                    :title="'Delete Order'" 
+                    :message="'Are you sure you want to delete this order? This action cannot be undone.'" 
+                    :action="route('admin.orders.destroy', $order->id)"
+                    confirmText="Delete"
+                />
+                @endforeach
+                
+                <!-- Pagination -->
+                <div class="px-6 py-4 border-t border-gray-200">
+                    {{ $orders->links() }}
+                </div>
+                @else
+                <div class="p-12 text-center">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
+                        </svg>
+                    </div>
+                    <p class="text-gray-500">No orders yet...</p>
+                </div>
+                @endif
             </div>
         </main>
 

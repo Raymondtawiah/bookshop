@@ -19,7 +19,6 @@ class Book extends Model
         'pages',
         'published_year',
         'cover_image',
-        'pdf_file',
         'stock',
         'is_featured',
     ];

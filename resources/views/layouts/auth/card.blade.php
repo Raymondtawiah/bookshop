@@ -1,24 +1,28 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="dark">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         @include('partials.head')
     </head>
-    <body class="min-h-screen bg-neutral-100 antialiased dark:bg-linear-to-b dark:from-neutral-950 dark:to-neutral-900">
-        <div class="bg-muted flex min-h-svh flex-col items-center justify-center gap-6 p-6 md:p-10">
-            <div class="flex w-full max-w-md flex-col gap-6">
-                <a href="{{ route('home') }}" class="flex flex-col items-center gap-2 font-medium" wire:navigate>
-                    <span class="flex h-9 w-9 items-center justify-center rounded-md">
-                        <x-app-logo-icon class="size-9 fill-current text-black dark:text-white" />
+    <body class="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 antialiased">
+        <div class="flex min-h-svh flex-col items-center justify-center gap-8 p-6 md:p-10">
+            <div class="flex w-full max-w-md flex-col gap-8">
+                <!-- Logo -->
+                <a href="{{ route('home') }}" class="flex flex-col items-center gap-3" wire:navigate>
+                    <span class="flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-indigo-600 to-purple-700 shadow-xl shadow-indigo-600/30">
+                        <x-app-logo-icon class="size-9 fill-current text-white" />
                     </span>
-
-                    <span class="sr-only">{{ config('app.name', 'Laravel') }}</span>
+                    <span class="text-2xl font-bold text-neutral-800">{{ config('app.name', 'BookShop') }}</span>
                 </a>
 
-                <div class="flex flex-col gap-6">
-                    <div class="rounded-xl border bg-white dark:bg-stone-950 dark:border-stone-800 text-stone-800 shadow-xs">
-                        <div class="px-10 py-8">{{ $slot }}</div>
-                    </div>
+                <!-- Card -->
+                <div class="rounded-2xl border border-neutral-200/60 bg-white shadow-2xl shadow-neutral-200/40">
+                    <div class="px-8 py-10">{{ $slot }}</div>
                 </div>
+
+                <!-- Footer -->
+                <p class="text-center text-sm text-neutral-400">
+                    © {{ date('Y') }} {{ config('app.name', 'BookShop') }}. All rights reserved.
+                </p>
             </div>
         </div>
         @fluxScripts

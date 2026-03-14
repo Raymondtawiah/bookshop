@@ -13,13 +13,20 @@ class Order extends Model
     protected $fillable = [
         'user_id',
         'customer_name',
+        'email',
+        'residence',
+        'contact',
+        'payment_method',
         'total_amount',
         'status',
-        'personalized_pdf_path',
+        'order_number',
+        'payment_status',
+        'paid_at',
     ];
 
     protected $casts = [
         'total_amount' => 'decimal:2',
+        'paid_at' => 'datetime',
     ];
 
     /**
@@ -28,24 +35,5 @@ class Order extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
-    }
-
-    /**
-     * Check if the order has a personalized PDF.
-     */
-    public function hasPersonalizedPdf(): bool
-    {
-        return !empty($this->personalized_pdf_path);
-    }
-
-    /**
-     * Get the URL for downloading the personalized PDF.
-     */
-    public function getDownloadUrlAttribute(): ?string
-    {
-        if ($this->personalized_pdf_path) {
-            return route('order.download', $this->id);
-        }
-        return null;
     }
 }

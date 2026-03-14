@@ -6,7 +6,6 @@
         <title>Books Management - {{ config('app.name', 'Bookshop') }}</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     </head>
     <body class="bg-gray-50 font-sans">
         <!-- Header -->
@@ -43,9 +42,23 @@
                     </nav>
 
                     <div class="flex items-center gap-4">
+                        <a href="{{ route('cart') }}" class="relative p-2 text-gray-600 hover:text-indigo-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            @php
+                                $cartCount = \App\Models\Cart::where('user_id', auth()->id())->sum('quantity') ?? 0;
+                            @endphp
+                            @if($cartCount > 0)
+                                <span class="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ $cartCount }}</span>
+                            @endif
+                        </a>
+                        
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                                {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+                            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                                </svg>
                             </div>
                             <div class="hidden sm:block">
                                 <p class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</p>
@@ -101,7 +114,6 @@
                                     <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Category</th>
                                     <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Price</th>
                                     <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Stock</th>
-                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">PDF</th>
                                     <th class="px-6 py-4 text-right text-sm font-semibold text-gray-900">Actions</th>
                                 </tr>
                             </thead>
@@ -137,13 +149,6 @@
                                                 <span class="text-red-600">Out of stock</span>
                                             @endif
                                         </td>
-                                        <td class="px-6 py-4">
-                                            @if($book->pdf_file)
-                                                <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded">PDF Ready</span>
-                                            @else
-                                                <span class="px-2 py-1 text-xs bg-gray-100 text-gray-500 rounded">No PDF</span>
-                                            @endif
-                                        </td>
                                         <td class="px-6 py-4 text-right">
                                             <div class="flex items-center justify-end gap-2">
                                                 <a href="{{ route('admin.books.edit', $book->id) }}" class="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Edit">
@@ -151,15 +156,20 @@
                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
                                                     </svg>
                                                 </a>
-                                                <form action="{{ route('admin.books.destroy', $book->id) }}" method="POST" class="inline">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="submit" class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete" onclick="return confirm('Are you sure you want to delete this book?')">
-                                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                                        </svg>
-                                                    </button>
-                                                </form>
+                                                <button type="button" onclick="openDeleteModal{{ $book->id }}()" class="p-2 text-gray-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                                    </svg>
+                                                </button>
+                                                
+                                                <!-- Delete Confirmation Modal -->
+                                                <x-modal-delete
+                                                    :id="$book->id"
+                                                    title="Delete Book"
+                                                    message='Are you sure you want to delete "{{ $book->title }}"? This action cannot be undone.'
+                                                    action="{{ route('admin.books.destroy', $book->id) }}"
+                                                    confirmText="Delete"
+                                                />
                                             </div>
                                         </td>
                                     </tr>

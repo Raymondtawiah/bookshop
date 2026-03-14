@@ -4,6 +4,7 @@
         @include('partials.head')
     </head>
     <body class="min-h-screen bg-gray-50">
+        <x-flash-message />
         <flux:sidebar class="border-e border-gray-200 bg-white">
             <flux:sidebar.header>
                 <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />

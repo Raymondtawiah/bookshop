@@ -6,7 +6,6 @@
         <title>Add New Book - {{ config('app.name', 'Bookshop') }}</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     </head>
     <body class="bg-gray-50 font-sans">
         <!-- Header -->
@@ -43,9 +42,23 @@
                     </nav>
 
                     <div class="flex items-center gap-4">
+                        <a href="{{ route('cart') }}" class="relative p-2 text-gray-600 hover:text-indigo-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            @php
+                                $cartCount = \App\Models\Cart::where('user_id', auth()->id())->sum('quantity') ?? 0;
+                            @endphp
+                            @if($cartCount > 0)
+                                <span class="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ $cartCount }}</span>
+                            @endif
+                        </a>
+                        
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                                {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+                            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                                </svg>
                             </div>
                             <div class="hidden sm:block">
                                 <p class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</p>
@@ -166,41 +179,27 @@
                     <!-- Cover Image -->
                     <div>
                         <label for="cover_image" class="block text-sm font-medium text-gray-700 mb-1">Cover Image</label>
-                        <div class="mt-1 flex justify-center rounded-lg border-2 border-dashed border-gray-300 px-6 py-8">
-                            <div class="text-center">
+                        <div class="mt-1 flex justify-center rounded-lg border-2 border-dashed border-gray-300 px-6 py-8" id="cover-image-dropzone">
+                            <div class="text-center" id="cover-image-content">
                                 <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                                     <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
                                 </svg>
                                 <div class="mt-4 flex text-sm leading-6 text-gray-600">
                                     <label for="cover_image" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 hover:text-indigo-500">
                                         <span>Upload a file</span>
-                                        <input id="cover_image" name="cover_image" type="file" class="sr-only" accept="image/*">
+                                        <input id="cover_image" name="cover_image" type="file" class="sr-only" accept="image/*" onchange="updateCoverImagePreview(this)">
                                     </label>
                                     <p class="pl-1">or drag and drop</p>
                                 </div>
                                 <p class="text-xs leading-5 text-gray-500">PNG, JPG, GIF up to 2MB</p>
                             </div>
                         </div>
-                    </div>
-
-                    <!-- PDF File -->
-                    <div>
-                        <label for="pdf_file" class="block text-sm font-medium text-gray-700 mb-1">PDF Book Template</label>
-                        <div class="mt-1 flex justify-center rounded-lg border-2 border-dashed border-gray-300 px-6 py-8">
-                            <div class="text-center">
-                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <div id="cover-image-preview" class="mt-2 hidden">
+                            <div class="flex items-center gap-2 text-sm text-green-600">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
                                 </svg>
-                                <div class="mt-4 flex text-sm leading-6 text-gray-600">
-                                    <label for="pdf_file" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 hover:text-indigo-500">
-                                        <span>Upload PDF</span>
-                                        <input id="pdf_file" name="pdf_file" type="file" class="sr-only" accept=".pdf">
-                                    </label>
-                                    <p class="pl-1">or drag and drop</p>
-                                </div>
-                                <p class="text-xs leading-5 text-gray-500">PDF only, up to 50MB</p>
-                                <p class="text-xs leading-5 text-gray-500 mt-1">This will be used to generate personalized books with customer names</p>
+                                <span id="cover-image-name"></span>
                             </div>
                         </div>
                     </div>
@@ -230,5 +229,17 @@
                 <p class="text-center text-sm text-gray-500">&copy; {{ date('Y') }} Bookshop Admin. All rights reserved.</p>
             </div>
         </footer>
+
+        <script>
+            function updateCoverImagePreview(input) {
+                if (input.files && input.files[0]) {
+                    const fileName = input.files[0].name;
+                    document.getElementById('cover-image-name').textContent = fileName;
+                    document.getElementById('cover-image-preview').classList.remove('hidden');
+                    document.getElementById('cover-image-dropzone').classList.add('border-green-500');
+                }
+            }
+
+        </script>
     </body>
 </html>

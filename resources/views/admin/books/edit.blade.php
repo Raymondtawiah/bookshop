@@ -6,7 +6,6 @@
         <title>Edit Book - {{ config('app.name', 'Bookshop') }}</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     </head>
     <body class="bg-gray-50 font-sans">
         <!-- Header -->
@@ -43,9 +42,23 @@
                     </nav>
 
                     <div class="flex items-center gap-4">
+                        <a href="{{ route('cart') }}" class="relative p-2 text-gray-600 hover:text-indigo-600">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                            @php
+                                $cartCount = \App\Models\Cart::where('user_id', auth()->id())->sum('quantity') ?? 0;
+                            @endphp
+                            @if($cartCount > 0)
+                                <span class="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ $cartCount }}</span>
+                            @endif
+                        </a>
+                        
                         <div class="flex items-center gap-3">
-                            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                                {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+                            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                                </svg>
                             </div>
                             <div class="hidden sm:block">
                                 <p class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</p>
@@ -179,41 +192,6 @@
                         </div>
                     </div>
 
-                    <!-- PDF File -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">PDF Book Template</label>
-                        @if($book->pdf_file)
-                            <div class="mb-3 flex items-center gap-3">
-                                <div class="flex items-center justify-center h-12 w-12 bg-red-100 rounded-lg">
-                                    <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p class="text-sm font-medium text-gray-900">PDF Template Uploaded</p>
-                                    <p class="text-xs text-gray-500">Current: {{ basename($book->pdf_file) }}</p>
-                                </div>
-                            </div>
-                        @endif
-                        <div class="mt-1 flex justify-center rounded-lg border-2 border-dashed border-gray-300 px-6 py-6">
-                            <div class="text-center">
-                                <svg class="mx-auto h-10 w-10 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                                </svg>
-                                <div class="mt-2 flex text-sm leading-6 text-gray-600">
-                                    <label for="pdf_file" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 hover:text-indigo-500">
-                                        <span>{{ $book->pdf_file ? 'Replace PDF' : 'Upload PDF' }}</span>
-                                        <input id="pdf_file" name="pdf_file" type="file" class="sr-only" accept=".pdf">
-                                    </label>
-                                    <p class="pl-1">or drag and drop</p>
-                                </div>
-                                <p class="text-xs leading-5 text-gray-500 mt-1">PDF only, up to 50MB</p>
-                                <p class="text-xs leading-5 text-gray-500 mt-1">This will be used to generate personalized books with customer names</p>
-                            </div>
-                        </div>
-                    </div>
-
                     <!-- Featured -->
                     <div class="flex items-center">
                         <input type="checkbox" name="is_featured" id="is_featured" value="1" {{ old('is_featured', $book->is_featured) ? 'checked' : '' }}
@@ -242,5 +220,15 @@
                 <p class="text-center text-sm text-gray-500">&copy; {{ date('Y') }} Bookshop Admin. All rights reserved.</p>
             </div>
         </footer>
+
+        <script>
+            function updateCoverImagePreview(input) {
+                if (input.files && input.files[0]) {
+                    const fileName = input.files[0].name;
+                    alert('Selected cover image: ' + fileName);
+                }
+            }
+
+        </script>
     </body>
 </html>

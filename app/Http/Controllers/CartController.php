@@ -87,12 +87,7 @@ class CartController extends Controller
             return $item->product_price * $item->quantity;
         });
 
-        // Check if any item has PDF template
-        $hasPdfTemplate = $cartItems->contains(function($item) {
-            return $item->book && $item->book->pdf_file;
-        });
-
-        return view('cart.checkout', compact('cartItems', 'total', 'hasPdfTemplate'));
+        return view('cart.checkout', compact('cartItems', 'total'));
     }
 
     /**

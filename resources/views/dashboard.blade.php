@@ -6,11 +6,12 @@
         <title>Dashboard - {{ config('app.name', 'Bookshop') }}</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     </head>
     <body class="bg-gray-50 font-sans">
-        <!-- Header -->
-        <header class="bg-white shadow-sm sticky top-0 z-50">
+        <x-customer-navbar />
+
+        <!-- Main Content -->
+        <!-- Main Content -->
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
                     <!-- Logo -->
@@ -44,8 +45,10 @@
                     <!-- User Menu with Dropdown -->
                     <div class="relative">
                         <button id="user-menu-button" class="flex items-center gap-3 p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
-                            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold text-sm">
-                                {{ strtoupper(substr(auth()->user()->name, 0, 2)) }}
+                            <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
+                                <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                    <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                                </svg>
                             </div>
                             <div class="hidden sm:block text-left">
                                 <p class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</p>
@@ -105,11 +108,149 @@
         </header>
 
         <!-- Main Content -->
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 py-8">
             <!-- Welcome Section -->
             <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 mb-8 text-white">
                 <h1 class="text-3xl font-bold mb-2">Welcome back, {{ auth()->user()->name }}! 📚</h1>
                 <p class="text-indigo-100">Ready to discover your next great read?</p>
+            </div>
+
+            <!-- Stats Section -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Total Orders</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ \App\Models\Order::where('user_id', auth()->id())->count() }}</p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Cart Items</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ \App\Models\Cart::where('user_id', auth()->id())->sum('quantity') ?? 0 }}</p>
+                        </div>
+                        <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Total Spent</p>
+                            <p class="text-2xl font-bold text-gray-900">₵{{ number_format(\App\Models\Order::where('user_id', auth()->id())->sum('total_amount'), 2) }}</p>
+                        </div>
+                        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Member Since</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ auth()->user()->created_at->format('Y') }}</p>
+                        </div>
+                        <div class="w-12 h-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Additional Stats -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Completed</p>
+                            <p class="text-2xl font-bold text-green-600">{{ \App\Models\Order::where('user_id', auth()->id())->where('status', 'completed')->count() }}</p>
+                        </div>
+                        <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Pending</p>
+                            <p class="text-2xl font-bold text-yellow-600">{{ \App\Models\Order::where('user_id', auth()->id())->where('status', 'pending')->count() }}</p>
+                        </div>
+                        <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Processing</p>
+                            <p class="text-2xl font-bold text-blue-600">{{ \App\Models\Order::where('user_id', auth()->id())->where('status', 'processing')->count() }}</p>
+                        </div>
+                        <div class="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-gray-500">Books Available</p>
+                            <p class="text-2xl font-bold text-indigo-600">{{ \App\Models\Book::count() }}</p>
+                        </div>
+                        <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
+                            <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Categories Section -->
+            <div class="mb-8">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Browse by Category</h2>
+                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    @php
+                        $categories = \App\Models\Book::select('category')->distinct()->whereNotNull('category')->pluck('category');
+                    @endphp
+                    @foreach($categories as $category)
+                    <a href="{{ route('home') }}?category={{ $category }}" class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all text-center">
+                        <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-2">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
+                        </div>
+                        <p class="font-medium text-gray-900 text-sm">{{ $category }}</p>
+                        <p class="text-xs text-gray-500">{{ \App\Models\Book::where('category', $category)->count() }} books</p>
+                    </a>
+                    @endforeach
+                    @if($categories->isEmpty())
+                    <div class="col-span-6 text-center py-8">
+                        <p class="text-gray-500">No categories available yet.</p>
+                    </div>
+                    @endif
+                </div>
             </div>
 
             <!-- Quick Actions -->
@@ -173,9 +314,7 @@
                             @else
                                 <img src="{{ asset('welcome.jpg') }}" alt="{{ $book->title }}" class="w-full h-full object-cover">
                             @endif
-                            @if($book->pdf_file)
-                            <div class="absolute top-2 right-2 bg-green-600 text-white text-xs font-bold px-2 py-0.5 rounded">PDF</div>
-                            @endif
+
                         </div>
                         <div class="p-3">
                             <h3 class="font-semibold text-gray-900 text-sm truncate">{{ $book->title }}</h3>
@@ -203,12 +342,125 @@
             </div>
             @endif
 
+            <!-- Recent Orders -->
+            @php
+                $recentOrders = \App\Models\Order::where('user_id', auth()->id())->orderBy('created_at', 'desc')->take(5)->get();
+            @endphp
+            @if($recentOrders->count() > 0)
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-gray-900">Recent Orders</h2>
+                    <a href="{{ route('customer.orders') }}" class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">View All →</a>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 border-b border-gray-100">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Order ID</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-semibold text-gray-500 uppercase tracking-wider">Total</th>
+                                <th class="px-6 py-3 text-right text-xs font-semibold text-gray-500 uppercase tracking-wider">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            @foreach($recentOrders as $order)
+                            <tr class="hover:bg-gray-50 transition-colors">
+                                <td class="px-6 py-4">
+                                    <span class="font-medium text-gray-900">#{{ $order->id }}</span>
+                                </td>
+                                <td class="px-6 py-4 text-gray-600">
+                                    {{ $order->created_at->format('M d, Y') }}
+                                </td>
+                                <td class="px-6 py-4">
+                                    @if($order->status == 'completed')
+                                        <span class="px-2 py-1 text-xs bg-green-100 text-green-700 rounded-full">Completed</span>
+                                    @elseif($order->status == 'pending')
+                                        <span class="px-2 py-1 text-xs bg-yellow-100 text-yellow-700 rounded-full">Pending</span>
+                                    @elseif($order->status == 'processing')
+                                        <span class="px-2 py-1 text-xs bg-blue-100 text-blue-700 rounded-full">Processing</span>
+                                    @else
+                                        <span class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">{{ ucfirst($order->status) }}</span>
+                                    @endif
+                                </td>
+                                <td class="px-6 py-4 font-medium text-gray-900">
+                                    ₵{{ number_format($order->total_amount, 2) }}
+                                </td>
+                                <td class="px-6 py-4 text-right">
+                                    <a href="{{ route('customer.orders') }}" class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">View</a>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            @endif
+
+            <!-- Benefits Section -->
+            <div class="mb-8">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Why Shop With Us</h2>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-6 border border-indigo-100">
+                        <div class="w-12 h-12 bg-indigo-600 rounded-xl flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">Secure Payments</h3>
+                        <p class="text-sm text-gray-600">Your payment information is encrypted and secure with us.</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-green-50 to-teal-50 rounded-xl p-6 border border-green-100">
+                        <div class="w-12 h-12 bg-green-600 rounded-xl flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">Quality Guarantee</h3>
+                        <p class="text-sm text-gray-600">We ensure all books meet our high quality standards.</p>
+                    </div>
+                    <div class="bg-gradient-to-br from-orange-50 to-red-50 rounded-xl p-6 border border-orange-100">
+                        <div class="w-12 h-12 bg-orange-600 rounded-xl flex items-center justify-center mb-4">
+                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
+                            </svg>
+                        </div>
+                        <h3 class="font-semibold text-gray-900 mb-2">24/7 Support</h3>
+                        <p class="text-sm text-gray-600">Our support team is available around the clock to help you.</p>
+                    </div>
+                </div>
+            </div>
+
             <!-- Account Info -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex items-center justify-between">
                     <h2 class="text-lg font-semibold text-gray-900">Account Information</h2>
+                    <a href="{{ route('profile') }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">Edit Profile →</a>
                 </div>
                 <div class="p-6">
+                    <!-- Profile Completeness -->
+                    @php
+                        $profileComplete = 0;
+                        $totalFields = 4;
+                        if(auth()->user()->name) $profileComplete++;
+                        if(auth()->user()->email) $profileComplete++;
+                        if(auth()->user()->phone) $profileComplete++;
+                        if(auth()->user()->address) $profileComplete++;
+                        $percentage = round(($profileComplete / $totalFields) * 100);
+                    @endphp
+                    <div class="mb-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm font-medium text-gray-700">Profile Completeness</span>
+                            <span class="text-sm font-bold text-indigo-600">{{ $percentage }}%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 h-2 rounded-full" style="width: {{ $percentage }}%"></div>
+                        </div>
+                        @if($percentage < 100)
+                        <p class="text-xs text-gray-500 mt-2">Complete your profile to get the most out of your account!</p>
+                        @endif
+                    </div>
+
                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                         <div class="flex items-start gap-3">
                             <div class="w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0">
@@ -261,6 +513,31 @@
                             <div>
                                 <p class="text-xs text-gray-500 uppercase tracking-wide">Member Since</p>
                                 <p class="font-medium text-gray-900">{{ auth()->user()->created_at->format('M d, Y') }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01.502 1.21l2.257 1.11a11.042 11.042 0 005.516 5.516l1.11-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Phone</p>
+                                <p class="font-medium text-gray-900">{{ auth()->user()->phone ?? 'Not provided' }}</p>
+                            </div>
+                        </div>
+
+                        <div class="flex items-start gap-3">
+                            <div class="w-10 h-10 bg-teal-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                                <svg class="w-5 h-5 text-teal-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-xs text-gray-500 uppercase tracking-wide">Address</p>
+                                <p class="font-medium text-gray-900">{{ auth()->user()->address ?? 'Not provided' }}</p>
                             </div>
                         </div>
                     </div>

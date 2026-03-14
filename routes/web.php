@@ -6,8 +6,13 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
+
+Route::get('visa-tip', function() {
+    return view('visa-tip');
+})->name('visa-tip');
 
 Route::get('product/{id}', [ProductController::class, 'show'])->name('product.show');
 
@@ -27,6 +32,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('checkout/process', [OrderController::class, 'processCheckout'])->name('checkout.process');
     Route::get('order/download/{order}', [OrderController::class, 'downloadPdf'])->name('order.download');
     Route::get('my-orders', [OrderController::class, 'myOrders'])->name('my-orders');
+    
+    // Payment routes
+    Route::post('payment/initialize', [PaymentController::class, 'initializePayment'])->name('payment.initialize');
+    Route::get('payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
+    Route::get('payment/status', [PaymentController::class, 'checkPaymentStatus'])->name('payment.status');
+    Route::get('payment/banks', [PaymentController::class, 'getBanks'])->name('payment.banks');
 });
 
 require __DIR__.'/settings.php';

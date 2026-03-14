@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\OrderController;
 use Illuminate\Support\Facades\Route;
 
 // Admin authentication routes - requires login via web guard with is_admin=true
@@ -21,9 +22,11 @@ Route::prefix('admin')->name('admin.')->middleware('auth:web')->group(function (
     // Customers
     Route::get('customers', [CustomerController::class, 'index'])->name('customers');
     
-    Route::get('orders', function () {
-        return view('admin.orders.index');
-    })->name('orders');
+    Route::get('orders', [OrderController::class, 'index'])->name('orders');
+    Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::put('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
+    Route::post('orders/{order}/send-pdf', [OrderController::class, 'sendPdf'])->name('orders.sendPdf');
+    Route::delete('orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
     
     Route::get('settings', function () {
         return view('admin.settings.index');
