@@ -260,10 +260,12 @@
             @if($books->count() > 0)
             <div class="mb-8">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">Featured Books</h2>
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                
+                <!-- Horizontal scrollable on mobile, grid on desktop -->
+                <div class="flex overflow-x-auto gap-4 pb-4 md:grid md:grid-cols-3 lg:grid-cols-4 md:gap-6 md:pb-0 scrollbar-hide">
                     @foreach($books as $book)
-                    <a href="{{ route('products.show', $book->id) }}" class="group">
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+                    <a href="{{ route('products.show', $book->id) }}" class="group flex-shrink-0 w-40 md:w-auto">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow h-full">
                             @if($book->cover_image)
                             <div class="aspect-[3/4] relative overflow-hidden">
                                 <img src="{{ asset('storage/' . $book->cover_image) }}" alt="{{ $book->title }}" class="object-cover w-full h-full group-hover:scale-105 transition-transform">
@@ -275,10 +277,10 @@
                                 </svg>
                             </div>
                             @endif
-                            <div class="p-4">
-                                <h3 class="font-semibold text-gray-900 truncate">{{ $book->title }}</h3>
-                                <p class="text-sm text-gray-500 truncate">{{ $book->author }}</p>
-                                <p class="mt-2 font-bold text-indigo-600">₵{{ number_format($book->price, 2) }}</p>
+                            <div class="p-3 md:p-4">
+                                <h3 class="font-semibold text-gray-900 text-sm md:text-base truncate">{{ $book->title }}</h3>
+                                <p class="text-xs md:text-sm text-gray-500 truncate">{{ $book->author }}</p>
+                                <p class="mt-1 md:mt-2 font-bold text-indigo-600 text-sm md:text-base">₵{{ number_format($book->price, 2) }}</p>
                             </div>
                         </div>
                     </a>
