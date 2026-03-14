@@ -106,8 +106,8 @@
         </div>
     </div>
 
-    <!-- Mobile Navigation Menu -->
-    <div id="customer-mobile-menu" class="hidden md:hidden absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 p-4">
+    <!-- Navigation Menu -->
+    <div id="customer-mobile-menu" class="hidden absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 p-4">
         <div class="flex flex-col space-y-3">
             <a href="{{ route('home') }}#home" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Home</a>
             @if(\App\Models\Book::count() > 0)
