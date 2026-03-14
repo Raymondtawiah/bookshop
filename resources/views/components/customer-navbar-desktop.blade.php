@@ -1,5 +1,5 @@
 <!-- Desktop Navigation -->
-<div class="hidden md:flex items-center justify-between flex-1">
+<div class="hidden md:flex items-center justify-between flex-1 ml-8">
     <!-- Desktop Menu Links -->
     <div class="flex items-center space-x-8">
         <a href="{{ route('home') }}#home" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Home</a>
@@ -29,8 +29,8 @@
         @endauth
 
         <!-- User Icon with Dropdown -->
-        <div class="relative" x-data="{ open: false }">
-            <button @click="open = !open" @click.outside="open = false" class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
+        <div class="relative" id="user-dropdown-container">
+            <button id="user-menu-button" class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
                 <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
                     <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                         <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
@@ -39,7 +39,7 @@
             </button>
             
             <!-- Dropdown Menu -->
-            <div x-show="open" x-transition class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50">
+            <div class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50" id="user-dropdown-menu">
                 @auth
                     <div class="px-4 py-2 border-b border-gray-100">
                         <p class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</p>
@@ -90,3 +90,26 @@
         </div>
     </div>
 </div>
+
+<script>
+    // Close user dropdown when clicking outside
+    document.addEventListener('click', function(event) {
+        var dropdown = document.getElementById('user-dropdown-menu');
+        var container = document.getElementById('user-dropdown-container');
+        if (dropdown && container) {
+            if (!container.contains(event.target)) {
+                dropdown.style.display = 'none';
+            }
+        }
+    });
+    
+    // Toggle dropdown on button click
+    document.querySelector('#user-dropdown-container button').addEventListener('click', function() {
+        var dropdown = document.getElementById('user-dropdown-menu');
+        if (dropdown.style.display === 'none' || dropdown.style.display === '') {
+            dropdown.style.display = 'block';
+        } else {
+            dropdown.style.display = 'none';
+        }
+    });
+</script>
