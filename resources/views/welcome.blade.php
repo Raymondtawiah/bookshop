@@ -49,7 +49,7 @@
             </div>
         </section>
 
-        <!-- Featured Books - Horizontal Scroll on Mobile, Staggered on Desktop -->
+        <!-- Featured Books - Horizontal Scroll on Mobile, Grid on Desktop -->
         @if($books && $books->count() > 0)
         <section id="store" class="py-20 bg-white overflow-hidden">
             <div class="max-w-7xl mx-auto px-6">
@@ -58,12 +58,12 @@
                     <p class="text-xl text-gray-600 max-w-2xl mx-auto">Handpicked selections from our latest collection</p>
                 </div>
                 
-                <!-- Horizontal scroll on mobile, staggered on desktop -->
-                <div class="flex overflow-x-auto gap-6 pb-4 md:flex-wrap md:overflow-x-visible md:justify-center md:items-end md:gap-6 scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
-                    @foreach($books as $index => $book)
-                    <div class="flex-shrink-0" style="margin-top: {{ $index * 30 }}px; margin-left: {{ $index * 10 }}px;">
-                        <a href="{{ route('product.show', $book->id) }}" class="block transform group-hover:-translate-y-3 transition-all duration-300">
-                            <div class="w-40 h-60 md:w-52 md:h-80 rounded-xl shadow-lg overflow-hidden relative z-10 bg-white border border-gray-100 group-hover:shadow-2xl group-hover:border-indigo-200 transition-all duration-300">
+                <!-- Horizontal scroll on mobile, grid on desktop -->
+                <div class="flex overflow-x-auto gap-6 pb-4 md:grid md:grid-cols-4 md:overflow-x-visible md:gap-6 scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
+                    @foreach($books as $book)
+                    <div class="flex-shrink-0 w-40 md:w-auto">
+                        <a href="{{ route('product.show', $book->id) }}" class="block transform group-hover:-translate-y-2 transition-all duration-300">
+                            <div class="w-40 h-60 md:w-full md:h-72 rounded-xl shadow-lg overflow-hidden relative z-10 bg-white border border-gray-100 group-hover:shadow-2xl group-hover:border-indigo-200 transition-all duration-300">
                                 @if($book->cover_image)
                                     <img src="{{ Storage::url($book->cover_image) }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                 @else
@@ -75,12 +75,10 @@
                                 <!-- Gradient overlay on hover -->
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             </div>
-                            <!-- Book spine effect -->
-                            <div class="absolute left-0 top-0 w-3 h-full bg-gradient-to-r from-gray-300 to-gray-200 -z-10 rounded-l-xl"></div>
                         </a>
-                        <div class="text-center mt-4 px-2">
-                            <h3 class="text-base font-bold text-gray-900 truncate w-36 md:w-52 mx-auto group-hover:text-indigo-600 transition-colors duration-300">{{ $book->title }}</h3>
-                            <p class="text-lg md:text-xl font-extrabold text-indigo-600 mt-1">₵{{ number_format($book->price, 2) }}</p>
+                        <div class="text-center mt-4">
+                            <h3 class="text-base font-bold text-gray-900 truncate w-40 mx-auto group-hover:text-indigo-600 transition-colors duration-300">{{ $book->title }}</h3>
+                            <p class="text-lg font-extrabold text-indigo-600 mt-1">₵{{ number_format($book->price, 2) }}</p>
                             @auth
                             <form action="{{ route('cart.add') }}" method="POST" class="mt-2">
                                 @csrf
