@@ -41,7 +41,7 @@
                 <!-- Introduction -->
                 <div class="text-center mb-12">
                     <h2 class="text-3xl font-bold text-gray-900 mb-4">Preparing for Your Visa Interview</h2>
-                    <p class="text-xl text-gray-600">A visa interview can be intimidating, but with the right preparation, you can present yourself confidently and increase your chances of approval.</p>
+                    <p class="text-xl text-gray-600">Practical guides to help students and travelers understand visa interviews, avoid common mistakes, and answer visa officer questions with confidence.</p>
                 </div>
 
                 <!-- Tips Grid -->
