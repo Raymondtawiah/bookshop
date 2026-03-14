@@ -99,16 +99,6 @@
                                     dropdown.classList.add('hidden');
                                 }
                             });
-                            
-                            function toggleCustomerMobileMenu() {
-                                const mobileMenu = document.getElementById('customer-mobile-menu');
-                                const menuIcon = document.getElementById('menu-icon');
-                                const closeIcon = document.getElementById('close-icon');
-                                
-                                mobileMenu.classList.toggle('hidden');
-                                menuIcon.classList.toggle('hidden');
-                                closeIcon.classList.toggle('hidden');
-                            }
                         </script>
                     @endauth
                 @endif
@@ -160,3 +150,15 @@
         </div>
     </div>
 </nav>
+
+<script>
+    function toggleCustomerMobileMenu() {
+        const mobileMenu = document.getElementById('customer-mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        const closeIcon = document.getElementById('close-icon');
+        
+        mobileMenu.classList.toggle('hidden');
+        menuIcon.classList.toggle('hidden');
+        closeIcon.classList.toggle('hidden');
+    }
+</script>
