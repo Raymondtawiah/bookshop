@@ -34,21 +34,21 @@
 
             <!-- Right side: User menu + Mobile toggle -->
             <div class="flex items-center gap-4">
-                <!-- User Info -->
-                <div class="flex items-center gap-3">
+                <!-- User Info (Desktop only) -->
+                <div class="hidden md:flex items-center gap-3">
                     <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
                         <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                             <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
                         </svg>
                     </div>
-                    <div class="hidden sm:block">
+                    <div>
                         <p class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</p>
                         <p class="text-xs text-gray-500">Administrator</p>
                     </div>
                 </div>
 
-                <!-- Logout -->
-                <form method="POST" action="{{ route('admin.logout') }}">
+                <!-- Logout (Desktop only) -->
+                <form method="POST" action="{{ route('admin.logout') }}" class="hidden md:block">
                     @csrf
                     <button type="submit" class="p-2 text-gray-400 hover:text-gray-600 transition-colors" title="Logout">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -57,7 +57,7 @@
                     </button>
                 </form>
 
-                <!-- Right side: Toggle button (moved to right) -->
+                <!-- Toggle button (Mobile) -->
                 <button id="mobile-menu-btn" class="md:hidden p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg ml-2" onclick="toggleMobileMenu()">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="menu-icon">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
@@ -88,6 +88,25 @@
             <a href="{{ route('admin.settings') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.settings*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">
                 Settings
             </a>
+        </div>
+        <div class="border-t border-gray-200 px-4 py-3">
+            <div class="flex items-center gap-3 mb-3">
+                <div class="w-9 h-9 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</p>
+                    <p class="text-xs text-gray-500">Administrator</p>
+                </div>
+            </div>
+            <form method="POST" action="{{ route('admin.logout') }}">
+                @csrf
+                <button type="submit" class="w-full px-4 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg text-left">
+                    Logout
+                </button>
+            </form>
         </div>
     </div>
 </header>
