@@ -243,7 +243,7 @@
                     <div>
                         <h2 class="text-4xl font-bold text-gray-900 mb-6">About Our Bookshop</h2>
                         <p class="text-xl text-gray-600 leading-relaxed">
-                            We are dedicated to bringing the joy of reading to everyone. Our carefully curated collection includes books for all ages and interests. Whether you're looking for the latest bestseller or a timeless classic, you'll find it here.
+                            This store was created by Nathaniel Gyarteng to help students and travelers prepare confidently for their visa interviews. Many applicants feel nervous because they don't know what visa officers expect. These resources are designed to simplify the process, help you structure your answers clearly, and avoid common mistakes that lead to visa denials. Whether you are applying for a student visa or planning to travel abroad, these guides will help you walk into your interview prepared and confident.
                         </p>
                         <div class="mt-8 grid grid-cols-2 gap-6">
                             <div class="bg-white p-4 rounded-xl shadow-sm">
