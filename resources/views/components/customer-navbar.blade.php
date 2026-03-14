@@ -44,8 +44,8 @@
                 
                 @if (Route::has('login'))
                     @auth
-                        <!-- User Menu with Dropdown -->
-                        <div class="relative">
+                        <!-- User Menu with Dropdown (Desktop only) -->
+                        <div class="relative hidden md:block">
                             <button id="user-menu-button" class="flex items-center gap-2 p-1.5 rounded-lg hover:bg-gray-100 transition-colors">
                                 <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
                                     <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -135,6 +135,29 @@
             <a href="{{ route('home') }}#about" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">About</a>
             <a href="{{ route('home') }}#contact" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Contact</a>
             
+            @auth
+            <hr class="border-gray-200 my-2">
+            <div class="flex items-center gap-3 py-2">
+                <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                        <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <div>
+                    <p class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</p>
+                    <p class="text-xs text-gray-500">{{ auth()->user()->email }}</p>
+                </div>
+            </div>
+            <a href="{{ route('profile') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Settings</a>
+            <a href="{{ route('my-orders') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">My Orders</a>
+            <form method="POST" action="{{ route('logout') }}" class="w-full">
+                @csrf
+                <button type="submit" class="text-left text-red-600 hover:text-red-800 font-medium transition-colors w-full">
+                    Logout
+                </button>
+            </form>
+            @endauth
+
             @guest
             <hr class="border-gray-200 my-2">
             <a href="{{ route('login') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Sign In</a>
