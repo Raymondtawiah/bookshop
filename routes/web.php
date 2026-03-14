@@ -22,7 +22,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Profile routes
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::put('password', [ProfileController::class, 'updatePassword'])->name('password.update');
+    Route::put('password', [ProfileController::class, 'updatePassword'])->name('user.password.update');
     
     Route::get('cart', [CartController::class, 'viewCart'])->name('cart');
     Route::post('cart/add', [CartController::class, 'addToCart'])->name('cart.add');

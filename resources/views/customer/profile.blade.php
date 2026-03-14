@@ -56,7 +56,7 @@
                     <h2 class="text-lg font-semibold text-gray-900">Change Password</h2>
                 </div>
                 
-                <form method="POST" action="{{ route('password.update') }}" class="p-6 space-y-6">
+                <form method="POST" action="{{ route('user.password.update') }}" class="p-6 space-y-6">
                     @csrf
                     @method('PUT')
 
