@@ -261,32 +261,24 @@
             <div class="mb-8">
                 <h2 class="text-2xl font-bold text-gray-900 mb-4">Featured Books</h2>
                 
-                <!-- Horizontal scrollable container - always horizontal, snap on mobile -->
-                <div class="-mx-4 px-4 overflow-x-auto scrollbar-hide md:overflow-x-visible md:mx-0 md:px-0">
-                    <div class="flex gap-4 pb-2 md:grid md:grid-cols-4 md:gap-6 md:pb-0" style="min-width: max-content;">
-                        @foreach($books as $book)
-                        <a href="{{ route('products.show', $book->id) }}" class="group flex-shrink-0 w-36 sm:w-40">
-                            <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow h-full">
-                                @if($book->cover_image)
-                                <div class="aspect-[3/4] relative overflow-hidden">
-                                    <img src="{{ asset('storage/' . $book->cover_image) }}" alt="{{ $book->title }}" class="object-cover w-full h-full group-hover:scale-105 transition-transform">
-                                </div>
-                                @else
-                                <div class="aspect-[3/4] bg-gray-200 flex items-center justify-center">
-                                    <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                                    </svg>
-                                </div>
-                                @endif
-                                <div class="p-3">
-                                    <h3 class="font-semibold text-gray-900 text-sm truncate">{{ $book->title }}</h3>
-                                    <p class="text-xs text-gray-500 truncate">{{ $book->author }}</p>
-                                    <p class="mt-1 font-bold text-indigo-600 text-sm">₵{{ number_format($book->price, 2) }}</p>
-                                </div>
+                <!-- Horizontal scroll container -->
+                <div class="flex overflow-x-auto gap-4 pb-4 scrollbar-hide -mx-4 px-4">
+                    @foreach($books as $book)
+                    <a href="{{ route('products.show', $book->id) }}" class="flex-shrink-0 w-36 sm:w-40">
+                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
+                            <div class="aspect-[3/4] bg-gray-200 flex items-center justify-center">
+                                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                </svg>
                             </div>
-                        </a>
-                        @endforeach
-                    </div>
+                            <div class="p-3">
+                                <h3 class="font-semibold text-gray-900 text-sm truncate">{{ $book->title }}</h3>
+                                <p class="text-xs text-gray-500 truncate">{{ $book->author }}</p>
+                                <p class="mt-1 font-bold text-indigo-600 text-sm">₵{{ number_format($book->price, 2) }}</p>
+                            </div>
+                        </div>
+                    </a>
+                    @endforeach
                 </div>
             </div>
             @endif
