@@ -7,6 +7,7 @@
             </a>
 
             <!-- Desktop View Component -->
+            <!-- Testing: this is the desktop navbar component -->
             <x-customer-navbar-desktop />
 
             <!-- Mobile/Phone View Component -->
