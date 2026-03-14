@@ -5,7 +5,6 @@
             <a href="{{ route('home') }}" class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
                 Nathaniel Gyarteng
             </a>
-            gklgfgfxhfghjcjgcjcjc
 
             <!-- Desktop View Component -->
             <x-customer-navbar-desktop />
