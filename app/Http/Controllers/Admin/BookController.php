@@ -10,26 +10,29 @@ use Illuminate\Support\Facades\Storage;
 class BookController extends Controller
 {
     /**
-     * Upload image to public/books directory
+     * Upload image to public_html/books directory
      */
     private function uploadImage($file)
     {
         if (!$file) return null;
         
-        // Store directly in public/books directory
+        // Create a unique filename
         $filename = time() . '_' . $file->getClientOriginalName();
-        $file->move(public_path('books'), $filename);
         
+        // Save image to public_html/books
+        $file->move(base_path('books'), $filename);
+        
+        // Return only the filename for database storage
         return $filename;
     }
 
     /**
-     * Delete image from public/books directory
+     * Delete image from public_html/books directory
      */
     private function deleteImage($filename)
     {
-        if ($filename && file_exists(public_path('books') . '/' . $filename)) {
-            unlink(public_path('books') . '/' . $filename);
+        if ($filename && file_exists(base_path('books') . '/' . $filename)) {
+            unlink(base_path('books') . '/' . $filename);
         }
     }
 
