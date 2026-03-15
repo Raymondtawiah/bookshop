@@ -85,5 +85,6 @@
                 </div>
             @endif
         </div>
+        <x-customer-footer />
     </body>
 </html>
