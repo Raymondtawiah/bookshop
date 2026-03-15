@@ -5,96 +5,63 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Book;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
     /**
-     * Upload image to public/books directory
+     * Upload file (image or PDF) to public/books directory
      */
-    private function uploadImage($file)
+    private function uploadFile($file)
     {
         if (!$file) return null;
-        
-        // Create a unique filename
+
         $filename = time() . '_' . $file->getClientOriginalName();
-        
-        // Ensure directory exists
-        $directory = base_path('public/books');
+
+        $directory = public_path('books');
         if (!file_exists($directory)) {
             mkdir($directory, 0755, true);
         }
-        
-        // Save image to public/books
+
         $file->move($directory, $filename);
-        
-        // Return only the filename for database storage
+
         return $filename;
     }
 
     /**
-     * Upload PDF to public/books directory
+     * Delete file from public/books directory
      */
-    private function uploadPdf($file)
+    private function deleteFile($filename)
     {
-        if (!$file) return null;
-        
-        // Create a unique filename
-        $filename = time() . '_' . $file->getClientOriginalName();
-        
-        // Ensure directory exists
-        $directory = base_path('public/books');
-        if (!file_exists($directory)) {
-            mkdir($directory, 0755, true);
-        }
-        
-        // Save PDF to public/books
-        $file->move($directory, $filename);
-        
-        // Return only the filename for database storage
-        return $filename;
-    }
-
-    /**
-     * Delete image from public/books directory
-     */
-    private function deleteImage($filename)
-    {
-        if ($filename && file_exists(base_path('public/books') . '/' . $filename)) {
-            unlink(base_path('public/books') . '/' . $filename);
+        $path = public_path('books/' . $filename);
+        if ($filename && file_exists($path)) {
+            unlink($path);
         }
     }
 
     /**
-     * Delete PDF from public/books directory
+     * Get full URL for a file
      */
-    private function deletePdf($filename)
+    private function fileUrl($filename)
     {
-        if ($filename && file_exists(base_path('public/books') . '/' . $filename)) {
-            unlink(base_path('public/books') . '/' . $filename);
-        }
+        return $filename ? asset('books/' . $filename) : null;
     }
 
-    /**
-     * Display a listing of books.
-     */
     public function index()
     {
         $books = Book::latest()->paginate(10);
+        // Add URLs for views
+        foreach ($books as $book) {
+            $book->cover_image_url = $this->fileUrl($book->cover_image);
+            $book->book_pdf_url = $this->fileUrl($book->book_pdf);
+        }
         return view('admin.books.index', compact('books'));
     }
 
-    /**
-     * Show the form for creating a new book.
-     */
     public function create()
     {
         return view('admin.books.create');
     }
 
-    /**
-     * Store a newly created book.
-     */
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -114,11 +81,11 @@ class BookController extends Controller
         ]);
 
         if ($request->hasFile('cover_image')) {
-            $validated['cover_image'] = $this->uploadImage($request->file('cover_image'));
+            $validated['cover_image'] = $this->uploadFile($request->file('cover_image'));
         }
 
         if ($request->hasFile('book_pdf')) {
-            $validated['book_pdf'] = $this->uploadPdf($request->file('book_pdf'));
+            $validated['book_pdf'] = $this->uploadFile($request->file('book_pdf'));
         }
 
         $validated['stock'] = $validated['stock'] ?? 0;
@@ -129,17 +96,13 @@ class BookController extends Controller
         return redirect()->route('admin.books')->with('success', 'Book added successfully!');
     }
 
-    /**
-     * Show the form for editing the specified book.
-     */
     public function edit(Book $book)
     {
+        $book->cover_image_url = $this->fileUrl($book->cover_image);
+        $book->book_pdf_url = $this->fileUrl($book->book_pdf);
         return view('admin.books.edit', compact('book'));
     }
 
-    /**
-     * Update the specified book.
-     */
     public function update(Request $request, Book $book)
     {
         $validated = $request->validate([
@@ -159,15 +122,13 @@ class BookController extends Controller
         ]);
 
         if ($request->hasFile('cover_image')) {
-            // Delete old image if exists
-            $this->deleteImage($book->cover_image);
-            $book->cover_image = $this->uploadImage($request->file('cover_image'));
+            $this->deleteFile($book->cover_image);
+            $validated['cover_image'] = $this->uploadFile($request->file('cover_image'));
         }
 
         if ($request->hasFile('book_pdf')) {
-            // Delete old PDF if exists
-            $this->deletePdf($book->book_pdf);
-            $book->book_pdf = $this->uploadPdf($request->file('book_pdf'));
+            $this->deleteFile($book->book_pdf);
+            $validated['book_pdf'] = $this->uploadFile($request->file('book_pdf'));
         }
 
         $validated['is_free'] = $request->boolean('is_free');
@@ -177,14 +138,11 @@ class BookController extends Controller
         return redirect()->route('admin.books')->with('success', 'Book updated successfully!');
     }
 
-    /**
-     * Remove the specified book.
-     */
     public function destroy(Book $book)
     {
-        $this->deleteImage($book->cover_image);
-        $this->deletePdf($book->book_pdf);
-        
+        $this->deleteFile($book->cover_image);
+        $this->deleteFile($book->book_pdf);
+
         $book->delete();
 
         return redirect()->route('admin.books')->with('success', 'Book deleted successfully!');
