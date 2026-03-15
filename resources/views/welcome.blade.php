@@ -63,7 +63,7 @@
                     @foreach($books as $book)
                     <div class="flex-shrink-0 w-40 md:w-auto">
                         @if($book->is_free && $book->book_pdf)
-                        <a href="{{ route('product.download', $book->id) }}" class="block transform group-hover:-translate-y-2 transition-all duration-300" title="Download Free PDF">
+                        <a href="{{ asset('books/' . $book->book_pdf) }}" download class="block transform group-hover:-translate-y-2 transition-all duration-300" title="Download Free PDF">
                         @else
                         <a href="{{ route('product.show', $book->id) }}" class="block transform group-hover:-translate-y-2 transition-all duration-300">
                         @endif
