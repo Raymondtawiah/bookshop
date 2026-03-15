@@ -133,12 +133,49 @@
                         </div>
                     </div>
 
+                    <!-- PDF File -->
+                    <div>
+                        <label for="pdf_file" class="block text-sm font-medium text-gray-700 mb-1">PDF File</label>
+                        <div class="mt-1 flex justify-center rounded-lg border-2 border-dashed border-gray-300 px-6 py-8" id="pdf-dropzone">
+                            <div class="text-center" id="pdf-content">
+                                <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
+                                    <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                    <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                </svg>
+                                <div class="mt-4 flex text-sm leading-6 text-gray-600">
+                                    <label for="pdf_file" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 hover:text-indigo-500">
+                                        <span>Upload PDF</span>
+                                        <input id="pdf_file" name="pdf_file" type="file" class="sr-only" accept="application/pdf" onchange="updatePdfPreview(this)">
+                                    </label>
+                                    <p class="pl-1">or drag and drop</p>
+                                </div>
+                                <p class="text-xs leading-5 text-gray-500">PDF up to 10MB</p>
+                            </div>
+                            <!-- PDF Preview -->
+                            <div id="pdf-preview" class="hidden">
+                                <svg class="mx-auto h-12 w-12 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                <p id="pdf-name" class="mt-2 text-sm text-gray-500"></p>
+                            </div>
+                        </div>
+                    </div>
+
                     <!-- Featured -->
                     <div class="flex items-center">
                         <input type="checkbox" name="is_featured" id="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }}
                             class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
                         <label for="is_featured" class="ml-2 block text-sm font-medium text-gray-700">
                             Mark as featured book
+                        </label>
+                    </div>
+
+                    <!-- Free Book -->
+                    <div class="flex items-center">
+                        <input type="checkbox" name="is_free" id="is_free" value="1" {{ old('is_free') ? 'checked' : '' }}
+                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
+                        <label for="is_free" class="ml-2 block text-sm font-medium text-gray-700">
+                            This book is free (PDF download)
                         </label>
                     </div>
 
@@ -175,6 +212,17 @@
                     }
                     
                     reader.readAsDataURL(file);
+                }
+            }
+
+            function updatePdfPreview(input) {
+                if (input.files && input.files[0]) {
+                    var file = input.files[0];
+                    document.getElementById('pdf-name').textContent = file.name;
+                    document.getElementById('pdf-content').classList.add('hidden');
+                    document.getElementById('pdf-preview').classList.remove('hidden');
+                    document.getElementById('pdf-dropzone').classList.remove('border-gray-300');
+                    document.getElementById('pdf-dropzone').classList.add('border-green-500');
                 }
             }
         </script>

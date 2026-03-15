@@ -19,6 +19,8 @@ class Book extends Model
         'pages',
         'published_year',
         'cover_image',
+        'pdf_file',
+        'is_free',
         'stock',
         'is_featured',
     ];
@@ -26,6 +28,7 @@ class Book extends Model
     protected $casts = [
         'price' => 'decimal:2',
         'is_featured' => 'boolean',
+        'is_free' => 'boolean',
         'stock' => 'integer',
     ];
 }
