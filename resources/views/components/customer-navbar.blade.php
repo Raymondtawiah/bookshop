@@ -1,10 +1,10 @@
 <nav class="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm shadow-sm">
     <div class="max-w-7xl mx-auto px-6 py-4">
-        <div class="flex items-center justify-between">
+        <div class="flex items-center justify-between gap-2">
             <!-- Logo -->
-            <a href="{{ route('home') }}" class="text-xl md:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent whitespace-nowrap">
+            <a href="{{ route('home') }}" class="text-lg md:text-xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent whitespace-nowrap">
                 <span class="hidden md:inline">Nathaniel Gyarteng</span>
-                <span class="md:hidden">Nathaniel</span>
+                <span class="md:hidden text-sm">Nathan...</span>
             </a>
 
             <!-- Desktop View (hidden on mobile) -->
@@ -13,7 +13,7 @@
             </div>
 
             <!-- Mobile/Phone View (hidden on desktop) --> 
-            <div class="md:hidden flex items-center gap-2 flex-nowrap">
+            <div class="md:hidden flex items-center gap-1">
                 @auth
                 <a href="{{ route('cart') }}" class="relative p-2 text-gray-600 hover:text-indigo-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -29,7 +29,7 @@
                 @endauth
 
                 <!-- Toggle Button -->
-                <button id="mobile-menu-btn" class="p-2 text-gray-600 hover:text-indigo-600" onclick="toggleCustomerMobileMenu(event)">
+                <button id="mobile-menu-btn" class="p-2 text-gray-600 hover:text-indigo-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="menu-icon">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
@@ -87,43 +87,36 @@
 </div>
 
 <script>
-    function toggleCustomerMobileMenu(event) {
-        event.stopPropagation();
-        const mobileMenu = document.getElementById('customer-mobile-menu');
+    document.addEventListener('DOMContentLoaded', function() {
+        const btn = document.getElementById('mobile-menu-btn');
+        const menu = document.getElementById('customer-mobile-menu');
         const menuIcon = document.getElementById('menu-icon');
         const closeIcon = document.getElementById('close-icon');
         
-        const isHidden = mobileMenu.classList.contains('hidden');
-        
-        if (isHidden) {
-            mobileMenu.classList.remove('hidden');
-            menuIcon.classList.add('hidden');
-            closeIcon.classList.remove('hidden');
-        } else {
-            mobileMenu.classList.add('hidden');
-            menuIcon.classList.remove('hidden');
-            closeIcon.classList.add('hidden');
-        }
-    }
-
-    // Close menu when clicking outside
-    document.addEventListener('click', function(event) {
-        const mobileMenu = document.getElementById('customer-mobile-menu');
-        const menuBtn = document.getElementById('mobile-menu-btn');
-        const menuIcon = document.getElementById('menu-icon');
-        const closeIcon = document.getElementById('close-icon');
-        
-        if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
-            if (!mobileMenu.contains(event.target) && !menuBtn.contains(event.target)) {
-                mobileMenu.classList.add('hidden');
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            if (menu.classList.contains('hidden')) {
+                menu.classList.remove('hidden');
+                menuIcon.classList.add('hidden');
+                closeIcon.classList.remove('hidden');
+            } else {
+                menu.classList.add('hidden');
                 menuIcon.classList.remove('hidden');
                 closeIcon.classList.add('hidden');
             }
-        }
-    });
-
-    // Prevent menu from closing when clicking inside it
-    document.getElementById('customer-mobile-menu').addEventListener('click', function(event) {
-        event.stopPropagation();
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!menu.classList.contains('hidden')) {
+                if (!menu.contains(e.target) && !btn.contains(e.target)) {
+                    menu.classList.add('hidden');
+                    menuIcon.classList.remove('hidden');
+                    closeIcon.classList.add('hidden');
+                }
+            }
+        });
     });
 </script>
