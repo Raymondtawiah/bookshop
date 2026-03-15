@@ -145,7 +145,7 @@
                                     </svg>
                                 @endif
                                 <div class="mt-2 flex text-sm leading-6 text-gray-600">
-                                    <label for="pdf_file" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 hover:text-indigo-500">
+                                    <label for="book_pdf" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 hover:text-indigo-500">
                                         <span>{{ $book->book_pdf ? 'Replace PDF' : 'Upload PDF' }}</span>
                                         <input id="book_pdf" name="book_pdf" type="file" class="sr-only" accept="application/pdf" onchange="updatePdfPreview(this)">
                                     </label>
