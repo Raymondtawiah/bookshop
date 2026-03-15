@@ -341,7 +341,7 @@
                     <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-all">
                         <div class="h-40 bg-gray-100 relative overflow-hidden">
                             @if($book->cover_image)
-                                <img src="{{ asset('books/' . $book->cover_image) }}" alt="{{ $book->title }}" class="w-full h-full object-cover">
+                                <img src="{{ $book->cover_image_url }}" alt="{{ $book->title }}" class="w-full h-full object-cover">
                             @else
                                 <img src="{{ asset('welcome.jpg') }}" alt="{{ $book->title }}" class="w-full h-full object-cover">
                             @endif

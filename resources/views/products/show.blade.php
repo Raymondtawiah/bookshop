@@ -36,7 +36,7 @@ i<!DOCTYPE html>
                         <!-- Product Image -->
                         <div class="relative h-80 md:h-[500px] bg-gray-100 flex items-center justify-center p-6">
                             @if($book->cover_image)
-                                <img src="{{ asset('books/' . $book->cover_image) }}" alt="{{ $book->title }}" class="max-h-full max-w-full object-contain rounded-lg shadow-lg">
+                                <img src="{{ $book->cover_image_url }}" alt="{{ $book->title }}" class="max-h-full max-w-full object-contain rounded-lg shadow-lg">
                             @else
                                 <img src="{{ asset('welcome.jpg') }}" alt="{{ $book->title }}" class="max-h-full max-w-full object-contain rounded-lg shadow-lg">
                             @endif
@@ -96,8 +96,8 @@ i<!DOCTYPE html>
                             </div>
 
                             <!-- Add to Cart -->
-                            @if($book->is_free && $book->book_pdf)
-                                <a href="{{ asset('books/' . $book->book_pdf) }}" download class="flex-1 px-6 py-4 bg-gradient-to-r from-green-600 to-teal-600 text-white font-semibold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                            @if($book->is_free && $book->book_pdf_url)
+                                <a href="{{ $book->book_pdf_url }}" download class="flex-1 px-6 py-4 bg-gradient-to-r from-green-600 to-teal-600 text-white font-semibold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                                     </svg>
@@ -144,7 +144,7 @@ i<!DOCTYPE html>
                         <a href="{{ route('product.show', $related->id) }}" class="bg-white rounded-2xl overflow-hidden shadow-lg hover:-translate-y-2 hover:shadow-xl transition-all duration-300">
                             <div class="h-56 bg-gray-100 relative overflow-hidden">
                                 @if($related->cover_image)
-                                    <img src="{{ asset('books/' . $related->cover_image) }}" alt="{{ $related->title }}" class="w-full h-full object-cover">
+                                    <img src="{{ $related->cover_image_url }}" alt="{{ $related->title }}" class="w-full h-full object-cover">
                                 @else
                                     <img src="{{ asset('welcome.jpg') }}" alt="{{ $related->title }}" class="w-full h-full object-cover">
                                 @endif

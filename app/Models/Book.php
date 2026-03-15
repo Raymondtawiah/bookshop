@@ -31,4 +31,20 @@ class Book extends Model
         'is_free' => 'boolean',
         'stock' => 'integer',
     ];
+
+    /**
+     * Get the full URL for the cover image
+     */
+    public function getCoverImageUrlAttribute()
+    {
+        return $this->cover_image ? url('books/' . $this->cover_image) : null;
+    }
+
+    /**
+     * Get the full URL for the PDF
+     */
+    public function getBookPdfUrlAttribute()
+    {
+        return $this->book_pdf ? url('books/' . $this->book_pdf) : null;
+    }
 }

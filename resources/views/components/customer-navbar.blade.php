@@ -2,8 +2,9 @@
     <div class="max-w-7xl mx-auto px-6 py-4">
         <div class="flex items-center justify-between">
             <!-- Logo -->
-            <a href="{{ route('home') }}" class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                Nathaniel Gyarteng
+            <a href="{{ route('home') }}" class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent whitespace-nowrap">
+                <span class="hidden md:inline">Nathaniel Gyarteng</span>
+                <span class="md:hidden">Nathaniel</span>
             </a>
 
             <!-- Desktop View (hidden on mobile) -->
@@ -12,7 +13,7 @@
             </div>
 
             <!-- Mobile/Phone View (hidden on desktop) --> 
-            <div class="md:hidden flex items-center gap-2 ml-auto">
+            <div class="md:hidden flex items-center gap-2">
                 @auth
                 <a href="{{ route('cart') }}" class="relative p-2 text-gray-600 hover:text-indigo-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -42,7 +43,7 @@
 </nav>
 
 <!-- Mobile Menu Dropdown -->
-<div id="customer-mobile-menu" class="hidden fixed top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 p-4 z-40" style="display: none;">
+<div id="customer-mobile-menu" class="hidden fixed top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 p-4 z-40">
     <div class="flex flex-col space-y-3">
         <a href="{{ route('home') }}#home" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Home</a>
         @if(\App\Models\Book::count() > 0)
@@ -91,15 +92,32 @@
         const menuIcon = document.getElementById('menu-icon');
         const closeIcon = document.getElementById('close-icon');
         
-        mobileMenu.classList.toggle('hidden');
-        if (mobileMenu.classList.contains('hidden')) {
-            mobileMenu.style.display = 'none';
-            menuIcon.classList.remove('hidden');
-            closeIcon.classList.add('hidden');
-        } else {
-            mobileMenu.style.display = 'block';
+        const isHidden = mobileMenu.classList.contains('hidden');
+        
+        if (isHidden) {
+            mobileMenu.classList.remove('hidden');
             menuIcon.classList.add('hidden');
             closeIcon.classList.remove('hidden');
+        } else {
+            mobileMenu.classList.add('hidden');
+            menuIcon.classList.remove('hidden');
+            closeIcon.classList.add('hidden');
         }
     }
+
+    // Close menu when clicking outside
+    document.addEventListener('click', function(event) {
+        const mobileMenu = document.getElementById('customer-mobile-menu');
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const menuIcon = document.getElementById('menu-icon');
+        const closeIcon = document.getElementById('close-icon');
+        
+        if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+            if (!mobileMenu.contains(event.target) && !menuBtn.contains(event.target)) {
+                mobileMenu.classList.add('hidden');
+                menuIcon.classList.remove('hidden');
+                closeIcon.classList.add('hidden');
+            }
+        }
+    });
 </script>
