@@ -49,7 +49,7 @@
                                     <tr class="hover:bg-gray-50 transition-colors">
                                         <td class="px-6 py-4">
                                             @if($book->cover_image)
-                                                <img src="/books/{{ $book->cover_image }}" alt="{{ $book->title }}" class="h-16 w-12 object-cover rounded">
+                                                <img src="{{ asset('books/' . $book->cover_image) }}" alt="{{ $book->title }}" class="h-16 w-12 object-cover rounded">
                                             @else
                                                 <div class="h-16 w-12 bg-gray-200 rounded flex items-center justify-center">
                                                     <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
