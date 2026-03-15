@@ -413,38 +413,7 @@
                 </div>
             </div>
         </section>
-
-        <!-- Footer -->
-        <footer class="bg-gray-900 text-white py-12">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-                    <div>
-                        <h4 class="text-lg font-semibold mb-4">Bookshop</h4>
-                        <p class="text-gray-400 text-sm">Your trusted online bookstore for all genres and interests.</p>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
-                        <ul class="space-y-2 text-gray-400 text-sm">
-                            <li><a href="#home" class="hover:text-white transition-colors">Home</a></li>
-                            <li><a href="#store" class="hover:text-white transition-colors">Shop</a></li>
-                            <li><a href="#about" class="hover:text-white transition-colors">About</a></li>
-                            <li><a href="#contact" class="hover:text-white transition-colors">Contact</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h4 class="text-lg font-semibold mb-4">Contact</h4>
-                        <ul class="space-y-2 text-gray-400 text-sm">
-                            <li>info@bookshop.com</li>
-                            <li>+1 (304) 517-4663</li>
-                            <li>123 Book Street</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="border-t border-gray-800 pt-8 text-center">
-                    <p class="text-gray-400">&copy; {{ date('Y') }} Bookshop. All rights reserved.</p>
-                </div>
-            </div>
-        </footer>
+        
 
         <style>
             @keyframes slideInFromRight {
