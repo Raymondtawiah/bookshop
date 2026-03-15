@@ -523,6 +523,7 @@
                 });
             });
         </script>
+        <x-customer-footer />
     </body>
 </html>
 

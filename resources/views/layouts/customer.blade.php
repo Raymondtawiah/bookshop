@@ -94,6 +94,8 @@
             {{ $slot }}
         </flux:main>
 
+        <x-customer-footer />
+
         @fluxScripts
     </body>
 </html>
