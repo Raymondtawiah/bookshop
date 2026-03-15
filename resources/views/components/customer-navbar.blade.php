@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto px-6 py-4">
         <div class="flex items-center justify-between">
             <!-- Logo -->
-            <a href="{{ route('home') }}" class="text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent whitespace-nowrap">
+            <a href="{{ route('home') }}" class="text-xl md:text-2xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent whitespace-nowrap">
                 <span class="hidden md:inline">Nathaniel Gyarteng</span>
                 <span class="md:hidden">Nathaniel</span>
             </a>
@@ -13,7 +13,7 @@
             </div>
 
             <!-- Mobile/Phone View (hidden on desktop) --> 
-            <div class="md:hidden flex items-center gap-2">
+            <div class="md:hidden flex items-center gap-2 flex-nowrap">
                 @auth
                 <a href="{{ route('cart') }}" class="relative p-2 text-gray-600 hover:text-indigo-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -29,7 +29,7 @@
                 @endauth
 
                 <!-- Toggle Button -->
-                <button id="mobile-menu-btn" class="p-2 text-gray-600 hover:text-indigo-600" onclick="toggleCustomerMobileMenu()">
+                <button id="mobile-menu-btn" class="p-2 text-gray-600 hover:text-indigo-600" onclick="toggleCustomerMobileMenu(event)">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="menu-icon">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
                     </svg>
@@ -87,7 +87,8 @@
 </div>
 
 <script>
-    function toggleCustomerMobileMenu() {
+    function toggleCustomerMobileMenu(event) {
+        event.stopPropagation();
         const mobileMenu = document.getElementById('customer-mobile-menu');
         const menuIcon = document.getElementById('menu-icon');
         const closeIcon = document.getElementById('close-icon');
@@ -119,5 +120,10 @@
                 closeIcon.classList.add('hidden');
             }
         }
+    });
+
+    // Prevent menu from closing when clicking inside it
+    document.getElementById('customer-mobile-menu').addEventListener('click', function(event) {
+        event.stopPropagation();
     });
 </script>
