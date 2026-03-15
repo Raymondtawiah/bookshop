@@ -23,11 +23,11 @@
             <div class="max-w-7xl mx-auto px-6 relative z-10">
                 <div class="text-center">
                     <h1 class="text-5xl md:text-6xl font-bold text-white mb-6">
-                        Discover Your Next
-                        <span class="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">Great Read</span>
+                        Visa Interview Preparation 
+                        <span class="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">Resources</span>
                     </h1>
                     <p class="text-xl md:text-2xl text-white/90 mb-10 max-w-2xl mx-auto">
-                        Explore thousands of books across all genres. From bestsellers to hidden gems, find your perfect read today.
+                        Practical guides to help students and travelers understand visa interviews, avoid common mistakes, and answer visa officer questions with confidence.
                     </p>
                     <div class="flex flex-col sm:flex-row items-center justify-center gap-4 top-1.5">
                         @if(\App\Models\Book::count() > 0)
@@ -59,7 +59,7 @@
                 </div>
                 
                 <!-- Horizontal scroll on mobile, grid on desktop -->
-                <div class="flex overflow-x-auto gap-6 pb-4 md:grid md:grid-cols-4 md:overflow-x-visible md:gap-6 scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
+                <div class="flex overflow-x-auto gap-6 pb-4 md:grid md:grid-cols-3 lg:grid-cols-4 md:overflow-x-visible md:gap-6 scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
                     @foreach($books as $book)
                     <div class="flex-shrink-0 w-40 md:w-auto">
                         @if($book->is_free && $book->book_pdf_url)
