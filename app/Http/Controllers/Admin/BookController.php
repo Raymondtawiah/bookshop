@@ -46,7 +46,8 @@ class BookController extends Controller
         ]);
 
         if ($request->hasFile('cover_image')) {
-            $validated['cover_image'] = $request->file('cover_image')->store('books', 'public');
+            $path = $request->file('cover_image')->store('books', 'public');
+            $validated['cover_image'] = $path;
         }
 
         $validated['stock'] = $validated['stock'] ?? 0;
@@ -88,7 +89,9 @@ class BookController extends Controller
             if ($book->cover_image) {
                 Storage::disk('public')->delete($book->cover_image);
             }
-            $validated['cover_image'] = $request->file('cover_image')->store('books', 'public');
+            $path = $request->file('cover_image')->store('books', 'public');
+            $book->cover_image = $path;
+            $book->save();
         }
 
         $book->update($validated);
