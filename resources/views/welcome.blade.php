@@ -63,11 +63,11 @@
                     @foreach($books as $book)
                     <div class="flex-shrink-0 w-40 md:w-auto">
                         @if($book->is_free && $book->book_pdf_url)
-                        <a href="{{ $book->book_pdf_url }}" target="_blank" class="block transform group-hover:-translate-y-2 transition-all duration-300" title="Download Free PDF">
+                        <a href="{{ route('product.show', $book->id) }}" class="block transform group-hover:-translate-y-2 transition-all duration-300" title="View Details">
                         @else
                         <a href="{{ route('product.show', $book->id) }}" class="block transform group-hover:-translate-y-2 transition-all duration-300">
                         @endif
-                            <div class="w-40 h-60 md:w-full md:h-72 rounded-xl shadow-lg overflow-hidden relative z-10 bg-white border border-gray-100 group-hover:shadow-2xl group-hover:border-indigo-200 transition-all duration-300">
+                            <div class="w-40 h-60 md:w-full md:h-96 rounded-xl shadow-lg overflow-hidden relative z-10 bg-white border border-gray-100 group-hover:shadow-2xl group-hover:border-indigo-200 transition-all duration-300">
                                 @if($book->cover_image)
                                     <img src="{{ $book->cover_image_url }}" alt="{{ $book->title }}" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
                                 @else
@@ -85,11 +85,6 @@
                                     </div>
                                 </div>
                                 @else
-                                <div class="absolute bottom-3 right-3">
-                                    <div class="bg-white/95 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-lg">
-                                        <span class="text-indigo-600 font-bold text-lg">₵{{ number_format($book->price, 0) }}</span>
-                                    </div>
-                                </div>
                                 @endif
                                 
                                 @if($book->is_featured)
@@ -107,6 +102,7 @@
                             @else
                             <p class="text-lg font-extrabold text-indigo-600 mt-1">₵{{ number_format($book->price, 2) }}</p>
                             @endif
+                            @if(!($book->is_free && $book->book_pdf_url))
                             @auth
                             <form action="{{ route('cart.add') }}" method="POST" class="mt-2">
                                 @csrf
@@ -123,6 +119,7 @@
                                 Add
                             </a>
                             @endauth
+                            @endif
                         </div>
                     </div>
                     @endforeach
@@ -269,20 +266,15 @@
             <div class="max-w-7xl mx-auto px-6">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
                     <div>
-                        <h2 class="text-4xl font-bold text-gray-900 mb-6">About Our Bookshop</h2>
+                        <h2 class="text-4xl font-bold text-gray-900 mb-6">About This Store</h2>
                         <p class="text-xl text-gray-600 leading-relaxed">
-                            This store was created by Nathaniel Gyarteng to help students and travelers prepare confidently for their visa interviews. Many applicants feel nervous because they don't know what visa officers expect. These resources are designed to simplify the process, help you structure your answers clearly, and avoid common mistakes that lead to visa denials. Whether you are applying for a student visa or planning to travel abroad, these guides will help you walk into your interview prepared and confident.
+                            This store was created by Nathaniel Gyarteng to help students and travelers prepare confidently for their
+                             visa interviews. Many applicants feel nervous because they don't know what 
+                             visa officers expect. These resources are designed to simplify the process, 
+                             help you structure your answers clearly, and avoid common mistakes that lead to 
+                             visa denials. Whether you are applying for a student visa or planning to travel 
+                             abroad, these guides will help you walk into your interview prepared and confident.
                         </p>
-                        <div class="mt-8 grid grid-cols-2 gap-6">
-                            <div class="bg-white p-4 rounded-xl shadow-sm">
-                                <div class="text-3xl font-bold text-indigo-600 counter" data-target="500">0</div>
-                                <div class="text-gray-600">Books Available</div>
-                            </div>
-                            <div class="bg-white p-4 rounded-xl shadow-sm">
-                                <div class="text-3xl font-bold text-indigo-600 counter" data-target="1000">0</div>
-                                <div class="text-gray-600">Happy Customers</div>
-                            </div>
-                        </div>
                     </div>
                     <div class="relative">
                         <img src="{{ asset('welcome.jpg') }}" alt="About Bookshop" class="rounded-2xl shadow-2xl w-full max-w-md mx-auto">
