@@ -9,16 +9,17 @@ use Illuminate\Http\Request;
 class BookController extends Controller
 {
     /**
-     * Upload file (image or PDF) to public/books directory
+     * Upload file (image or PDF) to public_html/books
      */
     private function uploadFile($file)
     {
         if (!$file) return null;
 
-        $filename = time().'_'.$file->getClientOriginalName();
+        // Safer filename
+        $filename = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
 
-        // Laravel public folder
-        $directory = public_path('books');
+        // Hostinger public folder
+        $directory = $_SERVER['DOCUMENT_ROOT'].'/books';
 
         if (!file_exists($directory)) {
             mkdir($directory, 0755, true);
@@ -30,13 +31,13 @@ class BookController extends Controller
     }
 
     /**
-     * Delete file from public/books directory
+     * Delete file from public_html/books
      */
     private function deleteFile($filename)
     {
-        if(!$filename) return;
+        if (!$filename) return;
 
-        $path = public_path('books/'.$filename);
+        $path = $_SERVER['DOCUMENT_ROOT'].'/books/'.$filename;
 
         if (file_exists($path)) {
             unlink($path);
@@ -44,14 +45,13 @@ class BookController extends Controller
     }
 
     /**
-     * Get full URL for a file
+     * Generate public URL
      */
     private function fileUrl($filename)
     {
-        if(!$filename) return null;
+        if (!$filename) return null;
 
-        // Important fix for Hostinger structure
-        return asset('public/books/'.$filename);
+        return asset('books/'.$filename);
     }
 
     public function index()
