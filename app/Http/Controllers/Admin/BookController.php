@@ -15,9 +15,11 @@ class BookController extends Controller
     {
         if (!$file) return null;
 
-        $filename = time() . '_' . $file->getClientOriginalName();
+        $filename = time().'_'.$file->getClientOriginalName();
 
+        // Laravel public folder
         $directory = public_path('books');
+
         if (!file_exists($directory)) {
             mkdir($directory, 0755, true);
         }
@@ -32,8 +34,11 @@ class BookController extends Controller
      */
     private function deleteFile($filename)
     {
-        $path = public_path('books/' . $filename);
-        if ($filename && file_exists($path)) {
+        if(!$filename) return;
+
+        $path = public_path('books/'.$filename);
+
+        if (file_exists($path)) {
             unlink($path);
         }
     }
@@ -43,17 +48,21 @@ class BookController extends Controller
      */
     private function fileUrl($filename)
     {
-        return $filename ? asset('books/' . $filename) : null;
+        if(!$filename) return null;
+
+        // Important fix for Hostinger structure
+        return asset('public/books/'.$filename);
     }
 
     public function index()
     {
         $books = Book::latest()->paginate(10);
-        // Add URLs for views
+
         foreach ($books as $book) {
             $book->cover_image_url = $this->fileUrl($book->cover_image);
             $book->book_pdf_url = $this->fileUrl($book->book_pdf);
         }
+
         return view('admin.books.index', compact('books'));
     }
 
@@ -76,7 +85,7 @@ class BookController extends Controller
             'stock' => 'nullable|integer|min:0',
             'is_featured' => 'boolean',
             'is_free' => 'boolean',
-            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'book_pdf' => 'nullable|mimes:pdf|max:10240',
         ]);
 
@@ -100,6 +109,7 @@ class BookController extends Controller
     {
         $book->cover_image_url = $this->fileUrl($book->cover_image);
         $book->book_pdf_url = $this->fileUrl($book->book_pdf);
+
         return view('admin.books.edit', compact('book'));
     }
 
@@ -117,7 +127,7 @@ class BookController extends Controller
             'stock' => 'nullable|integer|min:0',
             'is_featured' => 'boolean',
             'is_free' => 'boolean',
-            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'book_pdf' => 'nullable|mimes:pdf|max:10240',
         ]);
 
