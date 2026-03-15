@@ -19,7 +19,7 @@ class Book extends Model
         'pages',
         'published_year',
         'cover_image',
-        'pdf_file',
+        'book_pdf',
         'is_free',
         'stock',
         'is_featured',

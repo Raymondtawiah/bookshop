@@ -33,7 +33,7 @@ class BookController extends Controller
     }
 
     /**
-     * Upload PDF to public/books/pdf directory
+     * Upload PDF to public/books directory
      */
     private function uploadPdf($file)
     {
@@ -43,12 +43,12 @@ class BookController extends Controller
         $filename = time() . '_' . $file->getClientOriginalName();
         
         // Ensure directory exists
-        $directory = base_path('public/books/pdf');
+        $directory = base_path('public/books');
         if (!file_exists($directory)) {
             mkdir($directory, 0755, true);
         }
         
-        // Save PDF to public/books/pdf
+        // Save PDF to public/books
         $file->move($directory, $filename);
         
         // Return only the filename for database storage
@@ -66,12 +66,12 @@ class BookController extends Controller
     }
 
     /**
-     * Delete PDF from public/books/pdf directory
+     * Delete PDF from public/books directory
      */
     private function deletePdf($filename)
     {
-        if ($filename && file_exists(base_path('public/books/pdf') . '/' . $filename)) {
-            unlink(base_path('public/books/pdf') . '/' . $filename);
+        if ($filename && file_exists(base_path('public/books') . '/' . $filename)) {
+            unlink(base_path('public/books') . '/' . $filename);
         }
     }
 
@@ -110,15 +110,15 @@ class BookController extends Controller
             'is_featured' => 'boolean',
             'is_free' => 'boolean',
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'pdf_file' => 'nullable|mimes:pdf|max:10240',
+            'book_pdf' => 'nullable|mimes:pdf|max:10240',
         ]);
 
         if ($request->hasFile('cover_image')) {
             $validated['cover_image'] = $this->uploadImage($request->file('cover_image'));
         }
 
-        if ($request->hasFile('pdf_file')) {
-            $validated['pdf_file'] = $this->uploadPdf($request->file('pdf_file'));
+        if ($request->hasFile('book_pdf')) {
+            $validated['book_pdf'] = $this->uploadPdf($request->file('book_pdf'));
         }
 
         $validated['stock'] = $validated['stock'] ?? 0;
@@ -155,7 +155,7 @@ class BookController extends Controller
             'is_featured' => 'boolean',
             'is_free' => 'boolean',
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'pdf_file' => 'nullable|mimes:pdf|max:10240',
+            'book_pdf' => 'nullable|mimes:pdf|max:10240',
         ]);
 
         if ($request->hasFile('cover_image')) {
@@ -164,10 +164,10 @@ class BookController extends Controller
             $book->cover_image = $this->uploadImage($request->file('cover_image'));
         }
 
-        if ($request->hasFile('pdf_file')) {
+        if ($request->hasFile('book_pdf')) {
             // Delete old PDF if exists
-            $this->deletePdf($book->pdf_file);
-            $book->pdf_file = $this->uploadPdf($request->file('pdf_file'));
+            $this->deletePdf($book->book_pdf);
+            $book->book_pdf = $this->uploadPdf($request->file('book_pdf'));
         }
 
         $validated['is_free'] = $request->boolean('is_free');
@@ -183,7 +183,7 @@ class BookController extends Controller
     public function destroy(Book $book)
     {
         $this->deleteImage($book->cover_image);
-        $this->deletePdf($book->pdf_file);
+        $this->deletePdf($book->book_pdf);
         
         $book->delete();
 

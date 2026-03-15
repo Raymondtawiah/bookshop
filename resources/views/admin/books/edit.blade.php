@@ -137,7 +137,7 @@
                                     <svg class="mx-auto h-10 w-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                                     </svg>
-                                    <p class="mt-2 text-sm text-gray-600">{{ $book->pdf_file }}</p>
+                                    <p class="mt-2 text-sm text-gray-600">{{ $book->book_pdf }}</p>
                                 @else
                                     <svg class="mx-auto h-10 w-10 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                                         <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
@@ -146,8 +146,8 @@
                                 @endif
                                 <div class="mt-2 flex text-sm leading-6 text-gray-600">
                                     <label for="pdf_file" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 hover:text-indigo-500">
-                                        <span>{{ $book->pdf_file ? 'Replace PDF' : 'Upload PDF' }}</span>
-                                        <input id="pdf_file" name="pdf_file" type="file" class="sr-only" accept="application/pdf" onchange="updatePdfPreview(this)">
+                                        <span>{{ $book->book_pdf ? 'Replace PDF' : 'Upload PDF' }}</span>
+                                        <input id="book_pdf" name="book_pdf" type="file" class="sr-only" accept="application/pdf" onchange="updatePdfPreview(this)">
                                     </label>
                                     @if($book->pdf_file)
                                         <p class="pl-1">or drag and drop</p>

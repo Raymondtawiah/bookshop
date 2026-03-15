@@ -145,7 +145,7 @@
                                 <div class="mt-4 flex text-sm leading-6 text-gray-600">
                                     <label for="pdf_file" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 hover:text-indigo-500">
                                         <span>Upload PDF</span>
-                                        <input id="pdf_file" name="pdf_file" type="file" class="sr-only" accept="application/pdf" onchange="updatePdfPreview(this)">
+                                        <input id="book_pdf" name="book_pdf" type="file" class="sr-only" accept="application/pdf" onchange="updatePdfPreview(this)">
                                     </label>
                                     <p class="pl-1">or drag and drop</p>
                                 </div>
