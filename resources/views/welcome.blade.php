@@ -65,7 +65,7 @@
                         <a href="{{ route('product.show', $book->id) }}" class="block transform group-hover:-translate-y-2 transition-all duration-300">
                             <div class="w-40 h-60 md:w-full md:h-72 rounded-xl shadow-lg overflow-hidden relative z-10 bg-white border border-gray-100 group-hover:shadow-2xl group-hover:border-indigo-200 transition-all duration-300">
                                 @if($book->cover_image)
-                                    <img src="{{ asset('storage/' . $book->cover_image) }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                    <img src="/books/{{ $book->cover_image }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                 @else
                                     <img src="{{ asset('welcome.jpg') }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                                 @endif
@@ -263,16 +263,17 @@
             </div>
         </section>
 
-        <!-- Contact Section -->
-        <section id="contact" class="py-20 bg-white">
+        <!-- Contact Section - Horizontal scroll on mobile -->
+        <section id="contact" class="py-20 bg-white overflow-hidden">
             <div class="max-w-7xl mx-auto px-6">
                 <div class="text-center mb-16">
                     <h2 class="text-4xl font-bold text-gray-900 mb-4">Get In Touch</h2>
                     <p class="text-xl text-gray-600">Have questions? We'd love to hear from you!</p>
                 </div>
                 <div class="max-w-2xl mx-auto">
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div class="text-center">
+                    <!-- Horizontal scroll on mobile, grid on desktop -->
+                    <div class="flex overflow-x-auto gap-6 pb-4 md:grid md:grid-cols-3 md:gap-8 md:overflow-x-visible md:pb-0 scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
+                        <div class="flex-shrink-0 w-40 text-center">
                             <div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -281,7 +282,7 @@
                             <h3 class="font-semibold text-gray-900 mb-2">Email</h3>
                             <p class="text-gray-600">info@bookshop.com</p>
                         </div>
-                        <div class="text-center">
+                        <div class="flex-shrink-0 w-40 text-center">
                             <div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <svg class="w-6 h-6 text-indigo-600" fill="currentColor" viewBox="0 0 24 24">
                                     <path d="M20.2 15.7l-1.7-1.7c-.4-.4-1-.6-1.5-.3-1.7.8-3.5-1-4.2-2.7-.4-1 .1-2.2.9-3l1.5-1.5C13.9 3.5 12.6 3 11.2 3c-2.8 0-5.3 2.1-5.7 5-.3 1.9.4 3.8 1.9 5.1 1.5 1.3 3.4 1.6 5 1.7 1.5.1 2.7-.3 3.7-1.2l1.4 1.4c.3.3.8.4 1.2.2l2.1-1c.5-.2.7-.8.5-1.3l-.8-2.2c-.3-.7-.9-1.3-1.6-1.6l-2.2-.8c-.5-.2-1.1 0-1.3.5l-1 2z"/>
@@ -290,7 +291,7 @@
                             <h3 class="font-semibold text-gray-900 mb-2">Phone</h3>
                             <p class="text-gray-600">+1 (304) 517-4553</p>
                         </div>
-                        <div class="text-center">
+                        <div class="flex-shrink-0 w-40 text-center">
                             <div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
                                 <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>

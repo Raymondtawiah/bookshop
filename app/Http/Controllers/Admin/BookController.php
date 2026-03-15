@@ -10,6 +10,30 @@ use Illuminate\Support\Facades\Storage;
 class BookController extends Controller
 {
     /**
+     * Upload image to public/books directory
+     */
+    private function uploadImage($file)
+    {
+        if (!$file) return null;
+        
+        // Store directly in public/books directory
+        $filename = time() . '_' . $file->getClientOriginalName();
+        $file->move(public_path('books'), $filename);
+        
+        return $filename;
+    }
+
+    /**
+     * Delete image from public/books directory
+     */
+    private function deleteImage($filename)
+    {
+        if ($filename && file_exists(public_path('books') . '/' . $filename)) {
+            unlink(public_path('books') . '/' . $filename);
+        }
+    }
+
+    /**
      * Display a listing of books.
      */
     public function index()
@@ -46,8 +70,7 @@ class BookController extends Controller
         ]);
 
         if ($request->hasFile('cover_image')) {
-            $path = $request->file('cover_image')->store('books', 'public');
-            $validated['cover_image'] = $path;
+            $validated['cover_image'] = $this->uploadImage($request->file('cover_image'));
         }
 
         $validated['stock'] = $validated['stock'] ?? 0;
@@ -86,12 +109,8 @@ class BookController extends Controller
 
         if ($request->hasFile('cover_image')) {
             // Delete old image if exists
-            if ($book->cover_image) {
-                Storage::disk('public')->delete($book->cover_image);
-            }
-            $path = $request->file('cover_image')->store('books', 'public');
-            $book->cover_image = $path;
-            $book->save();
+            $this->deleteImage($book->cover_image);
+            $book->cover_image = $this->uploadImage($request->file('cover_image'));
         }
 
         $book->update($validated);
@@ -104,9 +123,7 @@ class BookController extends Controller
      */
     public function destroy(Book $book)
     {
-        if ($book->cover_image) {
-            Storage::disk('public')->delete($book->cover_image);
-        }
+        $this->deleteImage($book->cover_image);
         
         $book->delete();
 
