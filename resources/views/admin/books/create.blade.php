@@ -125,13 +125,10 @@
                                 </div>
                                 <p class="text-xs leading-5 text-gray-500">PNG, JPG, GIF up to 2MB</p>
                             </div>
-                        </div>
-                        <div id="cover-image-preview" class="mt-2 hidden">
-                            <div class="flex items-center gap-2 text-sm text-green-600">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"/>
-                                </svg>
-                                <span id="cover-image-name"></span>
+                            <!-- Image Preview -->
+                            <div id="cover-image-preview" class="hidden">
+                                <img id="cover-preview-img" src="" alt="Cover Preview" class="max-h-48 rounded-lg mx-auto">
+                                <p id="cover-image-name" class="mt-2 text-sm text-gray-500"></p>
                             </div>
                         </div>
                     </div>
@@ -165,13 +162,21 @@
         <script>
             function updateCoverImagePreview(input) {
                 if (input.files && input.files[0]) {
-                    const fileName = input.files[0].name;
-                    document.getElementById('cover-image-name').textContent = fileName;
-                    document.getElementById('cover-image-preview').classList.remove('hidden');
-                    document.getElementById('cover-image-dropzone').classList.add('border-green-500');
+                    var file = input.files[0];
+                    var reader = new FileReader();
+                    
+                    reader.onload = function(e) {
+                        document.getElementById('cover-preview-img').src = e.target.result;
+                        document.getElementById('cover-image-name').textContent = file.name;
+                        document.getElementById('cover-image-content').classList.add('hidden');
+                        document.getElementById('cover-image-preview').classList.remove('hidden');
+                        document.getElementById('cover-image-dropzone').classList.remove('border-gray-300');
+                        document.getElementById('cover-image-dropzone').classList.add('border-green-500');
+                    }
+                    
+                    reader.readAsDataURL(file);
                 }
             }
-
         </script>
     </body>
 </html>
