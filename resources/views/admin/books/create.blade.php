@@ -135,7 +135,7 @@
 
                     <!-- PDF File -->
                     <div>
-                        <label for="pdf_file" class="block text-sm font-medium text-gray-700 mb-1">PDF File</label>
+                        <label for="book_pdf" class="block text-sm font-medium text-gray-700 mb-1">PDF File</label>
                         <div class="mt-1 flex justify-center rounded-lg border-2 border-dashed border-gray-300 px-6 py-8" id="pdf-dropzone">
                             <div class="text-center" id="pdf-content">
                                 <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
@@ -143,7 +143,7 @@
                                     <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                                 <div class="mt-4 flex text-sm leading-6 text-gray-600">
-                                    <label for="pdf_file" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 hover:text-indigo-500">
+                                    <label for="book_pdf" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 hover:text-indigo-500">
                                         <span>Upload PDF</span>
                                         <input id="book_pdf" name="book_pdf" type="file" class="sr-only" accept="application/pdf" onchange="updatePdfPreview(this)">
                                     </label>
