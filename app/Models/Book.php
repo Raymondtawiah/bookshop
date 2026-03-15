@@ -37,14 +37,15 @@ class Book extends Model
      */
     public function getCoverImageUrlAttribute()
     {
-        return $this->cover_image ? url('public/books/' . $this->cover_image) : null;
+        // ✅ Remove 'public/' from the path
+        return $this->cover_image ? url('books/' . $this->cover_image) : null;
     }
 
     /**
-     * Get the full URL for the PDF
+     * Optional: Get the full URL for the PDF
      */
     public function getBookPdfUrlAttribute()
     {
-        return $this->book_pdf ? url('public/books/' . $this->book_pdf) : null;
+        return $this->book_pdf ? url('books/' . $this->book_pdf) : null;
     }
 }
