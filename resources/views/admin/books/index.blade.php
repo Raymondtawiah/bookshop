@@ -28,13 +28,6 @@
                 </a>
             </div>
 
-            <!-- Success Message -->
-            @if(session('success'))
-                <div class="mb-6 p-4 bg-green-100 text-green-700 rounded-lg">
-                    {{ session('success') }}
-                </div>
-            @endif
-
             <!-- Books Table -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 @if($books->count() > 0)

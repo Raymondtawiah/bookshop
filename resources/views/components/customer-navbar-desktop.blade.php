@@ -1,6 +1,6 @@
 <!-- Desktop Navigation -->
-<div class="hidden md:flex items-center justify-between flex-1 ml-8">
-    <!-- Desktop Menu Links -->
+<div class="hidden md:flex items-center justify-center flex-1">
+    <!-- Desktop Menu Links - Centered -->
     <div class="flex items-center space-x-8">
         <a href="{{ route('home') }}#home" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Home</a>
         @if(\App\Models\Book::count() > 0)
@@ -10,9 +10,10 @@
         <a href="{{ route('home') }}#about" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">About</a>
         <a href="{{ route('home') }}#contact" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Contact</a>
     </div>
+</div>
 
-    <!-- Right Side: Cart + User Icon -->
-    <div class="flex items-center gap-4">
+<!-- Right Side: Cart + User Icon (outside, right aligned) -->
+<div class="hidden md:flex items-center gap-4">
         <!-- Cart Icon (Show only when logged in) -->
         @auth
         <a href="{{ route('cart') }}" class="relative p-2 text-gray-600 hover:text-indigo-600">
@@ -89,6 +90,7 @@
             </div>
         </div>
     </div>
+</div>
 </div>
 
 <script>
