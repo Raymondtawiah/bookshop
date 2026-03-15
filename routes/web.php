@@ -15,6 +15,7 @@ Route::get('visa-tip', function() {
 })->name('visa-tip');
 
 Route::get('product/{id}', [ProductController::class, 'show'])->name('product.show');
+Route::get('product/{id}/download', [ProductController::class, 'downloadPdf'])->name('product.download');
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', [HomeController::class, 'index'])->name('dashboard');

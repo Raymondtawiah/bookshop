@@ -65,20 +65,44 @@
                         <a href="{{ route('product.show', $book->id) }}" class="block transform group-hover:-translate-y-2 transition-all duration-300">
                             <div class="w-40 h-60 md:w-full md:h-72 rounded-xl shadow-lg overflow-hidden relative z-10 bg-white border border-gray-100 group-hover:shadow-2xl group-hover:border-indigo-200 transition-all duration-300">
                                 @if($book->cover_image)
-                                    <img src="{{ asset('books/' . $book->cover_image) }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                    <img src="{{ asset('books/' . $book->cover_image) }}" alt="{{ $book->title }}" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
                                 @else
-                                    <img src="{{ asset('welcome.jpg') }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                    <img src="{{ asset('welcome.jpg') }}" alt="{{ $book->title }}" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
                                 @endif
+                                
+                                <!-- Free/Paid Badge Overlay on Cover -->
+                                @if($book->is_free && $book->pdf_file)
+                                <div class="absolute inset-0 bg-gradient-to-t from-green-600/80 via-green-600/20 to-transparent flex flex-col items-center justify-end pb-4">
+                                    <div class="bg-white rounded-full px-4 py-1.5 shadow-lg flex items-center gap-2">
+                                        <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                        </svg>
+                                        <span class="text-green-600 font-bold text-sm">FREE PDF</span>
+                                    </div>
+                                </div>
+                                @else
+                                <div class="absolute bottom-3 right-3">
+                                    <div class="bg-white/95 backdrop-blur-sm rounded-lg px-3 py-1.5 shadow-lg">
+                                        <span class="text-indigo-600 font-bold text-lg">₵{{ number_format($book->price, 0) }}</span>
+                                    </div>
+                                </div>
+                                @endif
+                                
                                 @if($book->is_featured)
                                 <div class="absolute top-3 right-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">FEATURED</div>
                                 @endif
+                                
                                 <!-- Gradient overlay on hover -->
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
                             </div>
                         </a>
                         <div class="text-center mt-4">
                             <h3 class="text-base font-bold text-gray-900 truncate w-40 mx-auto group-hover:text-indigo-600 transition-colors duration-300">{{ $book->title }}</h3>
+                            @if($book->is_free && $book->pdf_file)
+                            <p class="text-lg font-extrabold text-green-600 mt-1">FREE</p>
+                            @else
                             <p class="text-lg font-extrabold text-indigo-600 mt-1">₵{{ number_format($book->price, 2) }}</p>
+                            @endif
                             @auth
                             <form action="{{ route('cart.add') }}" method="POST" class="mt-2">
                                 @csrf
