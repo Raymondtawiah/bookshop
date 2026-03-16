@@ -30,7 +30,7 @@ Route::post('verify-password-reset', [VerificationController::class, 'verifyPass
 Route::post('verify-password-reset/send', [VerificationController::class, 'sendPasswordResetCode'])->name('verification.send.password-reset');
 Route::post('verify-password-reset/resend', [VerificationController::class, 'resendPasswordResetCode'])->name('verification.resend.password-reset');
 Route::get('password/reset-form', [VerificationController::class, 'showPasswordResetForm'])->name('password.reset.form');
-Route::post('password/reset', [VerificationController::class, 'resetPassword'])->name('password.update');
+Route::post('password/reset', [VerificationController::class, 'resetPassword'])->name('password.reset.update');
 
 Route::get('product/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('product/{id}/download', [ProductController::class, 'downloadPdf'])->name('product.download');
