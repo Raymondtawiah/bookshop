@@ -96,6 +96,8 @@
 
         <x-customer-footer />
 
+        <x-install-pwa />
+
         @fluxScripts
     </body>
 </html>
