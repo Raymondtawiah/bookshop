@@ -162,7 +162,7 @@ class VerificationController extends Controller
         $key = 'password-reset-code:' . $request->ip();
         if (RateLimiter::tooManyAttempts($key, 3)) {
             $seconds = RateLimiter::availableIn($key);
-            return response()->json(['error' => "Please wait $seconds seconds before requesting another code."], 429);
+            return back()->with('error', "Please wait $seconds seconds before requesting another code.");
         }
 
         RateLimiter::hit($key, 60);
@@ -172,7 +172,8 @@ class VerificationController extends Controller
         // Store email in session for verification
         $request->session()->put('password_reset_email', $user->email);
 
-        return response()->json(['message' => 'Verification code sent successfully!']);
+        // Redirect to the verification page instead of returning JSON
+        return redirect()->route('verification.password-reset')->with('message', 'Verification code sent successfully!');
     }
 
     /**

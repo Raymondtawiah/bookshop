@@ -20,6 +20,12 @@
         </div>
     @endif
 
+    @if (session('message'))
+        <div class="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg text-sm">
+            {{ session('message') }}
+        </div>
+    @endif
+
     @if ($errors->any())
         <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
             @foreach ($errors->all() as $error)
@@ -28,7 +34,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('verification.password-reset') }}" class="space-y-4">
+    <form method="POST" action="{{ route('verification.send.password-reset') }}" class="space-y-4">
         @csrf
 
         <!-- Email -->
