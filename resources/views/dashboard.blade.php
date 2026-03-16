@@ -15,7 +15,7 @@
     <body class="bg-gray-50 font-sans">
         <x-customer-navbar />
 
-        <!-- Main Content -->
+      
         <!-- Main Content -->
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between items-center h-16">
@@ -589,6 +589,38 @@
         </footer>
 
         <x-install-pwa />
+
+        <!-- Direct Install Button -->
+        <div id="pwa-install-container" style="position:fixed;bottom:20px;right:20px;z-index:9999;">
+            <button 
+                id="pwa-install-btn"
+                onclick="installApp()"
+                style="background-color:#4f46e5;color:white;padding:12px 24px;border-radius:9999px;display:flex;align-items:center;gap:8px;font-weight:600;border:none;cursor:pointer;box-shadow:0 4px 6px rgba(0,0,0,0.3);"
+            >
+                <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                </svg>
+                <span>Install App</span>
+            </button>
+        </div>
+
+        <script>
+        let deferredPrompt;
+        window.addEventListener('beforeinstallprompt', function(e) {
+            e.preventDefault();
+            deferredPrompt = e;
+        });
+        function installApp() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then(function(choiceResult) {
+                    deferredPrompt = null;
+                });
+            } else {
+                alert('To install: Look for install icon in browser or go to menu → Add to Home Screen');
+            }
+        }
+        </script>
 
         <script>
             // Register service worker for PWA
