@@ -21,6 +21,20 @@ class CartController extends Controller
             'book_id' => 'nullable|exists:books,id',
         ]);
 
+        // Check if item already exists in cart
+        if ($request->book_id) {
+            $existingItem = Cart::where('user_id', Auth::id())
+                ->where('book_id', $request->book_id)
+                ->first();
+            
+            if ($existingItem) {
+                // Update quantity instead of creating new item
+                $existingItem->quantity += $request->quantity;
+                $existingItem->save();
+                return redirect()->back()->with('success', 'Item quantity updated in cart!');
+            }
+        }
+        
         $cartItem = Cart::create([
             'user_id' => Auth::id(),
             'book_id' => $request->book_id,

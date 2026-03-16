@@ -74,8 +74,6 @@
     <div class="content">
         <p>Dear {{ $user->name }},</p>
         
-        <p>We're excited to let you know that your order has been confirmed! 🎊</p>
-        
         <div class="order-details">
             <h3 style="margin-top: 0;">Order Details</h3>
             <p><strong>Order Number:</strong> #{{ $order->order_number }}</p>
