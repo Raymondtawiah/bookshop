@@ -51,7 +51,7 @@
             </button>
             
             <!-- Dropdown Menu -->
-            <div class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50" id="user-dropdown-menu">
+            <div class="hidden absolute right-0 mt-1 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50" id="user-dropdown-menu">
                 @auth
                     <a href="{{ route('profile') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -111,6 +111,16 @@
         var container = document.getElementById('user-dropdown-container');
         var dropdown = document.getElementById('user-dropdown-menu');
         var button = document.getElementById('user-menu-button');
+        
+        // Show dropdown on hover
+        container.addEventListener('mouseenter', function() {
+            dropdown.classList.remove('hidden');
+        });
+        
+        // Keep dropdown open when moving from button to menu
+        container.addEventListener('mouseleave', function() {
+            dropdown.classList.add('hidden');
+        });
         
         // Toggle dropdown on button click
         button.addEventListener('click', function(e) {
