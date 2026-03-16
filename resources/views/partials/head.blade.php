@@ -15,7 +15,6 @@
 </title>
 
 <link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="apple-touch-icon" href="/icon.jpg">
 <link rel="manifest" href="/manifest.json">
 
 <link rel="preconnect" href="https://fonts.bunny.net">

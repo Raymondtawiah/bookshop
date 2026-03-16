@@ -1,9 +1,9 @@
-<div id="pwa-install-container" class="fixed bottom-4 right-4 z-50">
+<div id="pwa-install-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999;">
     <button 
         id="pwa-install-btn"
-        class="bg-indigo-600 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-3 hover:bg-indigo-700 transition-all transform hover:scale-105 font-semibold"
+        style="background-color: #4f46e5; color: white; padding: 12px 24px; border-radius: 9999px; display: flex; align-items: center; gap: 8px; font-weight: 600; border: none; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.3);"
     >
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg style="width: 24px; height: 24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
         </svg>
         <span>Install App</span>
@@ -15,6 +15,8 @@
         let deferredPrompt;
         const installContainer = document.getElementById('pwa-install-container');
         const installBtn = document.getElementById('pwa-install-btn');
+
+        console.log('PWA Install: Button loaded');
 
         // Check if app is already installed
         function isAppInstalled() {
@@ -35,12 +37,12 @@
         window.addEventListener('beforeinstallprompt', function(e) {
             e.preventDefault();
             deferredPrompt = e;
-            console.log('beforeinstallprompt event fired');
+            console.log('PWA Install: beforeinstallprompt fired');
         });
 
         // Handle successful installation
         window.addEventListener('appinstalled', function(e) {
-            console.log('App installed successfully');
+            console.log('PWA Install: App installed');
             if (installContainer) {
                 installContainer.style.display = 'none';
             }
@@ -54,27 +56,19 @@
         if (installBtn) {
             installBtn.addEventListener('click', async function(e) {
                 e.preventDefault();
+                console.log('PWA Install: Button clicked, deferredPrompt:', deferredPrompt);
                 
                 if (deferredPrompt) {
                     // Show the native install prompt
                     deferredPrompt.prompt();
                     
                     const { outcome } = await deferredPrompt.userChoice;
-                    
-                    if (outcome === 'accepted') {
-                        console.log('User accepted the install prompt');
-                    }
+                    console.log('PWA Install: User choice:', outcome);
                     
                     deferredPrompt = null;
                 } else {
-                    // No deferred prompt - try to trigger install via link click
-                    // This works on some browsers
-                    const link = document.createElement('a');
-                    link.href = '/';
-                    link.click();
-                    
-                    // Show message
-                    alert('To install the app:\n\n1. Look for an install icon in your browser address bar\n2. Or go to your browser menu → Install App');
+                    // No deferred prompt - show message
+                    alert('To install this app:\n\n1. On mobile: Tap menu → Add to Home Screen\n2. On desktop: Look for install icon in address bar');
                 }
             });
         }
