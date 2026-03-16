@@ -1,4 +1,15 @@
 <nav class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
+<style>
+@keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+}
+.animate-gradient {
+    background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+    background-size: 300% 300%;
+    animation: gradient-shift 3s ease infinite;
+}
+</style>
     <div class="max-w-7xl mx-auto px-4">
         <div class="flex justify-between items-center h-14">
             <!-- Logo -->
@@ -30,12 +41,17 @@
                 </a>
                 <div class="relative group">
                     <button class="text-gray-700 hover:text-indigo-600 flex items-center">
-                        <span class="mr-1">{{ auth()->user()->name }}</span>
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div class="w-8 h-8 rounded-full flex items-center justify-center animate-gradient">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+                                <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                            </svg>
+                        </div>
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </button>
                     <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden group-hover:block border">
+                        <a href="{{ route('profile') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">My Profile</a>
                         <a href="{{ route('profile') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">Settings</a>
                         <a href="{{ route('my-orders') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">My Orders</a>
                         <form method="POST" action="{{ route('logout') }}">
