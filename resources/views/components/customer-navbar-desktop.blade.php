@@ -42,10 +42,16 @@
             <!-- Dropdown Menu -->
             <div class="hidden absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-1 z-50" id="user-dropdown-menu">
                 @auth
-                    <div class="px-4 py-2 border-b border-gray-100">
-                        <p class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</p>
-                        <p class="text-xs text-gray-500">{{ auth()->user()->email }}</p>
-                    </div>
+                    <a href="{{ route('profile') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                        <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                            {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-medium text-gray-900">{{ auth()->user()->name }}</span>
+                            <span class="text-xs text-gray-500">View Profile</span>
+                        </div>
+                    </a>
+                    <hr class="my-1 border-gray-100">
                     <a href="{{ route('profile') }}" class="flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
@@ -94,24 +100,27 @@
 </div>
 
 <script>
-    // Close user dropdown when clicking outside
-    document.addEventListener('click', function(event) {
-        var dropdown = document.getElementById('user-dropdown-menu');
+    document.addEventListener('DOMContentLoaded', function() {
         var container = document.getElementById('user-dropdown-container');
-        if (dropdown && container) {
-            if (!container.contains(event.target)) {
-                dropdown.style.display = 'none';
-            }
-        }
-    });
-    
-    // Toggle dropdown on button click
-    document.querySelector('#user-dropdown-container button').addEventListener('click', function() {
         var dropdown = document.getElementById('user-dropdown-menu');
-        if (dropdown.style.display === 'none' || dropdown.style.display === '') {
-            dropdown.style.display = 'block';
-        } else {
-            dropdown.style.display = 'none';
-        }
+        var button = document.getElementById('user-menu-button');
+        
+        // Toggle dropdown on button click
+        button.addEventListener('click', function(e) {
+            e.stopPropagation();
+            dropdown.classList.toggle('hidden');
+        });
+        
+        // Close dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!container.contains(e.target)) {
+                dropdown.classList.add('hidden');
+            }
+        });
+        
+        // Prevent dropdown from closing when clicking inside it
+        dropdown.addEventListener('click', function(e) {
+            e.stopPropagation();
+        });
     });
 </script>
