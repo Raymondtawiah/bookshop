@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
 class GoogleController extends Controller
@@ -14,7 +15,7 @@ class GoogleController extends Controller
      */
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->redirect();
+        return Socialite::driver('google')->stateless()->redirect();
     }
 
     /**
@@ -23,43 +24,48 @@ class GoogleController extends Controller
     public function handleGoogleCallback()
     {
         try {
-            $googleUser = Socialite::driver('google')->user();
+
+            $googleUser = Socialite::driver('google')->stateless()->user();
 
             // Check if user already exists
-            $user = User::where('email', $googleUser->email)->first();
+            $user = User::where('email', $googleUser->getEmail())->first();
 
             if ($user) {
-                // Update existing user with Google info if not already set
+
+                // Update Google info if missing
                 if (!$user->google_id) {
                     $user->update([
-                        'google_id' => $googleUser->id,
-                        'avatar' => $googleUser->avatar,
+                        'google_id' => $googleUser->getId(),
+                        'avatar' => $googleUser->getAvatar(),
                     ]);
                 }
+
             } else {
+
                 // Create new user
                 $user = User::create([
-                    'name' => $googleUser->name,
-                    'email' => $googleUser->email,
-                    'google_id' => $googleUser->id,
-                    'avatar' => $googleUser->avatar,
-                    'password' => bcrypt(str_random(16)), // Random password for OAuth users
-                    'email_verified_at' => now(), // Email is verified by Google
+                    'name' => $googleUser->getName(),
+                    'email' => $googleUser->getEmail(),
+                    'google_id' => $googleUser->getId(),
+                    'avatar' => $googleUser->getAvatar(),
+                    'password' => bcrypt(Str::random(16)), 
+                    'email_verified_at' => now(),
                 ]);
+
             }
 
-            // Log the user in
-            Auth::login($user);
+            Auth::login($user, true);
 
-            // Redirect to dashboard
-            return redirect()->intended(route('dashboard'))->with('success', 'Welcome back!');
+            return redirect()->intended(route('dashboard'))
+                ->with('success', 'Welcome back!');
 
         } catch (\Exception $e) {
-            // Log the error for debugging
-            \Log::error('Google OAuth Error: ' . $e->getMessage());
-            
+
+            \Log::error('Google OAuth Error: '.$e->getMessage());
+
             return redirect()->route('login')
                 ->with('error', 'Unable to login with Google. Please try again.');
+
         }
     }
 }
