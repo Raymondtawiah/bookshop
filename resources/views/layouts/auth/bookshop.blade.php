@@ -43,5 +43,6 @@
             </div>
         </div>
         @fluxScripts
+        <x-install-pwa />
     </body>
 </html>
