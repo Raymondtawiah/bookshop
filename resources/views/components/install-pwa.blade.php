@@ -1,9 +1,9 @@
-<div id="pwa-install-container" class="hidden fixed bottom-4 left-4 z-50">
+<div id="pwa-install-container" class="hidden fixed bottom-4 left-4 right-4 z-50 md:hidden">
     <button 
         id="pwa-install-btn"
-        class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:bg-indigo-700 transition-colors"
+        class="w-full bg-indigo-600 text-white py-4 px-6 rounded-xl shadow-lg flex items-center justify-center gap-3 hover:bg-indigo-700 transition-colors text-lg font-semibold"
     >
-        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
         </svg>
         <span>Install App</span>
@@ -22,12 +22,14 @@
                document.referrer.includes('android-app://');
     }
 
-    // Show button on mobile
+    // Show button on mobile (always show on mobile for visibility)
     function checkMobile() {
         if (window.innerWidth <= 768 && !isAppInstalled()) {
             installContainer.classList.remove('hidden');
+            installContainer.classList.add('flex');
         } else {
             installContainer.classList.add('hidden');
+            installContainer.classList.remove('flex');
         }
     }
 
@@ -35,11 +37,11 @@
     checkMobile();
     window.addEventListener('resize', checkMobile);
 
-    // Listen for the beforeinstallprompt event
+    // Listen for the beforeinstallprompt event (Chrome/Android)
     window.addEventListener('beforeinstallprompt', (e) => {
         e.preventDefault();
         deferredPrompt = e;
-        installContainer.classList.remove('hidden');
+        checkMobile();
     });
 
     // Handle install button click
@@ -51,8 +53,21 @@
                 deferredPrompt = null;
                 installContainer.classList.add('hidden');
             } else {
-                // For Safari - guide users to manually install
-                alert('To install this app on iPhone:\n\n1. Tap the Share button (square with arrow)\n2. Tap "Add to Home Screen"');
+                // For Safari or when prompt not available - show instructions
+                const isAndroid = /Android/i.test(navigator.userAgent);
+                const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+                
+                let message = 'To install this app:\n\n';
+                
+                if (isAndroid) {
+                    message += '• Tap the menu (three dots)\n• Tap "Add to Home Screen"';
+                } else if (isIOS) {
+                    message += '• Tap the Share button\n• Tap "Add to Home Screen"';
+                } else {
+                    message += '• Use Chrome on mobile to install';
+                }
+                
+                alert(message);
             }
         });
     }
