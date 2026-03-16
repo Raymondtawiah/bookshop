@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cart;
 use App\Models\Book;
+use App\Models\Nationality;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -101,7 +102,9 @@ class CartController extends Controller
             return $item->product_price * $item->quantity;
         });
 
-        return view('cart.checkout', compact('cartItems', 'total'));
+        $nationalities = Nationality::orderBy('name')->get();
+
+        return view('cart.checkout', compact('cartItems', 'total', 'nationalities'));
     }
 
     /**

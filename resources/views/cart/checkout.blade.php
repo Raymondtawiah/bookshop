@@ -258,17 +258,21 @@
                             <select name="nationality" id="nationality" required
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                                 <option value="">Select your nationality</option>
-                                <option value="Ghanaian">Ghanaian</option>
-                                <option value="Nigerian">Nigerian</option>
-                                <option value="Kenyan">Kenyan</option>
-                                <option value="South African">South African</option>
-                                <option value="Togolese">Togolese</option>
-                                <option value="Ivorian">Ivorian</option>
-                                <option value="Burkinabe">Burkinabe</option>
-                                <option value="Liberian">Liberian</option>
-                                <option value="Sierra Leonean">Sierra Leonean</option>
-                                <option value="Cameroonian">Cameroonian</option>
-                                <option value="Other">Other</option>
+                                @forelse($nationalities as $nationality)
+                                    <option value="{{ $nationality->name }}">{{ $nationality->name }}</option>
+                                @empty
+                                    <option value="Ghanaian">Ghanaian</option>
+                                    <option value="Nigerian">Nigerian</option>
+                                    <option value="Kenyan">Kenyan</option>
+                                    <option value="South African">South African</option>
+                                    <option value="Togolese">Togolese</option>
+                                    <option value="Ivorian">Ivorian</option>
+                                    <option value="Burkinabe">Burkinabe</option>
+                                    <option value="Liberian">Liberian</option>
+                                    <option value="Sierra Leonean">Sierra Leonean</option>
+                                    <option value="Cameroonian">Cameroonian</option>
+                                    <option value="Other">Other</option>
+                                @endforelse
                             </select>
                             @error('nationality')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>

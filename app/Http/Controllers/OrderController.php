@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Models\Nationality;
 use App\Services\PaystackService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -98,7 +99,8 @@ class OrderController extends Controller
                 'order' => $order, 
                 'total' => $total,
                 'bankTransfer' => true,
-                'bankDetails' => config('paystack.bankDetails')
+                'bankDetails' => config('paystack.bankDetails'),
+                'nationalities' => Nationality::orderBy('name')->get()
             ]);
         }
 

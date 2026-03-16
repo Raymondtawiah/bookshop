@@ -11,7 +11,7 @@
     </div>
 
     <h2 class="text-xl font-bold text-gray-800 mb-1">Forgot Password?</h2>
-    <p class="text-gray-500 text-sm mb-5">Enter your email and we'll send you a reset link</p>
+    <p class="text-gray-500 text-sm mb-5">Enter your email and we'll send you a verification code</p>
 
     <!-- Session Status -->
     @if (session('status'))
@@ -28,7 +28,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('password.email') }}" class="space-y-4">
+    <form method="POST" action="{{ route('verification.password-reset') }}" class="space-y-4">
         @csrf
 
         <!-- Email -->
@@ -50,7 +50,7 @@
             type="submit" 
             class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg"
         >
-            Send Reset Link
+            Send Verification Code
         </button>
     </form>
 
