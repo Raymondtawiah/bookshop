@@ -10,14 +10,8 @@
     "icons": [
         {
             "src": "/favicon.ico",
-            "sizes": "48x48",
+            "sizes": "48x48 64x64 128x128 256x256",
             "type": "image/x-icon"
-        },
-        {
-            "src": "/apple-touch-icon.png",
-            "sizes": "180x180",
-            "type": "image/png",
-            "purpose": "any maskable"
         }
     ],
     "categories": ["shopping", "books"],
