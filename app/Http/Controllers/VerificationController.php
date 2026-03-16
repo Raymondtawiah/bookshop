@@ -314,6 +314,6 @@ class VerificationController extends Controller
         $request->session()->forget('password_reset_email');
         $request->session()->forget('password_reset_user_id');
 
-        return redirect()->route('login')->with('status', 'Password reset successfully! Please login with your new password.');
+        return redirect()->route('login')->with('success', 'Password reset successfully! Please login with your new password.');
     }
 }

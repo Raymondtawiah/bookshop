@@ -3,10 +3,30 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <!-- PWA Meta Tags -->
+        <meta name="theme-color" content="#4f46e5" />
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+        <meta name="apple-mobile-web-app-title" content="BookShop" />
+        <link rel="manifest" href="/manifest.json">
         <title>{{ config('app.name', 'Bookshop') }}</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+        <script>
+            // Register service worker for PWA
+            if ('serviceWorker' in navigator) {
+                window.addEventListener('load', () => {
+                    navigator.serviceWorker.register('/sw.js')
+                        .then((registration) => {
+                            console.log('SW registered: ', registration);
+                        })
+                        .catch((registrationError) => {
+                            console.log('SW registration failed: ', registrationError);
+                        });
+                });
+            }
+        </script>
     </head>
     <body class="antialiased">
         <x-flash-message />
@@ -493,6 +513,7 @@
             });
         </script>
         <x-customer-footer />
+        <x-install-pwa />
     </body>
 </html>
 
