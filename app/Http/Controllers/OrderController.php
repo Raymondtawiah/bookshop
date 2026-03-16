@@ -22,6 +22,7 @@ class OrderController extends Controller
             'customer_name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'residence' => 'required|string|max:500',
+            'nationality' => 'required|string|max:100',
             'contact' => 'required|string|max:20',
             'payment_method' => 'required|in:momo,bank',
         ]);
