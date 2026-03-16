@@ -148,8 +148,8 @@ class PaymentController extends Controller
                     'paid_at' => now()
                 ]);
 
-                return redirect()->route('checkout')
-                    ->with(['success' => 'Payment successful! Order confirmed.', 'order' => $order, 'total' => $order->total_amount]);
+                return redirect()->route('home')
+                    ->with('success', 'Payment successful! Order confirmed. Check your email for details.');
             }
         }
 
