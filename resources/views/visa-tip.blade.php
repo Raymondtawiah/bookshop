@@ -185,6 +185,6 @@
             </div>
         </section>
 
-      <x-customer-footer />
+      <x-customer-footer />u
     </body>
 </html>
