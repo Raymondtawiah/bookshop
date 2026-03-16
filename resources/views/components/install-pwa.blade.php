@@ -1,4 +1,4 @@
-<div id="pwa-install-container" class="hidden fixed bottom-4 right-4 z-50">
+<div id="pwa-install-container" class="fixed bottom-4 right-4 z-50">
     <button 
         id="pwa-install-btn"
         class="bg-indigo-600 text-white px-6 py-3 rounded-full shadow-lg flex items-center gap-3 hover:bg-indigo-700 transition-all transform hover:scale-105 font-semibold"
@@ -24,19 +24,10 @@
                    window.navigator.standalone === true;
         }
 
-        // Show the install button
-        function showInstallButton() {
-            if (installContainer && !isAppInstalled()) {
-                installContainer.classList.remove('hidden');
-                installContainer.classList.add('block');
-            }
-        }
-
-        // Hide the install button
-        function hideInstallButton() {
-            if (installContainer) {
-                installContainer.classList.add('hidden');
-                installContainer.classList.remove('block');
+        // Hide the install button if app is already installed
+        function checkAndHideIfInstalled() {
+            if (isAppInstalled() && installContainer) {
+                installContainer.style.display = 'none';
             }
         }
 
@@ -45,30 +36,19 @@
             e.preventDefault();
             deferredPrompt = e;
             console.log('beforeinstallprompt event fired');
-            showInstallButton();
         });
 
         // Handle successful installation
         window.addEventListener('appinstalled', function(e) {
             console.log('App installed successfully');
-            hideInstallButton();
+            if (installContainer) {
+                installContainer.style.display = 'none';
+            }
             deferredPrompt = null;
         });
 
-        // Check on page load if already installed or if we should show the button
-        document.addEventListener('DOMContentLoaded', function() {
-            // Check if the browser supports PWA install
-            if (!('serviceWorker' in navigator)) {
-                return;
-            }
-            
-            // Show button after a short delay if deferredPrompt exists
-            setTimeout(function() {
-                if (deferredPrompt) {
-                    showInstallButton();
-                }
-            }, 1500);
-        });
+        // Check on page load if already installed
+        checkAndHideIfInstalled();
 
         // Handle install button click
         if (installBtn) {
@@ -83,24 +63,18 @@
                     
                     if (outcome === 'accepted') {
                         console.log('User accepted the install prompt');
-                        hideInstallButton();
                     }
                     
                     deferredPrompt = null;
                 } else {
-                    // No deferred prompt - show manual instructions
-                    const userAgent = navigator.userAgent || '';
-                    let instructions = '';
+                    // No deferred prompt - try to trigger install via link click
+                    // This works on some browsers
+                    const link = document.createElement('a');
+                    link.href = '/';
+                    link.click();
                     
-                    if (userAgent.includes('Android') || userAgent.includes('Chrome')) {
-                        instructions = 'To install the app:\n\n1. Tap the menu (three dots) in the top right corner\n2. Tap "Install App" or "Add to Home Screen"';
-                    } else if (userAgent.includes('iPhone') || userAgent.includes('iPad')) {
-                        instructions = 'To install on iPhone/iPad:\n\n1. Tap the Share button 📤 (bottom center)\n2. Scroll down and tap "Add to Home Screen"\n3. Tap "Add" in the top right';
-                    } else {
-                        instructions = 'To install the app:\n\n• Look for an install icon in the address bar\n• Or right-click and select "Save as Web App"';
-                    }
-                    
-                    alert('📱 INSTALL APP\n\n' + instructions);
+                    // Show message
+                    alert('To install the app:\n\n1. Look for an install icon in your browser address bar\n2. Or go to your browser menu → Install App');
                 }
             });
         }

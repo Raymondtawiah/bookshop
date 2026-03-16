@@ -10,16 +10,14 @@
     "scope": "/",
     "icons": [
         {
-            "src": "/icon-192.svg",
+            "src": "/icon.jpg",
             "sizes": "192x192",
-            "type": "image/svg+xml",
-            "purpose": "any"
+            "type": "image/jpeg"
         },
         {
-            "src": "/icon-512.svg",
+            "src": "/icon.jpg",
             "sizes": "512x512",
-            "type": "image/svg+xml",
-            "purpose": "any"
+            "type": "image/jpeg"
         }
     ],
     "categories": ["shopping", "books"],
