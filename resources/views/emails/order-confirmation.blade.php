@@ -20,6 +20,16 @@
             border-radius: 10px 10px 0 0;
             text-align: center;
         }
+        .header h1 {
+            text-align: center;
+            margin: 0 0 10px 0;
+            font-size: 28px;
+        }
+        .header p {
+            text-align: center;
+            margin: 0;
+            font-size: 16px;
+        }
         .content {
             background: #f9fafb;
             padding: 30px;
