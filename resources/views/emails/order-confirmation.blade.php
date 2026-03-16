@@ -108,6 +108,7 @@
             <p><strong>Name:</strong> {{ $order->customer_name }}</p>
             <p><strong>Email:</strong> {{ $order->email }}</p>
             <p><strong>Contact:</strong> {{ $order->contact }}</p>
+            <p><strong>Nationality:</strong> {{ $order->nationality ?? 'N/A' }}</p>
             <p><strong>Delivery Address:</strong> {{ $order->residence }}</p>
         </div>
         
