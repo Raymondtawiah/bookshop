@@ -530,10 +530,21 @@
 
         <script>
         let deferredPrompt;
+        
+        // Listen for the install prompt
         window.addEventListener('beforeinstallprompt', function(e) {
             e.preventDefault();
             deferredPrompt = e;
+            console.log('Install prompt available');
+            // Show the button when prompt is available
+            document.getElementById('pwa-install-container').style.display = 'flex';
         });
+        
+        // Check if app is already installed
+        if (window.matchMedia('(display-mode: standalone)').matches) {
+            document.getElementById('pwa-install-container').style.display = 'none';
+        }
+        
         function installApp() {
             if (deferredPrompt) {
                 deferredPrompt.prompt();
@@ -541,7 +552,13 @@
                     deferredPrompt = null;
                 });
             } else {
-                alert('To install: Look for install icon in browser or go to menu → Add to Home Screen');
+                // Try to open in new window as web app
+                var iframe = document.createElement('iframe');
+                iframe.style.display = 'none';
+                iframe.src = window.location.href;
+                document.body.appendChild(iframe);
+                
+                alert('INSTALL INSTRUCTIONS:\n\nOn Android Chrome:\n1. Tap the menu (3 dots)\n2. Tap "Add to Home Screen"\n\nOn iPhone Safari:\n1. Tap the Share button\n2. Tap "Add to Home Screen"\n\nOn Desktop Chrome:\nLook for install icon in address bar');
             }
         }
         </script>
