@@ -1,4 +1,4 @@
-s<div id="pwa-install-container" class="hidden fixed bottom-4 left-4 z-50">
+<div id="pwa-install-container" class="hidden fixed bottom-4 left-4 z-50">
     <button 
         id="pwa-install-btn"
         class="bg-indigo-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 hover:bg-indigo-700 transition-colors"
@@ -22,7 +22,7 @@ s<div id="pwa-install-container" class="hidden fixed bottom-4 left-4 z-50">
                document.referrer.includes('android-app://');
     }
 
-    // Hide by default, show on mobile only if not installed
+    // Show button on mobile
     function checkMobile() {
         if (window.innerWidth <= 768 && !isAppInstalled()) {
             installContainer.classList.remove('hidden');
@@ -37,34 +37,28 @@ s<div id="pwa-install-container" class="hidden fixed bottom-4 left-4 z-50">
 
     // Listen for the beforeinstallprompt event
     window.addEventListener('beforeinstallprompt', (e) => {
-        // Prevent Chrome 67 and earlier from automatically showing the prompt
         e.preventDefault();
-        // Stash the event so it can be triggered later
         deferredPrompt = e;
-        // Show our custom install button on mobile
-        checkMobile();
+        installContainer.classList.remove('hidden');
     });
 
     // Handle install button click
     if (installBtn) {
         installBtn.addEventListener('click', async () => {
             if (deferredPrompt) {
-                // Show the prompt
                 deferredPrompt.prompt();
-                // Wait for the user to respond to the prompt
                 const { outcome } = await deferredPrompt.userChoice;
-                // Clear the deferredPrompt
                 deferredPrompt = null;
-                // Hide the button
                 installContainer.classList.add('hidden');
+            } else {
+                // For Safari - guide users to manually install
+                alert('To install this app on iPhone:\n\n1. Tap the Share button (square with arrow)\n2. Tap "Add to Home Screen"');
             }
         });
     }
 
     // Handle successful install
     window.addEventListener('appinstalled', () => {
-        // Hide the install button after successful install
         installContainer.classList.add('hidden');
-        console.log('PWA installed successfully');
     });
 </script>
