@@ -17,8 +17,8 @@ Route::get('visa-tip', function() {
 })->name('visa-tip');
 
 // Google Authentication Routes
-Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
-Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
+Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
+Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
 
 // Verification routes
 Route::get('verify-login', [VerificationController::class, 'showLoginVerification'])->name('verification.login');
