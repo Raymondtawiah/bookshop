@@ -27,6 +27,7 @@ Route::post('verify-login/resend', [VerificationController::class, 'resendLoginC
 
 Route::get('verify-password-reset', [VerificationController::class, 'showPasswordResetVerification'])->name('verification.password-reset');
 Route::post('verify-password-reset', [VerificationController::class, 'verifyPasswordResetCode'])->name('verification.verify.password-reset');
+Route::post('verify-password-reset/send', [VerificationController::class, 'sendPasswordResetCode'])->name('verification.send.password-reset');
 Route::post('verify-password-reset/resend', [VerificationController::class, 'resendPasswordResetCode'])->name('verification.resend.password-reset');
 Route::get('password/reset-form', [VerificationController::class, 'showPasswordResetForm'])->name('password.reset.form');
 Route::post('password/reset', [VerificationController::class, 'resetPassword'])->name('password.update');
