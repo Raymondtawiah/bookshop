@@ -12,7 +12,7 @@
         <title>{{ config('app.name', 'Bookshop') }}</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="/icon-192.svg">
         <script>
             // Register service worker for PWA
             if ('serviceWorker' in navigator) {

@@ -11,81 +11,98 @@
 </div>
 
 <script>
-    let deferredPrompt;
-    const installContainer = document.getElementById('pwa-install-container');
-    const installBtn = document.getElementById('pwa-install-btn');
+    (function() {
+        let deferredPrompt;
+        const installContainer = document.getElementById('pwa-install-container');
+        const installBtn = document.getElementById('pwa-install-btn');
 
-    // Check if app is already installed
-    function isAppInstalled() {
-        return window.matchMedia('(display-mode: standalone)').matches || 
-               window.navigator.standalone === true ||
-               window.matchMedia('(display-mode: fullscreen)').matches;
-    }
-
-    // Show button if not installed and beforeinstallprompt is available
-    function showInstallButton() {
-        if (!isAppInstalled() && installContainer) {
-            installContainer.classList.remove('hidden');
-            installContainer.classList.add('block');
+        // Check if app is already installed
+        function isAppInstalled() {
+            return window.matchMedia('(display-mode: standalone)').matches || 
+                   window.matchMedia('(display-mode: fullscreen)').matches ||
+                   window.matchMedia('(display-mode: minimal-ui)').matches ||
+                   window.navigator.standalone === true;
         }
-    }
 
-    // Listen for the beforeinstallprompt event
-    window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        deferredPrompt = e;
-        showInstallButton();
-    });
-
-    // Also check on load in case the event fired before we listened
-    window.addEventListener('load', () => {
-        // Give a moment for the event to potentially fire
-        setTimeout(() => {
-            if (!deferredPrompt && !isAppInstalled()) {
-                // Event might have fired before we added the listener
-                // Try to show button anyway
-                showInstallButton();
+        // Show the install button
+        function showInstallButton() {
+            if (installContainer && !isAppInstalled()) {
+                installContainer.classList.remove('hidden');
+                installContainer.classList.add('block');
             }
-        }, 2000);
-    });
+        }
 
-    // Handle install button click
-    if (installBtn) {
-        installBtn.addEventListener('click', async (e) => {
+        // Hide the install button
+        function hideInstallButton() {
+            if (installContainer) {
+                installContainer.classList.add('hidden');
+                installContainer.classList.remove('block');
+            }
+        }
+
+        // Store the deferred prompt when received
+        window.addEventListener('beforeinstallprompt', function(e) {
             e.preventDefault();
-            
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                const { outcome } = await deferredPrompt.userChoice;
-                deferredPrompt = null;
-                
-                if (outcome === 'accepted') {
-                    installContainer.classList.add('hidden');
-                    installContainer.classList.remove('block');
-                }
-            } else {
-                // Manual install - show instructions based on user agent
-                const userAgent = navigator.userAgent || '';
-                let instructions = '';
-                
-                if (userAgent.includes('Android') || userAgent.includes('Chrome')) {
-                    instructions = 'To install the app:\n\n1. Tap the menu (three dots) in the top right corner\n2. Tap "Install App" or "Add to Home Screen"\n\nOR\n\n1. Tap the Share button 📤\n2. Tap "Add to Home Screen" ➕';
-                } else if (userAgent.includes('iPhone') || userAgent.includes('iPad') || userAgent.includes('Safari')) {
-                    instructions = 'To install on iPhone/iPad:\n\n1. Tap the Share button 📤 (bottom center)\n2. Scroll down and tap "Add to Home Screen" ➕\n3. Tap "Add" in the top right';
-                } else {
-                    instructions = 'To install the app:\n\n• On Desktop: Look for an install icon in the address bar\n• On Mobile: Tap menu → Add to Home Screen';
-                }
-                
-                alert('📱 INSTALL APP\n\n' + instructions);
-            }
+            deferredPrompt = e;
+            console.log('beforeinstallprompt event fired');
+            showInstallButton();
         });
-    }
 
-    // Handle successful install
-    window.addEventListener('appinstalled', () => {
-        if (installContainer) {
-            installContainer.classList.add('hidden');
-            installContainer.classList.remove('block');
+        // Handle successful installation
+        window.addEventListener('appinstalled', function(e) {
+            console.log('App installed successfully');
+            hideInstallButton();
+            deferredPrompt = null;
+        });
+
+        // Check on page load if already installed or if we should show the button
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if the browser supports PWA install
+            if (!('serviceWorker' in navigator)) {
+                return;
+            }
+            
+            // Show button after a short delay if deferredPrompt exists
+            setTimeout(function() {
+                if (deferredPrompt) {
+                    showInstallButton();
+                }
+            }, 1500);
+        });
+
+        // Handle install button click
+        if (installBtn) {
+            installBtn.addEventListener('click', async function(e) {
+                e.preventDefault();
+                
+                if (deferredPrompt) {
+                    // Show the native install prompt
+                    deferredPrompt.prompt();
+                    
+                    const { outcome } = await deferredPrompt.userChoice;
+                    
+                    if (outcome === 'accepted') {
+                        console.log('User accepted the install prompt');
+                        hideInstallButton();
+                    }
+                    
+                    deferredPrompt = null;
+                } else {
+                    // No deferred prompt - show manual instructions
+                    const userAgent = navigator.userAgent || '';
+                    let instructions = '';
+                    
+                    if (userAgent.includes('Android') || userAgent.includes('Chrome')) {
+                        instructions = 'To install the app:\n\n1. Tap the menu (three dots) in the top right corner\n2. Tap "Install App" or "Add to Home Screen"';
+                    } else if (userAgent.includes('iPhone') || userAgent.includes('iPad')) {
+                        instructions = 'To install on iPhone/iPad:\n\n1. Tap the Share button 📤 (bottom center)\n2. Scroll down and tap "Add to Home Screen"\n3. Tap "Add" in the top right';
+                    } else {
+                        instructions = 'To install the app:\n\n• Look for an install icon in the address bar\n• Or right-click and select "Save as Web App"';
+                    }
+                    
+                    alert('📱 INSTALL APP\n\n' + instructions);
+                }
+            });
         }
-    });
+    })();
 </script>
