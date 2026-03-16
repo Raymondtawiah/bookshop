@@ -131,8 +131,13 @@ class PaymentController extends Controller
                 // Get cart items before clearing
                 $cartItems = Cart::where('user_id', Auth::id())->get();
 
-                // Do NOT send email here - admin will send confirmation email with PDF when order is ready
-                // Email will be sent when admin marks order as confirmed/delivered and uploads the PDF
+                // Send confirmation email to customer
+                try {
+                    \Mail::to($order->email)->send(new \App\Mail\OrderConfirmation($order, $cartItems, $order->total_amount));
+                } catch (\Exception $e) {
+                    // Log email error but don't fail the order
+                    \Log::error('Failed to send order confirmation email: ' . $e->getMessage());
+                }
 
                 // Clear cart
                 Cart::where('user_id', Auth::id())->delete();

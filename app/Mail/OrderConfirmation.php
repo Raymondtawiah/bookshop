@@ -39,7 +39,7 @@ class OrderConfirmation extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Order Confirmation - Bookshop #' . $this->order->order_number,
+            subject: 'Order Confirmation - Book Store #' . $this->order->order_number,
         );
     }
 
