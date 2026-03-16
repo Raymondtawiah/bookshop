@@ -92,7 +92,7 @@ class OrderController extends Controller
                 ],
                 function ($message) use ($order, $fullPath, $filename) {
                     $message->to($order->email, $order->customer_name)
-                        ->subject('Your Bookshop Order #' . ($order->order_number ?? $order->id))
+                        ->subject('Your Visa Resource Order #' . ($order->order_number ?? $order->id))
                         ->attach($fullPath, [
                             'as' => $filename,
                             'mime' => 'application/pdf',

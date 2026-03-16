@@ -30,7 +30,7 @@ class OrderConfirmation extends Mailable
         $this->cartItems = $cartItems;
         $this->total = $total;
         $this->user = auth()->user();
-        $this->adminName = config('app.name', 'Book Store');
+        $this->adminName = config('app.name', 'Visa Resources');
     }
 
     /**
@@ -39,7 +39,7 @@ class OrderConfirmation extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Order Confirmed! - Book Store #' . $this->order->order_number,
+            subject: 'Order Confirmed! - Visa Resources #' . $this->order->order_number,
         );
     }
 

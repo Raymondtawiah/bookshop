@@ -3,7 +3,7 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>My Orders - {{ config('app.name', 'Book Store') }}</title>
+        <title>My Orders - {{ config('app.name', 'Visa Resources') }}</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="icon" href="/favicon.ico" sizes="any">
     </head>
