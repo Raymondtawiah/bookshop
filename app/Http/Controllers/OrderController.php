@@ -44,6 +44,7 @@ class OrderController extends Controller
             'customer_name' => $request->customer_name,
             'email' => $request->email,
             'residence' => $request->residence,
+            'nationality' => $request->nationality,
             'contact' => $request->contact,
             'payment_method' => $paymentMethod,
             'total_amount' => $total,
