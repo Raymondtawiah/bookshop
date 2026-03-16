@@ -13,6 +13,11 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Seed nationalities
+        $this->call([
+            NationalitySeeder::class,
+        ]);
+
         // Create Admin User (hardcoded - not registrable)
         User::create([
             'name' => 'Admin',
