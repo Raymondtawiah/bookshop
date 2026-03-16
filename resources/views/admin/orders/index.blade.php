@@ -56,7 +56,7 @@
                                     <div class="text-sm text-gray-600">{{ $order->nationality ?? 'N/A' }}</div>
                                 </td>
                                 <td class="px-6 py-4">
-                                    <div class="text-sm text-gray-600 max-w-xs truncate">{{ $order->residence }}</div>
+                                    <div class="text-sm text-gray-600 max-w-xs truncate">{{ $order->residence ?? 'N/A' }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="text-sm font-bold text-gray-900">₵{{ number_format($order->total_amount, 2) }}</span>
