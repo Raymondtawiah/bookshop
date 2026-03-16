@@ -15,7 +15,7 @@
 </title>
 
 <link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="apple-touch-icon" href="/icon-192.svg">
 <link rel="manifest" href="/manifest.json">
 
 <link rel="preconnect" href="https://fonts.bunny.net">
