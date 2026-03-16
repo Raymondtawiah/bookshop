@@ -8,12 +8,17 @@ use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\VerificationController;
+use App\Http\Controllers\Auth\GoogleController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('visa-tip', function() {
     return view('visa-tip');
 })->name('visa-tip');
+
+// Google Authentication Routes
+Route::get('auth/google', [GoogleController::class, 'redirectToGoogle'])->name('auth.google');
+Route::get('auth/google/callback', [GoogleController::class, 'handleGoogleCallback']);
 
 // Verification routes
 Route::get('verify-login', [VerificationController::class, 'showLoginVerification'])->name('verification.login');
