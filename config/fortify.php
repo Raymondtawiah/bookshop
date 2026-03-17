@@ -146,7 +146,7 @@ return [
     'features' => [
         Features::registration(),
         Features::resetPasswords(),
-        Features::emailVerification(),
+        // Features::emailVerification(), // Disabled - users can login without email verification
         Features::twoFactorAuthentication([
             'confirm' => true,
             'confirmPassword' => true,
