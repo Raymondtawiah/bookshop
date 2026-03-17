@@ -7,7 +7,6 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\Auth\GoogleController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -19,18 +18,6 @@ Route::get('visa-tip', function() {
 // Google Authentication Routes
 Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
-
-// Verification routes
-Route::get('verify-login', [VerificationController::class, 'showLoginVerification'])->name('verification.login');
-Route::post('verify-login', [VerificationController::class, 'verifyLoginCode'])->name('verification.verify.login');
-Route::post('verify-login/resend', [VerificationController::class, 'resendLoginCode'])->name('verification.resend.login');
-
-Route::get('verify-password-reset', [VerificationController::class, 'showPasswordResetVerification'])->name('verification.password-reset');
-Route::post('verify-password-reset', [VerificationController::class, 'verifyPasswordResetCode'])->name('verification.verify.password-reset');
-Route::post('verify-password-reset/send', [VerificationController::class, 'sendPasswordResetCode'])->name('verification.send.password-reset');
-Route::post('verify-password-reset/resend', [VerificationController::class, 'resendPasswordResetCode'])->name('verification.resend.password-reset');
-Route::get('password/reset-form', [VerificationController::class, 'showPasswordResetForm'])->name('password.reset.form');
-Route::post('password/reset', [VerificationController::class, 'resetPassword'])->name('password.reset.update');
 
 Route::get('product/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('product/{id}/download', [ProductController::class, 'downloadPdf'])->name('product.download');
