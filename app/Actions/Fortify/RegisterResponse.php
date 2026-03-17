@@ -21,6 +21,6 @@ class RegisterResponse implements RegisterResponseContract
             return redirect()->route('admin.dashboard');
         }
         
-        return redirect()->intended(route('dashboard'));
+        return redirect()->intended(route('home'));
     }
 }
