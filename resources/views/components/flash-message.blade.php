@@ -1,6 +1,8 @@
 @php
 $flashType = '';
 $flashMessage = '';
+$bgColor = '';
+$textColor = 'white';
 
 // Check for validation errors
 if ($errors->any()) {
@@ -19,6 +21,24 @@ if ($errors->any()) {
     $flashType = 'info';
     $flashMessage = session('info');
 }
+
+// Set background color based on type
+switch ($flashType) {
+    case 'success':
+        $bgColor = '#10B981';
+        break;
+    case 'error':
+        $bgColor = '#EF4444';
+        break;
+    case 'warning':
+        $bgColor = '#F59E0B';
+        break;
+    case 'info':
+        $bgColor = '#3B82F6';
+        break;
+    default:
+        $bgColor = '#3B82F6';
+}
 @endphp
 
 @if($flashMessage)
@@ -32,19 +52,8 @@ if ($errors->any()) {
     box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     font-size: 16px;
     font-weight: bold;
-    @if($flashType === 'success')
-        background-color: #10B981;
-        color: white;
-    @elseif($flashType === 'error')
-        background-color: #EF4444;
-        color: white;
-    @elseif($flashType === 'warning')
-        background-color: #F59E0B;
-        color: white;
-    @else
-        background-color: #3B82F6;
-        color: white;
-    @endif
+    background-color: {{ $bgColor }};
+    color: {{ $textColor }};
 ">
     {{ $flashMessage }}
     <button onclick="this.parentElement.remove()" style="
