@@ -15,7 +15,7 @@ class AdminMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        // Check if user is authenticated via web guard and has is_admin flag
+        // Check if user is authenticated via admin guard
         if (!$request->user() || !$request->user()->is_admin) {
             abort(403, 'Access denied. Admin privileges required.');
         }
