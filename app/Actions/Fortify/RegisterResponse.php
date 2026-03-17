@@ -21,6 +21,7 @@ class RegisterResponse implements RegisterResponseContract
             return redirect()->route('admin.dashboard');
         }
         
-        return redirect()->intended(route('home'));
+        // Customer registration - redirect to login page with success message
+        return redirect()->route('login')->with('success', 'Registration successful! Please login with your credentials or Google.');
     }
 }

@@ -21,7 +21,12 @@ class LoginResponse implements LoginResponseContract
             return redirect()->route('admin.dashboard');
         }
         
-        // Direct login without verification - redirect to home/welcome page
+        // Check if customer's email is verified
+        if ($user && !$user->hasVerifiedEmail()) {
+            return redirect()->route('verification.notice');
+        }
+        
+        // Direct login - redirect to home/welcome page
         return redirect()->intended(route('home'));
     }
 }

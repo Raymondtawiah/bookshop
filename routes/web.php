@@ -11,19 +11,6 @@ use App\Http\Controllers\Auth\GoogleController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
-// Debug routes - remove after testing
-Route::get('/test', function() {
-    return 'Routes are working! ' . date('Y-m-d H:i:s');
-});
-
-Route::get('/test-session', function() {
-    if (!session()->isStarted()) {
-        session_start();
-    }
-    $_SESSION['test'] = 'Session is working!';
-    return 'Session test: ' . ($_SESSION['test'] ?? 'failed') . ' | Session ID: ' . session()->getId();
-});
-
 Route::get('visa-tip', function() {
     return view('visa-tip');
 })->name('visa-tip');
