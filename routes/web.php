@@ -19,7 +19,7 @@ Route::post('logout', function () {
     Session::invalidate();
     Session::regenerateToken();
     return redirect('/');
-})->name('logout');
+})->name('logout')->middleware('web');
 
 Route::get('visa-tip', function() {
     return view('visa-tip');
