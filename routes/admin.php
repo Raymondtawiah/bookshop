@@ -6,8 +6,8 @@ use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\OrderController;
 use Illuminate\Support\Facades\Route;
 
-// Admin authentication routes - requires login via admin guard with is_admin=true
-Route::prefix('admin')->name('admin.')->middleware('auth:admin')->group(function () {
+// Admin authentication routes - requires login via web guard with is_admin=true
+Route::prefix('admin')->name('admin.')->middleware('auth:web')->group(function () {
     Route::get('dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     
