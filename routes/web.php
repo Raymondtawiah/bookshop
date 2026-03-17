@@ -1,9 +1,6 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
-use Laravel\Fortify\Fortify;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
@@ -11,16 +8,6 @@ use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Auth\GoogleController;
-
-// Fortify routes
-Fortify::loginView(fn () => view('auth.login'));
-Fortify::registerView(fn () => view('auth.register'));
-Fortify::requestPasswordResetLinkView(fn () => view('auth.forgot-password'));
-Fortify::resetPasswordView(fn () => view('auth.reset-password'));
-
-Route::post('/login', [\Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::class, 'store'])->middleware(['guest', 'throttle:login']);
-Route::post('/register', [\Laravel\Fortify\Http\Controllers\RegisteredUserController::class, 'store'])->middleware(['guest', 'throttle:register']);
-Route::post('/logout', [\Laravel\Fortify\Http\Controllers\AuthenticatedSessionController::class, 'destroy'])->middleware(['auth']);
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -61,5 +48,6 @@ Route::middleware(['auth'])->group(function () {
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
+
 
 
