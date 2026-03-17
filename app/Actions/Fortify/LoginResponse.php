@@ -21,7 +21,7 @@ class LoginResponse implements LoginResponseContract
             return redirect()->route('admin.dashboard');
         }
         
-        // Direct login without verification - redirect to dashboard
-        return redirect()->intended(route('dashboard'));
+        // Direct login without verification - redirect to home/welcome page
+        return redirect()->intended(route('home'));
     }
 }

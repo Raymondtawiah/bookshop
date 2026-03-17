@@ -62,7 +62,7 @@ class GoogleController extends Controller
                     ->with('success', 'Welcome back, Admin!');
             }
 
-            return redirect()->intended(route('dashboard'))
+            return redirect()->intended(route('home'))
                 ->with('success', 'Welcome back!');
 
         } catch (\Exception $e) {
