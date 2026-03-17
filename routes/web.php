@@ -11,6 +11,16 @@ use App\Http\Controllers\Auth\GoogleController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Debug route to test session
+Route::get('/test-session', function() {
+    session(['test' => 'Session is working!']);
+    return response()->json([
+        'session_test' => session('test'),
+        'session_id' => session()->getId(),
+        'cookie_name' => config('session.cookie'),
+    ]);
+});
+
 Route::get('visa-tip', function() {
     return view('visa-tip');
 })->name('visa-tip');
