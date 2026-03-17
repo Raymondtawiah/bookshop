@@ -15,7 +15,7 @@ class GoogleController extends Controller
      */
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->stateless()->redirect();
+        return Socialite::driver('google')->redirect();
     }
 
     /**
@@ -25,7 +25,7 @@ class GoogleController extends Controller
     {
         try {
 
-            $googleUser = Socialite::driver('google')->stateless()->user();
+            $googleUser = Socialite::driver('google')->user();
 
             // Check if user already exists
             $user = User::where('email', $googleUser->getEmail())->first();
@@ -68,9 +68,10 @@ class GoogleController extends Controller
         } catch (\Exception $e) {
 
             \Log::error('Google OAuth Error: '.$e->getMessage());
+            \Log::error('Google OAuth Trace: '.$e->getTraceAsString());
 
             return redirect()->route('login')
-                ->with('error', 'Unable to login with Google. Please try again.');
+                ->with('error', 'Unable to login with Google. Error: '.$e->getMessage());
 
         }
     }
