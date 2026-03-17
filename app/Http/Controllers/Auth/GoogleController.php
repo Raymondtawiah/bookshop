@@ -39,28 +39,33 @@ class GoogleController extends Controller
                         'avatar' => $googleUser->getAvatar(),
                     ]);
                 }
+                
+                // Mark email as verified since Google verified it
+                if (!$user->hasVerifiedEmail()) {
+                    $user->markEmailAsVerified();
+                }
 
             } else {
 
-                // Create new user
+                // Create new user - Google already verified their email
                 $user = User::create([
                     'name' => $googleUser->getName(),
                     'email' => $googleUser->getEmail(),
                     'google_id' => $googleUser->getId(),
                     'avatar' => $googleUser->getAvatar(),
-                    'password' => bcrypt(Str::random(16)), 
-                    'email_verified_at' => now(),
+                    'password' => bcrypt(Str::random(16)),
+                    'email_verified_at' => now(), // Google verified the email
                 ]);
 
             }
 
-            Auth::login($user, true);
-
-            // Redirect based on user role
+            // Admins cannot login with Google - they must use password
             if ($user->is_admin) {
-                return redirect()->route('admin.dashboard')
-                    ->with('success', 'Welcome back, Admin!');
+                return redirect()->route('login')
+                    ->with('error', 'Admins must login with email and password.');
             }
+
+            Auth::login($user, true);
 
             return redirect()->intended(route('home'))
                 ->with('success', 'Welcome back!');
