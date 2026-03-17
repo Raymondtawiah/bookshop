@@ -19,11 +19,13 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // Create Admin User (hardcoded - not registrable)
-        User::create([
-            'name' => 'Admin',
-            'email' => 'admin@bookshop.com',
-            'password' => Hash::make('admin123'),
-            'is_admin' => true,
-        ]);
+        User::firstOrCreate(
+            ['email' => 'admin@bookshop.com'],
+            [
+                'name' => 'Admin',
+                'password' => Hash::make('admin123'),
+                'is_admin' => true,
+            ]
+        );
     }
 }
