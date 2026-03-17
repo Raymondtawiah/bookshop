@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
 
         // Create Admin User (hardcoded - not registrable)
         User::firstOrCreate(
-            ['email' => 'admin@bookshop.com'],
+            ['email' => 'raymondtawiah23@gmail.com'],
             [
                 'name' => 'Admin',
                 'password' => Hash::make('admin123'),
