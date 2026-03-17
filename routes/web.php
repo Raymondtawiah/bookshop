@@ -11,6 +11,9 @@ use App\Http\Controllers\Auth\GoogleController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
+// Logout route
+Route::post('/logout', [\App\Http\Controllers\Controller::class, 'logout'])->name('logout');
+
 Route::get('visa-tip', function() {
     return view('visa-tip');
 })->name('visa-tip');
