@@ -21,6 +21,29 @@ Route::get('visa-tip', function() {
 Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
 
+// Login and Register Routes
+Route::get('login', function() {
+    return view('auth.login');
+})->middleware(['guest'])->name('login');
+
+Route::post('login', function(\Illuminate\Http\Request $request) {
+    $credentials = $request->only('email', 'password');
+    $remember = $request->boolean('remember');
+    
+    if (Auth::attempt($credentials, $remember)) {
+        $request->session()->regenerate();
+        return redirect()->intended(route('dashboard'));
+    }
+    
+    return back()->withErrors([
+        'email' => 'The provided credentials do not match our records.',
+    ])->onlyInput('email');
+});
+
+Route::get('register', function() {
+    return view('auth.register');
+})->middleware(['guest'])->name('register');
+
 // Custom Verification Routes (6-digit code)
 Route::middleware(['web'])->group(function () {
     Route::get('verification/login', [\App\Http\Controllers\VerificationController::class, 'showLoginVerification'])->name('verification.login');
