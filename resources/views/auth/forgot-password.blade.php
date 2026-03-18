@@ -34,7 +34,7 @@
         </div>
     @endif
 
-    <form method="POST" action="{{ route('verification.send.password-reset') }}" class="space-y-4">
+    <form method="POST" action="{{ route('verification.password-reset.send') }}" class="space-y-4">
         @csrf
 
         <!-- Email -->

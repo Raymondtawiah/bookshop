@@ -45,7 +45,7 @@
                     </p>
                 </div>
 
-                <form id="verification-form" method="POST" action="{{ route('verification.verify.password-reset') }}">
+                <form id="verification-form" method="POST" action="{{ route('verification.password-reset.verify') }}">
                     @csrf
                     
                     <div class="mb-6">
@@ -104,7 +104,7 @@
         resendBtn.addEventListener('click', function() {
             if (!canResend) return;
             
-            fetch('{{ route("verification.resend.password-reset") }}', {
+            fetch('{{ route("verification.password-reset.resend") }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
