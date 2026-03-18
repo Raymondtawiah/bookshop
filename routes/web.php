@@ -194,5 +194,34 @@ Route::middleware(['auth', 'verify.customer'])->group(function () {
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
 
+// Test route for debugging storage paths
+Route::get('test-storage', function() {
+    $book = \App\Models\Book::latest()->first();
+    
+    if (!$book) {
+        return 'No books found';
+    }
+    
+    $filename = $book->cover_image;
+    $localPath = 'books/' . $filename;
+    $fullLocalPath = storage_path('app/public/' . $localPath);
+    $existsLocally = file_exists($fullLocalPath);
+    $localUrl = \Illuminate\Support\Facades\Storage::disk('public')->url($localPath);
+    $externalUrl = 'https://srv2111-files.hstgr.io/f5e93c1ee0caf648/files/public_html/storage/app/public/' . $localPath;
+    $modelUrl = $book->cover_image_url;
+    
+    return "<h1>Storage Debug</h1>
+    <p><strong>Filename:</strong> {$filename}</p>
+    <p><strong>Full Local Path:</strong> {$fullLocalPath}</p>
+    <p><strong>Exists Locally:</strong> " . ($existsLocally ? 'YES' : 'NO') . "</p>
+    <p><strong>Local URL:</strong> <a href='{$localUrl}'>{$localUrl}</a></p>
+    <p><strong>External URL:</strong> <a href='{$externalUrl}'>{$externalUrl}</a></p>
+    <p><strong>Model URL:</strong> <a href='{$modelUrl}'>{$modelUrl}</a></p>
+    <hr>
+    <h3>Config:</h3>
+    <p><strong>Public disk root:</strong> " . config('filesystems.disks.public.root') . "</p>
+    <p><strong>External disk url:</strong> " . config('filesystems.disks.external.url') . "</p>";
+});
+
 
 
