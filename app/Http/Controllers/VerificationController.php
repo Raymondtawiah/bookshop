@@ -80,6 +80,10 @@ class VerificationController extends Controller
             'code' => 'required|digits:6',
         ]);
 
+        // Clean the code - remove any spaces or non-digit characters
+        $code = preg_replace('/[^0-9]/', '', $request->code);
+        $code = str_pad($code, 6, '0', STR_PAD_LEFT);
+        
         $userId = Session::get('pending_login_user_id');
         
         if (!$userId) {
@@ -105,7 +109,7 @@ class VerificationController extends Controller
             ]);
         }
 
-        if (!$this->verificationService->verifyCode($user, $request->code, 'login')) {
+        if (!$this->verificationService->verifyCode($user, $code, 'login')) {
             RateLimiter::hit($key, 60);
             throw ValidationException::withMessages([
                 'code' => 'Invalid or expired verification code.',
@@ -220,6 +224,10 @@ class VerificationController extends Controller
             'code' => 'required|digits:6',
         ]);
 
+        // Clean the code - remove any spaces or non-digit characters
+        $code = preg_replace('/[^0-9]/', '', $request->code);
+        $code = str_pad($code, 6, '0', STR_PAD_LEFT);
+        
         $email = $request->session()->get('password_reset_email');
         
         if (!$email) {
@@ -245,7 +253,7 @@ class VerificationController extends Controller
             ]);
         }
 
-        if (!$this->verificationService->verifyCode($user, $request->code, 'password_reset')) {
+        if (!$this->verificationService->verifyCode($user, $code, 'password_reset')) {
             RateLimiter::hit($key, 60);
             throw ValidationException::withMessages([
                 'code' => 'Invalid or expired verification code.',
