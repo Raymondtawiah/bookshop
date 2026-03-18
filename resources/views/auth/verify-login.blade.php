@@ -45,7 +45,7 @@
                     </p>
                 </div>
 
-                <form id="verification-form" method="POST" action="{{ route('verification.verify.login') }}">
+                <form id="verification-form" method="POST" action="{{ route('verification.login.verify') }}">
                     @csrf
                     
                     <div class="mb-6">
@@ -104,7 +104,7 @@
         resendBtn.addEventListener('click', function() {
             if (!canResend) return;
             
-            fetch('{{ route("verification.resend.login") }}', {
+            fetch('{{ route("verification.login.resend") }}', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

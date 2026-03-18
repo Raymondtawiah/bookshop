@@ -20,14 +20,6 @@ class AuthController extends Controller
     }
 
     /**
-     * Show admin registration form
-     */
-    public function showRegistrationForm()
-    {
-        return view('admin.auth.register');
-    }
-
-    /**
      * Handle admin login
      */
     public function login(Request $request)
@@ -51,7 +43,7 @@ class AuthController extends Controller
             ]);
         }
 
-        Auth::guard('admin')->login($user, $request->boolean('remember'));
+        Auth::login($user, $request->boolean('remember'));
 
         $request->session()->regenerate();
 
@@ -59,40 +51,16 @@ class AuthController extends Controller
     }
 
     /**
-     * Handle admin registration
-     */
-    public function register(Request $request)
-    {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', 'min:8'],
-        ]);
-
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'is_admin' => true,
-            'email_verified_at' => now(), // Admins don't need to verify
-        ]);
-
-        Auth::guard('web')->login($user);
-
-        return redirect()->route('admin.dashboard');
-    }
-
-    /**
      * Handle admin logout
      */
     public function logout(Request $request)
     {
-        Auth::guard('web')->logout();
+        Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->route('admin.login');
     }
 
     /**

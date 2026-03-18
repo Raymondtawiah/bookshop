@@ -31,14 +31,37 @@ Route::post('login', function(\Illuminate\Http\Request $request) {
     $credentials = $request->only('email', 'password');
     $remember = $request->boolean('remember');
     
-    if (Auth::attempt($credentials, $remember)) {
-        $request->session()->regenerate();
-        return redirect()->intended(route('dashboard'));
+    $user = \App\Models\User::where('email', $credentials['email'])->first();
+    
+    if (!$user || !\Illuminate\Support\Facades\Hash::check($credentials['password'], $user->password)) {
+        return back()->withErrors([
+            'email' => 'The provided credentials do not match our records.',
+        ])->onlyInput('email');
     }
     
-    return back()->withErrors([
-        'email' => 'The provided credentials do not match our records.',
-    ])->onlyInput('email');
+    // Check if user is admin - redirect to admin dashboard
+    if ($user->is_admin) {
+        \Illuminate\Support\Facades\Auth::login($user, $remember);
+        $request->session()->regenerate();
+        return redirect()->route('admin.dashboard');
+    }
+    
+    // For customers, check if email is verified
+    if (!$user->hasVerifiedEmail()) {
+        // Store user ID in session for verification
+        $request->session()->put('pending_login_user_id', $user->id);
+        
+        // Send verification code
+        app(\App\Services\VerificationService::class)->sendCode($user, 'login');
+        
+        return redirect()->route('verification.login');
+    }
+    
+    // Email is verified, log the user in
+    \Illuminate\Support\Facades\Auth::login($user, $remember);
+    $request->session()->regenerate();
+    
+    return redirect()->intended(route('dashboard'));
 })->name('login.store');
 
 Route::get('register', function() {
@@ -58,9 +81,13 @@ Route::post('register', function(\Illuminate\Http\Request $request) {
         'password' => \Illuminate\Support\Facades\Hash::make($request->password),
     ]);
     
-    Auth::login($user);
+    // Store user ID in session for verification
+    $request->session()->put('pending_login_user_id', $user->id);
     
-    return redirect()->route('verification.notice');
+    // Send verification code
+    app(\App\Services\VerificationService::class)->sendCode($user, 'login');
+    
+    return redirect()->route('verification.login');
 })->name('register.store');
 
 // Custom Verification Routes (6-digit code)
@@ -74,6 +101,10 @@ Route::middleware(['web'])->group(function () {
     Route::post('verification/password-reset/send', [\App\Http\Controllers\VerificationController::class, 'sendPasswordResetCode'])->name('verification.password-reset.send');
     Route::post('verification/password-reset/resend', [\App\Http\Controllers\VerificationController::class, 'resendPasswordResetCode'])->name('verification.password-reset.resend');
     Route::post('verification/password-reset/verify', [\App\Http\Controllers\VerificationController::class, 'verifyPasswordResetCode'])->name('verification.password-reset.verify');
+    
+    // Password Reset Form (after verification)
+    Route::get('password/reset-form', [\App\Http\Controllers\VerificationController::class, 'showPasswordResetForm'])->name('password.reset.form');
+    Route::post('password/reset', [\App\Http\Controllers\VerificationController::class, 'resetPassword'])->name('password.reset.update');
 });
 
 // Password Reset Routes
