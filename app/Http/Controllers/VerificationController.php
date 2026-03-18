@@ -115,6 +115,9 @@ class VerificationController extends Controller
         // Clear the pending login session
         Session::forget('pending_login_user_id');
 
+        // Mark the user's email as verified
+        $user->markEmailAsVerified();
+
         // Log the user in
         Auth::login($user);
 
