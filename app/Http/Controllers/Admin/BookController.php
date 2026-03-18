@@ -5,43 +5,35 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Book;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
     /**
-     * Upload file (image or PDF) to public_html/books
+     * Upload file (image or PDF) to public storage
      */
     private function uploadFile($file)
     {
         if (!$file) return null;
 
-        // Safer filename
+        // Generate safe filename
         $filename = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
 
-        // Hostinger public folder
-        $directory = $_SERVER['DOCUMENT_ROOT'].'/books';
-
-        if (!file_exists($directory)) {
-            mkdir($directory, 0755, true);
-        }
-
-        $file->move($directory, $filename);
+        // Store in public disk under books folder
+        $path = $file->storeAs('books', $filename, 'public');
 
         return $filename;
     }
 
     /**
-     * Delete file from public_html/books
+     * Delete file from public storage
      */
     private function deleteFile($filename)
     {
         if (!$filename) return;
 
-        $path = $_SERVER['DOCUMENT_ROOT'].'/books/'.$filename;
-
-        if (file_exists($path)) {
-            unlink($path);
-        }
+        // Delete from public disk
+        Storage::disk('public')->delete('books/'.$filename);
     }
 
     /**
@@ -51,17 +43,12 @@ class BookController extends Controller
     {
         if (!$filename) return null;
 
-        return asset('books/'.$filename);
+        return Storage::disk('public')->url('books/'.$filename);
     }
 
     public function index()
     {
         $books = Book::latest()->paginate(10);
-
-        foreach ($books as $book) {
-            $book->cover_image_url = $this->fileUrl($book->cover_image);
-            $book->book_pdf_url = $this->fileUrl($book->book_pdf);
-        }
 
         return view('admin.books.index', compact('books'));
     }
@@ -107,9 +94,6 @@ class BookController extends Controller
 
     public function edit(Book $book)
     {
-        $book->cover_image_url = $this->fileUrl($book->cover_image);
-        $book->book_pdf_url = $this->fileUrl($book->book_pdf);
-
         return view('admin.books.edit', compact('book'));
     }
 

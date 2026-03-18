@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class Book extends Model
 {
@@ -33,19 +34,20 @@ class Book extends Model
     ];
 
     /**
-     * Get the full URL for the cover image
+     * Get the full URL for the cover image from storage
      */
     public function getCoverImageUrlAttribute()
     {
-        // ✅ Remove 'public/' from the path
-        return $this->cover_image ? url('books/' . $this->cover_image) : null;
+        if (!$this->cover_image) return null;
+        return Storage::disk('public')->url('books/' . $this->cover_image);
     }
 
     /**
-     * Optional: Get the full URL for the PDF
+     * Get the full URL for the PDF from storage
      */
     public function getBookPdfUrlAttribute()
     {
-        return $this->book_pdf ? url('books/' . $this->book_pdf) : null;
+        if (!$this->book_pdf) return null;
+        return Storage::disk('public')->url('books/' . $this->book_pdf);
     }
 }
