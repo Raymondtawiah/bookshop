@@ -8,6 +8,7 @@ use App\Models\Cart;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
@@ -71,8 +72,8 @@ class OrderController extends Controller
         $filename = 'order-' . ($order->order_number ?? $order->id) . '.pdf';
         $pdfPath = $pdfFile->storeAs('books/pdfs', $filename, 'public');
         
-        // Get full path
-        $fullPath = storage_path('app/public/' . $pdfPath);
+        // Get full path from storage
+        $fullPath = Storage::disk('public')->path($pdfPath);
         
         Log::info('PDF stored at: ' . $fullPath);
         
