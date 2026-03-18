@@ -41,8 +41,9 @@ class GoogleController extends Controller
                 }
                 
                 // Mark email as verified since Google verified it
-                if (!$user->hasVerifiedEmail()) {
-                    $user->markEmailAsVerified();
+                // Force verify even if somehow not set
+                if (is_null($user->email_verified_at)) {
+                    $user->forceFill(['email_verified_at' => now()])->save();
                 }
 
             } else {
@@ -65,9 +66,13 @@ class GoogleController extends Controller
                     ->with('error', 'Admins must login with email and password.');
             }
 
+            // Login the user
             Auth::login($user, true);
+            
+            // Regenerate session to prevent session fixation
+            request()->session()->regenerate();
 
-            return redirect()->intended(route('home'))
+            return redirect()->intended(route('dashboard'))
                 ->with('success', 'Welcome back!');
 
         } catch (\Exception $e) {
