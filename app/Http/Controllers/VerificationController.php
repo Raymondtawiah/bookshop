@@ -121,7 +121,10 @@ class VerificationController extends Controller
         // Clear rate limiter
         RateLimiter::clear($key);
 
-        return redirect()->intended(route('dashboard'))->with('success', 'Login successful!');
+        return response()->json([
+            'message' => 'Verification successful!',
+            'redirect' => route('dashboard')
+        ]);
     }
 
     /**

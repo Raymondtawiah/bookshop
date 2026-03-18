@@ -99,6 +99,35 @@
             this.value = this.value.replace(/[^0-9]/g, '');
         });
 
+        // Handle form submission with AJAX
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = new FormData(form);
+            
+            fetch('{{ route("verification.login.verify") }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.redirect) {
+                    window.location.href = data.redirect;
+                }
+            })
+            .catch(error => {
+                if (error.response && error.response.data && error.response.data.errors) {
+                    const errors = error.response.data.errors;
+                    if (errors.code) {
+                        alert(errors.code[0]);
+                    }
+                }
+            });
+        });
+
         // Resend code functionality
         let canResend = true;
         resendBtn.addEventListener('click', function() {
