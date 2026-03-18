@@ -45,7 +45,7 @@
                     </p>
                 </div>
 
-                <form id="verification-form" method="POST" action="{{ route('verification.login.verify') }}">
+                <form method="POST" action="{{ route('verification.login.verify') }}">
                     @csrf
                     
                     <div class="mb-6">
@@ -71,12 +71,13 @@
 
                 <div class="mt-6 text-center">
                     <p class="text-gray-600 text-sm">Didn't receive the code?</p>
-                    <button type="button" 
-                            id="resend-btn"
-                            class="mt-2 text-indigo-600 font-medium hover:text-indigo-800 disabled:opacity-50 disabled:cursor-not-allowed">
-                        Resend Code
-                    </button>
-                    <p id="countdown" class="text-sm text-gray-500 mt-2 hidden"></p>
+                    <form method="POST" action="{{ route('verification.login.resend') }}" class="inline">
+                        @csrf
+                        <button type="submit" 
+                                class="mt-2 text-indigo-600 font-medium hover:text-indigo-800">
+                            Resend Code
+                        </button>
+                    </form>
                 </div>
 
                 <div class="mt-6 pt-6 border-t border-gray-200 text-center">
@@ -87,88 +88,5 @@
             </div>
         </div>
     </div>
-
-    <script>
-        const form = document.getElementById('verification-form');
-        const codeInput = document.getElementById('code');
-        const resendBtn = document.getElementById('resend-btn');
-        const countdown = document.getElementById('countdown');
-
-        // Auto-format input to only numbers
-        codeInput.addEventListener('input', function(e) {
-            this.value = this.value.replace(/[^0-9]/g, '');
-        });
-
-        // Handle form submission with AJAX
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(form);
-            
-            fetch('{{ route("verification.login.verify") }}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.redirect) {
-                    window.location.href = data.redirect;
-                }
-            })
-            .catch(error => {
-                if (error.response && error.response.data && error.response.data.errors) {
-                    const errors = error.response.data.errors;
-                    if (errors.code) {
-                        alert(errors.code[0]);
-                    }
-                }
-            });
-        });
-
-        // Resend code functionality
-        let canResend = true;
-        resendBtn.addEventListener('click', function() {
-            if (!canResend) return;
-            
-            fetch('{{ route("verification.login.resend") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    alert(data.message);
-                    // Start countdown
-                    canResend = false;
-                    resendBtn.disabled = true;
-                    let seconds = 60;
-                    countdown.classList.remove('hidden');
-                    countdown.textContent = `Resend code in ${seconds}s`;
-                    
-                    const interval = setInterval(() => {
-                        seconds--;
-                        countdown.textContent = `Resend code in ${seconds}s`;
-                        if (seconds <= 0) {
-                            clearInterval(interval);
-                            canResend = true;
-                            resendBtn.disabled = false;
-                            countdown.classList.add('hidden');
-                        }
-                    }, 1000);
-                }
-            })
-            .catch(error => {
-                if (error.response && error.response.data && error.response.data.error) {
-                    alert(error.response.data.error);
-                }
-            });
-        });
-    </script>
 </body>
 </html>
