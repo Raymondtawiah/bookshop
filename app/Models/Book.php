@@ -34,6 +34,16 @@ class Book extends Model
     ];
 
     /**
+     * Get the external storage base URL from config
+     */
+    private function getExternalStorageBaseUrl()
+    {
+        // Configure this in your .env file: EXTERNAL_STORAGE_URL=https://srv2111-files.hstgr.io/...
+        return config('filesystems.disks.external.url') ?? 
+               'https://srv2111-files.hstgr.io/f5e93c1ee0caf648/files/public_html/storage/app/public/books';
+    }
+
+    /**
      * Get the full URL for the cover image from storage
      */
     public function getCoverImageUrlAttribute()
@@ -45,7 +55,14 @@ class Book extends Model
             return $this->cover_image;
         }
         
-        return Storage::disk('public')->url('books/' . $this->cover_image);
+        // Check if file exists in local storage
+        $localPath = 'books/' . $this->cover_image;
+        if (Storage::disk('public')->exists($localPath)) {
+            return Storage::disk('public')->url($localPath);
+        }
+        
+        // File not found locally - use external CDN
+        return $this->getExternalStorageBaseUrl() . '/' . $this->cover_image;
     }
 
     /**
@@ -60,6 +77,13 @@ class Book extends Model
             return $this->book_pdf;
         }
         
-        return Storage::disk('public')->url('books/' . $this->book_pdf);
+        // Check if file exists in local storage
+        $localPath = 'books/' . $this->book_pdf;
+        if (Storage::disk('public')->exists($localPath)) {
+            return Storage::disk('public')->url($localPath);
+        }
+        
+        // File not found locally - use external CDN
+        return $this->getExternalStorageBaseUrl() . '/' . $this->book_pdf;
     }
 }

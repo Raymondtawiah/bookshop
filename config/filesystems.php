@@ -60,6 +60,15 @@ return [
             'report' => false,
         ],
 
+        'external' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public'),
+            'url' => env('EXTERNAL_STORAGE_URL', 'https://srv2111-files.hstgr.io/f5e93c1ee0caf648/files/public_html/storage/app/public'),
+            'visibility' => 'public',
+            'throw' => false,
+            'report' => false,
+        ],
+
     ],
 
     /*
