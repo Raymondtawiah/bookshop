@@ -9,6 +9,7 @@ use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\VerificationController;
 
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
@@ -20,20 +21,16 @@ Route::get('visa-tip', function() {
 Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
 
-// Email Verification Routes
-Route::get('email/verify', function () {
-    return view('auth.verify-email');
-})->middleware(['auth'])->name('verification.notice');
+// Custom Verification Routes (6-digit code)
+Route::get('verification/login', [\App\Http\Controllers\VerificationController::class, 'showLoginVerification'])->name('verification.login');
+Route::post('verification/login/resend', [\App\Http\Controllers\VerificationController::class, 'resendLoginCode'])->name('verification.login.resend');
+Route::post('verification/login/verify', [\App\Http\Controllers\VerificationController::class, 'verifyLoginCode'])->name('verification.login.verify');
 
-Route::post('email/verification-notification', function (\Illuminate\Http\Request $request) {
-    $request->user()->sendEmailVerificationNotification();
-    return back()->with('message', 'Verification link sent!');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
-
-Route::get('email/verify/{id}/{hash}', function (\Illuminate\Http\Request $request) {
-    $request->user()->markEmailAsVerified();
-    return redirect('/dashboard')->with('success', 'Email verified successfully!');
-})->middleware(['auth', 'signed'])->name('verification.verify');
+// Password Reset with Verification Code
+Route::get('verification/password-reset', [\App\Http\Controllers\VerificationController::class, 'showPasswordResetVerification'])->name('verification.password-reset');
+Route::post('verification/password-reset/send', [\App\Http\Controllers\VerificationController::class, 'sendPasswordResetCode'])->name('verification.password-reset.send');
+Route::post('verification/password-reset/resend', [\App\Http\Controllers\VerificationController::class, 'resendPasswordResetCode'])->name('verification.password-reset.resend');
+Route::post('verification/password-reset/verify', [\App\Http\Controllers\VerificationController::class, 'verifyPasswordResetCode'])->name('verification.password-reset.verify');
 
 // Password Reset Routes
 Route::get('forgot-password', function () {

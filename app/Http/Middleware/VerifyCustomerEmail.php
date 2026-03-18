@@ -26,10 +26,16 @@ class VerifyCustomerEmail
             return $next($request);
         }
 
-        // Customers must verify their email
+        // Customers must verify their email - redirect to custom verification page
         if (!$user->hasVerifiedEmail()) {
-            return redirect()->route('verification.notice')
-                ->with('warning', 'Please verify your email address before continuing.');
+            // Store user ID in session for verification
+            $request->session()->put('pending_login_user_id', $user->id);
+            
+            // Send verification code
+            app(\App\Services\VerificationService::class)->sendCode($user, 'login');
+            
+            return redirect()->route('verification.login')
+                ->with('warning', 'Please verify your email address with the 6-digit code sent to your email.');
         }
 
         return $next($request);
