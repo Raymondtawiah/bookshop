@@ -23,7 +23,13 @@ class LoginResponse implements LoginResponseContract
         
         // Check if customer's email is verified
         if ($user && !$user->hasVerifiedEmail()) {
-            return redirect()->route('verification.notice');
+            // Store user ID in session for verification
+            $request->session()->put('pending_login_user_id', $user->id);
+            
+            // Send verification code
+            app(\App\Services\VerificationService::class)->sendCode($user, 'login');
+            
+            return redirect()->route('verification.login');
         }
         
         // Direct login - redirect to home/welcome page

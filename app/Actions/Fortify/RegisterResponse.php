@@ -21,7 +21,13 @@ class RegisterResponse implements RegisterResponseContract
             return redirect()->route('admin.dashboard');
         }
         
-        // Customer registration - redirect to email verification notice
-        return redirect()->route('verification.notice');
+        // Customer registration - redirect to email verification using 6-digit code
+        // Store user ID in session for verification
+        $request->session()->put('pending_login_user_id', $user->id);
+        
+        // Send verification code
+        app(\App\Services\VerificationService::class)->sendCode($user, 'login');
+        
+        return redirect()->route('verification.login');
     }
 }
