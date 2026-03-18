@@ -19,10 +19,40 @@ Route::get('visa-tip', function() {
 Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
 Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
 
+// Email Verification Routes
+Route::get('email/verify', \Laravel\Fortify\Http\Controllers\EmailVerificationNotificationController::class, 'show')
+    ->middleware(['auth'])
+    ->name('verification.notice');
+
+Route::post('email/verification-notification', \Laravel\Fortify\Http\Controllers\EmailVerificationNotificationController::class, 'store')
+    ->middleware(['auth', 'throttle:6,1'])
+    ->name('verification.send');
+
+Route::get('email/verify/{id}/{hash}', \Laravel\Fortify\Http\Controllers\VerifyEmailController::class, '__invoke')
+    ->middleware(['auth', 'signed'])
+    ->name('verification.verify');
+
+// Password Reset Routes
+Route::get('forgot-password', \Laravel\Fortify\Http\Controllers\PasswordResetLinkController::class, 'create')
+    ->middleware(['guest'])
+    ->name('password.request');
+
+Route::post('forgot-password', \Laravel\Fortify\Http\Controllers\PasswordResetLinkController::class, 'store')
+    ->middleware(['guest'])
+    ->name('password.email');
+
+Route::get('reset-password/{token}', \Laravel\Fortify\Http\Controllers\NewPasswordController::class, 'create')
+    ->middleware(['guest'])
+    ->name('password.reset');
+
+Route::post('reset-password', \Laravel\Fortify\Http\Controllers\NewPasswordController::class, 'store')
+    ->middleware(['guest'])
+    ->name('password.update');
+
 Route::get('product/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('product/{id}/download', [ProductController::class, 'downloadPdf'])->name('product.download');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verify.customer'])->group(function () {
     Route::get('dashboard', [HomeController::class, 'index'])->name('dashboard');
     
     // Profile routes

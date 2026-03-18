@@ -4,11 +4,10 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
-class User extends Authenticatable implements MustVerifyEmail
+class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable;
@@ -75,5 +74,24 @@ class User extends Authenticatable implements MustVerifyEmail
     public function isCustomer(): bool
     {
         return $this->is_admin !== true;
+    }
+
+    /**
+     * Determine if the user should verify their email
+     * Only customers need to verify, admins don't
+     */
+    public function shouldVerifyEmail(): bool
+    {
+        return $this->isCustomer();
+    }
+
+    /**
+     * Send the email verification notification
+     */
+    public function sendEmailVerificationNotification(): void
+    {
+        if ($this->shouldVerifyEmail()) {
+            $this->notify(new \App\Mail\VerificationCodeMail());
+        }
     }
 }

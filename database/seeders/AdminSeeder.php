@@ -22,6 +22,7 @@ class AdminSeeder extends Seeder
             'email' => 'admin@nathanielgyarteng.com',
             'password' => Hash::make('admin123'),
             'is_admin' => true,
+            'email_verified_at' => now(), // Admin is auto-verified
         ]);
         
         $this->command->info('Admin user created successfully!');

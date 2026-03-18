@@ -28,6 +28,8 @@ class CreateNewUser implements CreatesNewUsers
             'name' => $input['name'],
             'email' => $input['email'],
             'password' => $input['password'],
+            'is_admin' => isset($input['is_admin']) ? true : false,
+            'email_verified_at' => isset($input['is_admin']) ? now() : null, // Admins auto-verified
         ]);
     }
 }

@@ -74,9 +74,10 @@ class AuthController extends Controller
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'is_admin' => true,
+            'email_verified_at' => now(), // Admins don't need to verify
         ]);
 
-        Auth::guard('admin')->login($user);
+        Auth::guard('web')->login($user);
 
         return redirect()->route('admin.dashboard');
     }
