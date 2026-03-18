@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
         // Seed nationalities
         $this->call([
             NationalitySeeder::class,
+            AdminSeeder::class
         ]);
     }
 }

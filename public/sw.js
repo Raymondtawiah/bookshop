@@ -1,37 +1,43 @@
-const CACHE_NAME = 'bookshop-v1';
+const CACHE_NAME = 'bookshop-v2';
+
+// Only cache STATIC assets (NOT auth pages)
 const urlsToCache = [
     '/',
-    '/dashboard',
-    '/login',
-    '/register',
     '/manifest.json',
 ];
 
-// Install event - cache resources
+// Routes we should NEVER cache
+const EXCLUDED_ROUTES = ['/login', '/register', '/logout', '/dashboard'];
+
+// Install event
 self.addEventListener('install', (event) => {
     event.waitUntil(
         caches.open(CACHE_NAME)
-            .then((cache) => {
-                return cache.addAll(urlsToCache);
-            })
+            .then((cache) => cache.addAll(urlsToCache))
     );
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event
 self.addEventListener('fetch', (event) => {
+    const url = new URL(event.request.url);
+
+    // ❌ Skip caching for auth & dynamic routes
+    if (
+        EXCLUDED_ROUTES.includes(url.pathname) ||
+        event.request.method !== 'GET'
+    ) {
+        return; // Let browser handle normally
+    }
+
+    // ✅ Cache-first for static assets only
     event.respondWith(
-        caches.match(event.request)
-            .then((response) => {
-                // Return cache if found, otherwise fetch from network
-                if (response) {
-                    return response;
-                }
-                return fetch(event.request);
-            })
+        caches.match(event.request).then((response) => {
+            return response || fetch(event.request);
+        })
     );
 });
 
-// Activate event - clean up old caches
+// Activate event
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((cacheNames) => {
