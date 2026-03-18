@@ -10,6 +10,22 @@
     animation: gradient-shift 3s ease infinite;
 }
 </style>
+<script>
+    // Check auth state on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
+        const authElements = document.querySelectorAll('.auth-only');
+        const guestElements = document.querySelectorAll('.guest-only');
+        
+        if (isAuthenticated) {
+            authElements.forEach(el => el.style.display = '');
+            guestElements.forEach(el => el.style.display = 'none');
+        } else {
+            authElements.forEach(el => el.style.display = 'none');
+            guestElements.forEach(el => el.style.display = '');
+        }
+    });
+</script>
     <div class="max-w-7xl mx-auto px-4">
         <div class="flex justify-between items-center h-14">
             <!-- Logo -->
@@ -28,7 +44,7 @@
                 <a href="{{ route('home') }}#contact" class="text-gray-700 hover:text-indigo-600">Contact</a>
                 
                 @auth
-                <a href="{{ route('cart') }}" class="relative text-gray-700 hover:text-indigo-600">
+                <a href="{{ route('cart') }}" class="relative text-gray-700 hover:text-indigo-600 auth-only">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
                     </svg>
@@ -39,7 +55,7 @@
                         <span class="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ $cartCount }}</span>
                     @endif
                 </a>
-                <div class="relative group">
+                <div class="relative group auth-only">
                     <button class="text-gray-700 hover:text-indigo-600 flex items-center">
                         <div class="w-8 h-8 rounded-full flex items-center justify-center animate-gradient">
                             <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
@@ -60,9 +76,9 @@
                     </div>
                 </div>
                 @else
-                <a href="{{ route('login') }}" class="text-gray-700 hover:text-indigo-600">Sign In</a>
+                <a href="{{ route('login') }}" class="text-gray-700 hover:text-indigo-600 guest-only">Sign In</a>
                 @if (Route::has('register'))
-                <a href="{{ route('register') }}" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700">Register</a>
+                <a href="{{ route('register') }}" class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 guest-only">Register</a>
                 @endif
                 @endauth
             </div>
@@ -107,7 +123,7 @@
             <hr class="border-gray-200">
             
             @auth
-            <div class="flex items-center gap-3 py-2">
+            <div class="flex items-center gap-3 py-2 auth-only">
                 <div class="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center text-white font-bold">
                     {{ substr(auth()->user()->name, 0, 1) }}
                 </div>
@@ -115,17 +131,17 @@
                     <p class="text-sm font-medium text-gray-900">{{ auth()->user()->name }}</p>
                 </div>
             </div>
-            <a href="{{ route('cart') }}" class="block text-gray-700 hover:text-indigo-600">Cart ({{ $cartCount ?? 0 }})</a>
-            <a href="{{ route('profile') }}" class="block text-gray-700 hover:text-indigo-600">Settings</a>
-            <a href="{{ route('my-orders') }}" class="block text-gray-700 hover:text-indigo-600">My Orders</a>
-            <form method="POST" action="{{ route('logout') }}">
+            <a href="{{ route('cart') }}" class="block text-gray-700 hover:text-indigo-600 auth-only">Cart ({{ $cartCount ?? 0 }})</a>
+            <a href="{{ route('profile') }}" class="block text-gray-700 hover:text-indigo-600 auth-only">Settings</a>
+            <a href="{{ route('my-orders') }}" class="block text-gray-700 hover:text-indigo-600 auth-only">My Orders</a>
+            <form method="POST" action="{{ route('logout') }}" class="auth-only">
                 @csrf
                 <button type="submit" class="block text-red-600 hover:text-red-800 w-full text-left">Logout</button>
             </form>
             @else
-            <a href="{{ route('login') }}" class="block text-gray-700 hover:text-indigo-600">Sign In</a>
+            <a href="{{ route('login') }}" class="block text-gray-700 hover:text-indigo-600 guest-only">Sign In</a>
             @if (Route::has('register'))
-            <a href="{{ route('register') }}" class="block text-indigo-600 hover:text-indigo-800 font-medium">Register</a>
+            <a href="{{ route('register') }}" class="block text-indigo-600 hover:text-indigo-800 font-medium guest-only">Register</a>
             @endif
             @endauth
         </div>
