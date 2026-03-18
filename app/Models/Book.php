@@ -34,16 +34,6 @@ class Book extends Model
     ];
 
     /**
-     * Get the external storage base URL from config
-     */
-    private function getExternalStorageBaseUrl()
-    {
-        // Configure this in your .env file: EXTERNAL_STORAGE_URL=https://srv2111-files.hstgr.io/...
-        return config('filesystems.disks.external.url') ?? 
-               'https://srv2111-files.hstgr.io/f5e93c1ee0caf648/files/public_html/storage/app/public';
-    }
-
-    /**
      * Get the full URL for the cover image from storage
      */
     public function getCoverImageUrlAttribute()
@@ -55,8 +45,8 @@ class Book extends Model
             return $this->cover_image;
         }
         
-        // Use external CDN URL - it's more reliable for production
-        return $this->getExternalStorageBaseUrl() . '/books/' . $this->cover_image;
+        // Use Laravel's Storage facade to generate URL
+        return Storage::disk('public')->url('books/' . $this->cover_image);
     }
 
     /**
@@ -71,7 +61,7 @@ class Book extends Model
             return $this->book_pdf;
         }
         
-        // Use external CDN URL - it's more reliable for production
-        return $this->getExternalStorageBaseUrl() . '/books/' . $this->book_pdf;
+        // Use Laravel's Storage facade to generate URL
+        return Storage::disk('public')->url('books/' . $this->book_pdf);
     }
 }
