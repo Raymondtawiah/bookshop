@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Password;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
@@ -20,34 +21,60 @@ Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name(
 Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
 
 // Email Verification Routes
-Route::get('email/verify', \Laravel\Fortify\Http\Controllers\EmailVerificationNotificationController::class, 'show')
-    ->middleware(['auth'])
-    ->name('verification.notice');
+Route::get('email/verify', function () {
+    return view('auth.verify-email');
+})->middleware(['auth'])->name('verification.notice');
 
-Route::post('email/verification-notification', \Laravel\Fortify\Http\Controllers\EmailVerificationNotificationController::class, 'store')
-    ->middleware(['auth', 'throttle:6,1'])
-    ->name('verification.send');
+Route::post('email/verification-notification', function (\Illuminate\Http\Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return back()->with('message', 'Verification link sent!');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
-Route::get('email/verify/{id}/{hash}', \Laravel\Fortify\Http\Controllers\VerifyEmailController::class, '__invoke')
-    ->middleware(['auth', 'signed'])
-    ->name('verification.verify');
+Route::get('email/verify/{id}/{hash}', function (\Illuminate\Http\Request $request) {
+    $request->user()->markEmailAsVerified();
+    return redirect('/dashboard')->with('success', 'Email verified successfully!');
+})->middleware(['auth', 'signed'])->name('verification.verify');
 
 // Password Reset Routes
-Route::get('forgot-password', \Laravel\Fortify\Http\Controllers\PasswordResetLinkController::class, 'create')
-    ->middleware(['guest'])
-    ->name('password.request');
+Route::get('forgot-password', function () {
+    return view('auth.forgot-password');
+})->middleware(['guest'])->name('password.request');
 
-Route::post('forgot-password', \Laravel\Fortify\Http\Controllers\PasswordResetLinkController::class, 'store')
-    ->middleware(['guest'])
-    ->name('password.email');
+Route::post('forgot-password', function (\Illuminate\Http\Request $request) {
+    $request->validate(['email' => 'required|email']);
+    
+    $status = \Illuminate\Support\Facades\Password::sendResetLink(
+        $request->only('email')
+    );
+    
+    return $status === \Illuminate\Support\Facades\Password::RESET_LINK_SENT
+        ? back()->with('status', __($status))
+        : back()->withInput($request->only('email'))->withErrors(['email' => __($status)]);
+})->middleware(['guest'])->name('password.email');
 
-Route::get('reset-password/{token}', \Laravel\Fortify\Http\Controllers\NewPasswordController::class, 'create')
-    ->middleware(['guest'])
-    ->name('password.reset');
+Route::get('reset-password/{token}', function ($token) {
+    return view('auth.reset-password', ['token' => $token]);
+})->middleware(['guest'])->name('password.reset');
 
-Route::post('reset-password', \Laravel\Fortify\Http\Controllers\NewPasswordController::class, 'store')
-    ->middleware(['guest'])
-    ->name('password.update');
+Route::post('reset-password', function (\Illuminate\Http\Request $request) {
+    $request->validate([
+        'token' => 'required',
+        'email' => 'required|email',
+        'password' => 'required|min:8|confirmed',
+    ]);
+    
+    $status = \Illuminate\Support\Facades\Password::reset(
+        $request->only('email', 'password', 'password_confirmation', 'token'),
+        function ($user) use ($request) {
+            $user->password = \Illuminate\Hashing\Hash::make($request->password);
+            $user->save();
+        }
+    );
+    
+    return $status === \Illuminate\Support\Facades\Password::PASSWORD_RESET
+        ? redirect()->route('login')->with('status', __($status))
+        : back()->withInput($request->only('email'))->withErrors(['email' => __($status)]);
+})->middleware(['guest'])->name('password.update');
 
 Route::get('product/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('product/{id}/download', [ProductController::class, 'downloadPdf'])->name('product.download');
