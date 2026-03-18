@@ -1,8 +1,24 @@
 <!-- Mobile Navigation (Phone View) -->
+<script>
+    // Check auth state on page load
+    document.addEventListener('DOMContentLoaded', function() {
+        const isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
+        const authElements = document.querySelectorAll('.auth-only');
+        const guestElements = document.querySelectorAll('.guest-only');
+        
+        if (isAuthenticated) {
+            authElements.forEach(el => el.style.display = '');
+            guestElements.forEach(el => el.style.display = 'none');
+        } else {
+            authElements.forEach(el => el.style.display = 'none');
+            guestElements.forEach(el => el.style.display = '');
+        }
+    });
+</script>
 <div class="md:hidden flex items-center gap-2">
     <!-- Cart Icon (Show only when logged in) -->
     @auth
-    <a href="{{ route('cart') }}" class="relative p-2 text-gray-600 hover:text-indigo-600">
+    <a href="{{ route('cart') }}" class="relative p-2 text-gray-600 hover:text-indigo-600 auth-only">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
         </svg>
@@ -38,8 +54,8 @@
         <a href="{{ route('home') }}#contact" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Contact</a>
         
         @auth
-        <hr class="border-gray-200 my-2">
-        <div class="flex items-center gap-3 py-2">
+        <hr class="border-gray-200 my-2 auth-only">
+        <div class="flex items-center gap-3 py-2 auth-only">
             <div class="w-8 h-8 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-full flex items-center justify-center">
                 <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                     <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
@@ -50,9 +66,9 @@
                 <p class="text-xs text-gray-500">{{ auth()->user()->email }}</p>
             </div>
         </div>
-        <a href="{{ route('profile') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Settings</a>
-        <a href="{{ route('my-orders') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">My Orders</a>
-        <form method="POST" action="{{ route('logout') }}" class="w-full">
+        <a href="{{ route('profile') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors auth-only">Settings</a>
+        <a href="{{ route('my-orders') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors auth-only">My Orders</a>
+        <form method="POST" action="{{ route('logout') }}" class="w-full auth-only">
             @csrf
             <button type="submit" class="text-left text-red-600 hover:text-red-800 font-medium transition-colors w-full">
                 Logout
@@ -61,10 +77,10 @@
         @endauth
 
         @guest
-        <hr class="border-gray-200 my-2">
-        <a href="{{ route('login') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Sign In</a>
+        <hr class="border-gray-200 my-2 guest-only">
+        <a href="{{ route('login') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors guest-only">Sign In</a>
         @if (Route::has('register'))
-        <a href="{{ route('register') }}" class="text-indigo-600 hover:text-indigo-800 font-medium transition-colors">Register</a>
+        <a href="{{ route('register') }}" class="text-indigo-600 hover:text-indigo-800 font-medium transition-colors guest-only">Register</a>
         @endif
         @endguest
     </div>
