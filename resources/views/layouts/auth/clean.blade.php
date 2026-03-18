@@ -10,21 +10,12 @@
         body {
             min-height: 100vh;
         }
-        .bg-bookshop {
-            background-image: url('https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=1920&q=80');
-            background-size: cover;
-            background-position: center;
-            background-repeat: no-repeat;
-        }
     </style>
 </head>
-<body class="bg-bookshop flex items-center justify-center min-h-screen p-4">
-    <!-- Dark overlay with small blur -->
-    <div class="absolute inset-0 bg-black/40 backdrop-blur-[2px]"></div>
-    
-    <div class="w-full max-w-md relative z-10">
+<body class="bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex items-center justify-center min-h-screen p-4">
+    <div class="w-full max-w-md">
         <!-- Card -->
-        <div class="bg-white/95 rounded-2xl shadow-2xl p-8">
+        <div class="bg-white rounded-2xl shadow-xl p-8 border border-gray-100">
             {{ $slot }}
         </div>
     </div>
