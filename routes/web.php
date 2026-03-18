@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Auth;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ProductController;
@@ -38,11 +39,29 @@ Route::post('login', function(\Illuminate\Http\Request $request) {
     return back()->withErrors([
         'email' => 'The provided credentials do not match our records.',
     ])->onlyInput('email');
-});
+})->name('login.store');
 
 Route::get('register', function() {
     return view('auth.register');
 })->middleware(['guest'])->name('register');
+
+Route::post('register', function(\Illuminate\Http\Request $request) {
+    \Illuminate\Support\Facades\Validator::make($request->all(), [
+        'name' => ['required', 'string', 'max:255'],
+        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+        'password' => ['required', 'string', 'min:8', 'confirmed'],
+    ])->validate();
+    
+    $user = \App\Models\User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => \Illuminate\Support\Facades\Hash::make($request->password),
+    ]);
+    
+    Auth::login($user);
+    
+    return redirect()->route('verification.notice');
+})->name('register.store');
 
 // Custom Verification Routes (6-digit code)
 Route::middleware(['web'])->group(function () {
@@ -97,6 +116,22 @@ Route::post('reset-password', function (\Illuminate\Http\Request $request) {
         ? redirect()->route('login')->with('status', __($status))
         : back()->withInput($request->only('email'))->withErrors(['email' => __($status)]);
 })->middleware(['guest'])->name('password.update');
+
+// Email Verification Routes (Laravel Fortify)
+Route::get('email/verify', function () {
+    return view('auth.verify-email');
+})->middleware('auth')->name('verification.notice');
+
+Route::get('email/verify/{id}/{hash}', function (\Illuminate\Http\Request $request) {
+    \Illuminate\Auth\Access\Authorization::authorizeResourceFor('App\Models\User', $request->route('id'));
+    $request->user()->markEmailAsVerified();
+    return redirect('/dashboard')->with('verified', true);
+})->middleware(['auth', 'signed'])->name('verification.verify');
+
+Route::post('email/verification-notification', function (\Illuminate\Http\Request $request) {
+    $request->user()->sendEmailVerificationNotification();
+    return back()->with('status', 'verification-link-sent');
+})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
 
 Route::get('product/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('product/{id}/download', [ProductController::class, 'downloadPdf'])->name('product.download');
