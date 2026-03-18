@@ -39,6 +39,12 @@ class Book extends Model
     public function getCoverImageUrlAttribute()
     {
         if (!$this->cover_image) return null;
+        
+        // Check if it's already a full URL (external storage)
+        if (filter_var($this->cover_image, FILTER_VALIDATE_URL)) {
+            return $this->cover_image;
+        }
+        
         return Storage::disk('public')->url('books/' . $this->cover_image);
     }
 
@@ -48,6 +54,12 @@ class Book extends Model
     public function getBookPdfUrlAttribute()
     {
         if (!$this->book_pdf) return null;
+        
+        // Check if it's already a full URL (external storage)
+        if (filter_var($this->book_pdf, FILTER_VALIDATE_URL)) {
+            return $this->book_pdf;
+        }
+        
         return Storage::disk('public')->url('books/' . $this->book_pdf);
     }
 }
