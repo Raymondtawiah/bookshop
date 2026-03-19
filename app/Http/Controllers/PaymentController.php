@@ -199,6 +199,7 @@ class PaymentController extends Controller
             'email' => $user->email,
             'contact' => $request->contact ?? $user->phone ?? '',
             'residence' => $request->residence ?? '',
+            'nationality' => $request->nationality ?? '',
             'payment_method' => $request->payment_method,
             'total_amount' => $total,
             'status' => 'pending',
