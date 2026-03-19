@@ -59,9 +59,8 @@
 <div id="customer-mobile-menu" class="hidden absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 p-4" style="display: none;">
     <div class="flex flex-col space-y-3">
         <a href="{{ route('home') }}#home" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Home</a>
-        @if(\App\Models\Book::count() > 0)
+        <!-- Always show Store link - it will scroll to store section -->
         <a href="{{ route('home') }}#store" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Store</a>
-        @endif
         <a href="{{ route('visa-tip') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Tips</a>
         <a href="{{ route('home') }}#about" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">About</a>
         <a href="{{ route('home') }}#contact" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Contact</a>
