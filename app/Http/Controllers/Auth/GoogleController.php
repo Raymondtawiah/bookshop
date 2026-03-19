@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Facades\Socialite;
 
@@ -40,10 +41,12 @@ class GoogleController extends Controller
                     ]);
                 }
                 
-                // Mark email as verified since Google verified it
-                // Force verify even if somehow not set
+                // ALWAYS mark email as verified since Google already verified it
+                // This ensures existing users who haven't verified can still login via Google
                 if (is_null($user->email_verified_at)) {
                     $user->forceFill(['email_verified_at' => now()])->save();
+                    $user->refresh(); // Refresh to get the updated model
+                    Log::info('Google login: Email verified for existing user', ['user_id' => $user->id, 'email' => $user->email, 'verified_at' => $user->email_verified_at]);
                 }
 
             } else {

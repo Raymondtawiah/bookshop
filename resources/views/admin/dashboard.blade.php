@@ -33,7 +33,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-500">Total Books</p>
-                            <p class="text-3xl font-bold mt-1 text-gray-900 counter" data-target="500">0</p>
+                            <p class="text-3xl font-bold mt-1 text-gray-900">{{ \App\Models\Book::count() }}</p>
                         </div>
                         <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
                             <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,7 +47,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-500">Total Customers</p>
-                            <p class="text-3xl font-bold mt-1 text-gray-900 counter" data-target="520">0</p>
+                            <p class="text-3xl font-bold mt-1 text-gray-900">{{ \App\Models\User::where('is_admin', false)->count() }}</p>
                         </div>
                         <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
                             <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -61,7 +61,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-500">Total Orders</p>
-                            <p class="text-3xl font-bold mt-1 text-gray-900 counter" data-target="580">0</p>
+                            <p class="text-3xl font-bold mt-1 text-gray-900">{{ \App\Models\Order::count() }}</p>
                         </div>
                         <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
                             <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -75,7 +75,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-500">Total Revenue</p>
-                            <p class="text-3xl font-bold mt-1 text-gray-900">₵<span class="counter" data-target="5000">0</span></p>
+                            <p class="text-3xl font-bold mt-1 text-gray-900">₵{{ number_format(\App\Models\Order::where('payment_status', 'paid')->sum('total_amount'), 2) }}</p>
                         </div>
                         <div class="w-14 h-14 bg-yellow-100 rounded-xl flex items-center justify-center">
                             <svg class="w-7 h-7 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -85,29 +85,6 @@
                     </div>
                 </div>
             </div>
-
-            <script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    const counters = document.querySelectorAll('.counter');
-                    const speed = 20; // Lower is faster
-
-                    counters.forEach(counter => {
-                        const updateCount = () => {
-                            const target = +counter.getAttribute('data-target');
-                            const count = +counter.innerText;
-                            const inc = target / speed;
-
-                            if (count < target) {
-                                counter.innerText = Math.ceil(count + inc);
-                                setTimeout(updateCount, 10);
-                            } else {
-                                counter.innerText = target + '+';
-                            }
-                        };
-                        updateCount();
-                    });
-                });
-            </script>
 
             <!-- Quick Actions -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -156,9 +133,64 @@
 
             <!-- Recent Activity -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
+                <div class="px-6 py-4 border-b border-gray-100 bg-gray-50 flex justify-between items-center">
                     <h2 class="text-lg font-semibold text-gray-900">Recent Orders</h2>
+                    <a href="{{ route('admin.orders') }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">View All</a>
                 </div>
+                @php
+                    $recentOrders = \App\Models\Order::with('user')->latest()->take(10)->get();
+                @endphp
+                @if($recentOrders->count() > 0)
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead class="bg-gray-50 border-b border-gray-100">
+                            <tr>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order #</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100">
+                            @foreach($recentOrders as $order)
+                            <tr class="hover:bg-gray-50">
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    <a href="{{ route('admin.orders.show', $order->id) }}" class="hover:text-indigo-600">
+                                        {{ $order->order_number ?? 'ORD-' . $order->id }}
+                                    </a>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                    {{ $order->customer_name ?? $order->user->name ?? 'N/A' }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                                    ₵{{ number_format($order->total_amount, 2) }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap">
+                                    @php
+                                        $statusColors = [
+                                            'pending' => 'bg-yellow-100 text-yellow-800',
+                                            'confirmed' => 'bg-blue-100 text-blue-800',
+                                            'processing' => 'bg-indigo-100 text-indigo-800',
+                                            'shipped' => 'bg-purple-100 text-purple-800',
+                                            'delivered' => 'bg-green-100 text-green-800',
+                                            'cancelled' => 'bg-red-100 text-red-800',
+                                        ];
+                                        $color = $statusColors[$order->status] ?? 'bg-gray-100 text-gray-800';
+                                    @endphp
+                                    <span class="px-2 py-1 text-xs font-medium rounded-full {{ $color }}">
+                                        {{ ucfirst($order->status) }}
+                                    </span>
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                    {{ $order->created_at->format('M d, Y') }}
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </div>
+                @else
                 <div class="p-6 text-center">
                     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -167,6 +199,7 @@
                     </div>
                     <p class="text-gray-500">No orders yet</p>
                 </div>
+                @endif
             </div>
         </main>
 

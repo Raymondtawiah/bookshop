@@ -162,11 +162,6 @@ i<!DOCTYPE html>
             </div>
         </div>
 
-        <!-- Footer -->
-        <footer class="bg-gray-900 text-white py-12">
-            <div class="max-w-7xl mx-auto px-6 text-center">
-                <p class="text-gray-400">&copy; {{ date('Y') }} Bookshop. All rights reserved.</p>
-            </div>
-        </footer>
+       <x-customer-footer />
     </body>
 </html>
