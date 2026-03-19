@@ -1,7 +1,7 @@
 <!-- Mobile Navigation (Phone View) -->
 <script>
-    // Check auth state on page load
-    document.addEventListener('DOMContentLoaded', function() {
+    // Check auth state on page load and also on visibility change
+    function updateAuthUI() {
         const isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
         const authElements = document.querySelectorAll('.auth-only');
         const guestElements = document.querySelectorAll('.guest-only');
@@ -13,7 +13,20 @@
             authElements.forEach(el => el.style.display = 'none');
             guestElements.forEach(el => el.style.display = '');
         }
+    }
+    
+    // Run on page load
+    document.addEventListener('DOMContentLoaded', updateAuthUI);
+    
+    // Run when page becomes visible (user switches tabs or returns to page)
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            updateAuthUI();
+        }
     });
+    
+    // Also run on focus
+    window.addEventListener('focus', updateAuthUI);
 </script>
 <div class="md:hidden flex items-center gap-2">
     <!-- Cart Icon (Show only when logged in) -->
