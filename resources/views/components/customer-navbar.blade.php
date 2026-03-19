@@ -11,20 +11,43 @@
 }
 </style>
 <script>
-    // Check auth state on page load
-    document.addEventListener('DOMContentLoaded', function() {
-        const isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
-        const authElements = document.querySelectorAll('.auth-only');
-        const guestElements = document.querySelectorAll('.guest-only');
-        
-        if (isAuthenticated) {
-            authElements.forEach(el => el.style.display = '');
-            guestElements.forEach(el => el.style.display = 'none');
-        } else {
-            authElements.forEach(el => el.style.display = 'none');
-            guestElements.forEach(el => el.style.display = '');
+    // Check auth state on page load and also on visibility change (when user returns to tab)
+    function updateAuthUI() {
+        // Make a fetch request to check auth state
+        fetch('{{ url("/") }}', { method: 'HEAD', credentials: 'same-origin' })
+            .then(() => {
+                // Get current auth state from Laravel
+                const isAuthenticated = {{ auth()->check() ? 'true' : 'false' }};
+                const authElements = document.querySelectorAll('.auth-only');
+                const guestElements = document.querySelectorAll('.guest-only');
+                
+                if (isAuthenticated) {
+                    authElements.forEach(el => el.style.display = '');
+                    guestElements.forEach(el => el.style.display = 'none');
+                } else {
+                    authElements.forEach(el => el.style.display = 'none');
+                    guestElements.forEach(el => el.style.display = '');
+                }
+            })
+            .catch(() => {
+                // On error, assume not authenticated
+                const guestElements = document.querySelectorAll('.guest-only');
+                guestElements.forEach(el => el.style.display = '');
+            });
+    }
+    
+    // Run on page load
+    document.addEventListener('DOMContentLoaded', updateAuthUI);
+    
+    // Run when page becomes visible (user switches tabs or returns to page)
+    document.addEventListener('visibilitychange', function() {
+        if (!document.hidden) {
+            updateAuthUI();
         }
     });
+    
+    // Also run on focus
+    window.addEventListener('focus', updateAuthUI);
 </script>
     <div class="max-w-7xl mx-auto px-4">
         <div class="flex justify-between items-center h-14">
