@@ -133,7 +133,14 @@ class PaymentController extends Controller
 
                 // Send confirmation email to customer
                 try {
+                    \Log::info('Attempting to send order confirmation email', [
+                        'order_id' => $order->id,
+                        'email' => $order->email
+                    ]);
+                    
                     \Mail::to($order->email)->send(new \App\Mail\OrderConfirmation($order, $cartItems, $order->total_amount));
+                    
+                    \Log::info('Order confirmation email sent successfully', ['order_id' => $order->id]);
                 } catch (\Exception $e) {
                     // Log email error but don't fail the order
                     \Log::error('Failed to send order confirmation email: ' . $e->getMessage());
