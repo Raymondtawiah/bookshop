@@ -379,6 +379,7 @@
                                 customer_name: formData.get('customer_name'),
                                 email: formData.get('email'),
                                 residence: formData.get('residence'),
+                                nationality: formData.get('nationality'),
                                 contact: contact,
                                 payment_method: paymentMethod,
                                 mobile_number: contact,
