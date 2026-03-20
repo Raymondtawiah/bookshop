@@ -1,4 +1,13 @@
 <nav class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
+<script>
+// Handle back-forward cache (bfcache) - ensures fresh content on navigation
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        // Page was loaded from bfcache - reload to get fresh content
+        window.location.reload();
+    }
+});
+</script>
 <style>
 @keyframes gradient-shift {
     0%, 100% { background-position: 0% 50%; }
