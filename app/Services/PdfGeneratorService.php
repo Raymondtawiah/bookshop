@@ -69,8 +69,8 @@ class PdfGeneratorService implements PdfGeneratorInterface
             // Generate unique filename
             $filename = $this->generateFilename($book, $order);
             
-            // Ensure directory exists
-            $fullPath = storage_path("app/public/{$this->storagePath}");
+            // Save to public/storage/books/generated/ directory
+            $fullPath = public_path("storage/{$this->storagePath}");
             if (!is_dir($fullPath)) {
                 mkdir($fullPath, 0755, true);
             }
@@ -81,6 +81,7 @@ class PdfGeneratorService implements PdfGeneratorInterface
             
             Log::info("PDF generated successfully: {$outputPath}");
             
+            // Return path relative to public/storage
             return "{$this->storagePath}/{$filename}";
             
         } catch (\Exception $e) {
@@ -148,8 +149,8 @@ class PdfGeneratorService implements PdfGeneratorInterface
             $sanitizedName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $order->customer_name);
             $filename = sprintf('%s_%s_%d.pdf', $title, $sanitizedName, time());
             
-            // Ensure directory exists
-            $fullPath = storage_path("app/public/{$this->storagePath}");
+            // Save to public/storage/books/generated/ directory
+            $fullPath = public_path("storage/{$this->storagePath}");
             if (!is_dir($fullPath)) {
                 mkdir($fullPath, 0755, true);
             }
@@ -160,6 +161,7 @@ class PdfGeneratorService implements PdfGeneratorInterface
             
             Log::info("PDF generated from text successfully: {$outputPath}");
             
+            // Return path relative to public/storage
             return "{$this->storagePath}/{$filename}";
             
         } catch (\Exception $e) {
@@ -184,7 +186,7 @@ class PdfGeneratorService implements PdfGeneratorInterface
 
         // For simple generation, just copy the file with a new name
         $filename = time() . '_' . slug($book->title) . '.pdf';
-        $fullPath = storage_path("app/public/{$this->storagePath}");
+        $fullPath = public_path("storage/{$this->storagePath}");
         
         if (!is_dir($fullPath)) {
             mkdir($fullPath, 0755, true);
