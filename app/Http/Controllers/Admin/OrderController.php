@@ -132,16 +132,20 @@ class OrderController extends Controller
         
         Log::info("OrderController: passage = " . var_export($request->passage, true) . ", content = " . var_export($request->content, true));
         
-        if ($request->passage) {
-            Log::info("OrderController: Loading passage with key: " . var_export($request->passage, true));
+        // Force passage to string to handle any integer values from dropdown
+        $passageKey = is_scalar($request->passage) ? (string) $request->passage : $request->passage;
+        Log::info("OrderController: converted passage key to: " . var_export($passageKey, true));
+        
+        if ($passageKey) {
+            Log::info("OrderController: Loading passage with key: " . var_export($passageKey, true));
             // Load content from passage file
-            $content = $this->passageService->getPassage($request->passage);
+            $content = $this->passageService->getPassage($passageKey);
             Log::info("OrderController: Loaded content length: " . ($content ? strlen($content) : 0));
             if (!$content) {
                 return redirect()->back()->withInput()->with('error', 'Selected passage not found.');
             }
             // Use passage name as title (delegated to service for proper key handling)
-            $title = $this->passageService->getPassageName($request->passage, $title);
+            $title = $this->passageService->getPassageName($passageKey, $title);
             Log::info("OrderController: Title set to: {$title}");
         } elseif ($request->content) {
             // Use directly pasted content
