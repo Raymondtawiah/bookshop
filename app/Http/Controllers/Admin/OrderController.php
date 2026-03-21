@@ -145,13 +145,25 @@ class OrderController extends Controller
             return redirect()->back()->withInput()->with('error', 'Please select a passage or enter content.');
         }
 
-        // Use the OrderPdfService to generate PDF from text and send
-        $result = $this->orderPdfService->generateFromTextAndSend($order, $content, $title);
+        // Debug logging
+        Log::debug("OrderController: Generating PDF for order #{$order->id}");
+        Log::debug("OrderController: customer_name = " . var_export($order->customer_name, true));
+        Log::debug("OrderController: title = " . $title);
+        Log::debug("OrderController: content length = " . strlen($content));
+        
+        try {
+            // Use the OrderPdfService to generate PDF from text and send
+            $result = $this->orderPdfService->generateFromTextAndSend($order, $content, $title);
 
-        if ($result['success']) {
-            return redirect()->back()->with('success', $result['message']);
-        } else {
-            return redirect()->back()->withInput()->with('error', $result['message']);
+            if ($result['success']) {
+                return redirect()->back()->with('success', $result['message']);
+            } else {
+                return redirect()->back()->withInput()->with('error', $result['message']);
+            }
+        } catch (\Exception $e) {
+            Log::error("PDF generation error: " . $e->getMessage());
+            Log::error("Stack trace: " . $e->getTraceAsString());
+            return redirect()->back()->withInput()->with('error', 'Error generating PDF: ' . $e->getMessage());
         }
     }
 

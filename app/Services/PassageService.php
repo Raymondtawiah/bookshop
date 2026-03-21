@@ -61,18 +61,20 @@ class PassageService
     /**
      * Get a specific passage by filename
      * 
-     * @param string $filename
+     * @param string|int $filename The filename or key of the passage
      * @return string|null
      */
-    public function getPassage(string $filename): ?string
+    public function getPassage($filename): ?string
     {
-        $path = "{$this->passagesPath}/{$filename}.txt";
+        // Cast to string to handle integer keys from dropdowns
+        $stringFilename = (string) $filename;
+        $path = "{$this->passagesPath}/{$stringFilename}.txt";
         
         if (!file_exists($path)) {
             Log::warning("Passage not found: {$path}");
             return null;
         }
-
+        
         return File::get($path);
     }
 
@@ -105,16 +107,24 @@ class PassageService
      */
     public function getPassageName($key, ?string $default = null): ?string
     {
+        Log::debug("PassageService:getPassageName called with key: " . var_export($key, true));
+        
         if ($key === null || $key === '') {
+            Log::debug("PassageService: key is null or empty, returning default");
             return $default;
         }
         
         // Cast to string to handle integer keys from dropdowns
         $stringKey = (string) $key;
+        Log::debug("PassageService: converted key to string: " . $stringKey);
         
         $passageNames = $this->getPassageNames();
+        Log::debug("PassageService: available passage names: " . json_encode($passageNames));
         
-        return $passageNames[$stringKey] ?? $default;
+        $result = $passageNames[$stringKey] ?? $default;
+        Log::debug("PassageService: result: " . var_export($result, true));
+        
+        return $result;
     }
 
     /**
