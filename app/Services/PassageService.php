@@ -107,28 +107,28 @@ class PassageService
      */
     public function getPassageName($key, ?string $default = null): ?string
     {
-        Log::info("PassageService: getPassageName called with key: " . var_export($key, true) . " (type: " . gettype($key) . ")");
+        logger("PassageService: getPassageName called with key: " . var_export($key, true) . " (type: " . gettype($key) . ")");
         
         if ($key === null || $key === '') {
-            Log::info("PassageService: key is null or empty, returning default: {$default}");
+            logger("PassageService: key is null or empty, returning default: {$default}");
             return $default;
         }
         
         // Cast to string to handle integer keys from dropdowns
         $stringKey = (string) $key;
-        Log::info("PassageService: converted key to string: '{$stringKey}'");
+        logger("PassageService: converted key to string: '{$stringKey}'");
         
         $passageNames = $this->getPassageNames();
-        Log::info("PassageService: available passage names: " . json_encode(array_keys($passageNames)));
+        logger("PassageService: available passage names: " . json_encode($passageNames));
         
         // Check if key exists
         if (!array_key_exists($stringKey, $passageNames)) {
-            Log::warning("PassageService: key '{$stringKey}' not found in passage names, returning default");
+            logger("PassageService: key not found, available keys: " . json_encode(array_keys($passageNames)));
             return $default;
         }
         
         $result = $passageNames[$stringKey];
-        Log::info("PassageService: result: {$result}");
+        logger("PassageService: result: {$result}");
         
         return $result;
     }
