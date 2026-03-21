@@ -111,7 +111,7 @@ class PdfGeneratorService implements PdfGeneratorInterface
             $validDate = date('Y-m-d');
             
             // Initialize TCPDF
-            $pdf = new \TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+            $pdf = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
             
             // Set document information
             $pdf->SetCreator('Visa Resources');
