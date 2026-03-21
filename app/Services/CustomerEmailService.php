@@ -45,7 +45,11 @@ class CustomerEmailService implements EmailServiceInterface
             $cartItems = Cart::where('user_id', $order->user_id)->get();
             
             // Get admin name
-            $adminName = auth()->user()->name ?? 'Admin';
+            try {
+                $adminName = auth()->check() ? auth()->user()->name : 'Admin';
+            } catch (\Exception $e) {
+                $adminName = 'Admin';
+            }
             
             // Extract filename from path
             $filename = basename($pdfPath);
