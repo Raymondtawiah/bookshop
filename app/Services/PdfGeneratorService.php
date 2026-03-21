@@ -102,21 +102,17 @@ class PdfGeneratorService implements PdfGeneratorInterface
     public function generateFromText(string $content, Order $order, string $title = 'Document'): string
     {
         try {
-            // Log input parameters for debugging
-            Log::debug("PdfGeneratorService:generateFromText called");
-            Log::debug("Order ID: " . $order->id);
-            Log::debug("Order customer_name: " . var_export($order->customer_name, true));
-            Log::debug("Title: " . $title);
-            Log::debug("Content type: " . gettype($content));
-            Log::debug("Content length: " . (is_string($content) ? strlen($content) : 0));
+            Log::info("PDF Gen: Starting - Order: {$order->id}, Title: {$title}");
             
             // Ensure content is a string
             if (!is_string($content)) {
+                Log::error("PDF Gen: Content is not a string, type: " . gettype($content));
                 throw new \Exception("Content must be a string, got: " . gettype($content));
             }
             
             // Store customer name for use in footer
             $customerName = $order->customer_name ?? 'Customer';
+            Log::info("PDF Gen: Customer name: {$customerName}");
             $validDate = date('Y-m-d');
             
             // Initialize TCPDF

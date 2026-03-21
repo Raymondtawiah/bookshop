@@ -130,14 +130,19 @@ class OrderController extends Controller
         $content = '';
         $title = $request->title ?? 'Document';
         
+        Log::info("OrderController: passage = " . var_export($request->passage, true) . ", content = " . var_export($request->content, true));
+        
         if ($request->passage) {
+            Log::info("OrderController: Loading passage with key: " . var_export($request->passage, true));
             // Load content from passage file
             $content = $this->passageService->getPassage($request->passage);
+            Log::info("OrderController: Loaded content length: " . ($content ? strlen($content) : 0));
             if (!$content) {
                 return redirect()->back()->withInput()->with('error', 'Selected passage not found.');
             }
             // Use passage name as title (delegated to service for proper key handling)
             $title = $this->passageService->getPassageName($request->passage, $title);
+            Log::info("OrderController: Title set to: {$title}");
         } elseif ($request->content) {
             // Use directly pasted content
             $content = $request->content;

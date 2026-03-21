@@ -107,22 +107,28 @@ class PassageService
      */
     public function getPassageName($key, ?string $default = null): ?string
     {
-        Log::debug("PassageService:getPassageName called with key: " . var_export($key, true));
+        Log::info("PassageService: getPassageName called with key: " . var_export($key, true) . " (type: " . gettype($key) . ")");
         
         if ($key === null || $key === '') {
-            Log::debug("PassageService: key is null or empty, returning default");
+            Log::info("PassageService: key is null or empty, returning default: {$default}");
             return $default;
         }
         
         // Cast to string to handle integer keys from dropdowns
         $stringKey = (string) $key;
-        Log::debug("PassageService: converted key to string: " . $stringKey);
+        Log::info("PassageService: converted key to string: '{$stringKey}'");
         
         $passageNames = $this->getPassageNames();
-        Log::debug("PassageService: available passage names: " . json_encode($passageNames));
+        Log::info("PassageService: available passage names: " . json_encode(array_keys($passageNames)));
         
-        $result = $passageNames[$stringKey] ?? $default;
-        Log::debug("PassageService: result: " . var_export($result, true));
+        // Check if key exists
+        if (!array_key_exists($stringKey, $passageNames)) {
+            Log::warning("PassageService: key '{$stringKey}' not found in passage names, returning default");
+            return $default;
+        }
+        
+        $result = $passageNames[$stringKey];
+        Log::info("PassageService: result: {$result}");
         
         return $result;
     }
