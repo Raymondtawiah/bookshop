@@ -110,8 +110,9 @@ class PdfGeneratorService implements PdfGeneratorInterface
             $customerName = $order->customer_name ?? 'Customer';
             $validDate = date('Y-m-d');
             
-            // Initialize TCPDF
-            $pdf = new \TCPDF('P', 'mm', 'A4', true, 'UTF-8', false);
+            // Initialize TCPDF - simpler approach
+            $pdf = new \TCPDF();
+            $pdf->SetFont('helvetica', '', 12);
             
             // Set document information
             $pdf->SetCreator('Visa Resources');
