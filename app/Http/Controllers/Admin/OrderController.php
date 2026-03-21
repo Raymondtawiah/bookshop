@@ -136,8 +136,10 @@ class OrderController extends Controller
             if (!$content) {
                 return redirect()->back()->withInput()->with('error', 'Selected passage not found.');
             }
-            // Use passage name as title
-            $title = $this->passageService->getPassageNames()[$request->passage] ?? $title;
+            // Use passage name as title (cast to string to handle integer keys from dropdown)
+            $passageKey = (string) $request->passage;
+            $passageNames = $this->passageService->getPassageNames();
+            $title = isset($passageNames[$passageKey]) ? $passageNames[$passageKey] : $title;
         } elseif ($request->content) {
             // Use directly pasted content
             $content = $request->content;
