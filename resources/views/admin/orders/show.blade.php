@@ -188,19 +188,29 @@
                             @csrf
                             
                             <!-- Select Book from Order -->
-                            @if(!empty($orderItems) && $orderItems->count() > 0)
                             <div>
-                                <label for="selected_book" class="block text-sm font-medium text-gray-700 mb-1">Select Book from Order</label>
+                                <label for="selected_book" class="block text-sm font-medium text-gray-700 mb-1">Select Book to Send</label>
                                 <select name="selected_book" id="selected_book"
                                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                                     <option value="">-- Select a Book --</option>
-                                    @foreach($orderItems as $item)
-                                        @if($item->book_id)
-                                            <option value="{{ $item->book_id }}">{{ $item->product_name }} (₵{{ number_format($item->product_price, 2) }})</option>
-                                        @else
-                                            <option value="custom">{{ $item->product_name }} (₵{{ number_format($item->product_price, 2) }}) - Custom</option>
-                                        @endif
-                                    @endforeach
+                                    @if(!empty($orderItems) && $orderItems->count() > 0)
+                                        <optgroup label="Ordered Books">
+                                            @foreach($orderItems as $item)
+                                                @if($item->book_id)
+                                                    <option value="{{ $item->book_id }}">{{ $item->product_name }} (₵{{ number_format($item->product_price, 2) }})</option>
+                                                @else
+                                                    <option value="custom">{{ $item->product_name }} (₵{{ number_format($item->product_price, 2) }}) - Custom</option>
+                                                @endif
+                                            @endforeach
+                                        </optgroup>
+                                    @endif
+                                    @if(!empty($books) && $books->count() > 0)
+                                        <optgroup label="All Available Books">
+                                            @foreach($books as $book)
+                                                <option value="{{ $book->id }}">{{ $book->title }} - {{ $book->author }}</option>
+                                            @endforeach
+                                        </optgroup>
+                                    @endif
                                 </select>
                                 <p class="text-xs text-gray-500 mt-1">Select a book to send the pre-configured PDF to the customer</p>
                             </div>
@@ -208,7 +218,6 @@
                             <div class="flex items-center justify-center text-gray-400">
                                 <span class="text-sm">- OR -</span>
                             </div>
-                            @endif
                             
                             <!-- Passage feature disabled for now - use content field instead -->
                             <!-- <div>
