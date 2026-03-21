@@ -31,6 +31,8 @@ Route::prefix('admin')->name('admin.')->middleware('auth:web')->group(function (
     Route::get('orders', [OrderController::class, 'index'])->name('orders');
     Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::put('orders/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.status');
+    Route::post('orders/{order}/generate-pdf', [OrderController::class, 'generateAndSendPdf'])->name('orders.generatePdf');
+    Route::post('orders/{order}/generate-text-pdf', [OrderController::class, 'generateFromText'])->name('orders.generateTextPdf');
     Route::post('orders/{order}/send-pdf', [OrderController::class, 'sendPdf'])->name('orders.sendPdf');
     Route::delete('orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
     
