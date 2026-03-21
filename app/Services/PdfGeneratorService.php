@@ -62,8 +62,8 @@ class PdfGeneratorService implements PdfGeneratorInterface
                 // Use the template
                 $pdf->useTemplate($templateId);
                 
-                // Add watermark - customer name
-                $this->addWatermark($pdf, $order->customer_name, $size['width'], $size['height']);
+                // Add watermark - customer name (first page gets special message)
+                $this->addWatermark($pdf, $order->customer_name, $size['width'], $size['height'], $pageNo === 1);
             }
             
             // Generate unique filename
@@ -102,6 +102,10 @@ class PdfGeneratorService implements PdfGeneratorInterface
     public function generateFromText(string $content, Order $order, string $title = 'Document'): string
     {
         try {
+            // Store customer name for use in footer
+            $customerName = $order->customer_name;
+            $validDate = date('Y-m-d');
+            
             // Initialize TCPDF
             $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
             
@@ -115,38 +119,36 @@ class PdfGeneratorService implements PdfGeneratorInterface
             $pdf->setPrintHeader(false);
             $pdf->setPrintFooter(false);
             
-            // Set margins
+            // Set margins (left, top, right) - leave space for footer
             $pdf->SetMargins(20, 20, 20);
             
-            // Set auto page breaks
-            $pdf->SetAutoPageBreak(TRUE, 25);
+            // Set bottom margin for footer space
+            $pdf->SetAutoPageBreak(TRUE, 30);
             
-            // Add a page
+            // Set page number callback
+            $pdf->setPageMark();
+            
+            // Add first page
             $pdf->AddPage();
             
-            // Set font
-            $pdf->SetFont('helvetica', '', 12);
+            // Set font for title
+            $pdf->SetFont('helvetica', 'B', 18);
             
             // Add title if provided
             if ($title) {
-                $pdf->SetFont('helvetica', 'B', 18);
                 $pdf->Cell(0, 10, $title, 0, true, 'C');
-                $pdf->Ln(10);
-                $pdf->SetFont('helvetica', '', 12);
+                $pdf->Ln(5);
             }
             
             // Add the content
+            $pdf->SetFont('helvetica', '', 12);
             $pdf->MultiCell(0, 10, $content);
             
-            // Add customer name at the bottom of the last page
-            $pdf->SetFont('helvetica', 'I', 10);
-            $pdf->SetTextColor(128, 128, 128);
-            $pdf->SetY(-20);
-            $pdf->Cell(0, 10, "Licensed to: {$order->customer_name} | Valid: " . date('Y-m-d'), 0, 1, 'C');
-            $pdf->SetTextColor(0, 0, 0);
+            // Add footer on current (last) page
+            $this->addTextFooter($pdf, $customerName, $validDate, true);
             
             // Generate unique filename
-            $sanitizedName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $order->customer_name);
+            $sanitizedName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $customerName);
             $filename = sprintf('%s_%s_%d.pdf', $title, $sanitizedName, time());
             
             // Save to public/storage/books/generated/ directory
@@ -168,6 +170,44 @@ class PdfGeneratorService implements PdfGeneratorInterface
             Log::error("PDF generation from text failed: " . $e->getMessage());
             throw new \Exception("Failed to generate PDF from text: " . $e->getMessage());
         }
+    }
+
+    /**
+     * Add footer text to each page of the PDF
+     * 
+     * @param TCPDF $pdf
+     * @param string $customerName
+     * @param string $validDate
+     * @param bool $isFirstPage
+     */
+    protected function addTextFooter(TCPDF $pdf, string $customerName, string $validDate, bool $isFirstPage = false): void
+    {
+        // Get page dimensions
+        $pageWidth = $pdf->getPageWidth();
+        $pageHeight = $pdf->getPageHeight();
+        
+        // Define footer margins
+        $footerBottom = 10; // 10mm from bottom
+        $footerHeight = 18;
+        
+        // Move to footer position
+        $y = $pageHeight - $footerBottom - $footerHeight;
+        $pdf->SetY($y);
+        
+        // If first page, add "This book is personally customized for..."
+        if ($isFirstPage) {
+            $pdf->SetFont('helvetica', 'B', 11);
+            $pdf->SetTextColor(0, 0, 128); // Dark blue for first line
+            $pdf->Cell(0, 8, "This book is personally customized for {$customerName}", 0, 1, 'C');
+        }
+        
+        // Add "Licensed to: Customer Name | Valid: Date" on EVERY page
+        $pdf->SetFont('helvetica', 'B', 10); // Bold font
+        $pdf->SetTextColor(0, 0, 0); // Black color
+        $pdf->Cell(0, 8, "Licensed to: {$customerName} | Valid: {$validDate}", 0, 1, 'C');
+        
+        // Reset text color
+        $pdf->SetTextColor(0, 0, 0);
     }
 
     /**
@@ -255,19 +295,30 @@ class PdfGeneratorService implements PdfGeneratorInterface
      * @param string $customerName
      * @param float $pageWidth
      * @param float $pageHeight
+     * @param bool $isFirstPage
      */
-    protected function addWatermark(Fpdi $pdf, string $customerName, float $pageWidth, float $pageHeight): void
+    protected function addWatermark(Fpdi $pdf, string $customerName, float $pageWidth, float $pageHeight, bool $isFirstPage = false): void
     {
-        // Add customer name at the bottom of the page
-        $pdf->SetFont('helvetica', 'I', 10);
-        $pdf->SetTextColor(128, 128, 128);
+        $validDate = date('Y-m-d');
         
-        // Position at bottom center
-        $pdf->SetXY(0, $pageHeight - 20);
+        // If first page, add "This book is personally customized for..."
+        if ($isFirstPage) {
+            $pdf->SetFont('helvetica', 'B', 11);
+            $pdf->SetTextColor(0, 0, 128); // Dark blue for first line
+            
+            // Position at bottom
+            $pdf->SetXY(0, $pageHeight - 25);
+            $pdf->Cell($pageWidth, 8, "This book is personally customized for {$customerName}", 0, 1, 'C', false);
+        }
         
-        // Add licensed to text
-        $footerText = "Licensed to: {$customerName} | Valid: " . date('Y-m-d');
-        $pdf->Cell($pageWidth, 10, $footerText, 0, 1, 'C', false);
+        // Add "Licensed to: Customer Name | Valid: Date" on EVERY page (BOLD)
+        $pdf->SetFont('helvetica', 'B', 10); // Bold font
+        $pdf->SetTextColor(0, 0, 0); // Black color
+        
+        // Position at bottom
+        $pdf->SetXY(0, $pageHeight - 15);
+        $footerText = "Licensed to: {$customerName} | Valid: {$validDate}";
+        $pdf->Cell($pageWidth, 8, $footerText, 0, 1, 'C', false);
         
         // Reset text color
         $pdf->SetTextColor(0, 0, 0);
