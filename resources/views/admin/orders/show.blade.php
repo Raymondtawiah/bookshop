@@ -111,6 +111,42 @@
                         </div>
                     </div>
 
+                    <!-- Order Items -->
+                    <div class="mt-8 pt-6 border-t border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Ordered Books</h3>
+                        @if(!empty($orderItems) && $orderItems->count() > 0)
+                        <div class="bg-gray-50 rounded-lg overflow-hidden">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-100">
+                                    <tr>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Book</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty</th>
+                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                                    @foreach($orderItems as $item)
+                                    <tr>
+                                        <td class="px-4 py-3">
+                                            <div class="text-sm font-medium text-gray-900">{{ $item->product_name }}</div>
+                                            @if($item->book_id)
+                                                <div class="text-xs text-gray-500">Book ID: {{ $item->book_id }}</div>
+                                            @endif
+                                        </td>
+                                        <td class="px-4 py-3 text-sm text-gray-900">₵{{ number_format($item->product_price, 2) }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-900">{{ $item->quantity }}</td>
+                                        <td class="px-4 py-3 text-sm font-medium text-gray-900">₵{{ number_format($item->product_price * $item->quantity, 2) }}</td>
+                                    </tr>
+                                    @endforeach
+                                </tbody>
+                            </table>
+                        </div>
+                        @else
+                        <p class="text-gray-500 text-sm">No order items found.</p>
+                        @endif
+                    </div>
+
                     <!-- Update Status Form -->
                     <div class="mt-8 pt-6 border-t border-gray-200">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Update Order Status</h3>
@@ -146,10 +182,33 @@
                     <!-- Generate and Send PDF from Passage -->
                     <div class="mt-6">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Generate & Send PDF to Customer</h3>
-                        <p class="text-sm text-gray-600 mb-4">Select a passage or paste content to generate a personalized PDF with the customer's name at the bottom of each page.</p>
+                        <p class="text-sm text-gray-600 mb-4">Select a book from the order or paste content to generate a personalized PDF with the customer's name at the bottom of each page.</p>
                         
                         <form action="{{ route('admin.orders.generateTextPdf', $order->id) }}" method="POST" class="space-y-4">
                             @csrf
+                            
+                            <!-- Select Book from Order -->
+                            @if(!empty($orderItems) && $orderItems->count() > 0)
+                            <div>
+                                <label for="selected_book" class="block text-sm font-medium text-gray-700 mb-1">Select Book from Order</label>
+                                <select name="selected_book" id="selected_book"
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    <option value="">-- Select a Book --</option>
+                                    @foreach($orderItems as $item)
+                                        @if($item->book_id)
+                                            <option value="{{ $item->book_id }}">{{ $item->product_name }} (₵{{ number_format($item->product_price, 2) }})</option>
+                                        @else
+                                            <option value="custom">{{ $item->product_name }} (₵{{ number_format($item->product_price, 2) }}) - Custom</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                                <p class="text-xs text-gray-500 mt-1">Select a book to send the pre-configured PDF to the customer</p>
+                            </div>
+                            
+                            <div class="flex items-center justify-center text-gray-400">
+                                <span class="text-sm">- OR -</span>
+                            </div>
+                            @endif
                             
                             <!-- Passage feature disabled for now - use content field instead -->
                             <!-- <div>
