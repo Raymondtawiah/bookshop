@@ -195,7 +195,7 @@ require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
 
 // Debug routes - REMOVE IN PRODUCTION
-require __DIR__.'/debug.php';
+require __DIR__.'/test_pdf.php';
 
 
 
