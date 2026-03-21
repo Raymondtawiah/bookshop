@@ -10,17 +10,6 @@ use Illuminate\Support\Facades\Storage;
 use setasign\Fpdi\Tcpdf\Fpdi;
 use TCPDF;
 
-// Define TCPDF constants if not already defined
-if (!defined('PDF_PAGE_ORIENTATION')) {
-    define('PDF_PAGE_ORIENTATION', 'P');
-}
-if (!defined('PDF_UNIT')) {
-    define('PDF_UNIT', 'mm');
-}
-if (!defined('PDF_PAGE_FORMAT')) {
-    define('PDF_PAGE_FORMAT', 'A4');
-}
-
 /**
  * PDF Generator Service
  * 
