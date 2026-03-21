@@ -109,30 +109,21 @@ class PassageService
      */
     public function getPassageName($key, ?string $default = null): ?string
     {
-        logger("PassageService: getPassageName called with key: " . var_export($key, true) . " (type: " . gettype($key) . ")");
-        
         if ($key === null || $key === '') {
-            logger("PassageService: key is null or empty, returning default: {$default}");
             return $default;
         }
         
         // Cast to string to handle integer keys from dropdowns
         $stringKey = (string) $key;
-        logger("PassageService: converted key to string: '{$stringKey}'");
         
         $passageNames = $this->getPassageNames();
-        logger("PassageService: available passage names: " . json_encode($passageNames));
         
         // Check if key exists
         if (!array_key_exists($stringKey, $passageNames)) {
-            logger("PassageService: key not found, available keys: " . json_encode(array_keys($passageNames)));
             return $default;
         }
         
-        $result = $passageNames[$stringKey];
-        logger("PassageService: result: {$result}");
-        
-        return $result;
+        return $passageNames[$stringKey];
     }
 
     /**

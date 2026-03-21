@@ -130,36 +130,13 @@ class OrderController extends Controller
         $content = '';
         $title = $request->title ?? 'Document';
         
-        Log::info("OrderController: passage = " . var_export($request->passage, true) . ", content = " . var_export($request->content, true));
-        
-        // Force passage to string to handle any integer values from dropdown
-        $passageKey = is_scalar($request->passage) ? (string) $request->passage : $request->passage;
-        Log::info("OrderController: converted passage key to: " . var_export($passageKey, true));
-        
-        if ($passageKey) {
-            Log::info("OrderController: Loading passage with key: " . var_export($passageKey, true));
-            // Load content from passage file
-            $content = $this->passageService->getPassage($passageKey);
-            Log::info("OrderController: Loaded content length: " . ($content ? strlen($content) : 0));
-            if (!$content) {
-                return redirect()->back()->withInput()->with('error', 'Selected passage not found.');
-            }
-            // Use passage name as title (delegated to service for proper key handling)
-            $title = $this->passageService->getPassageName($passageKey, $title);
-            Log::info("OrderController: Title set to: {$title}");
-        } elseif ($request->content) {
-            // Use directly pasted content
+        // Use pasted content only - skip passage dropdown for now
+        if (!empty($request->content)) {
             $content = $request->content;
         } else {
-            return redirect()->back()->withInput()->with('error', 'Please select a passage or enter content.');
+            return redirect()->back()->withInput()->with('error', 'Please paste some content for the PDF.');
         }
 
-        // Debug logging
-        logger("OrderController: Generating PDF for order #{$order->id}");
-        logger("OrderController: customer_name = " . var_export($order->customer_name, true));
-        logger("OrderController: title = " . $title);
-        logger("OrderController: content length = " . strlen($content));
-        
         try {
             // Use the OrderPdfService to generate PDF from text and send
             $result = $this->orderPdfService->generateFromTextAndSend($order, $content, $title);
@@ -170,13 +147,7 @@ class OrderController extends Controller
                 return redirect()->back()->withInput()->with('error', $result['message']);
             }
         } catch (\Exception $e) {
-            $errorMsg = $e->getMessage();
-            $trace = $e->getTraceAsString();
-            logger("PDF generation ERROR: " . $errorMsg);
-            logger("Stack trace: " . $trace);
-            
-            // Return detailed error for debugging
-            return redirect()->back()->withInput()->with('error', 'Error: ' . $errorMsg . ' | Trace: ' . substr($trace, 0, 500));
+            return redirect()->back()->withInput()->with('error', 'Error generating PDF: ' . $e->getMessage());
         }
     }
 
