@@ -110,8 +110,8 @@ class PdfGeneratorService implements PdfGeneratorInterface
             $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
             
             // Set document information
-            $pdf->SetCreator('Bookshop');
-            $pdf->SetAuthor('Bookshop Admin');
+            $pdf->SetCreator('Visa Resources');
+            $pdf->SetAuthor('Visa Resources');
             $pdf->SetTitle($title);
             $pdf->SetSubject('Customer Document');
             
@@ -182,9 +182,21 @@ class PdfGeneratorService implements PdfGeneratorInterface
      */
     protected function addTextFooter(TCPDF $pdf, string $customerName, string $validDate, bool $isFirstPage = false): void
     {
-        // Get page dimensions
-        $pageWidth = $pdf->getPageWidth();
-        $pageHeight = $pdf->getPageHeight();
+        // Use fixed A4 dimensions in mm as fallback
+        $pageWidth = 210; // A4 width in mm
+        $pageHeight = 297; // A4 height in mm
+        
+        // Try to get actual page dimensions
+        try {
+            if (method_exists($pdf, 'getPageWidth') && $pdf->getPageWidth()) {
+                $pageWidth = $pdf->getPageWidth();
+            }
+            if (method_exists($pdf, 'getPageHeight') && $pdf->getPageHeight()) {
+                $pageHeight = $pdf->getPageHeight();
+            }
+        } catch (\Exception $e) {
+            // Use defaults
+        }
         
         // Define footer margins
         $footerBottom = 10; // 10mm from bottom
