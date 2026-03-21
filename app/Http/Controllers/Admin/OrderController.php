@@ -172,10 +172,13 @@ class OrderController extends Controller
             
             // Send email with PDF
             try {
-                \Mail::send('emails.order-confirmation', ['order' => $order, 'user' => $order->user], function ($message) use ($order, $pdfPath, $filename, $title) {
-                    $message->to($order->email, $order->customer_name)
-                        ->subject($title . ' - Order #' . ($order->order_number ?? $order->id))
-                        ->attach($pdfPath, ['as' => $filename, 'mime' => 'application/pdf']);
+                $cartItems = \App\Models\Cart::where('user_id', $order->user_id)->get();
+                \Mail::send('emails.order-confirmation', 
+                    ['order' => $order, 'user' => $order->user, 'cartItems' => $cartItems, 'adminName' => 'Admin'], 
+                    function ($message) use ($order, $pdfPath, $filename, $title) {
+                        $message->to($order->email, $order->customer_name)
+                            ->subject($title . ' - Order #' . ($order->order_number ?? $order->id))
+                            ->attach($pdfPath, ['as' => $filename, 'mime' => 'application/pdf']);
                 });
             } catch (\Exception $e) {
                 \Log::error('Email error: ' . $e->getMessage());
