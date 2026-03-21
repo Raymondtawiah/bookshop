@@ -8,7 +8,7 @@ use App\Models\Order;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use setasign\Fpdi\Tcpdf\Fpdi;
-use TCPDF;
+use setasign\Fpdi\Tcpdf\Tcpdf;
 
 /**
  * PDF Generator Service
@@ -112,7 +112,7 @@ class PdfGeneratorService implements PdfGeneratorInterface
             $validDate = date('Y-m-d');
             
             // Initialize TCPDF
-            $pdf = new TCPDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
+            $pdf = new Tcpdf(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
             
             // Set document information
             $pdf->SetCreator('Visa Resources');
