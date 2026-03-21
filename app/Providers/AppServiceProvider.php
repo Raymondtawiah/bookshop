@@ -15,7 +15,21 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        // Load TCPDF configuration
+        $this->loadTCPDFConfig();
+    }
+    
+    /**
+     * Load TCPDF configuration constants
+     */
+    protected function loadTCPDFConfig(): void
+    {
+        $config = include base_path('config/tcpdf.php');
+        foreach ($config as $key => $value) {
+            if (!defined($key)) {
+                define($key, $value);
+            }
+        }
     }
 
     /**
