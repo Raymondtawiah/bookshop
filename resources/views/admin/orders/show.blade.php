@@ -159,7 +159,7 @@
                                     <option value="">-- Select a Passage --</option>
                                     @if(!empty($passageNames))
                                         @foreach($passageNames as $key => $name)
-                                            <option value="{{ $key }}">{{ $name }}</option>
+                                            <option value="{{ strval($key) }}">{{ $name }}</option>
                                         @endforeach
                                     @else
                                         <option value="" disabled>No passages available</option>
