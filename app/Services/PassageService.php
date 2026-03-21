@@ -89,7 +89,9 @@ class PassageService
         $names = [];
         
         foreach ($passages as $key => $passage) {
-            $names[$key] = $passage['name'];
+            // Ensure key is always a string
+            $stringKey = (string) $key;
+            $names[$stringKey] = $passage['name'];
         }
         
         return $names;
