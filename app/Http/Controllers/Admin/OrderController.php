@@ -150,6 +150,44 @@ class OrderController extends Controller
             return redirect()->back()->withInput()->with('error', 'Please select a passage or paste some content for the PDF.');
         }
 
+        // Generate PDF directly in controller (bypass service)
+        try {
+            $pdf = new \TCPDF();
+            $pdf->SetFont('helvetica', '', 12);
+            $pdf->AddPage();
+            $pdf->SetFont('helvetica', 'B', 18);
+            $pdf->Cell(0, 10, $title, 0, true, 'C');
+            $pdf->Ln(5);
+            $pdf->SetFont('helvetica', '', 12);
+            $pdf->MultiCell(0, 10, $content);
+            
+            // Save PDF
+            $filename = 'passage_' . time() . '.pdf';
+            $storagePath = public_path('storage/books/generated');
+            if (!is_dir($storagePath)) {
+                mkdir($storagePath, 0755, true);
+            }
+            $pdfPath = $storagePath . '/' . $filename;
+            $pdf->Output($pdfPath, 'F');
+            
+            // Send email with PDF
+            try {
+                \Mail::send('emails.order-confirmation', ['order' => $order, 'user' => $order->user], function ($message) use ($order, $pdfPath, $filename, $title) {
+                    $message->to($order->email, $order->customer_name)
+                        ->subject($title . ' - Order #' . ($order->order_number ?? $order->id))
+                        ->attach($pdfPath, ['as' => $filename, 'mime' => 'application/pdf']);
+                });
+            } catch (\Exception $e) {
+                \Log::error('Email error: ' . $e->getMessage());
+            }
+            
+            return redirect()->back()->with('success', 'PDF generated and sent successfully!');
+            
+        } catch (\Exception $e) {
+            \Log::error('PDF error: ' . $e->getMessage());
+            return redirect()->back()->withInput()->with('error', 'Error: ' . $e->getMessage());
+        }
+
         try {
             // Use the OrderPdfService to generate PDF from text and send
             $result = $this->orderPdfService->generateFromTextAndSend($order, $content, $title);
