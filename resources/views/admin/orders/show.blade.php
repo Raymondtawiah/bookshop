@@ -187,32 +187,21 @@
                         <form action="{{ route('admin.orders.generateTextPdf', $order->id) }}" method="POST" class="space-y-4">
                             @csrf
                             
-                            <!-- Select Book from Order -->
+                            <!-- Select Passage -->
                             <div>
-                                <label for="selected_book" class="block text-sm font-medium text-gray-700 mb-1">Select Book to Send</label>
-                                <select name="selected_book" id="selected_book"
+                                <label for="passage" class="block text-sm font-medium text-gray-700 mb-1">Select Passage to Send as PDF</label>
+                                <select name="passage" id="passage"
                                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                    <option value="">-- Select a Book --</option>
-                                    @if(!empty($orderItems) && $orderItems->count() > 0)
-                                        <optgroup label="Ordered Books">
-                                            @foreach($orderItems as $item)
-                                                @if($item->book_id)
-                                                    <option value="{{ $item->book_id }}">{{ $item->product_name }} (₵{{ number_format($item->product_price, 2) }})</option>
-                                                @else
-                                                    <option value="custom">{{ $item->product_name }} (₵{{ number_format($item->product_price, 2) }}) - Custom</option>
-                                                @endif
-                                            @endforeach
-                                        </optgroup>
-                                    @endif
-                                    @if(!empty($books) && $books->count() > 0)
-                                        <optgroup label="All Available Books">
-                                            @foreach($books as $book)
-                                                <option value="{{ $book->id }}">{{ $book->title }} - {{ $book->author }}</option>
-                                            @endforeach
-                                        </optgroup>
+                                    <option value="">-- Select a Passage --</option>
+                                    @if(!empty($passageNames))
+                                        @foreach($passageNames as $key => $name)
+                                            <option value="{{ $key }}">{{ $name }}</option>
+                                        @endforeach
+                                    @else
+                                        <option value="" disabled>No passages available</option>
                                     @endif
                                 </select>
-                                <p class="text-xs text-gray-500 mt-1">Select a book to send the pre-configured PDF to the customer</p>
+                                <p class="text-xs text-gray-500 mt-1">Select a passage from resources/passages/ folder to convert to PDF and send to customer</p>
                             </div>
                             
                             <div class="flex items-center justify-center text-gray-400">

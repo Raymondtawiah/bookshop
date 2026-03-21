@@ -130,11 +130,24 @@ class OrderController extends Controller
         $content = '';
         $title = $request->title ?? 'Document';
         
-        // Use pasted content only - skip passage dropdown for now
-        if (!empty($request->content)) {
+        // First check if a passage is selected
+        if (!empty($request->passage)) {
+            $passageContent = $this->passageService->getPassage($request->passage);
+            if ($passageContent) {
+                $content = $passageContent;
+                // Use passage name as title if no custom title provided
+                if (empty($request->title)) {
+                    $passageName = $this->passageService->getPassageName($request->passage);
+                    $title = $passageName ?? 'Document';
+                }
+            } else {
+                return redirect()->back()->withInput()->with('error', 'Selected passage not found.');
+            }
+        } elseif (!empty($request->content)) {
+            // Use pasted content
             $content = $request->content;
         } else {
-            return redirect()->back()->withInput()->with('error', 'Please paste some content for the PDF.');
+            return redirect()->back()->withInput()->with('error', 'Please select a passage or paste some content for the PDF.');
         }
 
         try {
