@@ -94,6 +94,30 @@ class PassageService
     }
 
     /**
+     * Get a specific passage name by key (supports both string and integer keys)
+     * 
+     * This method handles the conversion of integer keys from dropdown selections
+     * to string keys used in the internal array.
+     * 
+     * @param string|int $key The passage key from request
+     * @param string|null $default Default value if key not found
+     * @return string|null
+     */
+    public function getPassageName($key, ?string $default = null): ?string
+    {
+        if ($key === null || $key === '') {
+            return $default;
+        }
+        
+        // Cast to string to handle integer keys from dropdowns
+        $stringKey = (string) $key;
+        
+        $passageNames = $this->getPassageNames();
+        
+        return $passageNames[$stringKey] ?? $default;
+    }
+
+    /**
      * Format filename to readable name
      * 
      * @param string $filename
