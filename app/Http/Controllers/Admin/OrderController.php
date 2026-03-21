@@ -132,13 +132,13 @@ class OrderController extends Controller
         
         // First check if a passage is selected
         if (!empty($request->passage)) {
-            $passageContent = $this->passageService->getPassage($request->passage);
-            if ($passageContent) {
-                $content = $passageContent;
+            // Directly read the passage file
+            $passagePath = resource_path('passages/' . $request->passage . '.txt');
+            if (file_exists($passagePath)) {
+                $content = file_get_contents($passagePath);
                 // Use passage name as title if no custom title provided
                 if (empty($request->title)) {
-                    $passageName = $this->passageService->getPassageName($request->passage);
-                    $title = $passageName ?? 'Document';
+                    $title = str_replace(['_', '-'], ' ', ucwords($request->passage, ' _-'));
                 }
             } else {
                 return redirect()->back()->withInput()->with('error', 'Selected passage not found.');
