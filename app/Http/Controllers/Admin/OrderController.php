@@ -151,10 +151,10 @@ class OrderController extends Controller
         }
 
         // Debug logging
-        Log::debug("OrderController: Generating PDF for order #{$order->id}");
-        Log::debug("OrderController: customer_name = " . var_export($order->customer_name, true));
-        Log::debug("OrderController: title = " . $title);
-        Log::debug("OrderController: content length = " . strlen($content));
+        logger("OrderController: Generating PDF for order #{$order->id}");
+        logger("OrderController: customer_name = " . var_export($order->customer_name, true));
+        logger("OrderController: title = " . $title);
+        logger("OrderController: content length = " . strlen($content));
         
         try {
             // Use the OrderPdfService to generate PDF from text and send
@@ -166,9 +166,13 @@ class OrderController extends Controller
                 return redirect()->back()->withInput()->with('error', $result['message']);
             }
         } catch (\Exception $e) {
-            Log::error("PDF generation error: " . $e->getMessage());
-            Log::error("Stack trace: " . $e->getTraceAsString());
-            return redirect()->back()->withInput()->with('error', 'Error generating PDF: ' . $e->getMessage());
+            $errorMsg = $e->getMessage();
+            $trace = $e->getTraceAsString();
+            logger("PDF generation ERROR: " . $errorMsg);
+            logger("Stack trace: " . $trace);
+            
+            // Return detailed error for debugging
+            return redirect()->back()->withInput()->with('error', 'Error: ' . $errorMsg . ' | Trace: ' . substr($trace, 0, 500));
         }
     }
 
