@@ -143,25 +143,65 @@
                         </form>
                     </div>
 
-                    <!-- Actions -->
+                    <!-- Generate and Send PDF from Passage -->
                     <div class="mt-6">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Send PDF to Customer</h3>
-                        <form action="{{ route('admin.orders.sendPdf', $order->id) }}" method="POST" enctype="multipart/form-data" class="flex flex-wrap gap-4 items-end">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Generate & Send PDF to Customer</h3>
+                        <p class="text-sm text-gray-600 mb-4">Select a passage or paste content to generate a personalized PDF with the customer's name at the bottom of each page.</p>
+                        
+                        <form action="{{ route('admin.orders.generateTextPdf', $order->id) }}" method="POST" class="space-y-4">
                             @csrf
-                            <div class="flex-1 min-w-[200px]">
-                                <label for="pdf_file" class="block text-sm font-medium text-gray-700 mb-1">Upload PDF</label>
-                                <input type="file" name="pdf_file" id="pdf_file" accept=".pdf" required
+                            
+                            <!-- Option 1: Select Passage -->
+                            <div>
+                                <label for="passage" class="block text-sm font-medium text-gray-700 mb-1">Select Passage (optional)</label>
+                                <select name="passage" id="passage"
                                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                    <option value="">-- Select a Passage --</option>
+                                    @if(!empty($passageNames))
+                                        @foreach($passageNames as $key => $name)
+                                            <option value="{{ $key }}">{{ $name }}</option>
+                                        @endforeach
+                                    @else
+                                        <option value="" disabled>No passages available</option>
+                                    @endif
+                                </select>
+                                <p class="text-xs text-gray-500 mt-1">Passages are stored in resources/passages/ folder</p>
                             </div>
-                            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 inline-flex items-center gap-2">
+
+                            <div class="flex items-center justify-center text-gray-400">
+                                <span class="text-sm">- OR -</span>
+                            </div>
+
+                            <!-- Option 2: Paste Content -->
+                            <div>
+                                <label for="content" class="block text-sm font-medium text-gray-700 mb-1">Paste Content (optional)</label>
+                                <textarea name="content" id="content" rows="6"
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    placeholder="Paste your content here... This will be converted to PDF with customer's name at the bottom."></textarea>
+                            </div>
+
+                            <div>
+                                <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Document Title (optional)</label>
+                                <input type="text" name="title" id="title" 
+                                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    placeholder="e.g., Visa Application Guide">
+                            </div>
+
+                            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2">
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                                 </svg>
-                                Upload & Send
+                                Generate & Send PDF
                             </button>
                         </form>
+                        
                         @if($order->pdf_sent && $order->pdf_sent_at)
-                        <p class="mt-2 text-sm text-green-600">PDF sent on {{ $order->pdf_sent_at->format('M j, Y g:i A') }}</p>
+                        <p class="mt-3 text-sm text-green-600 flex items-center gap-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            PDF sent on {{ $order->pdf_sent_at->format('M j, Y g:i A') }}
+                        </p>
                         @endif
                     </div>
 

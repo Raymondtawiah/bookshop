@@ -5,6 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use App\Models\Cart;
+use App\Models\Book;
+use App\Services\OrderPdfService;
+use App\Services\PassageService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -12,6 +15,21 @@ use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
 {
+    protected OrderPdfService $orderPdfService;
+    protected PassageService $passageService;
+
+    /**
+     * Constructor - inject OrderPdfService (Dependency Injection)
+     * 
+     * This follows the Dependency Inversion Principle (DIP) -
+     * The controller depends on abstractions (services), not concrete implementations.
+     */
+    public function __construct(OrderPdfService $orderPdfService, PassageService $passageService)
+    {
+        $this->orderPdfService = $orderPdfService;
+        $this->passageService = $passageService;
+    }
+
     /**
      * Display all orders
      */
@@ -34,7 +52,17 @@ class OrderController extends Controller
         // Get order items from cart (since we store them there temporarily)
         $orderItems = Cart::where('user_id', $order->user_id)->get();
         
-        return view('admin.orders.show', compact('order', 'orderItems'));
+        // Get all books with PDFs for selection
+        $books = Book::whereNotNull('book_pdf')
+            ->where('book_pdf', '!=', '')
+            ->orderBy('title')
+            ->get();
+        
+        // Get all passages for selection
+        $passages = $this->passageService->getAllPassages();
+        $passageNames = $this->passageService->getPassageNames();
+        
+        return view('admin.orders.show', compact('order', 'orderItems', 'books', 'passages', 'passageNames'));
     }
 
     /**
@@ -54,6 +82,77 @@ class OrderController extends Controller
         ]);
 
         return redirect()->back()->with('success', 'Order status updated successfully!');
+    }
+
+    /**
+     * Generate and send PDF to customer using selected book
+     * 
+     * This follows the Single Responsibility Principle (SRP) -
+     * This method handles the specific use case of generating PDF from book and sending.
+     */
+    public function generateAndSendPdf(Request $request, $id)
+    {
+        $request->validate([
+            'book_id' => 'required|integer|exists:books,id'
+        ]);
+
+        $order = Order::with('user')->findOrFail($id);
+        $bookId = $request->book_id;
+
+        // Use the OrderPdfService to generate and send PDF
+        $result = $this->orderPdfService->generateAndSendPdf($order, $bookId);
+
+        if ($result['success']) {
+            return redirect()->back()->with('success', $result['message']);
+        } else {
+            return redirect()->back()->withInput()->with('error', $result['message']);
+        }
+    }
+
+    /**
+     * Generate and send PDF from text content
+     * 
+     * This allows admin to paste text or select passage and generate a PDF
+     * with the customer's name at the bottom of each page.
+     */
+    public function generateFromText(Request $request, $id)
+    {
+        // Validate either passage or content is provided
+        $request->validate([
+            'passage' => 'nullable|string',
+            'content' => 'nullable|string|min:1',
+            'title' => 'nullable|string|max:255'
+        ]);
+
+        $order = Order::with('user')->findOrFail($id);
+        
+        // Check if passage is selected
+        $content = '';
+        $title = $request->title ?? 'Document';
+        
+        if ($request->passage) {
+            // Load content from passage file
+            $content = $this->passageService->getPassage($request->passage);
+            if (!$content) {
+                return redirect()->back()->withInput()->with('error', 'Selected passage not found.');
+            }
+            // Use passage name as title
+            $title = $this->passageService->getPassageNames()[$request->passage] ?? $title;
+        } elseif ($request->content) {
+            // Use directly pasted content
+            $content = $request->content;
+        } else {
+            return redirect()->back()->withInput()->with('error', 'Please select a passage or enter content.');
+        }
+
+        // Use the OrderPdfService to generate PDF from text and send
+        $result = $this->orderPdfService->generateFromTextAndSend($order, $content, $title);
+
+        if ($result['success']) {
+            return redirect()->back()->with('success', $result['message']);
+        } else {
+            return redirect()->back()->withInput()->with('error', $result['message']);
+        }
     }
 
     /**
