@@ -361,14 +361,6 @@
                                 <input type="hidden" name="product_name" value="{{ $book->title }}">
                                 <input type="hidden" name="product_price" value="{{ $book->price }}">
                                 <input type="hidden" name="book_id" value="{{ $book->id }}">
-                                <div class="flex items-center gap-1 mb-2">
-                                    <label for="qty-{{ $book->id }}" class="text-xs text-gray-600">Qty:</label>
-                                    <select name="quantity" id="qty-{{ $book->id }}" class="w-14 px-1 py-1 text-xs border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                        @for($i = 1; $i <= 10; $i++)
-                                            <option value="{{ $i }}">{{ $i }}</option>
-                                        @endfor
-                                    </select>
-                                </div>
                                 <button type="submit" class="w-full px-3 py-1.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
                                     Add to Cart
                                 </button>
