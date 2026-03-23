@@ -39,7 +39,13 @@ class OrderController extends Controller
             ->latest()
             ->paginate(15);
 
-        return view('admin.orders.index', compact('orders'));
+        // Get order items for each order
+        $orderItems = [];
+        foreach ($orders as $order) {
+            $orderItems[$order->id] = Cart::where('user_id', $order->user_id)->get();
+        }
+
+        return view('admin.orders.index', compact('orders', 'orderItems'));
     }
 
     /**

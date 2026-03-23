@@ -29,9 +29,10 @@
                         <thead class="bg-gray-50">
                             <tr>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Order #</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Book(s)</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Customer</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Contact</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Delivery Address</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Location</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Payment</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
@@ -44,6 +45,21 @@
                             <tr class="hover:bg-gray-50">
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="text-sm font-medium text-indigo-600">#{{ $order->order_number ?? $order->id }}</span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    @php
+                                        $items = $orderItems[$order->id] ?? collect();
+                                    @endphp
+                                    @if($items->count() > 0)
+                                        <div class="text-sm font-medium text-gray-900">
+                                            @foreach($items as $item)
+                                                {{ $item->product_name }}@if(!$loop->last), @endif
+                                            @endforeach
+                                        </div>
+                                        <div class="text-xs text-gray-500">Qty: {{ $items->sum('quantity') }}</div>
+                                    @else
+                                        <span class="text-sm text-gray-400">-</span>
+                                    @endif
                                 </td>
                                 <td class="px-6 py-4">
                                     <div class="text-sm font-medium text-gray-900">{{ $order->customer_name }}</div>
