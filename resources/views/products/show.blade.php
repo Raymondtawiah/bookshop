@@ -1,4 +1,4 @@
-i<!DOCTYPE html>
+ i<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
     <head>
         <meta charset="utf-8">
@@ -110,16 +110,7 @@ i<!DOCTYPE html>
                                         <input type="hidden" name="product_name" value="{{ $book->title }}">
                                         <input type="hidden" name="product_price" value="{{ $book->price }}">
                                         <input type="hidden" name="book_id" value="{{ $book->id }}">
-                                        
-                                        <!-- Quantity Selector -->
-                                        <div class="flex items-center gap-2">
-                                            <label for="quantity" class="text-sm font-medium text-gray-700">Qty:</label>
-                                            <select name="quantity" id="quantity" class="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                                @for($i = 1; $i <= 10; $i++)
-                                                    <option value="{{ $i }}">{{ $i }}</option>
-                                                @endfor
-                                            </select>
-                                        </div>
+                                        <input type="hidden" name="quantity" value="1">
                                         
                                         <button type="submit" class="flex-1 px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
                                             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">

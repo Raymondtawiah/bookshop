@@ -114,7 +114,10 @@
                     <!-- Order Items -->
                     <div class="mt-8 pt-6 border-t border-gray-200">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Ordered Books</h3>
-                        @if(!empty($orderItems) && $orderItems->count() > 0)
+                        @php
+                            $items = is_array($orderItems) ? collect($orderItems) : $orderItems;
+                        @endphp
+                        @if(!empty($items) && $items->count() > 0)
                         <div class="bg-gray-50 rounded-lg overflow-hidden">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-100">
@@ -126,17 +129,17 @@
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($orderItems as $item)
+                                    @foreach($items as $item)
                                     <tr>
                                         <td class="px-4 py-3">
-                                            <div class="text-sm font-medium text-gray-900">{{ $item->product_name }}</div>
-                                            @if($item->book_id)
-                                                <div class="text-xs text-gray-500">Book ID: {{ $item->book_id }}</div>
+                                            <div class="text-sm font-medium text-gray-900">{{ is_array($item) ? $item['product_name'] : $item->product_name }}</div>
+                                            @if(is_array($item) ? ($item['book_id'] ?? null) : $item->book_id)
+                                                <div class="text-xs text-gray-500">Book ID: {{ is_array($item) ? $item['book_id'] : $item->book_id }}</div>
                                             @endif
                                         </td>
-                                        <td class="px-4 py-3 text-sm text-gray-900">₵{{ number_format($item->product_price, 2) }}</td>
-                                        <td class="px-4 py-3 text-sm text-gray-900">{{ $item->quantity }}</td>
-                                        <td class="px-4 py-3 text-sm font-medium text-gray-900">₵{{ number_format($item->product_price * $item->quantity, 2) }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-900">₵{{ number_format(is_array($item) ? $item['product_price'] : $item->product_price, 2) }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-900">{{ is_array($item) ? $item['quantity'] : $item->quantity }}</td>
+                                        <td class="px-4 py-3 text-sm font-medium text-gray-900">₵{{ number_format((is_array($item) ? $item['product_price'] : $item->product_price) * (is_array($item) ? $item['quantity'] : $item->quantity), 2) }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>

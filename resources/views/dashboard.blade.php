@@ -11,6 +11,17 @@
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="BookShop" />
+        <style>
+            /* Hide scrollbar for Chrome, Safari and Opera */
+            .scrollbar-hide::-webkit-scrollbar {
+                display: none;
+            }
+            /* Hide scrollbar for IE, Edge and Firefox */
+            .scrollbar-hide {
+                -ms-overflow-style: none;  /* IE and Edge */
+                scrollbar-width: none;  /* Firefox */
+            }
+        </style>
     </head>
     <body class="bg-gray-50 font-sans">
         <x-customer-navbar />
@@ -39,7 +50,7 @@
                         <a href="{{ route('cart') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all flex items-center gap-2">
                             Cart
                             @php
-                                $cartCount = \App\Models\Cart::where('user_id', auth()->id())->sum('quantity') ?? 0;
+                                $cartCount = \App\Models\Cart::where('user_id', auth()->id())->count();
                             @endphp
                             @if($cartCount > 0)
                                 <span class="bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ $cartCount }}</span>
@@ -139,7 +150,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm text-gray-500">Cart Items</p>
-                            <p class="text-2xl font-bold text-gray-900">{{ \App\Models\Cart::where('user_id', auth()->id())->sum('quantity') ?? 0 }}</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ \App\Models\Cart::where('user_id', auth()->id())->count() }}</p>
                         </div>
                         <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
                             <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -260,26 +271,55 @@
 
             <!-- Featured Books Section -->
             @php
-                $books = \App\Models\Book::latest()->take(8)->get();
+                $featuredBooks = \App\Models\Book::latest()->take(8)->get();
             @endphp
-            @if($books->count() > 0)
-            <div class="mb-8">
-                <h2 class="text-2xl font-bold text-gray-900 mb-4">Featured Books</h2>
+            @if($featuredBooks->count() > 0)
+            <div class="mb-12">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                            </svg>
+                        </div>
+                        <h2 class="text-2xl font-bold text-gray-900">Featured Books</h2>
+                    </div>
+                    <a href="{{ route('home') }}#store" class="text-sm font-medium text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
+                        View All
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
                 
                 <!-- Horizontal scroll container -->
-                <div class="flex overflow-x-auto gap-4 pb-4 scrollbar-hide -mx-4 px-4">
-                    @foreach($books as $book)
-                    <a href="{{ route('products.show', $book->id) }}" class="flex-shrink-0 w-36 sm:w-40">
-                        <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-shadow">
-                            <div class="aspect-[3/4] bg-gray-200 flex items-center justify-center">
-                                <svg class="w-12 h-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                                </svg>
+                <div class="flex overflow-x-auto gap-6 pb-4 scrollbar-hide -mx-4 px-4">
+                    @foreach($featuredBooks as $book)
+                    <a href="{{ route('products.show', $book->id) }}" class="flex-shrink-0 w-44 group">
+                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:border-indigo-200 transition-all duration-300">
+                            <div class="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative overflow-hidden">
+                                @if($book->cover_image)
+                                    <img src="{{ $book->cover_image_url }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                @else
+                                    <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                    </svg>
+                                @endif
+                                <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <span class="bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-medium px-2 py-1 rounded-full shadow-sm">
+                                        View Details
+                                    </span>
+                                </div>
                             </div>
-                            <div class="p-3">
-                                <h3 class="font-semibold text-gray-900 text-sm truncate">{{ $book->title }}</h3>
-                                <p class="text-xs text-gray-500 truncate">{{ $book->author }}</p>
-                                <p class="mt-1 font-bold text-indigo-600 text-sm">₵{{ number_format($book->price, 2) }}</p>
+                            <div class="p-4">
+                                <h3 class="font-semibold text-gray-900 text-sm truncate group-hover:text-indigo-600 transition-colors">{{ $book->title }}</h3>
+                                <p class="text-xs text-gray-500 truncate mt-1">{{ $book->author }}</p>
+                                <div class="mt-3 flex items-center justify-between">
+                                    <p class="font-bold text-lg text-indigo-600">₵{{ number_format($book->price, 2) }}</p>
+                                    @if($book->category)
+                                        <span class="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-full">{{ $book->category }}</span>
+                                    @endif
+                                </div>
                             </div>
                         </div>
                     </a>
@@ -334,39 +374,72 @@
                 </a>
             </div>
 
-            <!-- Books Section -->
-            @if($books && $books->count() > 0)
-            <div class="mb-8">
-                <div class="flex items-center justify-between mb-4">
-                    <h2 class="text-xl font-bold text-gray-900">Available Books</h2>
-                    <a href="{{ route('home') }}#store" class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">View All →</a>
-                </div>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                    @foreach($books->take(4) as $book)
-                    <div class="bg-white rounded-xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-lg transition-all">
-                        <div class="h-40 bg-gray-100 relative overflow-hidden">
-                            @if($book->cover_image)
-                                <img src="{{ $book->cover_image_url }}" alt="{{ $book->title }}" class="w-full h-full object-cover">
-                            @else
-                                <img src="{{ asset('welcome.jpg') }}" alt="{{ $book->title }}" class="w-full h-full object-cover">
-                            @endif
-
+            <!-- Available Books Section -->
+            @php
+                $availableBooks = \App\Models\Book::latest()->take(4)->get();
+            @endphp
+            @if($availableBooks && $availableBooks->count() > 0)
+            <div class="mb-12">
+                <div class="flex items-center justify-between mb-6">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-teal-600 rounded-xl flex items-center justify-center">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                            </svg>
                         </div>
-                        <div class="p-3">
-                            <h3 class="font-semibold text-gray-900 text-sm truncate">{{ $book->title }}</h3>
-                            <p class="text-indigo-600 font-bold">₵{{ number_format($book->price, 2) }}</p>
+                        <h2 class="text-2xl font-bold text-gray-900">Available Books</h2>
+                    </div>
+                    <a href="{{ route('home') }}#store" class="text-sm font-medium text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
+                        View All
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a>
+                </div>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
+                    @foreach($availableBooks as $book)
+                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 group">
+                        <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
+                            @if($book->cover_image)
+                                <img src="{{ $book->cover_image_url }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center">
+                                    <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                    </svg>
+                                </div>
+                            @endif
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
+                                <a href="{{ route('products.show', $book->id) }}" class="bg-white text-gray-900 px-4 py-2 rounded-full text-sm font-medium shadow-lg hover:bg-indigo-600 hover:text-white transition-colors">
+                                    View Details
+                                </a>
+                            </div>
+                        </div>
+                        <div class="p-4">
+                            <h3 class="font-semibold text-gray-900 text-sm truncate group-hover:text-indigo-600 transition-colors">{{ $book->title }}</h3>
+                            <p class="text-xs text-gray-500 mt-1">{{ $book->author }}</p>
+                            <div class="mt-3 flex items-center justify-between">
+                                <p class="font-bold text-xl text-indigo-600">₵{{ number_format($book->price, 2) }}</p>
+                                @if($book->category)
+                                    <span class="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-full">{{ $book->category }}</span>
+                                @endif
+                            </div>
                             @auth
-                            <form action="{{ route('cart.add') }}" method="POST" class="mt-2">
+                            <form action="{{ route('cart.add') }}" method="POST" class="mt-3">
                                 @csrf
                                 <input type="hidden" name="product_name" value="{{ $book->title }}">
                                 <input type="hidden" name="product_price" value="{{ $book->price }}">
                                 <input type="hidden" name="book_id" value="{{ $book->id }}">
-                                <button type="submit" class="w-full px-3 py-1.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
+                                <input type="hidden" name="quantity" value="1">
+                                <button type="submit" class="w-full px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-medium rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                    </svg>
                                     Add to Cart
                                 </button>
                             </form>
                             @else
-                            <a href="{{ route('login') }}" class="block mt-2 text-center px-3 py-1.5 bg-gray-100 text-gray-600 text-sm font-medium rounded-lg hover:bg-gray-200 transition-colors">
+                            <a href="{{ route('login') }}" class="block mt-3 text-center px-4 py-2 bg-gray-100 text-gray-600 text-sm font-medium rounded-xl hover:bg-gray-200 transition-colors">
                                 Sign in to Buy
                             </a>
                             @endauth

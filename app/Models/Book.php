@@ -45,8 +45,11 @@ class Book extends Model
             return $this->cover_image;
         }
         
-        // Use Laravel's Storage facade to generate URL
-        return Storage::disk('public')->url('books/' . $this->cover_image);
+        // Use Laravel's Storage facade to generate URL with cache-busting
+        $url = Storage::disk('public')->url('books/' . $this->cover_image);
+        
+        // Add timestamp to prevent browser caching
+        return $url . '?v=' . $this->updated_at->timestamp;
     }
 
     /**
@@ -61,7 +64,10 @@ class Book extends Model
             return $this->book_pdf;
         }
         
-        // Use Laravel's Storage facade to generate URL
-        return Storage::disk('public')->url('books/' . $this->book_pdf);
+        // Use Laravel's Storage facade to generate URL with cache-busting
+        $url = Storage::disk('public')->url('books/' . $this->book_pdf);
+        
+        // Add timestamp to prevent browser caching
+        return $url . '?v=' . $this->updated_at->timestamp;
     }
 }

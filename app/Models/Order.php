@@ -25,6 +25,7 @@ class Order extends Model
         'paid_at',
         'pdf_sent',
         'pdf_sent_at',
+        'order_items',
     ];
 
     protected $casts = [
@@ -32,7 +33,16 @@ class Order extends Model
         'paid_at' => 'datetime',
         'pdf_sent' => 'boolean',
         'pdf_sent_at' => 'datetime',
+        'order_items' => 'array',
     ];
+
+    /**
+     * Get the order items as a collection
+     */
+    public function getOrderItemsAttribute()
+    {
+        return collect($this->order_items ?? []);
+    }
 
     /**
      * Get the user that owns the order.
