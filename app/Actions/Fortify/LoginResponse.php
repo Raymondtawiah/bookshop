@@ -32,7 +32,7 @@ class LoginResponse implements LoginResponseContract
             return redirect()->route('verification.login');
         }
         
-        // Direct login - redirect to home/welcome page
-        return redirect()->intended(route('home'));
+        // Direct login - redirect to dashboard
+        return redirect()->intended(route('dashboard'));
     }
 }
