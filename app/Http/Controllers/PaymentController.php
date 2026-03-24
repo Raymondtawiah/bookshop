@@ -131,6 +131,16 @@ class PaymentController extends Controller
                 // Get cart items before clearing
                 $cartItems = Cart::where('user_id', Auth::id())->get();
 
+                // Prepare order items data
+                $orderItems = $cartItems->map(function($item) {
+                    return [
+                        'book_id' => $item->book_id,
+                        'product_name' => $item->product_name,
+                        'product_price' => $item->product_price,
+                        'quantity' => $item->quantity,
+                    ];
+                })->toArray();
+
                 // Send confirmation email to customer
                 try {
                     \Log::info('Attempting to send order confirmation email', [
@@ -152,7 +162,8 @@ class PaymentController extends Controller
                 $order->update([
                     'status' => 'paid',
                     'payment_status' => 'completed',
-                    'paid_at' => now()
+                    'paid_at' => now(),
+                    'order_items' => $orderItems,
                 ]);
 
                 return redirect()->route('dashboard')

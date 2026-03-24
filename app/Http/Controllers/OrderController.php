@@ -102,6 +102,7 @@ class OrderController extends Controller
             $order->update([
                 'payment_status' => 'pending',
                 'status' => 'pending_payment',
+                'order_items' => $orderItems,
             ]);
 
             // Clear cart
