@@ -48,23 +48,20 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     @php
-                                        $itemsData = [];
-                                        $rawItems = $order->order_items;
-                                        if ($rawItems) {
-                                            if (is_array($rawItems)) {
-                                                $itemsData = $rawItems;
-                                            } elseif (is_string($rawItems)) {
-                                                $itemsData = json_decode($rawItems, true);
-                                            }
+                                        $items = $order->order_items ?? [];
+                                        if (is_array($items)) {
+                                            $itemsArray = $items;
+                                        } else {
+                                            $itemsArray = [];
                                         }
                                     @endphp
-                                    @if(!empty($itemsData) && is_array($itemsData))
+                                    @if(count($itemsArray) > 0)
                                         <div class="text-sm font-medium text-gray-900">
-                                            @foreach($itemsData as $item)
-                                                {{ $item['product_name'] ?? 'Unknown' }}@if(!$loop->last), @endif
+                                            @foreach($itemsArray as $item)
+                                                {{ is_array($item) ? ($item['product_name'] ?? 'Unknown') : 'Unknown' }}@if(!$loop->last), @endif
                                             @endforeach
                                         </div>
-                                        <div class="text-xs text-gray-500">Qty: {{ array_sum(array_column($itemsData, 'quantity')) }}</div>
+                                        <div class="text-xs text-gray-500">Qty: {{ array_sum(array_column($itemsArray, 'quantity')) }}</div>
                                     @else
                                         <span class="text-sm text-gray-400">-</span>
                                     @endif
