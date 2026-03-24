@@ -52,7 +52,17 @@ class OrderController extends Controller
         // Get order items from the order itself (stored as JSON)
         $orderItems = $order->order_items ?? [];
         
-        return view('admin.orders.show', compact('order', 'orderItems'));
+        // Get all books with PDFs for selection
+        $books = Book::whereNotNull('book_pdf')
+            ->where('book_pdf', '!=', '')
+            ->orderBy('title')
+            ->get();
+        
+        // Get all passages for selection
+        $passages = $this->passageService->getAllPassages();
+        $passageNames = $this->passageService->getPassageNames();
+        
+        return view('admin.orders.show', compact('order', 'orderItems', 'books', 'passages', 'passageNames'));
     }
 
     /**
