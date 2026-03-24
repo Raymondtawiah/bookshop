@@ -115,10 +115,17 @@
                     <div class="mt-8 pt-6 border-t border-gray-200">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Ordered Books</h3>
                         @php
-                            $orderItemsData = $orderItems ?? [];
-                            $items = is_array($orderItemsData) ? collect($orderItemsData) : collect([]);
+                            $items = [];
+                            $orderItemsJson = $order->order_items;
+                            if ($orderItemsJson) {
+                                if (is_array($orderItemsJson)) {
+                                    $items = $orderItemsJson;
+                                } elseif (is_string($orderItemsJson)) {
+                                    $items = json_decode($orderItemsJson, true);
+                                }
+                            }
                         @endphp
-                        @if(!empty($items) && $items->count() > 0)
+                        @if(!empty($items) && is_array($items))
                         <div class="bg-gray-50 rounded-lg overflow-hidden">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-100">
@@ -133,14 +140,17 @@
                                     @foreach($items as $item)
                                     <tr>
                                         <td class="px-4 py-3">
-                                            <div class="text-sm font-medium text-gray-900">{{ is_array($item) ? ($item['product_name'] ?? 'Unknown') : 'Unknown' }}</div>
-                                            @if(is_array($item) ? ($item['book_id'] ?? null) : (isset($item->book_id) ? $item->book_id : null))
-                                                <div class="text-xs text-gray-500">Book ID: {{ is_array($item) ? ($item['book_id'] ?? '') : ($item->book_id ?? '') }}</div>
-                                            @endif
+                                            <div class="text-sm font-medium text-gray-900">
+                                                @if(isset($item['product_name']) && $item['product_name'])
+                                                    {{ $item['product_name'] }}
+                                                @else
+                                                    Unknown Book
+                                                @endif
+                                            </div>
                                         </td>
-                                        <td class="px-4 py-3 text-sm text-gray-900">₵{{ number_format(is_array($item) ? ($item['product_price'] ?? 0) : ($item->product_price ?? 0), 2) }}</td>
-                                        <td class="px-4 py-3 text-sm text-gray-900">{{ is_array($item) ? ($item['quantity'] ?? 1) : ($item->quantity ?? 1) }}</td>
-                                        <td class="px-4 py-3 text-sm font-medium text-gray-900">₵{{ number_format((is_array($item) ? ($item['product_price'] ?? 0) : ($item->product_price ?? 0)) * (is_array($item) ? ($item['quantity'] ?? 1) : ($item->quantity ?? 1)), 2) }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-900">₵{{ number_format($item['product_price'] ?? 0, 2) }}</td>
+                                        <td class="px-4 py-3 text-sm text-gray-900">{{ $item['quantity'] ?? 1 }}</td>
+                                        <td class="px-4 py-3 text-sm font-medium text-gray-900">₵{{ number_format(($item['product_price'] ?? 0) * ($item['quantity'] ?? 1), 2) }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
