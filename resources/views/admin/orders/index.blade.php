@@ -49,14 +49,19 @@
                                 <td class="px-6 py-4">
                                     @php
                                         $items = $order->order_items ?? [];
+                                        if (is_array($items)) {
+                                            $itemsArray = $items;
+                                        } else {
+                                            $itemsArray = [];
+                                        }
                                     @endphp
-                                    @if(count($items) > 0)
+                                    @if(count($itemsArray) > 0)
                                         <div class="text-sm font-medium text-gray-900">
-                                            @foreach($items as $item)
-                                                {{ $item['product_name'] }}@if(!$loop->last), @endif
+                                            @foreach($itemsArray as $item)
+                                                {{ is_array($item) ? ($item['product_name'] ?? 'Unknown') : 'Unknown' }}@if(!$loop->last), @endif
                                             @endforeach
                                         </div>
-                                        <div class="text-xs text-gray-500">Qty: {{ collect($items)->sum('quantity') }}</div>
+                                        <div class="text-xs text-gray-500">Qty: {{ array_sum(array_column($itemsArray, 'quantity')) }}</div>
                                     @else
                                         <span class="text-sm text-gray-400">-</span>
                                     @endif

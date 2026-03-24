@@ -168,7 +168,7 @@ Route::get('product/{id}', [ProductController::class, 'show'])->name('product.sh
 Route::get('product/{id}/download', [ProductController::class, 'downloadPdf'])->name('product.download');
 
 Route::middleware(['auth', 'verify.customer'])->group(function () {
-    Route::get('dashboard', [HomeController::class, 'index'])->name('dashboard');
+    Route::get('dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
     
     // Profile routes
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile');
