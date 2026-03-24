@@ -49,9 +49,6 @@
                         </a>
                         <a href="{{ route('cart') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all flex items-center gap-2">
                             Cart
-                            @php
-                                $cartCount = \App\Models\Cart::where('user_id', auth()->id())->count();
-                            @endphp
                             @if($cartCount > 0)
                                 <span class="bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ $cartCount }}</span>
                             @endif
@@ -150,7 +147,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm text-gray-500">Cart Items</p>
-                            <p class="text-2xl font-bold text-gray-900">{{ \App\Models\Cart::where('user_id', auth()->id())->count() }}</p>
+                            <p class="text-2xl font-bold text-gray-900">{{ $cartCount }}</p>
                         </div>
                         <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
                             <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
