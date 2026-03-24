@@ -39,13 +39,7 @@ class OrderController extends Controller
             ->latest()
             ->paginate(15);
 
-        // Get order items for each order
-        $orderItems = [];
-        foreach ($orders as $order) {
-            $orderItems[$order->id] = Cart::where('user_id', $order->user_id)->get();
-        }
-
-        return view('admin.orders.index', compact('orders', 'orderItems'));
+        return view('admin.orders.index', compact('orders'));
     }
 
     /**
@@ -55,9 +49,11 @@ class OrderController extends Controller
     {
         $order = Order::with('user')->findOrFail($id);
         
-        // Get order items from cart (since we store them there temporarily)
-        $orderItems = Cart::where('user_id', $order->user_id)->get();
+        // Get order items from the order itself (stored as JSON)
+        $orderItems = $order->order_items ?? [];
         
+        return view('admin.orders.show', compact('order', 'orderItems'));
+    }
         // Get all books with PDFs for selection
         $books = Book::whereNotNull('book_pdf')
             ->where('book_pdf', '!=', '')

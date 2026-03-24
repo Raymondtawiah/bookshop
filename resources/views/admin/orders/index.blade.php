@@ -48,15 +48,15 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     @php
-                                        $items = $orderItems[$order->id] ?? collect();
+                                        $items = $order->order_items ?? [];
                                     @endphp
-                                    @if($items->count() > 0)
+                                    @if(count($items) > 0)
                                         <div class="text-sm font-medium text-gray-900">
                                             @foreach($items as $item)
-                                                {{ $item->product_name }}@if(!$loop->last), @endif
+                                                {{ $item['product_name'] }}@if(!$loop->last), @endif
                                             @endforeach
                                         </div>
-                                        <div class="text-xs text-gray-500">Qty: {{ $items->sum('quantity') }}</div>
+                                        <div class="text-xs text-gray-500">Qty: {{ collect($items)->sum('quantity') }}</div>
                                     @else
                                         <span class="text-sm text-gray-400">-</span>
                                     @endif

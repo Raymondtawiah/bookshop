@@ -60,6 +60,24 @@
                                     </div>
                                 </div>
 
+                                <!-- Order Items -->
+                                @php
+                                    $items = is_array($order->order_items) ? collect($order->order_items) : ($order->order_items ?? collect());
+                                @endphp
+                                @if($items->count() > 0)
+                                <div class="mt-4 pt-4 border-t border-gray-100">
+                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Ordered Books:</h4>
+                                    <div class="space-y-2">
+                                        @foreach($items as $item)
+                                        <div class="flex items-center justify-between text-sm">
+                                            <span class="text-gray-900">{{ is_array($item) ? $item['product_name'] : $item->product_name }}</span>
+                                            <span class="text-gray-500">x{{ is_array($item) ? $item['quantity'] : $item->quantity }}</span>
+                                            <span class="font-medium text-gray-900">₵{{ number_format((is_array($item) ? $item['product_price'] : $item->product_price) * (is_array($item) ? $item['quantity'] : $item->quantity), 2) }}</span>
+                                        </div>
+                                        @endforeach
+                                    </div>
+                                </div>
+                                @endif
 
                             </div>
                         @endforeach

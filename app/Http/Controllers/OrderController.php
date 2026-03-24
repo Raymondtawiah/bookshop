@@ -40,6 +40,16 @@ class OrderController extends Controller
         $paymentMethod = $request->payment_method;
         $reference = 'ORD-' . time() . rand(1000, 9999);
 
+        // Prepare order items data
+        $orderItems = $cartItems->map(function($item) {
+            return [
+                'book_id' => $item->book_id,
+                'product_name' => $item->product_name,
+                'product_price' => $item->product_price,
+                'quantity' => $item->quantity,
+            ];
+        })->toArray();
+
         // Create order with pending payment status
         $order = Order::create([
             'user_id' => Auth::id(),
@@ -52,6 +62,7 @@ class OrderController extends Controller
             'total_amount' => $total,
             'status' => 'pending',
             'order_number' => $reference,
+            'order_items' => $orderItems,
         ]);
 
         // Don't send email here - it will be sent after payment is confirmed in the callback
