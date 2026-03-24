@@ -62,18 +62,25 @@
 
                                 <!-- Order Items -->
                                 @php
-                                    $orderItems = $order->order_items ?? [];
-                                    $items = is_array($orderItems) ? collect($orderItems) : collect([]);
+                                    $orderItemsList = [];
+                                    $rawOrderItems = $order->order_items;
+                                    if ($rawOrderItems) {
+                                        if (is_array($rawOrderItems)) {
+                                            $orderItemsList = $rawOrderItems;
+                                        } elseif (is_string($rawOrderItems)) {
+                                            $orderItemsList = json_decode($rawOrderItems, true);
+                                        }
+                                    }
                                 @endphp
-                                @if($items->count() > 0)
+                                @if(!empty($orderItemsList) && is_array($orderItemsList))
                                 <div class="mt-4 pt-4 border-t border-gray-100">
                                     <h4 class="text-sm font-medium text-gray-700 mb-2">Ordered Books:</h4>
                                     <div class="space-y-2">
-                                        @foreach($items as $item)
+                                        @foreach($orderItemsList as $item)
                                         <div class="flex items-center justify-between text-sm">
-                                            <span class="text-gray-900">{{ is_array($item) ? ($item['product_name'] ?? 'Unknown') : 'Unknown' }}</span>
-                                            <span class="text-gray-500">x{{ is_array($item) ? ($item['quantity'] ?? 1) : 1 }}</span>
-                                            <span class="font-medium text-gray-900">₵{{ number_format((is_array($item) ? ($item['product_price'] ?? 0) : 0) * (is_array($item) ? ($item['quantity'] ?? 1) : 1), 2) }}</span>
+                                            <span class="text-gray-900">{{ $item['product_name'] ?? 'Unknown' }}</span>
+                                            <span class="text-gray-500">x{{ $item['quantity'] ?? 1 }}</span>
+                                            <span class="font-medium text-gray-900">₵{{ number_format(($item['product_price'] ?? 0) * ($item['quantity'] ?? 1), 2) }}</span>
                                         </div>
                                         @endforeach
                                     </div>

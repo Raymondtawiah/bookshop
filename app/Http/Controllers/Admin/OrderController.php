@@ -54,18 +54,6 @@ class OrderController extends Controller
         
         return view('admin.orders.show', compact('order', 'orderItems'));
     }
-        // Get all books with PDFs for selection
-        $books = Book::whereNotNull('book_pdf')
-            ->where('book_pdf', '!=', '')
-            ->orderBy('title')
-            ->get();
-        
-        // Get all passages for selection
-        $passages = $this->passageService->getAllPassages();
-        $passageNames = $this->passageService->getPassageNames();
-        
-        return view('admin.orders.show', compact('order', 'orderItems', 'books', 'passages', 'passageNames'));
-    }
 
     /**
      * Update order status
