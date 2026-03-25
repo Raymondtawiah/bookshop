@@ -89,13 +89,14 @@ class GoogleController extends Controller
             }
             
             // Debug: Log the login details
-            Log::info('Google login successful', [
+            Log::info('Google login successful - about to redirect', [
                 'user_id' => $user->id,
                 'email' => $user->email,
                 'is_admin' => $user->is_admin,
                 'google_id' => $user->google_id,
                 'email_verified_at' => $user->email_verified_at,
-                'auth_check' => Auth::check()
+                'auth_check' => Auth::check(),
+                'session_id' => request()->session()->getId()
             ]);
 
             // Redirect based on user type
@@ -103,8 +104,12 @@ class GoogleController extends Controller
                 return redirect()->route('admin.dashboard');
             }
             
+            // Use explicit URL instead of route() to avoid any caching issues
+            $homeUrl = url('/');
+            Log::info('Redirecting to: ' . $homeUrl);
+            
             // Google login doesn't need email verification - Google already verified it
-            return redirect()->intended(route('home'))
+            return redirect($homeUrl)
                 ->with('success', 'Welcome back!');
 
         } catch (\Exception $e) {
