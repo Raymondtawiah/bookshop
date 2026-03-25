@@ -18,80 +18,31 @@ Route::get('visa-tip', function() {
     return view('visa-tip');
 })->name('visa-tip');
 
-// Google Authentication Routes
-Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
-Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
-
-// Login and Register Routes
-Route::get('login', function() {
-    return view('auth.login');
-})->middleware(['guest'])->name('login');
-
-Route::post('login', function(\Illuminate\Http\Request $request) {
-    $credentials = $request->only('email', 'password');
-    $remember = $request->boolean('remember');
-    
-    $user = \App\Models\User::where('email', $credentials['email'])->first();
-    
-    if (!$user || !\Illuminate\Support\Facades\Hash::check($credentials['password'], $user->password)) {
-        return back()->withErrors([
-            'email' => 'The provided credentials do not match our records.',
-        ])->onlyInput('email');
-    }
-    
-    // Check if user is admin - redirect to admin dashboard
-    if ($user->is_admin) {
-        \Illuminate\Support\Facades\Auth::login($user, $remember);
-        $request->session()->regenerate();
-        return redirect()->route('admin.dashboard');
-    }
-    
-    // For customers, check if email is verified
-    if (!$user->hasVerifiedEmail()) {
-        // Store user ID in session for verification
-        $request->session()->put('pending_login_user_id', $user->id);
-        
-        // Send verification code
-        app(\App\Services\VerificationService::class)->sendCode($user, 'login');
-        
-        return redirect()->route('verification.login');
-    }
-    
-    // Email is verified, log the user in
-    \Illuminate\Support\Facades\Auth::login($user, $remember);
-    $request->session()->regenerate();
-    
-    return redirect()->intended(route('dashboard'));
-})->name('login.store');
-
-Route::get('register', function() {
-    return view('auth.register');
-})->middleware(['guest'])->name('register');
-
-Route::post('register', function(\Illuminate\Http\Request $request) {
-    \Illuminate\Support\Facades\Validator::make($request->all(), [
-        'name' => ['required', 'string', 'max:255'],
-        'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-        'password' => ['required', 'string', 'min:8', 'confirmed'],
-    ])->validate();
-    
-    $user = \App\Models\User::create([
-        'name' => $request->name,
-        'email' => $request->email,
-        'password' => \Illuminate\Support\Facades\Hash::make($request->password),
-    ]);
-    
-    // Store user ID in session for verification
-    $request->session()->put('pending_login_user_id', $user->id);
-    
-    // Send verification code
-    app(\App\Services\VerificationService::class)->sendCode($user, 'login');
-    
-    return redirect()->route('verification.login');
-})->name('register.store');
-
-// Custom Verification Routes (6-digit code)
+// Authentication Routes - wrapped in web middleware for CSRF protection
 Route::middleware(['web'])->group(function () {
+    // Google Authentication Routes
+    Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
+    Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
+
+    // Login/Logout/Register Routes
+    Route::get('login', [\App\Http\Controllers\Auth\AuthController::class, 'showLogin'])
+        ->middleware(['guest'])
+        ->name('login');
+
+    Route::post('login', [\App\Http\Controllers\Auth\AuthController::class, 'login'])
+        ->name('login.store');
+
+    Route::get('register', [\App\Http\Controllers\Auth\AuthController::class, 'showRegister'])
+        ->middleware(['guest'])
+        ->name('register');
+
+    Route::post('register', [\App\Http\Controllers\Auth\AuthController::class, 'register'])
+        ->name('register.store');
+
+    Route::post('logout', [\App\Http\Controllers\Auth\AuthController::class, 'logout'])
+        ->name('logout');
+
+    // Custom Verification Routes (6-digit code)
     Route::get('verification/login', [\App\Http\Controllers\VerificationController::class, 'showLoginVerification'])->name('verification.login');
     Route::post('verification/login/resend', [\App\Http\Controllers\VerificationController::class, 'resendLoginCode'])->name('verification.login.resend');
     Route::post('verification/login/verify', [\App\Http\Controllers\VerificationController::class, 'verifyLoginCode'])->name('verification.login.verify');
