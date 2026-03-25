@@ -25,7 +25,7 @@
 <div class="hidden md:flex items-center gap-4">
     @auth
     @php
-        $desktopCartCount = auth()->check() ? \App\Models\Cart::where('user_id', auth()->id())->count() : 0;
+        $desktopCartCount = auth()->check() ? \App\Models\Cart::where('user_id', auth()->id())->sum('quantity') : 0;
     @endphp
     <!-- Cart Icon -->
     <a href="{{ route('cart') }}" class="relative p-2 text-gray-600 hover:text-indigo-600">
