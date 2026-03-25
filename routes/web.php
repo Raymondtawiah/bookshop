@@ -161,7 +161,7 @@ Route::get('email/verify', function () {
 Route::get('email/verify/{id}/{hash}', function (\Illuminate\Http\Request $request) {
     \Illuminate\Auth\Access\Authorization::authorizeResourceFor('App\Models\User', $request->route('id'));
     $request->user()->markEmailAsVerified();
-    return redirect('/dashboard')->with('verified', true);
+    return redirect('/')->with('verified', true);
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
 Route::post('email/verification-notification', function (\Illuminate\Http\Request $request) {
@@ -173,8 +173,6 @@ Route::get('product/{id}', [ProductController::class, 'show'])->name('products.s
 Route::get('product/{id}/download', [ProductController::class, 'downloadPdf'])->name('product.download');
 
 Route::middleware(['auth', 'verify.customer'])->group(function () {
-    Route::get('dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
-    
     // Profile routes
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');

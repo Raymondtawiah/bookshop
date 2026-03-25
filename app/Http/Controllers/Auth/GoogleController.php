@@ -28,6 +28,11 @@ class GoogleController extends Controller
 
             $googleUser = Socialite::driver('google')->user();
 
+            Log::info('Google OAuth callback received', [
+                'email' => $googleUser->getEmail(),
+                'name' => $googleUser->getName()
+            ]);
+
             // Check if user already exists
             $user = User::where('email', $googleUser->getEmail())->first();
 
@@ -104,13 +109,11 @@ class GoogleController extends Controller
                 return redirect()->route('admin.dashboard');
             }
             
-            // Use explicit URL instead of route() to avoid any caching issues
-            $homeUrl = url('/');
-            Log::info('Redirecting to: ' . $homeUrl);
+            // Use route() helper with proper parameters
+            Log::info('Redirecting to home route');
             
             // Google login doesn't need email verification - Google already verified it
-            return redirect($homeUrl)
-                ->with('success', 'Welcome back!');
+            return redirect()->route('home', [], 302, ['Cache-Control' => 'no-cache, no-store, must-revalidate', 'Pragma' => 'no-cache', 'Expires' => '0']);
 
         } catch (\Exception $e) {
 

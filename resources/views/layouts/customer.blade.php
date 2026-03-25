@@ -7,14 +7,14 @@
         <x-flash-message />
         <flux:sidebar class="border-e border-gray-200 bg-white">
             <flux:sidebar.header>
-                <x-app-logo :sidebar="true" href="{{ route('dashboard') }}" wire:navigate />
+                <x-app-logo :sidebar="true" href="{{ route('home') }}" wire:navigate />
                 <flux:sidebar.collapse class="lg:hidden" />
             </flux:sidebar.header>
 
             <flux:sidebar.nav>
                 <flux:sidebar.group :heading="__('Menu')" class="grid">
-                    <flux:sidebar.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>
-                        {{ __('Dashboard') }}
+                    <flux:sidebar.item icon="home" :href="route('home')" :current="request()->routeIs('home')" wire:navigate>
+                        {{ __('Home') }}
                     </flux:sidebar.item>
                     <flux:sidebar.item icon="shopping-cart" :href="route('cart')" :current="request()->routeIs('cart')" wire:navigate>
                         {{ __('Cart') }}
