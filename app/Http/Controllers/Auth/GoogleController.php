@@ -16,7 +16,15 @@ class GoogleController extends Controller
      */
     public function redirectToGoogle()
     {
-        return Socialite::driver('google')->redirect();
+        Log::info('Starting Google OAuth redirect');
+        
+        $driver = Socialite::driver('google');
+        
+        // Set explicit redirect URI
+        $redirectUrl = config('services.google.redirect');
+        Log::info('Google redirect URI: ' . $redirectUrl);
+        
+        return $driver->redirect();
     }
 
     /**
@@ -113,7 +121,7 @@ class GoogleController extends Controller
             Log::info('Redirecting to home route');
             
             // Google login doesn't need email verification - Google already verified it
-            return redirect()->route('home', [], 302, ['Cache-Control' => 'no-cache, no-store, must-revalidate', 'Pragma' => 'no-cache', 'Expires' => '0']);
+            return redirect()->route('home');
 
         } catch (\Exception $e) {
 
