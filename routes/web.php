@@ -161,7 +161,7 @@ Route::post('email/verification-notification', function (\Illuminate\Http\Reques
     return back()->with('status', 'verification-link-sent');
 })->middleware('auth')->name('verification.send');
 
-Route::get('product/{id}', [ProductController::class, 'show'])->name('product.show');
+Route::get('product/{id}', [ProductController::class, 'show'])->name('products.show');
 Route::get('product/{id}/download', [ProductController::class, 'downloadPdf'])->name('product.download');
 
 Route::middleware(['auth', 'verify.customer'])->group(function () {
