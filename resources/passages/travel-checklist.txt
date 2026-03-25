@@ -1,100 +1,102 @@
 # Travel Essentials Checklist
 
+---
+
 Use this comprehensive checklist to ensure you have everything you need for your trip.
 
 ---
 
-## 📋 DOCUMENTS
+## Documents
 
-- [ ] Passport (valid for 6+ months)
-- [ ] Visa (if required)
-- [ ] Travel insurance documents
-- [ ] Flight tickets / booking confirmation
-- [ ] Hotel reservation / accommodation details
-- [ ] Emergency contact information
-- [ ] Copies of important documents (kept separately)
-
----
-
-## 💰 MONEY & FINANCE
-
-- [ ] Local currency / cash
-- [ ] Credit/debit cards
-- [ ] Travel money card
-- [ ] Bank statement (for visa purposes)
-- [ ] Emergency fund
+* Passport (valid for 6+ months)
+* Visa (if required)
+* Travel insurance documents
+* Flight tickets / booking confirmation
+* Hotel reservation / accommodation details
+* Emergency contact information
+* Copies of important documents (kept separately)
 
 ---
 
-## 🔌 ELECTRONICS
+## Money & Finance
 
-- [ ] Phone + charger
-- [ ] Power bank
-- [ ] Universal adapter
-- [ ] Camera
-- [ ] Laptop/tablet (if needed)
-
----
-
-## 👕 CLOTHING
-
-- [ ] Underwear
-- [ ] Socks
-- [ ] T-shirts
-- [ ] Pants/shorts
-- [ ] Jacket/sweater
-- [ ] Sleepwear
-- [ ] Comfortable shoes
-- [ ] Formal attire (if needed)
+* Local currency / cash
+* Credit/debit cards
+* Travel money card
+* Bank statement (for visa purposes)
+* Emergency fund
 
 ---
 
-## 🧴 TOILETRIES
+## Electronics
 
-- [ ] Toothbrush + toothpaste
-- [ ] Shampoo + conditioner
-- [ ] Soap/body wash
-- [ ] Deodorant
-- [ ] Sunscreen
-- [ ] Medications
-- [ ] First aid kit
+* Phone + charger
+* Power bank
+* Universal adapter
+* Camera
+* Laptop/tablet (if needed)
 
 ---
 
-## 💼 WORK & BUSINESS
+## Clothing
 
-- [ ] Business cards
-- [ ] Laptop + charger
-- [ ] Notepad + pen
-- [ ] Presentation materials
-
----
-
-## 🎮 ENTERTAINMENT
-
-- [ ] Books/e-reader
-- [ ] Headphones
-- [ ] Games
-- [ ] Downloaded movies/music
+* Underwear
+* Socks
+* T-shirts
+* Pants/shorts
+* Jacket/sweater
+* Sleepwear
+* Comfortable shoes
+* Formal attire (if needed)
 
 ---
 
-## 🛡️ SAFETY
+## Toiletries
 
-- [ ] Travel insurance
-- [ ] Emergency contacts
-- [ ] Local embassy information
-- [ ] Emergency numbers
+* Toothbrush + toothpaste
+* Shampoo + conditioner
+* Soap/body wash
+* Deodorant
+* Sunscreen
+* Medications
+* First aid kit
 
 ---
 
-## ❤️ HEALTH
+## Work & Business
 
-- [ ] Pres medications
-- [ ] First aid supplies
-- [ ] Hand sanitizer
-- [ ] Face masks
-- [ ] Thermometer
+* Business cards
+* Laptop + charger
+* Notepad + pen
+* Presentation materials
+
+---
+
+## Entertainment
+
+* Books/e-reader
+* Headphones
+* Games
+* Downloaded movies/music
+
+---
+
+## Safety
+
+* Travel insurance
+* Emergency contacts
+* Local embassy information
+* Emergency numbers
+
+---
+
+## Health
+
+* Pres medications
+* First aid supplies
+* Hand sanitizer
+* Face masks
+* Thermometer
 
 ---
 
