@@ -27,10 +27,10 @@
 
             <div class="bg-white rounded-lg shadow overflow-hidden">
                 <!-- Order Header -->
-                <div class="px-6 py-4 border-b border-gray-200 bg-gray-50">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-xl font-semibold text-gray-900">Order #{{ $order->order_number ?? $order->id }}</h2>
-                        <span class="px-3 py-1 rounded-full text-sm font-medium 
+                <div class="px-4 py-3 sm:px-6 border-b border-gray-200 bg-gray-50">
+                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+                        <h2 class="text-lg sm:text-xl font-semibold text-gray-900">Order #{{ $order->order_number ?? $order->id }}</h2>
+                        <span class="mt-2 sm:mt-0 px-2 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap
                             @if($order->status === 'delivered') bg-green-100 text-green-800
                             @elseif($order->status === 'confirmed') bg-blue-100 text-blue-800
                             @elseif($order->status === 'processing') bg-blue-100 text-blue-800
@@ -42,12 +42,12 @@
                     </div>
                 </div>
 
-                <div class="px-6 py-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="px-4 py-4 sm:px-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                         <!-- Customer Information -->
                         <div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Customer Information</h3>
-                            <dl class="space-y-3">
+                            <h3 class="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">Customer Information</h3>
+                            <dl class="space-y-2 sm:space-y-3">
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">Name</dt>
                                     <dd class="text-gray-900">{{ $order->customer_name }}</dd>
@@ -120,31 +120,33 @@
                         @endphp
                         @if(!empty($items) && $items->count() > 0)
                         <div class="bg-gray-50 rounded-lg overflow-hidden">
+                            <div class="overflow-x-auto">
                             <table class="min-w-full divide-y divide-gray-200">
                                 <thead class="bg-gray-100">
                                     <tr>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Book</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty</th>
-                                        <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                        <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Book</th>
+                                        <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Price</th>
+                                        <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Qty</th>
+                                        <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody class="bg-white divide-y divide-gray-200">
                                     @foreach($items as $item)
                                     <tr>
-                                        <td class="px-4 py-3">
+                                        <td class="px-2 py-3">
                                             <div class="text-sm font-medium text-gray-900">{{ is_array($item) ? ($item['product_name'] ?? 'Unknown') : 'Unknown' }}</div>
                                             @if(is_array($item) ? ($item['book_id'] ?? null) : (isset($item->book_id) ? $item->book_id : null))
                                                 <div class="text-xs text-gray-500">Book ID: {{ is_array($item) ? ($item['book_id'] ?? '') : ($item->book_id ?? '') }}</div>
                                             @endif
                                         </td>
-                                        <td class="px-4 py-3 text-sm text-gray-900">₵{{ number_format(is_array($item) ? ($item['product_price'] ?? 0) : ($item->product_price ?? 0), 2) }}</td>
-                                        <td class="px-4 py-3 text-sm text-gray-900">{{ is_array($item) ? ($item['quantity'] ?? 1) : ($item->quantity ?? 1) }}</td>
-                                        <td class="px-4 py-3 text-sm font-medium text-gray-900">₵{{ number_format((is_array($item) ? ($item['product_price'] ?? 0) : ($item->product_price ?? 0)) * (is_array($item) ? ($item['quantity'] ?? 1) : ($item->quantity ?? 1)), 2) }}</td>
+                                        <td class="px-2 py-3 text-sm text-gray-900 whitespace-nowrap">₵{{ number_format(is_array($item) ? ($item['product_price'] ?? 0) : ($item->product_price ?? 0), 2) }}</td>
+                                        <td class="px-2 py-3 text-sm text-gray-900 whitespace-nowrap">{{ is_array($item) ? ($item['quantity'] ?? 1) : ($item->quantity ?? 1) }}</td>
+                                        <td class="px-2 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">₵{{ number_format((is_array($item) ? ($item['product_price'] ?? 0) : ($item->product_price ?? 0)) * (is_array($item) ? ($item['quantity'] ?? 1) : ($item->quantity ?? 1)), 2) }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
                             </table>
+                            </div>
                         </div>
                         @else
                         <p class="text-gray-500 text-sm">No order items found.</p>
