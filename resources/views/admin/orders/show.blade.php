@@ -196,7 +196,7 @@
                             <!-- Select Passage -->
                             <div>
                                 <label for="passage" class="block text-sm font-medium text-gray-700 mb-1">Select Passage to Send as PDF</label>
-                                <select name="passage" id="passage"
+                                <select name="passage" id="passage" onchange="loadPassagePreview()"
                                     class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                                     <option value="">-- Select a Passage --</option>
                                     @if(!empty($passageNames))
@@ -208,6 +208,19 @@
                                     @endif
                                 </select>
                                 <p class="text-xs text-gray-500 mt-1">Select a passage from resources/passages/ folder to convert to PDF and send to customer</p>
+                            </div>
+                            
+                            <!-- Passage Preview Section -->
+                            <div id="passage-preview-section" class="hidden mt-4">
+                                <div class="flex items-center justify-between mb-2">
+                                    <label class="block text-sm font-medium text-gray-700">Passage Preview</label>
+                                    <button type="button" onclick="loadPassagePreview()" class="text-sm text-indigo-600 hover:text-indigo-800">
+                                        ↻ Refresh Preview
+                                    </button>
+                                </div>
+                                <div id="passage-preview" class="p-4 bg-gray-50 border border-gray-200 rounded-lg text-sm prose max-w-none overflow-y-auto max-h-64">
+                                    <p class="text-gray-400 italic">Select a passage to preview...</p>
+                                </div>
                             </div>
                             
                             <div class="flex items-center justify-center text-gray-400">
@@ -288,5 +301,52 @@
         :action="route('admin.orders.destroy', $order->id)"
         confirmText="Delete"
     />
+
+    <!-- JavaScript for Passage Preview -->
+    <script>
+        function loadPassagePreview() {
+            const passageSelect = document.getElementById('passage');
+            const previewSection = document.getElementById('passage-preview-section');
+            const previewContent = document.getElementById('passage-preview');
+            const selectedValue = passageSelect.value;
+            
+            if (!selectedValue) {
+                previewSection.classList.add('hidden');
+                return;
+            }
+            
+            // Show preview section
+            previewSection.classList.remove('hidden');
+            previewContent.innerHTML = '<p class="text-gray-400 italic">Loading...</p>';
+            
+            // Fetch passage content
+            fetch('{{ route("admin.passages.preview") }}?passage=' + encodeURIComponent(selectedValue))
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        // Convert markdown-like content to HTML
+                        let html = data.content
+                            .replace(/^# (.*$)/gm, '<h1 class="text-2xl font-bold mb-4 text-gray-800">$1</h1>')
+                            .replace(/^## (.*$)/gm, '<h2 class="text-xl font-semibold mt-6 mb-3 text-gray-700">$1</h2>')
+                            .replace(/^### (.*$)/gm, '<h3 class="text-lg font-medium mt-4 mb-2 text-gray-600">$1</h3>')
+                            .replace(/^\*\*\*(.*)$/gm, '<hr class="my-6 border-gray-300">')
+                            .replace(/^\*\* (.*)$/gm, '<strong class="text-gray-800">$1</strong>')
+                            .replace(/^\* (.*)$/gm, '<li class="ml-4 text-gray-600">$1</li>')
+                            .replace(/^- \[ \] (.*)$/gm, '<div class="flex items-center ml-4 text-gray-600"><input type="checkbox" class="mr-2">$1</div>')
+                            .replace(/^- \[x\] (.*)$/gm, '<div class="flex items-center ml-4 text-green-600"><input type="checkbox" checked class="mr-2">$1</div>')
+                            .replace(/^---$/gm, '<hr class="my-4 border-gray-200">')
+                            .replace(/\n\n/g, '</p><p class="mb-3 text-gray-600 leading-relaxed">')
+                            .replace(/\n/g, '<br>');
+                        
+                        previewContent.innerHTML = '<div class="prose max-w-none">' + html + '</div>';
+                    } else {
+                        previewContent.innerHTML = '<p class="text-red-500">Error loading passage: ' + data.message + '</p>';
+                    }
+                })
+                .catch(error => {
+                    previewContent.innerHTML = '<p class="text-red-500">Error loading passage</p>';
+                });
+        }
+    </script>
 </body>
 </html>

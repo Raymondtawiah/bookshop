@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
+use TCPDF;
 
 class OrderController extends Controller
 {
@@ -126,19 +127,25 @@ class OrderController extends Controller
 
         $order = Order::with('user')->findOrFail($id);
         
+        // Get customer name for footer
+        $customerName = $order->customer_name ?? 'Customer';
+        $validDate = date('Y-m-d');
+        
         // Check if passage is selected
         $content = '';
         $title = $request->title ?? 'Document';
         
         // First check if a passage is selected
         if (!empty($request->passage)) {
-            // Directly read the passage file
-            $passagePath = resource_path('passages/' . $request->passage . '.txt');
-            if (file_exists($passagePath)) {
-                $content = file_get_contents($passagePath);
+            // Use PassageService to get passage content
+            $passageService = app(\App\Services\PassageService::class);
+            $passageContent = $passageService->getPassage($request->passage);
+            
+            if ($passageContent !== null) {
+                $content = $passageContent;
                 // Use passage name as title if no custom title provided
                 if (empty($request->title)) {
-                    $title = str_replace(['_', '-'], ' ', ucwords($request->passage, ' _-'));
+                    $title = $passageService->getPassageName($request->passage, $title);
                 }
             } else {
                 return redirect()->back()->withInput()->with('error', 'Selected passage not found.');
@@ -150,19 +157,36 @@ class OrderController extends Controller
             return redirect()->back()->withInput()->with('error', 'Please select a passage or paste some content for the PDF.');
         }
 
-        // Generate PDF directly in controller (bypass service)
+        // Generate PDF with styled content and customer name footer
         try {
             $pdf = new \TCPDF();
             $pdf->SetFont('helvetica', '', 12);
+            
+            // Remove default header/footer
+            $pdf->setPrintHeader(false);
+            $pdf->setPrintFooter(false);
+            
+            // Set margins and auto page break
+            $pdf->SetMargins(20, 20, 20);
+            $pdf->SetAutoPageBreak(TRUE, 30);
+            
             $pdf->AddPage();
-            $pdf->SetFont('helvetica', 'B', 18);
+            
+            // Add title with styling
+            $pdf->SetFont('helvetica', 'B', 20);
             $pdf->Cell(0, 10, $title, 0, true, 'C');
-            $pdf->Ln(5);
+            $pdf->Ln(10);
+            
+            // Add styled content
             $pdf->SetFont('helvetica', '', 12);
             $pdf->MultiCell(0, 10, $content);
             
+            // Add customer name footer
+            $this->addCustomerFooter($pdf, $customerName, $validDate);
+            
             // Save PDF
-            $filename = 'passage_' . time() . '.pdf';
+            $sanitizedName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $customerName);
+            $filename = $title . '_' . $sanitizedName . '_' . time() . '.pdf';
             $storagePath = public_path('storage/books/generated');
             if (!is_dir($storagePath)) {
                 mkdir($storagePath, 0755, true);
@@ -190,19 +214,69 @@ class OrderController extends Controller
             \Log::error('PDF error: ' . $e->getMessage());
             return redirect()->back()->withInput()->with('error', 'Error: ' . $e->getMessage());
         }
+    }
 
+    /**
+     * Add customer name footer to PDF
+     */
+    protected function addCustomerFooter(TCPDF $pdf, string $customerName, string $validDate): void
+    {
+        $pageWidth = 210; // A4 width in mm
+        $pageHeight = 297; // A4 height in mm
+        
+        // Get actual page dimensions if available
         try {
-            // Use the OrderPdfService to generate PDF from text and send
-            $result = $this->orderPdfService->generateFromTextAndSend($order, $content, $title);
-
-            if ($result['success']) {
-                return redirect()->back()->with('success', $result['message']);
-            } else {
-                return redirect()->back()->withInput()->with('error', $result['message']);
+            if (method_exists($pdf, 'getPageWidth') && $pdf->getPageWidth()) {
+                $pageWidth = $pdf->getPageWidth();
+            }
+            if (method_exists($pdf, 'getPageHeight') && $pdf->getPageHeight()) {
+                $pageHeight = $pdf->getPageHeight();
             }
         } catch (\Exception $e) {
-            return redirect()->back()->withInput()->with('error', 'Error generating PDF: ' . $e->getMessage());
+            // Use defaults
         }
+        
+        $pdf->SetFont('helvetica', 'I', 9);
+        $pdf->SetTextColor(128, 128, 128);
+        
+        // Position at bottom of page
+        $pdf->SetXY(0, $pageHeight - 20);
+        $footerText = "Licensed to: {$customerName} | Valid Date: {$validDate}";
+        $pdf->Cell($pageWidth, 8, $footerText, 0, 1, 'C', false);
+        
+        // Reset text color
+        $pdf->SetTextColor(0, 0, 0);
+    }
+
+    /**
+     * Preview passage content (API endpoint)
+     */
+    public function previewPassage(Request $request)
+    {
+        $passage = $request->query('passage');
+        
+        if (empty($passage)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'No passage selected'
+            ]);
+        }
+        
+        $passageService = app(\App\Services\PassageService::class);
+        $content = $passageService->getPassage($passage);
+        
+        if ($content === null) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Passage not found'
+            ]);
+        }
+        
+        return response()->json([
+            'success' => true,
+            'content' => $content,
+            'name' => $passageService->getPassageName($passage)
+        ]);
     }
 
     /**
