@@ -25,12 +25,12 @@ Route::middleware(['web'])->group(function () {
     Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
 });
 
-// Login Routes - GET is guest-only, POST needs web for session/CSRF
-Route::get('login', function() {
-    return view('auth.login');
-})->middleware(['guest'])->name('login');
-
+// Login Routes - GET needs web middleware for session/CSRF, POST needs web
 Route::middleware(['web'])->group(function () {
+    Route::get('login', function() {
+        return view('auth.login');
+    })->middleware(['guest'])->name('login');
+
     Route::post('login', function(\Illuminate\Http\Request $request) {
         $credentials = $request->only('email', 'password');
         $remember = $request->boolean('remember');
@@ -66,10 +66,11 @@ Route::middleware(['web'])->group(function () {
     })->name('login.store');
 });
 
-// Register Routes - GET is guest-only, POST needs web for session/CSRF
-Route::get('register', function() {
-    return view('auth.register');
-})->middleware(['guest'])->name('register');
+// Register Routes - GET needs web middleware for session/CSRF, POST needs web
+Route::middleware(['web'])->group(function () {
+    Route::get('register', function() {
+        return view('auth.register');
+    })->middleware(['guest'])->name('register');
 
 Route::middleware(['web'])->group(function () {
     Route::post('register', function(\Illuminate\Http\Request $request) {
@@ -110,22 +111,24 @@ Route::middleware(['web'])->group(function () {
     Route::post('password/reset', [\App\Http\Controllers\VerificationController::class, 'resetPassword'])->name('password.reset.update');
 });
 
-// Guest-only password reset routes
-Route::get('forgot-password', function () {
-    return view('auth.forgot-password');
-})->middleware(['guest'])->name('password.request');
+// Password reset routes - GET needs web middleware for session/CSRF, POST needs web
+Route::middleware(['web'])->group(function () {
+    // Guest-only password reset routes
+    Route::get('forgot-password', function () {
+        return view('auth.forgot-password');
+    })->middleware(['guest'])->name('password.request');
 
-Route::post('forgot-password', function (\Illuminate\Http\Request $request) {
-    $request->validate(['email' => 'required|email']);
-    $status = Password::sendResetLink($request->only('email'));
-    return $status === Password::RESET_LINK_SENT
-        ? back()->with('status', __($status))
-        : back()->withInput($request->only('email'))->withErrors(['email' => __($status)]);
-})->middleware(['guest'])->name('password.email');
+    Route::post('forgot-password', function (\Illuminate\Http\Request $request) {
+        $request->validate(['email' => 'required|email']);
+        $status = Password::sendResetLink($request->only('email'));
+        return $status === Password::RESET_LINK_SENT
+            ? back()->with('status', __($status))
+            : back()->withInput($request->only('email'))->withErrors(['email' => __($status)]);
+    })->middleware(['guest'])->name('password.email');
 
-Route::get('reset-password/{token}', function ($token) {
-    return view('auth.reset-password', ['token' => $token]);
-})->middleware(['guest'])->name('password.reset');
+    Route::get('reset-password/{token}', function ($token) {
+        return view('auth.reset-password', ['token' => $token]);
+    })->middleware(['guest'])->name('password.reset');
 
 Route::post('reset-password', function (\Illuminate\Http\Request $request) {
     $request->validate([

@@ -44,10 +44,13 @@ class GoogleController extends Controller
                 // ALWAYS mark email as verified since Google already verified it
                 // This ensures existing users who haven't verified can still login via Google
                 if (is_null($user->email_verified_at)) {
-                    $user->forceFill(['email_verified_at' => now()])->save();
-                    $user->refresh(); // Refresh to get the updated model
+                    $user->email_verified_at = now();
+                    $user->save();
                     Log::info('Google login: Email verified for existing user', ['user_id' => $user->id, 'email' => $user->email, 'verified_at' => $user->email_verified_at]);
                 }
+                
+                // Refresh the user from database to ensure we have the latest data
+                $user = $user->fresh();
 
             } else {
 
