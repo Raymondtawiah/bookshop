@@ -37,7 +37,7 @@ window.addEventListener('pageshow', function(event) {
                 
                 @auth
                 @php
-                    $navbarCartCount = auth()->check() ? \App\Models\Cart::where('user_id', auth()->id())->count() : 0;
+                    $navbarCartCount = auth()->check() ? \App\Models\Cart::where('user_id', auth()->id())->sum('quantity') : 0;
                 @endphp
                 <a href="{{ route('cart') }}" class="relative text-gray-700 hover:text-indigo-600 auth-only">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
