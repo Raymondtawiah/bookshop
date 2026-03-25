@@ -78,6 +78,26 @@ class GoogleController extends Controller
             // Regenerate session to prevent session fixation
             request()->session()->regenerate();
 
+            // Debug: Check if user is actually logged in
+            if (!Auth::check()) {
+                Log::error('Google login: Auth::login() failed to log user in', [
+                    'user_id' => $user->id,
+                    'email' => $user->email
+                ]);
+                return redirect()->route('login')
+                    ->with('error', 'Login failed. Please try again.');
+            }
+            
+            // Debug: Log the login details
+            Log::info('Google login successful', [
+                'user_id' => $user->id,
+                'email' => $user->email,
+                'is_admin' => $user->is_admin,
+                'google_id' => $user->google_id,
+                'email_verified_at' => $user->email_verified_at,
+                'auth_check' => Auth::check()
+            ]);
+
             // Redirect based on user type
             if ($user->is_admin) {
                 return redirect()->route('admin.dashboard');
