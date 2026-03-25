@@ -1,13 +1,11 @@
-const CACHE_NAME = 'bookshop-v2';
+const CACHE_NAME = 'bookshop-v4';
 
-// Only cache STATIC assets (NOT auth pages)
+// Only cache static assets - NEVER cache HTML pages
 const urlsToCache = [
-    '/',
     '/manifest.json',
+    '/favicon.ico',
+    '/apple-touch-icon.png',
 ];
-
-// Routes we should NEVER cache
-const EXCLUDED_ROUTES = ['/login', '/register', '/logout', '/dashboard'];
 
 // Install event
 self.addEventListener('install', (event) => {
@@ -17,27 +15,49 @@ self.addEventListener('install', (event) => {
     );
 });
 
-// Fetch event
+// Fetch event - NEVER cache any HTML or auth routes
 self.addEventListener('fetch', (event) => {
     const url = new URL(event.request.url);
+    
+    // Get the pathname
+    const pathname = url.pathname;
 
-    // ❌ Skip caching for auth & dynamic routes
+    // ❌ NEVER cache these routes - always get fresh content
     if (
-        EXCLUDED_ROUTES.includes(url.pathname) ||
-        event.request.method !== 'GET'
+        pathname === '/' ||
+        pathname === '/login' ||
+        pathname === '/register' ||
+        pathname === '/logout' ||
+        pathname === '/dashboard' ||
+        pathname.startsWith('/login/google') ||
+        pathname === '/home' ||
+        pathname.endsWith('.html') ||
+        event.request.headers.get('accept')?.includes('text/html')
     ) {
-        return; // Let browser handle normally
+        // Don't use cache for HTML pages - fetch from network
+        event.respondWith(
+            fetch(event.request).catch(() => {
+                // If offline and it's a navigation, return basic response
+                return new Response('Offline', { status: 503 });
+            })
+        );
+        return;
     }
 
     // ✅ Cache-first for static assets only
-    event.respondWith(
-        caches.match(event.request).then((response) => {
-            return response || fetch(event.request);
-        })
-    );
+    if (url.pathname.match(/\.(js|css|png|jpg|jpeg|svg|woff2?|gif|ico)$/)) {
+        event.respondWith(
+            caches.match(event.request).then((response) => {
+                return response || fetch(event.request);
+            })
+        );
+    } else {
+        // For API calls, etc - always get fresh
+        return;
+    }
 });
 
-// Activate event
+// Activate event - clean up old caches
 self.addEventListener('activate', (event) => {
     event.waitUntil(
         caches.keys().then((cacheNames) => {
