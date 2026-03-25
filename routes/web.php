@@ -18,31 +18,80 @@ Route::get('visa-tip', function() {
     return view('visa-tip');
 })->name('visa-tip');
 
-// Authentication Routes - wrapped in web middleware for CSRF protection
+// All routes that need session and CSRF protection
 Route::middleware(['web'])->group(function () {
-    // Google Authentication Routes
+    
+    // Google OAuth Routes
     Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
     Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
 
-    // Login/Logout/Register Routes
-    Route::get('login', [\App\Http\Controllers\Auth\AuthController::class, 'showLogin'])
-        ->middleware(['guest'])
-        ->name('login');
+    // Login Routes (closure-based for reliability)
+    Route::get('login', function() {
+        return view('auth.login');
+    })->middleware(['guest'])->name('login');
 
-    Route::post('login', [\App\Http\Controllers\Auth\AuthController::class, 'login'])
-        ->name('login.store');
+    Route::post('login', function(\Illuminate\Http\Request $request) {
+        $credentials = $request->only('email', 'password');
+        $remember = $request->boolean('remember');
+        
+        $user = \App\Models\User::where('email', $credentials['email'])->first();
+        
+        if (!$user || !\Illuminate\Support\Facades\Hash::check($credentials['password'], $user->password)) {
+            return back()->withErrors([
+                'email' => 'The provided credentials do not match our records.',
+            ])->onlyInput('email');
+        }
+        
+        if ($user->is_admin) {
+            \Illuminate\Support\Facades\Auth::login($user, $remember);
+            $request->session()->regenerate();
+            return redirect()->route('admin.dashboard');
+        }
+        
+        if (!$user->hasVerifiedEmail()) {
+            $request->session()->put('pending_login_user_id', $user->id);
+            app(\App\Services\VerificationService::class)->sendCode($user, 'login');
+            return redirect()->route('verification.login');
+        }
+        
+        \Illuminate\Support\Facades\Auth::login($user, $remember);
+        $request->session()->regenerate();
+        return redirect()->intended(route('dashboard'));
+    })->name('login.store');
 
-    Route::get('register', [\App\Http\Controllers\Auth\AuthController::class, 'showRegister'])
-        ->middleware(['guest'])
-        ->name('register');
+    // Register Routes
+    Route::get('register', function() {
+        return view('auth.register');
+    })->middleware(['guest'])->name('register');
 
-    Route::post('register', [\App\Http\Controllers\Auth\AuthController::class, 'register'])
-        ->name('register.store');
+    Route::post('register', function(\Illuminate\Http\Request $request) {
+        \Illuminate\Support\Facades\Validator::make($request->all(), [
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+            'password' => ['required', 'string', 'min:8', 'confirmed'],
+        ])->validate();
+        
+        $user = \App\Models\User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => \Illuminate\Support\Facades\Hash::make($request->password),
+        ]);
+        
+        $request->session()->put('pending_login_user_id', $user->id);
+        app(\App\Services\VerificationService::class)->sendCode($user, 'login');
+        
+        return redirect()->route('verification.login');
+    })->name('register.store');
 
-    Route::post('logout', [\App\Http\Controllers\Auth\AuthController::class, 'logout'])
-        ->name('logout');
+    // Logout Route
+    Route::post('logout', function(\Illuminate\Http\Request $request) {
+        \Illuminate\Support\Facades\Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+        return redirect()->route('login');
+    })->name('logout');
 
-    // Custom Verification Routes (6-digit code)
+    // Verification Routes
     Route::get('verification/login', [\App\Http\Controllers\VerificationController::class, 'showLoginVerification'])->name('verification.login');
     Route::post('verification/login/resend', [\App\Http\Controllers\VerificationController::class, 'resendLoginCode'])->name('verification.login.resend');
     Route::post('verification/login/verify', [\App\Http\Controllers\VerificationController::class, 'verifyLoginCode'])->name('verification.login.verify');
@@ -53,24 +102,19 @@ Route::middleware(['web'])->group(function () {
     Route::post('verification/password-reset/resend', [\App\Http\Controllers\VerificationController::class, 'resendPasswordResetCode'])->name('verification.password-reset.resend');
     Route::post('verification/password-reset/verify', [\App\Http\Controllers\VerificationController::class, 'verifyPasswordResetCode'])->name('verification.password-reset.verify');
     
-    // Password Reset Form (after verification)
     Route::get('password/reset-form', [\App\Http\Controllers\VerificationController::class, 'showPasswordResetForm'])->name('password.reset.form');
     Route::post('password/reset', [\App\Http\Controllers\VerificationController::class, 'resetPassword'])->name('password.reset.update');
 });
 
-// Password Reset Routes
+// Guest-only password reset routes
 Route::get('forgot-password', function () {
     return view('auth.forgot-password');
 })->middleware(['guest'])->name('password.request');
 
 Route::post('forgot-password', function (\Illuminate\Http\Request $request) {
     $request->validate(['email' => 'required|email']);
-    
-    $status = \Illuminate\Support\Facades\Password::sendResetLink(
-        $request->only('email')
-    );
-    
-    return $status === \Illuminate\Support\Facades\Password::RESET_LINK_SENT
+    $status = Password::sendResetLink($request->only('email'));
+    return $status === Password::RESET_LINK_SENT
         ? back()->with('status', __($status))
         : back()->withInput($request->only('email'))->withErrors(['email' => __($status)]);
 })->middleware(['guest'])->name('password.email');
@@ -85,16 +129,14 @@ Route::post('reset-password', function (\Illuminate\Http\Request $request) {
         'email' => 'required|email',
         'password' => 'required|min:8|confirmed',
     ]);
-    
-    $status = \Illuminate\Support\Facades\Password::reset(
+    $status = Password::reset(
         $request->only('email', 'password', 'password_confirmation', 'token'),
         function ($user) use ($request) {
             $user->password = \Illuminate\Hashing\Hash::make($request->password);
             $user->save();
         }
     );
-    
-    return $status === \Illuminate\Support\Facades\Password::PASSWORD_RESET
+    return $status === Password::PASSWORD_RESET
         ? redirect()->route('login')->with('status', __($status))
         : back()->withInput($request->only('email'))->withErrors(['email' => __($status)]);
 })->middleware(['guest'])->name('password.update');
@@ -113,7 +155,7 @@ Route::get('email/verify/{id}/{hash}', function (\Illuminate\Http\Request $reque
 Route::post('email/verification-notification', function (\Illuminate\Http\Request $request) {
     $request->user()->sendEmailVerificationNotification();
     return back()->with('status', 'verification-link-sent');
-})->middleware(['auth', 'throttle:6,1'])->name('verification.send');
+})->middleware('auth')->name('verification.send');
 
 Route::get('product/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('product/{id}/download', [ProductController::class, 'downloadPdf'])->name('product.download');
@@ -147,6 +189,3 @@ require __DIR__.'/admin.php';
 
 // Debug routes - REMOVE IN PRODUCTION
 require __DIR__.'/test_pdf.php';
-
-
-
