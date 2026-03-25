@@ -61,7 +61,8 @@ Route::middleware(['web'])->group(function () {
         
         \Illuminate\Support\Facades\Auth::login($user, $remember);
         $request->session()->regenerate();
-        return redirect()->intended(route('dashboard'));
+        // Customers go to welcome page, not dashboard
+        return redirect()->intended(route('home'));
     })->name('login.store');
 });
 
@@ -194,6 +195,3 @@ Route::middleware(['auth', 'verify.customer'])->group(function () {
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
-
-// Debug routes - REMOVE IN PRODUCTION
-require __DIR__.'/test_pdf.php';
