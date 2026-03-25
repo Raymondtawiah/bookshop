@@ -49,8 +49,8 @@ class OrderController extends Controller
     {
         $order = Order::with('user')->findOrFail($id);
         
-        // Get order items from the order itself (stored as JSON)
-        $orderItems = $order->order_items ?? [];
+        // Get order items from the order - now using the accessor which properly handles the JSON
+        $orderItems = $order->order_items;
         
         // Get all books with PDFs for selection
         $books = Book::whereNotNull('book_pdf')
