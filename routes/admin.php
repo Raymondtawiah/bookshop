@@ -7,7 +7,7 @@ use App\Http\Controllers\Admin\OrderController;
 use Illuminate\Support\Facades\Route;
 
 // Admin login routes - accessible without authentication
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['web'])->group(function () {
     Route::get('login', [AuthController::class, 'showLoginForm'])->name('login');
     Route::post('login', [AuthController::class, 'login'])->name('login.post');
 });
