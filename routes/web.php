@@ -12,24 +12,25 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\VerificationController;
 
+// Home and public routes - NO middleware needed
 Route::get('/', [HomeController::class, 'index'])->name('home');
 
 Route::get('visa-tip', function() {
     return view('visa-tip');
 })->name('visa-tip');
 
-// All routes that need session and CSRF protection
+// Google OAuth - needs web middleware for session
 Route::middleware(['web'])->group(function () {
-    
-    // Google OAuth Routes
     Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
     Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
+});
 
-    // Login Routes (closure-based for reliability)
-    Route::get('login', function() {
-        return view('auth.login');
-    })->middleware(['guest'])->name('login');
+// Login Routes - GET is guest-only, POST needs web for session/CSRF
+Route::get('login', function() {
+    return view('auth.login');
+})->middleware(['guest'])->name('login');
 
+Route::middleware(['web'])->group(function () {
     Route::post('login', function(\Illuminate\Http\Request $request) {
         $credentials = $request->only('email', 'password');
         $remember = $request->boolean('remember');
@@ -58,12 +59,14 @@ Route::middleware(['web'])->group(function () {
         $request->session()->regenerate();
         return redirect()->intended(route('dashboard'));
     })->name('login.store');
+});
 
-    // Register Routes
-    Route::get('register', function() {
-        return view('auth.register');
-    })->middleware(['guest'])->name('register');
+// Register Routes - GET is guest-only, POST needs web for session/CSRF
+Route::get('register', function() {
+    return view('auth.register');
+})->middleware(['guest'])->name('register');
 
+Route::middleware(['web'])->group(function () {
     Route::post('register', function(\Illuminate\Http\Request $request) {
         \Illuminate\Support\Facades\Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
@@ -83,7 +86,7 @@ Route::middleware(['web'])->group(function () {
         return redirect()->route('verification.login');
     })->name('register.store');
 
-    // Logout Route
+    // Logout Route - needs web for session
     Route::post('logout', function(\Illuminate\Http\Request $request) {
         \Illuminate\Support\Facades\Auth::logout();
         $request->session()->invalidate();
@@ -91,18 +94,14 @@ Route::middleware(['web'])->group(function () {
         return redirect()->route('login');
     })->name('logout');
 
-    // Verification Routes
-    Route::get('verification/login', [\App\Http\Controllers\VerificationController::class, 'showLoginVerification'])->name('verification.login');
+    // Verification Routes - POST needs web
     Route::post('verification/login/resend', [\App\Http\Controllers\VerificationController::class, 'resendLoginCode'])->name('verification.login.resend');
     Route::post('verification/login/verify', [\App\Http\Controllers\VerificationController::class, 'verifyLoginCode'])->name('verification.login.verify');
     
-    // Password Reset with Verification Code
-    Route::get('verification/password-reset', [\App\Http\Controllers\VerificationController::class, 'showPasswordResetVerification'])->name('verification.password-reset');
+    // Password Reset with Verification Code - POST needs web
     Route::post('verification/password-reset/send', [\App\Http\Controllers\VerificationController::class, 'sendPasswordResetCode'])->name('verification.password-reset.send');
     Route::post('verification/password-reset/resend', [\App\Http\Controllers\VerificationController::class, 'resendPasswordResetCode'])->name('verification.password-reset.resend');
     Route::post('verification/password-reset/verify', [\App\Http\Controllers\VerificationController::class, 'verifyPasswordResetCode'])->name('verification.password-reset.verify');
-    
-    Route::get('password/reset-form', [\App\Http\Controllers\VerificationController::class, 'showPasswordResetForm'])->name('password.reset.form');
     Route::post('password/reset', [\App\Http\Controllers\VerificationController::class, 'resetPassword'])->name('password.reset.update');
 });
 
@@ -140,6 +139,11 @@ Route::post('reset-password', function (\Illuminate\Http\Request $request) {
         ? redirect()->route('login')->with('status', __($status))
         : back()->withInput($request->only('email'))->withErrors(['email' => __($status)]);
 })->middleware(['guest'])->name('password.update');
+
+// Verification GET routes (these are public, render views)
+Route::get('verification/login', [\App\Http\Controllers\VerificationController::class, 'showLoginVerification'])->name('verification.login');
+Route::get('verification/password-reset', [\App\Http\Controllers\VerificationController::class, 'showPasswordResetVerification'])->name('verification.password-reset');
+Route::get('password/reset-form', [\App\Http\Controllers\VerificationController::class, 'showPasswordResetForm'])->name('password.reset.form');
 
 // Email Verification Routes (Laravel Fortify)
 Route::get('email/verify', function () {
