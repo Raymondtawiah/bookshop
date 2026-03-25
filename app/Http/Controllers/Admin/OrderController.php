@@ -183,9 +183,6 @@ class OrderController extends Controller
             // Add customer name footer
             $this->addCustomerFooter($pdf, $customerName, $validDate);
             
-            // Add customer name footer
-            $this->addCustomerFooter($pdf, $customerName, $validDate);
-            
             // Save PDF
             $sanitizedName = preg_replace('/[^a-zA-Z0-9_-]/', '_', $customerName);
             $filename = $title . '_' . $sanitizedName . '_' . time() . '.pdf';
