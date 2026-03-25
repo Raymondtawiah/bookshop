@@ -177,9 +177,11 @@ class OrderController extends Controller
             $pdf->Cell(0, 10, $title, 0, true, 'C');
             $pdf->Ln(10);
             
-            // Add styled content
-            $pdf->SetFont('helvetica', '', 12);
-            $pdf->MultiCell(0, 10, $content);
+            // Parse and add styled content
+            $this->addStyledContent($pdf, $content);
+            
+            // Add customer name footer
+            $this->addCustomerFooter($pdf, $customerName, $validDate);
             
             // Add customer name footer
             $this->addCustomerFooter($pdf, $customerName, $validDate);
@@ -246,6 +248,171 @@ class OrderController extends Controller
         
         // Reset text color
         $pdf->SetTextColor(0, 0, 0);
+    }
+
+    /**
+     * Add styled content with proper formatting to PDF
+     * Handles headers, lists, checkboxes, horizontal rules
+     */
+    protected function addStyledContent(TCPDF $pdf, string $content): void
+    {
+        $lines = explode('\n', $content);
+        $inList = false;
+        
+        foreach ($lines as $line) {
+            $trimmedLine = trim($line);
+            
+            // Skip empty lines but maintain spacing
+            if (empty($trimmedLine)) {
+                $pdf->Ln(4);
+                $inList = false;
+                continue;
+            }
+            
+            // Main header (# Title)
+            if (preg_match('/^#\s+(.*)$/', $trimmedLine, $matches)) {
+                $pdf->Ln(8);
+                $pdf->SetFont('helvetica', 'B', 22);
+                $pdf->SetTextColor(31, 41, 59); // dark gray
+                $pdf->Cell(0, 12, $matches[1], 0, true, 'C');
+                $pdf->Ln(4);
+                $pdf->SetFont('helvetica', '', 12);
+                $pdf->SetTextColor(0, 0, 0);
+                $inList = false;
+                continue;
+            }
+            
+            // Section header (## Section)
+            if (preg_match('/^##\s+(.*)$/', $trimmedLine, $matches)) {
+                $pdf->Ln(10);
+                $pdf->SetFont('helvetica', 'B', 16);
+                $pdf->SetTextColor(31, 41, 59);
+                $pdf->Cell(0, 10, $matches[1], 0, true, 'L');
+                $pdf->SetDrawColor(99, 102, 241); // indigo
+                $pdf->SetLineWidth(0.5);
+                $pdf->Line($pdf->GetX(), $pdf->GetY() + 2, $pdf->GetX() + 180, $pdf->GetY() + 2);
+                $pdf->Ln(4);
+                $pdf->SetFont('helvetica', '', 12);
+                $pdf->SetTextColor(0, 0, 0);
+                $inList = false;
+                continue;
+            }
+            
+            // Subsection (### Subsection)
+            if (preg_match('/^###\s+(.*)$/', $trimmedLine, $matches)) {
+                $pdf->Ln(6);
+                $pdf->SetFont('helvetica', 'B', 14);
+                $pdf->SetTextColor(55, 65, 81);
+                $pdf->Cell(0, 8, $matches[1], 0, true, 'L');
+                $pdf->Ln(2);
+                $pdf->SetFont('helvetica', '', 12);
+                $pdf->SetTextColor(0, 0, 0);
+                $inList = false;
+                continue;
+            }
+            
+            // Horizontal rule (--- or ***)
+            if (preg_match('/^(-{3,}|\*{3,})$/', $trimmedLine)) {
+                $pdf->Ln(8);
+                $pdf->SetDrawColor(156, 163, 175); // gray
+                $pdf->SetLineWidth(0.3);
+                $pdf->Line($pdf->GetX(), $pdf->GetY(), $pdf->GetX() + 170, $pdf->GetY());
+                $pdf->Ln(8);
+                $inList = false;
+                continue;
+            }
+            
+            // Checkbox unchecked (- [ ] item)
+            if (preg_match('/^-\s+\[\s*\]\s+(.*)$/', $trimmedLine, $matches)) {
+                if (!$inList) {
+                    $pdf->Ln(4);
+                    $inList = true;
+                }
+                // Draw checkbox
+                $pdf->Rect($pdf->GetX() + 2, $pdf->GetY() + 2, 4, 4);
+                $pdf->SetFont('helvetica', '', 12);
+                $pdf->SetTextColor(75, 85, 99);
+                $pdf->Cell(10, 10, '', 0, 0);
+                $pdf->Cell(0, 10, $matches[1], 0, true);
+                $pdf->SetTextColor(0, 0, 0);
+                continue;
+            }
+            
+            // Checkbox checked (- [x] item)
+            if (preg_match('/^-\s+\[x\]\s+(.*)$/', $trimmedLine, $matches)) {
+                if (!$inList) {
+                    $pdf->Ln(4);
+                    $inList = true;
+                }
+                // Draw checked checkbox
+                $pdf->Rect($pdf->GetX() + 2, $pdf->GetY() + 2, 4, 4);
+                $pdf->SetFont('helvetica', '', 12);
+                $pdf->SetTextColor(22, 163, 74); // green
+                $pdf->Cell(10, 10, '', 0, 0);
+                $pdf->Cell(0, 10, $matches[1], 0, true);
+                $pdf->SetTextColor(0, 0, 0);
+                continue;
+            }
+            
+            // Bullet list item (- item)
+            if (preg_match('/^-\s+(.*)$/', $trimmedLine, $matches)) {
+                if (!$inList) {
+                    $pdf->Ln(4);
+                    $inList = true;
+                }
+                $pdf->SetFont('helvetica', '', 12);
+                $pdf->SetTextColor(55, 65, 81);
+                $pdf->Cell(8, 10, '•', 0, 0);
+                $pdf->Cell(0, 10, $matches[1], 0, true);
+                $pdf->SetTextColor(0, 0, 0);
+                continue;
+            }
+            
+            // Numbered list item (1. item)
+            if (preg_match('/^(\d+)\.\s+(.*)$/', $trimmedLine, $matches)) {
+                if (!$inList) {
+                    $pdf->Ln(4);
+                    $inList = true;
+                }
+                $pdf->SetFont('helvetica', '', 12);
+                $pdf->SetTextColor(55, 65, 81);
+                $pdf->Cell(8, 10, $matches[1] . '.', 0, 0);
+                $pdf->Cell(0, 10, $matches[2], 0, true);
+                $pdf->SetTextColor(0, 0, 0);
+                continue;
+            }
+            
+            // Bold text (**text**)
+            if (preg_match('/^\*\*(.*)\*\*$/', $trimmedLine, $matches)) {
+                $pdf->Ln(4);
+                $pdf->SetFont('helvetica', 'B', 12);
+                $pdf->SetTextColor(31, 41, 59);
+                $pdf->MultiCell(0, 10, $matches[1]);
+                $pdf->SetFont('helvetica', '', 12);
+                $pdf->SetTextColor(0, 0, 0);
+                $inList = false;
+                continue;
+            }
+            
+            // Italic text (*text*)
+            if (preg_match('/^\*([^\*]+)\*$/', $trimmedLine, $matches)) {
+                $pdf->Ln(4);
+                $pdf->SetFont('helvetica', 'I', 12);
+                $pdf->SetTextColor(75, 85, 99);
+                $pdf->MultiCell(0, 10, $matches[1]);
+                $pdf->SetFont('helvetica', '', 12);
+                $pdf->SetTextColor(0, 0, 0);
+                $inList = false;
+                continue;
+            }
+            
+            // Regular paragraph
+            $pdf->Ln(4);
+            $pdf->SetFont('helvetica', '', 12);
+            $pdf->SetTextColor(0, 0, 0);
+            $pdf->MultiCell(0, 10, $line);
+            $inList = false;
+        }
     }
 
     /**
