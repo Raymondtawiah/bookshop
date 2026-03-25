@@ -39,4 +39,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::get('settings', function () {
         return view('admin.settings.index');
     })->name('settings');
+    
+    // Passage preview API route
+    Route::get('passages/preview', [OrderController::class, 'previewPassage'])->name('passages.preview');
 });

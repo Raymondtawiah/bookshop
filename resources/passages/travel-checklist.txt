@@ -1,81 +1,103 @@
-Travel Essentials Checklist
+# Travel Essentials Checklist
 
 Use this comprehensive checklist to ensure you have everything you need for your trip.
 
-DOCUMENTS
-----------
-[ ] Passport (valid for 6+ months)
-[ ] Visa (if required)
-[ ] Travel insurance documents
-[ ] Flight tickets / booking confirmation
-[ ] Hotel reservation / accommodation details
-[ ] Emergency contact information
-[ ] Copies of important documents (kept separately)
+---
 
-MONEY & FINANCE
----------------
-[ ] Local currency / cash
-[ ] Credit/debit cards
-[ ] Travel money card
-[ ] Bank statement (for visa purposes)
-[ ] Emergency fund
+## 📋 DOCUMENTS
 
-ELECTRONICS
------------
-[ ] Phone + charger
-[ ] Power bank
-[ ] Universal adapter
-[ ] Camera
-[ ] Laptop/tablet (if needed)
+- [ ] Passport (valid for 6+ months)
+- [ ] Visa (if required)
+- [ ] Travel insurance documents
+- [ ] Flight tickets / booking confirmation
+- [ ] Hotel reservation / accommodation details
+- [ ] Emergency contact information
+- [ ] Copies of important documents (kept separately)
 
-CLOTHING
---------
-[ ] Underwear
-[ ] Socks
-[ ] T-shirts
-[ ] Pants/shorts
-[ ] Jacket/sweater
-[ ] Sleepwear
-[ ] Comfortable shoes
-[ ] Formal attire (if needed)
+---
 
-TOILETRIES
-----------
-[ ] Toothbrush + toothpaste
-[ ] Shampoo + conditioner
-[ ] Soap/body wash
-[ ] Deodorant
-[ ] Sunscreen
-[ ] Medications
-[ ] First aid kit
+## 💰 MONEY & FINANCE
 
-WORK & BUSINESS
----------------
-[ ] Business cards
-[ ] Laptop + charger
-[ ] Notepad + pen
-[ ] Presentation materials
+- [ ] Local currency / cash
+- [ ] Credit/debit cards
+- [ ] Travel money card
+- [ ] Bank statement (for visa purposes)
+- [ ] Emergency fund
 
-ENTERTAINMENT
--------------
-[ ] Books/e-reader
-[ ] Headphones
-[ ] Games
-[ ] Downloaded movies/music
+---
 
-SAFETY
-------
-[ ] Travel insurance
-[ ] Emergency contacts
-[ ] Local embassy information
-[ ] Emergency numbers
+## 🔌 ELECTRONICS
 
-HEALTH
-------
-[ ] Pres medications
-[ ] First aid supplies
-[ ] Hand sanitizer
-[ ] Face masks
-[ ] Thermometer
+- [ ] Phone + charger
+- [ ] Power bank
+- [ ] Universal adapter
+- [ ] Camera
+- [ ] Laptop/tablet (if needed)
 
-Remember to check weather forecast before packing!
+---
+
+## 👕 CLOTHING
+
+- [ ] Underwear
+- [ ] Socks
+- [ ] T-shirts
+- [ ] Pants/shorts
+- [ ] Jacket/sweater
+- [ ] Sleepwear
+- [ ] Comfortable shoes
+- [ ] Formal attire (if needed)
+
+---
+
+## 🧴 TOILETRIES
+
+- [ ] Toothbrush + toothpaste
+- [ ] Shampoo + conditioner
+- [ ] Soap/body wash
+- [ ] Deodorant
+- [ ] Sunscreen
+- [ ] Medications
+- [ ] First aid kit
+
+---
+
+## 💼 WORK & BUSINESS
+
+- [ ] Business cards
+- [ ] Laptop + charger
+- [ ] Notepad + pen
+- [ ] Presentation materials
+
+---
+
+## 🎮 ENTERTAINMENT
+
+- [ ] Books/e-reader
+- [ ] Headphones
+- [ ] Games
+- [ ] Downloaded movies/music
+
+---
+
+## 🛡️ SAFETY
+
+- [ ] Travel insurance
+- [ ] Emergency contacts
+- [ ] Local embassy information
+- [ ] Emergency numbers
+
+---
+
+## ❤️ HEALTH
+
+- [ ] Pres medications
+- [ ] First aid supplies
+- [ ] Hand sanitizer
+- [ ] Face masks
+- [ ] Thermometer
+
+---
+
+**Remember to check weather forecast before packing!**
+
+*This checklist is provided by Bookshop to help you travel prepared.*
