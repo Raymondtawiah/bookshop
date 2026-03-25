@@ -80,7 +80,8 @@ class GoogleController extends Controller
                 return redirect()->route('admin.dashboard');
             }
             
-            return redirect()->intended(route('dashboard'))
+            // Google login doesn't need email verification - Google already verified it
+            return redirect()->intended(route('home'))
                 ->with('success', 'Welcome back!');
 
         } catch (\Exception $e) {
