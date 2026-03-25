@@ -51,6 +51,8 @@
                                         $items = $order->order_items ?? [];
                                         if (is_array($items)) {
                                             $itemsArray = $items;
+                                        } elseif ($items instanceof \Illuminate\Support\Collection) {
+                                            $itemsArray = $items->toArray();
                                         } else {
                                             $itemsArray = [];
                                         }

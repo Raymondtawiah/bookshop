@@ -116,7 +116,13 @@
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Ordered Books</h3>
                         @php
                             $orderItemsData = $orderItems ?? [];
-                            $items = is_array($orderItemsData) ? collect($orderItemsData) : collect([]);
+                            if ($orderItemsData instanceof \Illuminate\Support\Collection) {
+                                $items = $orderItemsData;
+                            } elseif (is_array($orderItemsData)) {
+                                $items = collect($orderItemsData);
+                            } else {
+                                $items = collect([]);
+                            }
                         @endphp
                         @if(!empty($items) && $items->count() > 0)
                         <div class="bg-gray-50 rounded-lg overflow-hidden">
