@@ -49,10 +49,14 @@ Route::middleware(['web'])->group(function () {
             return redirect()->route('admin.dashboard');
         }
         
+        // For customers, check if email is verified (admin doesn't need verification)
         if (!$user->hasVerifiedEmail()) {
-            $request->session()->put('pending_login_user_id', $user->id);
-            app(\App\Services\VerificationService::class)->sendCode($user, 'login');
-            return redirect()->route('verification.login');
+            // Only verify customers, not admins
+            if (!$user->is_admin) {
+                $request->session()->put('pending_login_user_id', $user->id);
+                app(\App\Services\VerificationService::class)->sendCode($user, 'login');
+                return redirect()->route('verification.login');
+            }
         }
         
         \Illuminate\Support\Facades\Auth::login($user, $remember);
