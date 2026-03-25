@@ -48,11 +48,12 @@
                                 </td>
                                 <td class="px-6 py-4">
                                     @php
-                                        $items = $order->order_items ?? [];
-                                        if (is_array($items)) {
-                                            $itemsArray = $items;
-                                        } elseif ($items instanceof \Illuminate\Support\Collection) {
+                                        // Use order_items which now properly handles JSON via accessor
+                                        $items = $order->order_items;
+                                        if ($items instanceof \Illuminate\Support\Collection) {
                                             $itemsArray = $items->toArray();
+                                        } elseif (is_array($items)) {
+                                            $itemsArray = $items;
                                         } else {
                                             $itemsArray = [];
                                         }
