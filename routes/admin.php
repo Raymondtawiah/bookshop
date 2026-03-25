@@ -13,7 +13,7 @@ Route::prefix('admin')->name('admin.')->group(function () {
 });
 
 // Admin authenticated routes - requires login via web guard with is_admin=true
-Route::prefix('admin')->name('admin.')->middleware('auth:web')->group(function () {
+Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group(function () {
     Route::get('dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
     
