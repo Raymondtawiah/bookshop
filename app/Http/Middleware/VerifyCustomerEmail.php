@@ -37,6 +37,7 @@ class VerifyCustomerEmail
             'hasVerifiedEmail' => $user->hasVerifiedEmail()
         ]);
         
+        // Customers must verify their email
         if (!$user->hasVerifiedEmail()) {
             // Store user ID in session for verification
             $request->session()->put('pending_login_user_id', $user->id);

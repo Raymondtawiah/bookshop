@@ -75,6 +75,11 @@ class GoogleController extends Controller
             // Regenerate session to prevent session fixation
             request()->session()->regenerate();
 
+            // Redirect based on user type
+            if ($user->is_admin) {
+                return redirect()->route('admin.dashboard');
+            }
+            
             return redirect()->intended(route('dashboard'))
                 ->with('success', 'Welcome back!');
 
