@@ -166,7 +166,7 @@ class PaymentController extends Controller
                     'order_items' => $orderItems,
                 ]);
 
-                return redirect()->route('dashboard')
+                return redirect()->route('home')
                     ->with('success', 'Payment successful! Order confirmed. Check your email for details.');
             }
         }
