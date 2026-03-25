@@ -72,7 +72,6 @@ Route::middleware(['web'])->group(function () {
         return view('auth.register');
     })->middleware(['guest'])->name('register');
 
-Route::middleware(['web'])->group(function () {
     Route::post('register', function(\Illuminate\Http\Request $request) {
         \Illuminate\Support\Facades\Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
@@ -130,7 +129,7 @@ Route::middleware(['web'])->group(function () {
         return view('auth.reset-password', ['token' => $token]);
     })->middleware(['guest'])->name('password.reset');
 
-Route::post('reset-password', function (\Illuminate\Http\Request $request) {
+    Route::post('reset-password', function (\Illuminate\Http\Request $request) {
     $request->validate([
         'token' => 'required',
         'email' => 'required|email',
@@ -147,6 +146,7 @@ Route::post('reset-password', function (\Illuminate\Http\Request $request) {
         ? redirect()->route('login')->with('status', __($status))
         : back()->withInput($request->only('email'))->withErrors(['email' => __($status)]);
 })->middleware(['guest'])->name('password.update');
+});
 
 // Verification GET routes (these are public, render views)
 Route::get('verification/login', [\App\Http\Controllers\VerificationController::class, 'showLoginVerification'])->name('verification.login');
