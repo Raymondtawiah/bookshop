@@ -75,7 +75,39 @@ class PassageService
             return null;
         }
         
-        return File::get($path);
+        // Get raw content and clean it
+        $content = File::get($path);
+        
+        // Remove markdown formatting
+        $content = $this->cleanMarkdown($content);
+        
+        return $content;
+    }
+    
+    /**
+     * Clean markdown formatting from content
+     */
+    protected function cleanMarkdown(string $content): string
+    {
+        // Remove headers (# Title, ## Title)
+        $content = preg_replace('/^#+\s+/m', '', $content);
+        
+        // Remove horizontal rules (---)
+        $content = preg_replace('/^---+$/m', '', $content);
+        
+        // Remove bold (**text**)
+        $content = preg_replace('/\*\*(.+?)\*\*/', '$1', $content);
+        
+        // Remove italic (*text*)
+        $content = preg_replace('/\*([^*]+)\*/', '$1', $content);
+        
+        // Remove list markers at start of lines (* item or - item)
+        $content = preg_replace('/^[\*\-]\s+/m', '', $content);
+        
+        // Clean up multiple empty lines
+        $content = preg_replace('/\n{3,}/', "\n\n", $content);
+        
+        return $content;
     }
 
     /**
