@@ -40,7 +40,10 @@ class VerifyCustomerEmail
         
         // Google users are already verified (Google verified their email)
         if ($user->google_id) {
-            Log::info('VerifyCustomerEmail: User logged in via Google, skipping verification', ['user_id' => $user->id]);
+            Log::info('VerifyCustomerEmail: User logged in via Google, skipping verification', [
+                'user_id' => $user->id,
+                'google_id' => $user->google_id
+            ]);
             return $next($request);
         }
         
