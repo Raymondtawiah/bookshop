@@ -22,7 +22,7 @@
                     <!-- User Menu with Dropdown for authenticated users -->
                     @auth
                     <div class="flex items-center gap-4">
-                        <a href="{{ route('dashboard') }}" class="text-gray-600 hover:text-indigo-600 font-medium">
+                        <a href="{{ route('home') }}" class="text-gray-600 hover:text-indigo-600 font-medium">
                             Dashboard
                         </a>
                         <div class="relative">
