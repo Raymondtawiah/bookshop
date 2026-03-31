@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+<html lang="<?php echo e(str_replace('_', '-', app()->getLocale())); ?>">
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,7 +9,7 @@
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="BookShop" />
         <link rel="manifest" href="/manifest.json">
-        <title>{{ config('app.name', 'Bookshop') }}</title>
+        <title><?php echo e(config('app.name', 'Bookshop')); ?></title>
         <script src="https://cdn.tailwindcss.com"></script>
         <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="apple-touch-icon" href="/favicon.ico">
@@ -29,15 +29,57 @@
         </script>
     </head>
     <body class="antialiased">
-        <x-flash-message />
+        <?php if (isset($component)) { $__componentOriginalbb0843bd48625210e6e530f88101357e = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginalbb0843bd48625210e6e530f88101357e = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.flash-message','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('flash-message'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::processComponentKey($component); ?>
+
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginalbb0843bd48625210e6e530f88101357e)): ?>
+<?php $attributes = $__attributesOriginalbb0843bd48625210e6e530f88101357e; ?>
+<?php unset($__attributesOriginalbb0843bd48625210e6e530f88101357e); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginalbb0843bd48625210e6e530f88101357e)): ?>
+<?php $component = $__componentOriginalbb0843bd48625210e6e530f88101357e; ?>
+<?php unset($__componentOriginalbb0843bd48625210e6e530f88101357e); ?>
+<?php endif; ?>
         <!-- Navigation -->
-        <x-customer-navbar />
+        <?php if (isset($component)) { $__componentOriginal352d085fcf25f89da5d9c58864271205 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal352d085fcf25f89da5d9c58864271205 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.customer-navbar','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('customer-navbar'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::processComponentKey($component); ?>
+
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal352d085fcf25f89da5d9c58864271205)): ?>
+<?php $attributes = $__attributesOriginal352d085fcf25f89da5d9c58864271205; ?>
+<?php unset($__attributesOriginal352d085fcf25f89da5d9c58864271205); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal352d085fcf25f89da5d9c58864271205)): ?>
+<?php $component = $__componentOriginal352d085fcf25f89da5d9c58864271205; ?>
+<?php unset($__componentOriginal352d085fcf25f89da5d9c58864271205); ?>
+<?php endif; ?>
 
         <!-- Hero Section with S-Wave -->
         <section id="home" class="relative pt-32 pb-20 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700">
             <!-- Background Image -->
             <div class="absolute inset-0">
-                <img src="{{ asset('welcome.jpg') }}" alt="Bookshop" class="w-full h-full object-cover object-[center_70%]">
+                <img src="<?php echo e(asset('welcome.jpg')); ?>" alt="Bookshop" class="w-full h-full object-cover object-[center_70%]">
                 <div class="absolute inset-0 bg-gradient-to-r from-indigo-900/80 to-purple-900/80"></div>
             </div>
             <div class="max-w-7xl mx-auto px-6 relative z-10">
@@ -50,29 +92,29 @@
                         Practical guides to help students and travelers understand visa interviews, avoid common mistakes, and answer visa officer questions with confidence.
                     </p>
                     <div class="flex flex-col sm:flex-row items-center justify-center gap-4 top-1.5">
-                        @if(\App\Models\Book::count() > 0)
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(\App\Models\Book::count() > 0): ?>
                         <a href="#store" class="px-6 py-3 bg-white text-indigo-600 font-medium rounded-lg hover:bg-gray-100 transition-colors">
                             Explore Books
                         </a>
-                        @else
-                        <a href="{{ route('register') }}" class="px-8 py-4 bg-white text-indigo-600 font-semibold rounded-xl hover:bg-gray-100 transition-colors">
+                        <?php else: ?>
+                        <a href="<?php echo e(route('register')); ?>" class="px-8 py-4 bg-white text-indigo-600 font-semibold rounded-xl hover:bg-gray-100 transition-colors">
                             Get Started
                         </a>
-                        @endif
-                        @guest
-                        <a href="{{ route('register') }}" class="px-6 py-3 bg-white/20 text-white font-medium rounded-lg border border-white/30 hover:bg-white/30 transition-colors">
+                        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
+                        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if(auth()->guard()->guest()): ?>
+                        <a href="<?php echo e(route('register')); ?>" class="px-6 py-3 bg-white/20 text-white font-medium rounded-lg border border-white/30 hover:bg-white/30 transition-colors">
                             Create Account
                         </a>
-                        @endguest
+                        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
                     </div>
                 </div>
             </div>
         </section>
 
         <!-- Store Section -->
-        @if($books && $books->count() > 0)
-        @include('components.sections.store-section', ['books' => $books])
-        @endif
+        <?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if BLOCK]><![endif]--><?php endif; ?><?php if($books && $books->count() > 0): ?>
+        <?php echo $__env->make('components.sections.store-section', ['books' => $books], array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+        <?php endif; ?><?php if(\Livewire\Mechanisms\ExtendBlade\ExtendBlade::isRenderingLivewireComponent()): ?><!--[if ENDBLOCK]><![endif]--><?php endif; ?>
 
         <!-- Visa Guide Promo Section -->
         <section class="py-20 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700">
@@ -200,7 +242,7 @@
 
                 <!-- CTA -->
                 <div class="text-center">
-                    <a href="{{ route('visa-tip') }}" class="inline-block px-8 py-4 bg-white text-indigo-600 font-semibold rounded-xl hover:bg-gray-100 transition-colors shadow-lg">
+                    <a href="<?php echo e(route('visa-tip')); ?>" class="inline-block px-8 py-4 bg-white text-indigo-600 font-semibold rounded-xl hover:bg-gray-100 transition-colors shadow-lg">
                         Get Your Copy Now
                     </a>
                 </div>
@@ -208,11 +250,11 @@
         </section>
 
         <!-- About Section -->
-        @include('components.sections.about-section')
+        <?php echo $__env->make('components.sections.about-section', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
         <!-- Contact Section -->
-        @include('components.sections.contact-section')
-        @include('components.sections.animation-script')
+        <?php echo $__env->make('components.sections.contact-section', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
+        <?php echo $__env->make('components.sections.animation-script', array_diff_key(get_defined_vars(), ['__data' => 1, '__path' => 1]))->render(); ?>
 
         <!-- Newsletter Section -->
         <section class="py-16 bg-gradient-to-r from-indigo-600 to-purple-600">
@@ -225,7 +267,7 @@
                         Subscribe
                     </button>
                 </form>
-                <p class="text-indigo-200 text-sm mt-4">Join {{ \App\Models\User::where('is_admin', false)->count() }}+ subscribers</p>
+                <p class="text-indigo-200 text-sm mt-4">Join <?php echo e(\App\Models\User::where('is_admin', false)->count()); ?>+ subscribers</p>
             </div>
         </section>
 
@@ -352,9 +394,52 @@
                 });
             });
         </script>
-        <x-customer-footer />
+        <?php if (isset($component)) { $__componentOriginal0ce8c361df782acd2f488d363e827ff6 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal0ce8c361df782acd2f488d363e827ff6 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.customer-footer','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('customer-footer'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::processComponentKey($component); ?>
 
-        <x-install-pwa />
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal0ce8c361df782acd2f488d363e827ff6)): ?>
+<?php $attributes = $__attributesOriginal0ce8c361df782acd2f488d363e827ff6; ?>
+<?php unset($__attributesOriginal0ce8c361df782acd2f488d363e827ff6); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal0ce8c361df782acd2f488d363e827ff6)): ?>
+<?php $component = $__componentOriginal0ce8c361df782acd2f488d363e827ff6; ?>
+<?php unset($__componentOriginal0ce8c361df782acd2f488d363e827ff6); ?>
+<?php endif; ?>
+
+        <?php if (isset($component)) { $__componentOriginal93fb1375df3beb42de5c43a9dcc7a7f6 = $component; } ?>
+<?php if (isset($attributes)) { $__attributesOriginal93fb1375df3beb42de5c43a9dcc7a7f6 = $attributes; } ?>
+<?php $component = Illuminate\View\AnonymousComponent::resolve(['view' => 'components.install-pwa','data' => []] + (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag ? $attributes->all() : [])); ?>
+<?php $component->withName('install-pwa'); ?>
+<?php if ($component->shouldRender()): ?>
+<?php $__env->startComponent($component->resolveView(), $component->data()); ?>
+<?php if (isset($attributes) && $attributes instanceof Illuminate\View\ComponentAttributeBag): ?>
+<?php $attributes = $attributes->except(\Illuminate\View\AnonymousComponent::ignoredParameterNames()); ?>
+<?php endif; ?>
+<?php $component->withAttributes([]); ?>
+<?php \Livewire\Features\SupportCompiledWireKeys\SupportCompiledWireKeys::processComponentKey($component); ?>
+
+<?php echo $__env->renderComponent(); ?>
+<?php endif; ?>
+<?php if (isset($__attributesOriginal93fb1375df3beb42de5c43a9dcc7a7f6)): ?>
+<?php $attributes = $__attributesOriginal93fb1375df3beb42de5c43a9dcc7a7f6; ?>
+<?php unset($__attributesOriginal93fb1375df3beb42de5c43a9dcc7a7f6); ?>
+<?php endif; ?>
+<?php if (isset($__componentOriginal93fb1375df3beb42de5c43a9dcc7a7f6)): ?>
+<?php $component = $__componentOriginal93fb1375df3beb42de5c43a9dcc7a7f6; ?>
+<?php unset($__componentOriginal93fb1375df3beb42de5c43a9dcc7a7f6); ?>
+<?php endif; ?>
     </body>
 </html>
 
+<?php /**PATH C:\Users\enter\Herd\bookshop\resources\views/welcome.blade.php ENDPATH**/ ?>

@@ -13,3 +13,4 @@
         });
     })();
 </script>
+<?php /**PATH C:\Users\enter\Herd\bookshop\resources\views/components/install-pwa.blade.php ENDPATH**/ ?>
