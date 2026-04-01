@@ -131,7 +131,7 @@ class PaymentController extends Controller
                 // Get cart items before clearing
                 $cartItems = Cart::where('user_id', Auth::id())->get();
 
-                // Prepare order items data
+                // Prepare order items data from cart
                 $orderItems = $cartItems->map(function($item) {
                     return [
                         'book_id' => $item->book_id,
@@ -159,12 +159,25 @@ class PaymentController extends Controller
                 // Clear cart
                 Cart::where('user_id', Auth::id())->delete();
 
-                $order->update([
+                // Only update order_items if cart had items or order doesn't already have items
+                // This prevents overwriting existing order_items when cart was already cleared
+                $existingItems = $order->order_items;
+                $hasExistingItems = !empty($existingItems) && (is_array($existingItems) ? count($existingItems) > 0 : $existingItems->count() > 0);
+                
+                $updateData = [
                     'status' => 'paid',
                     'payment_status' => 'completed',
                     'paid_at' => now(),
-                    'order_items' => $orderItems,
-                ]);
+                ];
+                
+                if (!empty($orderItems)) {
+                    $updateData['order_items'] = $orderItems;
+                } elseif (!$hasExistingItems) {
+                    $updateData['order_items'] = $orderItems; // Save empty array if nothing exists
+                }
+                // If cart is empty but order already has items, don't overwrite
+                
+                $order->update($updateData);
 
                 return redirect()->route('home')
                     ->with('success', 'Payment successful! Order confirmed. Check your email for details.');
@@ -210,6 +223,16 @@ class PaymentController extends Controller
         
         $cartItems = Cart::where('user_id', $user->id)->get();
         
+        // Prepare order items data from cart
+        $orderItems = $cartItems->map(function($item) {
+            return [
+                'book_id' => $item->book_id,
+                'product_name' => $item->product_name,
+                'product_price' => $item->product_price,
+                'quantity' => $item->quantity,
+            ];
+        })->toArray();
+        
         $order = Order::create([
             'user_id' => $user->id,
             'order_number' => $reference,
@@ -221,12 +244,10 @@ class PaymentController extends Controller
             'payment_method' => $request->payment_method,
             'total_amount' => $total,
             'status' => 'pending',
-            'payment_status' => 'pending'
+            'payment_status' => 'pending',
+            'order_items' => $orderItems,
         ]);
 
-        // Store order items in order_items table if it exists
-        // Or keep them in cart (which we'll clear after payment)
-        
         return $order;
     }
 
