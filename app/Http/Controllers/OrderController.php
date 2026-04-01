@@ -82,8 +82,8 @@ class OrderController extends Controller
             Log::info('Paystack Payment Init Response for MoMo', ['result' => $result]);
 
             if ($result['success']) {
-                // Clear cart
-                $cartItems->each->delete();
+                // Don't clear cart here - it will be cleared in the payment callback
+                // after payment is confirmed. The order already has order_items saved.
 
                 // Redirect to Paystack checkout
                 return redirect($result['authorization_url']);
