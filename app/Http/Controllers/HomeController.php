@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Services\CartService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class HomeController extends Controller
 {
@@ -29,5 +31,28 @@ class HomeController extends Controller
         $cartCount = $cartService->getItemCount();
 
         return view('dashboard', compact('books', 'cartCount'));
+    }
+
+    /**
+     * Search books.
+     */
+    public function search(Request $request)
+    {
+        $query = $request->input('q');
+
+        $books = Book::where('title', 'like', "%{$query}%")
+            ->orWhere('author', 'like', "%{$query}%")
+            ->orWhere('description', 'like', "%{$query}%")
+            ->orWhere('category', 'like', "%{$query}%")
+            ->latest()
+            ->get();
+
+        if (Auth::check()) {
+            $cartService = app(CartService::class);
+            $cartCount = $cartService->getItemCount();
+            return view('dashboard', compact('books', 'query', 'cartCount'));
+        }
+
+        return view('welcome', compact('books', 'query'));
     }
 }

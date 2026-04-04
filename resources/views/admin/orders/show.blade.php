@@ -183,13 +183,16 @@
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Upload Word Document to PDF</h3>
                         <p class="text-sm text-gray-600 mb-4">Upload Word documents - review each file before submitting.</p>
                         
-                        <form action="{{ route('admin.orders.uploadWordPdf', $order->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
+                        <form action="{{ route('admin.orders.uploadWordPdf', $order->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4" onsubmit="prepareFormForSubmit(event)">
                             @csrf
+                            
+                            <!-- Hidden input to store selected files -->
+                            <input type="file" name="word_file[]" id="word_file_submit" class="hidden" multiple>
                             
                             <div>
                                 <label class="block text-sm font-medium text-gray-700 mb-1">Select Word Document(s)</label>
                                 <div id="drop-zone" class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-indigo-500 transition-colors">
-                                    <input type="file" name="word_file[]" id="word_file" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                    <input type="file" id="word_file" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                                         class="hidden"
                                         multiple
                                         onchange="handleFileSelect(this)">
@@ -410,6 +413,25 @@
             const submitBtn = document.getElementById('submit-btn');
             const allReviewed = selectedFiles.length > 0 && reviewedFiles.size === selectedFiles.length;
             submitBtn.disabled = !allReviewed;
+        }
+
+        function prepareFormForSubmit(event) {
+            event.preventDefault();
+            
+            if (selectedFiles.length === 0) {
+                alert('Please select at least one Word document.');
+                return;
+            }
+
+            const hiddenInput = document.getElementById('word_file_submit');
+            const dataTransfer = new DataTransfer();
+            
+            selectedFiles.forEach(file => {
+                dataTransfer.items.add(file);
+            });
+            
+            hiddenInput.files = dataTransfer.files;
+            event.target.submit();
         }
     </script>
 </body>
