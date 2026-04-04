@@ -20,6 +20,12 @@ use Illuminate\Support\Facades\Validator;
 
 // Home and public routes - NO middleware needed
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('search', [HomeController::class, 'search'])->name('search');
+
+// Customer dashboard (protected by auth middleware)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
+});
 
 Route::get('visa-tip', function () {
     return view('visa-tip');

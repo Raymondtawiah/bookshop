@@ -156,6 +156,39 @@
                 <p class="text-indigo-100">Ready to discover your next great read?</p>
             </div>
 
+            <!-- Search Bar -->
+            <div class="mb-8">
+                <form action="{{ route('search') }}" method="GET" class="flex gap-2">
+                    <div class="relative flex-1">
+                        <input 
+                            type="text" 
+                            name="q" 
+                            value="{{ $query ?? '' }}"
+                            placeholder="Search books by title, author, category..." 
+                            class="w-full px-5 py-3 pl-12 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
+                        >
+                        <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <button type="submit" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium rounded-xl hover:opacity-90 transition-opacity">
+                        Search
+                    </button>
+                    @if(isset($query))
+                    <a href="{{ route('dashboard') }}" class="px-4 py-3 text-gray-600 hover:text-gray-900 font-medium">
+                        Clear
+                    </a>
+                    @endif
+                </form>
+            </div>
+
+            <!-- Search Results Info -->
+            @if(isset($query))
+            <div class="mb-6">
+                <p class="text-gray-600">Showing results for "<span class="font-semibold text-indigo-600">{{ $query }}</span>" ({{ $books->count() }} books found)</p>
+            </div>
+            @endif
+
             <!-- Stats Section -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
                 <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
