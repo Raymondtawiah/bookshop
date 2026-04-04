@@ -60,7 +60,7 @@ class NationalitySeeder extends Seeder
             ['name' => 'Algerian', 'country' => 'Algeria'],
             ['name' => 'Tunisian', 'country' => 'Tunisia'],
             ['name' => 'Libyan', 'country' => 'Libya'],
-            
+
             // Other Countries
             ['name' => 'American', 'country' => 'United States'],
             ['name' => 'British', 'country' => 'United Kingdom'],

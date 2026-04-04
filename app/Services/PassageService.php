@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Log;
 
 /**
  * Passage Service
- * 
+ *
  * This follows the Single Responsibility Principle (SRP) -
  * This class is only responsible for managing passage/text files.
  */
@@ -28,20 +28,21 @@ class PassageService
 
     /**
      * Get all available passages
-     * 
+     *
      * @return array Array of passages with filename as key and content as value
      */
     public function getAllPassages(): array
     {
         $passages = [];
-        
-        if (!is_dir($this->passagesPath)) {
+
+        if (! is_dir($this->passagesPath)) {
             Log::warning("Passages directory not found: {$this->passagesPath}");
+
             return $passages;
         }
 
         $files = File::files($this->passagesPath);
-        
+
         foreach ($files as $file) {
             if ($file->getExtension() === 'txt') {
                 $filename = $file->getFilenameWithoutExtension();
@@ -50,7 +51,7 @@ class PassageService
                     'filename' => $filename,
                     'name' => $this->formatName($filename),
                     'content' => $content,
-                    'path' => $file->getPathname()
+                    'path' => $file->getPathname(),
                 ];
             }
         }
@@ -60,30 +61,30 @@ class PassageService
 
     /**
      * Get a specific passage by filename
-     * 
-     * @param string|int $filename The filename or key of the passage
-     * @return string|null
+     *
+     * @param  string|int  $filename  The filename or key of the passage
      */
     public function getPassage($filename): ?string
     {
         // Cast to string to handle integer keys from dropdowns
         $stringFilename = (string) $filename;
         $path = "{$this->passagesPath}/{$stringFilename}.txt";
-        
-        if (!file_exists($path)) {
+
+        if (! file_exists($path)) {
             Log::warning("Passage not found: {$path}");
+
             return null;
         }
-        
+
         // Get raw content and clean it
         $content = File::get($path);
-        
+
         // Remove markdown formatting
         $content = $this->cleanMarkdown($content);
-        
+
         return $content;
     }
-    
+
     /**
      * Clean markdown formatting from content
      */
@@ -91,94 +92,86 @@ class PassageService
     {
         // Remove headers (# Title, ## Title)
         $content = preg_replace('/^#+\s+/m', '', $content);
-        
+
         // Remove horizontal rules (---)
         $content = preg_replace('/^---+$/m', '', $content);
-        
+
         // Remove bold (**text**)
         $content = preg_replace('/\*\*(.+?)\*\*/', '$1', $content);
-        
+
         // Remove italic (*text*)
         $content = preg_replace('/\*([^*]+)\*/', '$1', $content);
-        
+
         // Remove list markers at start of lines (* item or - item)
         $content = preg_replace('/^[\*\-]\s+/m', '', $content);
-        
+
         // Clean up multiple empty lines
         $content = preg_replace('/\n{3,}/', "\n\n", $content);
-        
+
         return $content;
     }
 
     /**
      * Get passage names for dropdown selection
-     * 
-     * @return array
      */
     public function getPassageNames(): array
     {
         $passages = $this->getAllPassages();
         $names = [];
-        
+
         foreach ($passages as $key => $passage) {
             // Ensure key is always a string
             $stringKey = (string) $key;
             $names[$stringKey] = $passage['name'];
         }
-        
+
         return $names;
     }
 
     /**
      * Get a specific passage name by key (supports both string and integer keys)
-     * 
+     *
      * This method handles the conversion of integer keys from dropdown selections
      * to string keys used in the internal array.
-     * 
-     * @param string|int $key The passage key from request
-     * @param string|null $default Default value if key not found
-     * @return string|null
+     *
+     * @param  string|int  $key  The passage key from request
+     * @param  string|null  $default  Default value if key not found
      */
     public function getPassageName($key, ?string $default = null): ?string
     {
         if ($key === null || $key === '') {
             return $default;
         }
-        
+
         // Cast to string to handle integer keys from dropdowns
         $stringKey = (string) $key;
-        
+
         $passageNames = $this->getPassageNames();
-        
+
         // Check if key exists
-        if (!array_key_exists($stringKey, $passageNames)) {
+        if (! array_key_exists($stringKey, $passageNames)) {
             return $default;
         }
-        
+
         return $passageNames[$stringKey];
     }
 
     /**
      * Format filename to readable name
-     * 
-     * @param string $filename
-     * @return string
      */
     protected function formatName(string $filename): string
     {
         // Convert underscores and hyphens to spaces
         $name = str_replace(['_', '-'], ' ', $filename);
-        
+
         // Capitalize each word
         $name = ucwords($name);
-        
+
         return $name;
     }
 
     /**
      * Check if passages directory exists
-     * 
-     * @return bool
      */
     public function hasPassages(): bool
     {
@@ -187,12 +180,10 @@ class PassageService
 
     /**
      * Get passage count
-     * 
-     * @return int
      */
     public function count(): int
     {
-        if (!is_dir($this->passagesPath)) {
+        if (! is_dir($this->passagesPath)) {
             return 0;
         }
 

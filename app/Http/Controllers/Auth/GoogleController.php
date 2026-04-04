@@ -17,13 +17,13 @@ class GoogleController extends Controller
     public function redirectToGoogle()
     {
         Log::info('Starting Google OAuth redirect');
-        
+
         $driver = Socialite::driver('google');
-        
+
         // Set explicit redirect URI
         $redirectUrl = config('services.google.redirect');
-        Log::info('Google redirect URI: ' . $redirectUrl);
-        
+        Log::info('Google redirect URI: '.$redirectUrl);
+
         return $driver->redirect();
     }
 
@@ -38,7 +38,7 @@ class GoogleController extends Controller
 
             Log::info('Google OAuth callback received', [
                 'email' => $googleUser->getEmail(),
-                'name' => $googleUser->getName()
+                'name' => $googleUser->getName(),
             ]);
 
             // Check if user already exists
@@ -47,13 +47,13 @@ class GoogleController extends Controller
             if ($user) {
 
                 // Update Google info if missing
-                if (!$user->google_id) {
+                if (! $user->google_id) {
                     $user->update([
                         'google_id' => $googleUser->getId(),
                         'avatar' => $googleUser->getAvatar(),
                     ]);
                 }
-                
+
                 // ALWAYS mark email as verified since Google already verified it
                 // This ensures existing users who haven't verified can still login via Google
                 if (is_null($user->email_verified_at)) {
@@ -61,7 +61,7 @@ class GoogleController extends Controller
                     $user->save();
                     Log::info('Google login: Email verified for existing user', ['user_id' => $user->id, 'email' => $user->email, 'verified_at' => $user->email_verified_at]);
                 }
-                
+
                 // Refresh the user from database to ensure we have the latest data
                 $user = $user->fresh();
 
@@ -87,20 +87,21 @@ class GoogleController extends Controller
 
             // Login the user
             Auth::login($user, true);
-            
+
             // Regenerate session to prevent session fixation
             request()->session()->regenerate();
 
             // Debug: Check if user is actually logged in
-            if (!Auth::check()) {
+            if (! Auth::check()) {
                 Log::error('Google login: Auth::login() failed to log user in', [
                     'user_id' => $user->id,
-                    'email' => $user->email
+                    'email' => $user->email,
                 ]);
+
                 return redirect()->route('login')
                     ->with('error', 'Login failed. Please try again.');
             }
-            
+
             // Debug: Log the login details
             Log::info('Google login successful - about to redirect', [
                 'user_id' => $user->id,
@@ -109,17 +110,17 @@ class GoogleController extends Controller
                 'google_id' => $user->google_id,
                 'email_verified_at' => $user->email_verified_at,
                 'auth_check' => Auth::check(),
-                'session_id' => request()->session()->getId()
+                'session_id' => request()->session()->getId(),
             ]);
 
             // Redirect based on user type
             if ($user->is_admin) {
                 return redirect()->route('admin.dashboard');
             }
-            
+
             // Use route() helper with proper parameters
             Log::info('Redirecting to home route');
-            
+
             // Google login doesn't need email verification - Google already verified it
             return redirect()->route('home');
 

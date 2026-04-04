@@ -2,8 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
+use App\Mail\OrderConfirmation;
 use App\Models\Cart;
+use App\Models\Order;
 use App\Services\PaystackService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -32,22 +33,22 @@ class PaymentController extends Controller
         ]);
 
         $cartItems = Cart::where('user_id', Auth::id())->get();
-        
+
         if ($cartItems->isEmpty()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Your cart is empty'
+                'message' => 'Your cart is empty',
             ]);
         }
 
-        $total = $cartItems->sum(function($item) {
+        $total = $cartItems->sum(function ($item) {
             return $item->product_price * $item->quantity;
         });
 
         $email = $request->email ?? Auth::user()->email;
-        
+
         // Generate unique reference
-        $reference = 'ORD-' . time() . rand(1000, 9999);
+        $reference = 'ORD-'.time().rand(1000, 9999);
 
         // For mobile money - redirect to Paystack checkout where user can select mobile money
         if ($request->payment_method === 'momo') {
@@ -65,13 +66,13 @@ class PaymentController extends Controller
             return response()->json([
                 'success' => true,
                 'authorization_url' => $result['authorization_url'],
-                'reference' => $reference
+                'reference' => $reference,
             ]);
         }
 
         return response()->json([
             'success' => false,
-            'message' => $result['message'] ?? 'Payment initialization failed'
+            'message' => $result['message'] ?? 'Payment initialization failed',
         ]);
     }
 
@@ -82,7 +83,7 @@ class PaymentController extends Controller
     {
         // Remove any spaces or dashes
         $phone = preg_replace('/[^0-9]/', '', $phoneNumber);
-        
+
         // Get the first 3 digits after country code (233) or 0
         if (strlen($phone) === 12 && substr($phone, 0, 3) === '233') {
             $prefix = substr($phone, 3, 3);
@@ -114,8 +115,8 @@ class PaymentController extends Controller
     public function callback(Request $request)
     {
         $reference = $request->reference;
-        
-        if (!$reference) {
+
+        if (! $reference) {
             return redirect()->route('checkout')
                 ->with('error', 'Payment reference not found');
         }
@@ -126,13 +127,13 @@ class PaymentController extends Controller
         if ($result['success']) {
             // Find and update the order
             $order = Order::where('order_number', $reference)->first();
-            
+
             if ($order) {
                 // Get cart items before clearing
                 $cartItems = Cart::where('user_id', Auth::id())->get();
 
                 // Prepare order items data from cart
-                $orderItems = $cartItems->map(function($item) {
+                $orderItems = $cartItems->map(function ($item) {
                     return [
                         'book_id' => $item->book_id,
                         'product_name' => $item->product_name,
@@ -145,15 +146,15 @@ class PaymentController extends Controller
                 try {
                     \Log::info('Attempting to send order confirmation email', [
                         'order_id' => $order->id,
-                        'email' => $order->email
+                        'email' => $order->email,
                     ]);
-                    
-                    \Mail::to($order->email)->send(new \App\Mail\OrderConfirmation($order, $cartItems, $order->total_amount));
-                    
+
+                    \Mail::to($order->email)->send(new OrderConfirmation($order, $cartItems, $order->total_amount));
+
                     \Log::info('Order confirmation email sent successfully', ['order_id' => $order->id]);
                 } catch (\Exception $e) {
                     // Log email error but don't fail the order
-                    \Log::error('Failed to send order confirmation email: ' . $e->getMessage());
+                    \Log::error('Failed to send order confirmation email: '.$e->getMessage());
                 }
 
                 // Clear cart
@@ -162,21 +163,21 @@ class PaymentController extends Controller
                 // Only update order_items if cart had items or order doesn't already have items
                 // This prevents overwriting existing order_items when cart was already cleared
                 $existingItems = $order->order_items;
-                $hasExistingItems = !empty($existingItems) && (is_array($existingItems) ? count($existingItems) > 0 : $existingItems->count() > 0);
-                
+                $hasExistingItems = ! empty($existingItems) && (is_array($existingItems) ? count($existingItems) > 0 : $existingItems->count() > 0);
+
                 $updateData = [
                     'status' => 'paid',
                     'payment_status' => 'completed',
                     'paid_at' => now(),
                 ];
-                
-                if (!empty($orderItems)) {
+
+                if (! empty($orderItems)) {
                     $updateData['order_items'] = $orderItems;
-                } elseif (!$hasExistingItems) {
+                } elseif (! $hasExistingItems) {
                     $updateData['order_items'] = $orderItems; // Save empty array if nothing exists
                 }
                 // If cart is empty but order already has items, don't overwrite
-                
+
                 $order->update($updateData);
 
                 return redirect()->route('home')
@@ -194,23 +195,23 @@ class PaymentController extends Controller
     public function checkPaymentStatus(Request $request)
     {
         $reference = $request->reference;
-        
+
         $result = $this->paystack->verifyPayment($reference);
-        
+
         if ($result['success']) {
             $order = Order::where('order_number', $reference)->first();
-            
+
             if ($order && $order->status === 'paid') {
                 return response()->json([
                     'success' => true,
-                    'message' => 'Payment confirmed'
+                    'message' => 'Payment confirmed',
                 ]);
             }
         }
-        
+
         return response()->json([
             'success' => false,
-            'message' => 'Payment not yet confirmed'
+            'message' => 'Payment not yet confirmed',
         ]);
     }
 
@@ -220,11 +221,11 @@ class PaymentController extends Controller
     protected function createPendingOrder(Request $request, $total, $reference)
     {
         $user = Auth::user();
-        
+
         $cartItems = Cart::where('user_id', $user->id)->get();
-        
+
         // Prepare order items data from cart
-        $orderItems = $cartItems->map(function($item) {
+        $orderItems = $cartItems->map(function ($item) {
             return [
                 'book_id' => $item->book_id,
                 'product_name' => $item->product_name,
@@ -232,7 +233,7 @@ class PaymentController extends Controller
                 'quantity' => $item->quantity,
             ];
         })->toArray();
-        
+
         $order = Order::create([
             'user_id' => $user->id,
             'order_number' => $reference,
@@ -258,28 +259,28 @@ class PaymentController extends Controller
     {
         try {
             $user = $order->user;
-            
+
             // If cartItems not provided, try to get from cart
-            if (!$cartItems) {
+            if (! $cartItems) {
                 $cartItems = Cart::where('user_id', $order->user_id)->get();
             }
-            
+
             // If still no cart items, create empty array
-            if (!$cartItems) {
+            if (! $cartItems) {
                 $cartItems = collect([]);
             }
-            
+
             // Get admin name from settings or use default
             $adminName = 'The Bookshop Team';
-            
-            Mail::to($order->email)->send(new \App\Mail\OrderConfirmation($order, $cartItems, $order->total_amount));
-            
+
+            Mail::to($order->email)->send(new OrderConfirmation($order, $cartItems, $order->total_amount));
+
             Log::info('Order confirmation email sent', ['order_id' => $order->id]);
-            
+
         } catch (\Exception $e) {
             Log::error('Failed to send order confirmation email', [
                 'error' => $e->getMessage(),
-                'order_id' => $order->id
+                'order_id' => $order->id,
             ]);
         }
     }
@@ -290,17 +291,17 @@ class PaymentController extends Controller
     public function getBanks()
     {
         $result = $this->paystack->getBanks();
-        
+
         if ($result['status']) {
             return response()->json([
                 'success' => true,
-                'banks' => $result['data']
+                'banks' => $result['data'],
             ]);
         }
-        
+
         return response()->json([
             'success' => false,
-            'message' => 'Failed to fetch banks'
+            'message' => 'Failed to fetch banks',
         ]);
     }
 }

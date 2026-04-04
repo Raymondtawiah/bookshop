@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Services\CartService;
-use Illuminate\Http\Request;
 
 class HomeController extends Controller
 {
@@ -13,7 +12,8 @@ class HomeController extends Controller
      */
     public function index()
     {
-        $books = \App\Models\Book::latest()->take(8)->get();
+        $books = Book::latest()->take(8)->get();
+
         return view('welcome', compact('books'));
     }
 
@@ -22,12 +22,12 @@ class HomeController extends Controller
      */
     public function dashboard()
     {
-        $books = \App\Models\Book::latest()->take(8)->get();
-        
+        $books = Book::latest()->take(8)->get();
+
         // Use CartService to get cart data - following SOLID principles
         $cartService = app(CartService::class);
         $cartCount = $cartService->getItemCount();
-        
+
         return view('dashboard', compact('books', 'cartCount'));
     }
 }

@@ -38,18 +38,20 @@ class Book extends Model
      */
     public function getCoverImageUrlAttribute()
     {
-        if (!$this->cover_image) return null;
-        
+        if (! $this->cover_image) {
+            return null;
+        }
+
         // Check if it's already a full URL (external storage)
         if (filter_var($this->cover_image, FILTER_VALIDATE_URL)) {
             return $this->cover_image;
         }
-        
+
         // Use Laravel's Storage facade to generate URL with cache-busting
-        $url = Storage::disk('public')->url('books/' . $this->cover_image);
-        
+        $url = Storage::disk('public')->url('books/'.$this->cover_image);
+
         // Add timestamp to prevent browser caching
-        return $url . '?v=' . $this->updated_at->timestamp;
+        return $url.'?v='.$this->updated_at->timestamp;
     }
 
     /**
@@ -57,17 +59,19 @@ class Book extends Model
      */
     public function getBookPdfUrlAttribute()
     {
-        if (!$this->book_pdf) return null;
-        
+        if (! $this->book_pdf) {
+            return null;
+        }
+
         // Check if it's already a full URL (external storage)
         if (filter_var($this->book_pdf, FILTER_VALIDATE_URL)) {
             return $this->book_pdf;
         }
-        
+
         // Use Laravel's Storage facade to generate URL with cache-busting
-        $url = Storage::disk('public')->url('books/' . $this->book_pdf);
-        
+        $url = Storage::disk('public')->url('books/'.$this->book_pdf);
+
         // Add timestamp to prevent browser caching
-        return $url . '?v=' . $this->updated_at->timestamp;
+        return $url.'?v='.$this->updated_at->timestamp;
     }
 }
