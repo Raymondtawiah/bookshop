@@ -116,6 +116,34 @@
                             }
                         });
                     </script>
+                    <script>
+                        function toggleDesc(bookId, full, truncated) {
+                            var el = document.getElementById('desc-' + bookId);
+                            var btn = el.nextElementSibling;
+                            if (el.dataset.expanded === 'true') {
+                                el.textContent = truncated;
+                                el.dataset.expanded = 'false';
+                                btn.textContent = 'Show more';
+                            } else {
+                                el.textContent = full;
+                                el.dataset.expanded = 'true';
+                                btn.textContent = 'Show less';
+                            }
+                        }
+                        function toggleAvailDesc(bookId, full, truncated) {
+                            var el = document.getElementById('avail-' + bookId);
+                            var btn = el.nextElementSibling;
+                            if (el.dataset.expanded === 'true') {
+                                el.textContent = truncated;
+                                el.dataset.expanded = 'false';
+                                btn.textContent = 'Show more';
+                            } else {
+                                el.textContent = full;
+                                el.dataset.expanded = 'true';
+                                btn.textContent = 'Show less';
+                            }
+                        }
+                    </script>
                 </div>
             </div>
         </header>
@@ -311,6 +339,14 @@
                             <div class="p-4">
                                 <h3 class="font-semibold text-gray-900 text-sm truncate group-hover:text-indigo-600 transition-colors">{{ $book->title }}</h3>
                                 <p class="text-xs text-gray-500 truncate mt-1">{{ $book->author }}</p>
+                                @if($book->description)
+                                <div class="mt-2">
+                                    <p id="desc-{{ $book->id }}" class="text-xs text-gray-500 line-clamp-2">{{ Str::limit($book->description, 60) }}</p>
+                                    @if(strlen($book->description) > 60)
+                                    <button onclick="toggleDesc({{ $book->id }}, {!! json_encode($book->description) !!}, {!! json_encode(Str::limit($book->description, 60)) !!})" class="text-xs text-indigo-600 font-medium mt-1 hover:text-indigo-700">Show more</button>
+                                    @endif
+                                </div>
+                                @endif
                                 <div class="mt-3 flex items-center justify-between">
                                     <p class="font-bold text-lg text-indigo-600">₵{{ number_format($book->price, 2) }}</p>
                                     @if($book->category)
@@ -415,6 +451,14 @@
                         <div class="p-4">
                             <h3 class="font-semibold text-gray-900 text-sm truncate group-hover:text-indigo-600 transition-colors">{{ $book->title }}</h3>
                             <p class="text-xs text-gray-500 mt-1">{{ $book->author }}</p>
+                            @if($book->description)
+                            <div class="mt-2">
+                                <p id="avail-{{ $book->id }}" class="text-xs text-gray-500 line-clamp-2">{{ Str::limit($book->description, 60) }}</p>
+                                @if(strlen($book->description) > 60)
+                                <button onclick="toggleAvailDesc({{ $book->id }}, {!! json_encode($book->description) !!}, {!! json_encode(Str::limit($book->description, 60)) !!})" class="text-xs text-indigo-600 font-medium mt-1 hover:text-indigo-700">Show more</button>
+                                @endif
+                            </div>
+                            @endif
                             <div class="mt-3 flex items-center justify-between">
                                 <p class="font-bold text-xl text-indigo-600">₵{{ number_format($book->price, 2) }}</p>
                                 @if($book->category)

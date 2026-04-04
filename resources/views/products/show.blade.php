@@ -64,7 +64,31 @@
 
                             <!-- Description -->
                             @if($book->description)
-                            <p class="text-gray-600 mb-8 leading-relaxed">{{ $book->description }}</p>
+                            <div class="mb-8">
+                                <p id="bookDescription" class="text-gray-600 mb-2 leading-relaxed">{{ Str::limit($book->description, 100) }}</p>
+                                @if(strlen($book->description) > 100)
+                                <button id="toggleDescription" onclick="toggleDescription()" class="text-indigo-600 font-medium text-sm hover:text-indigo-700">Show more</button>
+                                <script>
+                                    let expanded = false;
+                                    const fullDescription = {!! json_encode($book->description) !!};
+                                    const truncated = {!! json_encode(Str::limit($book->description, 100)) !!};
+                                    
+                                    function toggleDescription() {
+                                        const descEl = document.getElementById('bookDescription');
+                                        const btnEl = document.getElementById('toggleDescription');
+                                        
+                                        if (expanded) {
+                                            descEl.textContent = truncated;
+                                            btnEl.textContent = 'Show more';
+                                        } else {
+                                            descEl.textContent = fullDescription;
+                                            btnEl.textContent = 'Show less';
+                                        }
+                                        expanded = !expanded;
+                                    }
+                                </script>
+                                @endif
+                            </div>
                             @endif
 
                             <!-- Product Details -->
