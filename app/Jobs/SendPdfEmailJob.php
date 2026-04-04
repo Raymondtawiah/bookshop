@@ -2,7 +2,7 @@
 
 namespace App\Jobs;
 
-use App\Mail\OrderConfirmationMail;
+use App\Mail\SendPdfToCustomer;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
@@ -30,7 +30,7 @@ class SendPdfEmailJob implements ShouldQueue
 
     public function handle(): void
     {
-        Mail::to($this->user->email)->send(new OrderConfirmationMail(
+        Mail::to($this->user->email)->send(new SendPdfToCustomer(
             $this->user,
             $this->pdfPaths,
             $this->orderId

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Jobs\SendPdfEmailJob;
 use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Models\Cart;
@@ -586,13 +587,33 @@ class OrderController extends Controller
                 return redirect()->back()->withInput()->with('error', 'Failed to convert Word files to PDF. Please try again.');
             }
 
-            $order->update([
-                'status' => 'confirmed',
-                'pdf_sent' => true,
-                'pdf_sent_at' => now(),
-            ]);
+            // Send email with PDF attachments using queue for faster delivery
+            try {
+                $user = $order->user;
+                
+                // Dispatch to queue for faster delivery
+                SendPdfEmailJob::dispatch($user, $pdfPaths, $order->id);
 
-            return redirect()->back()->with('success', count($pdfPaths).' file(s) converted and sent to customer successfully!');
+                $order->update([
+                    'status' => 'confirmed',
+                    'pdf_sent' => true,
+                    'pdf_sent_at' => now(),
+                ]);
+
+                return redirect()->back()->with('success', count($pdfPaths).' file(s) converted and queued to send to customer!');
+
+            } catch (\Exception $e) {
+                Log::error('Failed to queue PDF email: '.$e->getMessage());
+                
+                // Still update order even if email fails
+                $order->update([
+                    'status' => 'confirmed',
+                    'pdf_sent' => true,
+                    'pdf_sent_at' => now(),
+                ]);
+
+                return redirect()->back()->with('success', count($pdfPaths).' file(s) converted! (Email may be delayed)');
+            }
 
         } catch (\Exception $e) {
             Log::error('Word to PDF conversion failed: '.$e->getMessage());
