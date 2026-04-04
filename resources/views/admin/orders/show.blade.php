@@ -13,7 +13,6 @@
     
     <x-admin-navbar />
 
-    <!-- Main Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
 
             <div class="mb-6">
@@ -26,7 +25,6 @@
             </div>
 
             <div class="bg-white rounded-lg shadow overflow-hidden">
-                <!-- Order Header -->
                 <div class="px-4 py-3 sm:px-6 border-b border-gray-200 bg-gray-50">
                     <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
                         <h2 class="text-lg sm:text-xl font-semibold text-gray-900">Order #{{ $order->order_number ?? $order->id }}</h2>
@@ -44,7 +42,6 @@
 
                 <div class="px-4 py-4 sm:px-6">
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Customer Information -->
                         <div>
                             <h3 class="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">Customer Information</h3>
                             <dl class="space-y-2 sm:space-y-3">
@@ -71,7 +68,6 @@
                             </dl>
                         </div>
 
-                        <!-- Payment Information -->
                         <div>
                             <h3 class="text-lg font-medium text-gray-900 mb-4">Payment Information</h3>
                             <dl class="space-y-3">
@@ -111,11 +107,9 @@
                         </div>
                     </div>
 
-                    <!-- Order Items -->
                     <div class="mt-8 pt-6 border-t border-gray-200">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Ordered Books</h3>
                         @php
-                            // Use order_items which now properly handles JSON via accessor
                             $items = $order->order_items;
                         @endphp
                         @if(!empty($items) && $items->count() > 0)
@@ -153,7 +147,6 @@
                         @endif
                     </div>
 
-                    <!-- Update Status Form -->
                     <div class="mt-8 pt-6 border-t border-gray-200">
                         <h3 class="text-lg font-medium text-gray-900 mb-4">Update Order Status</h3>
                         <form action="{{ route('admin.orders.status', $order->id) }}" method="POST" class="flex flex-wrap gap-4 items-end">
@@ -185,100 +178,44 @@
                         </form>
                     </div>
 
-                    <!-- Generate and Send PDF from Passage -->
-                    <div class="mt-6">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Generate & Send PDF to Customer</h3>
-                        <p class="text-sm text-gray-600 mb-4">Select a book from the order or paste content to generate a personalized PDF with the customer's name at the bottom of each page.</p>
+                    <!-- Upload Word File and Convert to PDF -->
+                    <div class="mt-6 pt-6 border-t border-gray-200">
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Upload Word Document to PDF</h3>
+                        <p class="text-sm text-gray-600 mb-4">Upload Word documents - review each file before submitting.</p>
                         
-                        <form action="{{ route('admin.orders.generateTextPdf', $order->id) }}" method="POST" class="space-y-4">
+                        <form action="{{ route('admin.orders.uploadWordPdf', $order->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4">
                             @csrf
                             
-                            <!-- Select Passage -->
                             <div>
-                                <label for="passage" class="block text-sm font-medium text-gray-700 mb-1">Select Passage to Send as PDF</label>
-                                <select name="passage" id="passage" onchange="loadPassagePreview()"
-                                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                    <option value="">-- Select a Passage --</option>
-                                    @if(!empty($passageNames))
-                                        @foreach($passageNames as $key => $name)
-                                            <option value="{{ $key }}">{{ $name }}</option>
-                                        @endforeach
-                                    @else
-                                        <option value="" disabled>No passages available</option>
-                                    @endif
-                                </select>
-                                <p class="text-xs text-gray-500 mt-1">Select a passage from resources/passages/ folder to convert to PDF and send to customer</p>
-                            </div>
-                            
-                            <!-- Passage Preview Section -->
-                            <div id="passage-preview-section" class="hidden mt-4">
-                                <div class="flex items-center justify-between mb-2">
-                                    <label class="block text-sm font-medium text-gray-700">Passage Preview</label>
-                                    <button type="button" onclick="loadPassagePreview()" class="text-sm text-indigo-600 hover:text-indigo-800">
-                                        ↻ Refresh Preview
-                                    </button>
-                                </div>
-                                <div id="passage-preview" class="p-4 bg-gray-50 border border-gray-200 rounded-lg text-sm prose max-w-none overflow-y-auto max-h-64">
-                                    <p class="text-gray-400 italic">Select a passage to preview...</p>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Select Word Document(s)</label>
+                                <div id="drop-zone" class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-indigo-500 transition-colors">
+                                    <input type="file" name="word_file[]" id="word_file" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                        class="hidden"
+                                        multiple
+                                        onchange="handleFileSelect(this)">
+                                    
+                                    <div id="files-container" class="space-y-2">
+                                        <label for="word_file" class="cursor-pointer block">
+                                            <div class="text-gray-500 py-4">
+                                                <svg class="w-10 h-10 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                                                </svg>
+                                                <p class="text-sm">Drop files here or click to browse</p>
+                                                <p class="text-xs text-gray-400 mt-1">Accepted formats: .doc, .docx (max 10MB each)</p>
+                                            </div>
+                                        </label>
+                                    </div>
                                 </div>
                             </div>
-                            
-                            <div class="flex items-center justify-center text-gray-400">
-                                <span class="text-sm">- OR -</span>
-                            </div>
-                            
-                            <!-- Passage feature disabled for now - use content field instead -->
-                            <!-- <div>
-                                <label for="passage" class="block text-sm font-medium text-gray-700 mb-1">Select Passage (optional)</label>
-                                <select name="passage" id="passage"
-                                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                    <option value="">-- Select a Passage --</option>
-                                    @if(!empty($passageNames))
-                                        @foreach($passageNames as $key => $name)
-                                            <option value="{{ strval($key) }}">{{ $name }}</option>
-                                        @endforeach
-                                    @else
-                                        <option value="" disabled>No passages available</option>
-                                    @endif
-                                </select>
-                                <p class="text-xs text-gray-500 mt-1">Passages are stored in resources/passages/ folder</p>
-                            </div>
 
-                            <div class="flex items-center justify-center text-gray-400">
-                                <span class="text-sm">- OR -</span>
-                            </div> -->
-
-                            <!-- Option 2: Paste Content -->
-                            <div>
-                                <label for="content" class="block text-sm font-medium text-gray-700 mb-1">Paste Content (optional)</label>
-                                <textarea name="content" id="content" rows="6"
-                                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                    placeholder="Paste your content here... This will be converted to PDF with customer's name at the bottom."></textarea>
-                            </div>
-
-                            <div>
-                                <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Document Title (optional)</label>
-                                <input type="text" name="title" id="title" 
-                                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                    placeholder="e.g., Visa Application Guide">
-                            </div>
-
-                            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2">
+                            <!-- Submit Button -->
+                            <button type="submit" id="submit-btn" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed" disabled>
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                                 </svg>
-                                Generate & Send PDF
+                                Upload & Send as PDF
                             </button>
                         </form>
-                        
-                        @if($order->pdf_sent && $order->pdf_sent_at)
-                        <p class="mt-3 text-sm text-green-600 flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            PDF sent on {{ $order->pdf_sent_at->format('M j, Y g:i A') }}
-                        </p>
-                        @endif
                     </div>
 
                     <div class="mt-6 pt-6 border-t border-gray-200">
@@ -302,50 +239,177 @@
         confirmText="Delete"
     />
 
-    <!-- JavaScript for Passage Preview -->
     <script>
-        function loadPassagePreview() {
-            const passageSelect = document.getElementById('passage');
-            const previewSection = document.getElementById('passage-preview-section');
-            const previewContent = document.getElementById('passage-preview');
-            const selectedValue = passageSelect.value;
-            
-            if (!selectedValue) {
-                previewSection.classList.add('hidden');
+        let selectedFiles = [];
+        let reviewedFiles = new Set();
+
+        function handleFileSelect(input) {
+            const files = Array.from(input.files);
+            if (files.length === 0) {
                 return;
             }
+
+            const existingFileNames = selectedFiles.map(f => f.name);
+            const existingCount = existingFileNames.length;
             
-            // Show preview section
-            previewSection.classList.remove('hidden');
-            previewContent.innerHTML = '<p class="text-gray-400 italic">Loading...</p>';
+            files.forEach(file => {
+                if (!existingFileNames.includes(file.name)) {
+                    selectedFiles.push(file);
+                }
+            });
             
-            // Fetch passage content
-            fetch('{{ route("admin.passages.preview") }}?passage=' + encodeURIComponent(selectedValue))
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Convert markdown-like content to HTML
-                        let html = data.content
-                            .replace(/^# (.*$)/gm, '<h1 class="text-2xl font-bold mb-4 text-gray-800">$1</h1>')
-                            .replace(/^## (.*$)/gm, '<h2 class="text-xl font-semibold mt-6 mb-3 text-gray-700">$1</h2>')
-                            .replace(/^### (.*$)/gm, '<h3 class="text-lg font-medium mt-4 mb-2 text-gray-600">$1</h3>')
-                            .replace(/^\*\*\*(.*)$/gm, '<hr class="my-6 border-gray-300">')
-                            .replace(/^\*\* (.*)$/gm, '<strong class="text-gray-800">$1</strong>')
-                            .replace(/^\* (.*)$/gm, '<li class="ml-4 text-gray-600">$1</li>')
-                            .replace(/^- \[ \] (.*)$/gm, '<div class="flex items-center ml-4 text-gray-600"><input type="checkbox" class="mr-2">$1</div>')
-                            .replace(/^- \[x\] (.*)$/gm, '<div class="flex items-center ml-4 text-green-600"><input type="checkbox" checked class="mr-2">$1</div>')
-                            .replace(/^---$/gm, '<hr class="my-4 border-gray-200">')
-                            .replace(/\n\n/g, '</p><p class="mb-3 text-gray-600 leading-relaxed">')
-                            .replace(/\n/g, '<br>');
-                        
-                        previewContent.innerHTML = '<div class="prose max-w-none">' + html + '</div>';
-                    } else {
-                        previewContent.innerHTML = '<p class="text-red-500">Error loading passage: ' + data.message + '</p>';
+            if (existingCount > 0) {
+                const oldReviewed = new Set(reviewedFiles);
+                reviewedFiles = new Set();
+                selectedFiles.forEach((file, newIndex) => {
+                    if (newIndex < existingCount && oldReviewed.has(newIndex)) {
+                        reviewedFiles.add(newIndex);
                     }
-                })
-                .catch(error => {
-                    previewContent.innerHTML = '<p class="text-red-500">Error loading passage</p>';
                 });
+            }
+            
+            input.value = '';
+            
+            renderFilesInDropZone();
+            updateSubmitButton();
+        }
+
+        function renderFilesInDropZone() {
+            const container = document.getElementById('files-container');
+            
+            if (selectedFiles.length === 0) {
+                container.innerHTML = `
+                    <label for="word_file" class="cursor-pointer block">
+                        <div class="text-gray-500 py-4">
+                            <svg class="w-10 h-10 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
+                            </svg>
+                            <p class="text-sm">Drop files here or click to browse</p>
+                            <p class="text-xs text-gray-400 mt-1">Accepted formats: .doc, .docx (max 10MB each)</p>
+                        </div>
+                    </label>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    ${selectedFiles.map((file, index) => `
+                        <div class="relative bg-white rounded-lg border-2 border-gray-200 p-3 flex flex-col items-center justify-center aspect-square">
+                            <svg class="w-10 h-10 text-blue-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <p class="text-xs font-medium text-gray-900 text-center truncate w-full px-1" title="${file.name}">${file.name}</p>
+                            <p class="text-xs text-gray-500">${(file.size / 1024).toFixed(1)} KB</p>
+                            
+                            ${reviewedFiles.has(index) ? `
+                                <div class="mt-2 text-center">
+                                    <span class="text-green-600 text-xs flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                        Reviewed
+                                    </span>
+                                </div>
+                            ` : `
+                                <button type="button" onclick="reviewFile(${index})" class="mt-2 bg-indigo-600 text-white px-3 py-1 rounded text-xs hover:bg-indigo-700">
+                                    Review
+                                </button>
+                            `}
+                            
+                            <button type="button" onclick="removeFile(${index})" class="absolute top-1 right-1 text-red-600 hover:text-red-800">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+                <label for="word_file" class="cursor-pointer block mt-3">
+                    <span class="text-sm text-indigo-600 hover:text-indigo-800">+ Add more files</span>
+                </label>
+            `;
+        }
+
+        function reviewFile(index) {
+            const file = selectedFiles[index];
+            const container = document.getElementById('files-container');
+            
+            container.innerHTML = `
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    ${selectedFiles.map((f, i) => `
+                        <div class="relative bg-white rounded-lg border-2 ${i === index ? 'border-indigo-500' : 'border-gray-200'} p-3 flex flex-col items-center justify-center aspect-square ${i === index ? 'ring-2 ring-indigo-300' : ''}">
+                            <svg class="w-10 h-10 text-blue-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            </svg>
+                            <p class="text-xs font-medium text-gray-900 text-center truncate w-full px-1" title="${f.name}">${f.name}</p>
+                            <p class="text-xs text-gray-500">${(f.size / 1024).toFixed(1)} KB</p>
+                            
+                            ${reviewedFiles.has(i) ? `
+                                <div class="mt-2 text-center">
+                                    <span class="text-green-600 text-xs flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                        Reviewed
+                                    </span>
+                                </div>
+                            ` : i === index ? `
+                                <button type="button" onclick="confirmReview(${i})" class="mt-2 bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700">
+                                    ✓ Confirm
+                                </button>
+                            ` : `
+                                <button type="button" onclick="reviewFile(${i})" class="mt-2 bg-indigo-600 text-white px-3 py-1 rounded text-xs hover:bg-indigo-700">
+                                    Review
+                                </button>
+                            `}
+                            
+                            ${i === index ? '' : `
+                                <button type="button" onclick="removeFile(${i})" class="absolute top-1 right-1 text-red-600 hover:text-red-800">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                    </svg>
+                                </button>
+                            `}
+                        </div>
+                    `).join('')}
+                </div>
+                <label for="word_file" class="cursor-pointer block mt-3">
+                    <span class="text-sm text-indigo-600 hover:text-indigo-800">+ Add more files</span>
+                </label>
+            `;
+        }
+
+        function confirmReview(index) {
+            reviewedFiles.add(index);
+            renderFilesInDropZone();
+            updateSubmitButton();
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            reviewedFiles = new Set(Array.from(reviewedFiles).map(i => i > index ? i - 1 : i).filter(i => i < selectedFiles.length));
+            
+            if (selectedFiles.length === 0) {
+                document.getElementById('word_file').value = '';
+            }
+            
+            renderFilesInDropZone();
+            updateSubmitButton();
+        }
+
+        function clearFileList() {
+            selectedFiles = [];
+            reviewedFiles = new Set();
+            document.getElementById('word_file').value = '';
+            renderFilesInDropZone();
+            updateSubmitButton();
+        }
+
+        function updateSubmitButton() {
+            const submitBtn = document.getElementById('submit-btn');
+            const allReviewed = selectedFiles.length > 0 && reviewedFiles.size === selectedFiles.length;
+            submitBtn.disabled = !allReviewed;
         }
     </script>
 </body>

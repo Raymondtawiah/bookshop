@@ -23,20 +23,20 @@ class VerificationController extends Controller
     public function showLoginVerification()
     {
         $userId = Session::get('pending_login_user_id');
-        
-        if (!$userId) {
+
+        if (! $userId) {
             return redirect()->route('login');
         }
 
         $user = User::find($userId);
-        
-        if (!$user) {
+
+        if (! $user) {
             return redirect()->route('login');
         }
 
         return view('auth.verify-login', [
             'user' => $user,
-            'type' => 'login'
+            'type' => 'login',
         ]);
     }
 
@@ -46,21 +46,22 @@ class VerificationController extends Controller
     public function resendLoginCode(Request $request)
     {
         $userId = Session::get('pending_login_user_id');
-        
-        if (!$userId) {
+
+        if (! $userId) {
             return response()->json(['error' => 'Session expired. Please login again.'], 422);
         }
 
         $user = User::find($userId);
-        
-        if (!$user) {
+
+        if (! $user) {
             return response()->json(['error' => 'User not found.'], 422);
         }
 
         // Rate limiting - only allow 3 resend requests per minute
-        $key = 'resend-login-code:' . $request->ip();
+        $key = 'resend-login-code:'.$request->ip();
         if (RateLimiter::tooManyAttempts($key, 3)) {
             $seconds = RateLimiter::availableIn($key);
+
             return response()->json(['error' => "Please wait $seconds seconds before requesting another code."], 429);
         }
 
@@ -83,25 +84,25 @@ class VerificationController extends Controller
         // Clean the code - remove any spaces or non-digit characters
         $code = preg_replace('/[^0-9]/', '', $request->code);
         $code = str_pad($code, 6, '0', STR_PAD_LEFT);
-        
+
         $userId = Session::get('pending_login_user_id');
-        
-        if (!$userId) {
+
+        if (! $userId) {
             throw ValidationException::withMessages([
                 'code' => 'Session expired. Please login again.',
             ]);
         }
 
         $user = User::find($userId);
-        
-        if (!$user) {
+
+        if (! $user) {
             throw ValidationException::withMessages([
                 'code' => 'User not found.',
             ]);
         }
 
         // Rate limiting
-        $key = 'verify-login-code:' . $request->ip();
+        $key = 'verify-login-code:'.$request->ip();
         if (RateLimiter::tooManyAttempts($key, 5)) {
             $seconds = RateLimiter::availableIn($key);
             throw ValidationException::withMessages([
@@ -109,7 +110,7 @@ class VerificationController extends Controller
             ]);
         }
 
-        if (!$this->verificationService->verifyCode($user, $code, 'login')) {
+        if (! $this->verificationService->verifyCode($user, $code, 'login')) {
             RateLimiter::hit($key, 60);
             throw ValidationException::withMessages([
                 'code' => 'Invalid or expired verification code.',
@@ -138,20 +139,20 @@ class VerificationController extends Controller
     public function showPasswordResetVerification(Request $request)
     {
         $email = $request->session()->get('password_reset_email');
-        
-        if (!$email) {
+
+        if (! $email) {
             return redirect()->route('password.request');
         }
 
         $user = User::where('email', $email)->first();
-        
-        if (!$user) {
+
+        if (! $user) {
             return redirect()->route('password.request');
         }
 
         return view('auth.verify-password-reset', [
             'user' => $user,
-            'type' => 'password_reset'
+            'type' => 'password_reset',
         ]);
     }
 
@@ -167,9 +168,10 @@ class VerificationController extends Controller
         $user = User::where('email', $request->email)->first();
 
         // Rate limiting
-        $key = 'password-reset-code:' . $request->ip();
+        $key = 'password-reset-code:'.$request->ip();
         if (RateLimiter::tooManyAttempts($key, 3)) {
             $seconds = RateLimiter::availableIn($key);
+
             return back()->with('error', "Please wait $seconds seconds before requesting another code.");
         }
 
@@ -190,21 +192,22 @@ class VerificationController extends Controller
     public function resendPasswordResetCode(Request $request)
     {
         $email = $request->session()->get('password_reset_email');
-        
-        if (!$email) {
+
+        if (! $email) {
             return response()->json(['error' => 'Session expired. Please try again.'], 422);
         }
 
         $user = User::where('email', $email)->first();
-        
-        if (!$user) {
+
+        if (! $user) {
             return response()->json(['error' => 'User not found.'], 422);
         }
 
         // Rate limiting
-        $key = 'resend-password-reset-code:' . $request->ip();
+        $key = 'resend-password-reset-code:'.$request->ip();
         if (RateLimiter::tooManyAttempts($key, 3)) {
             $seconds = RateLimiter::availableIn($key);
+
             return response()->json(['error' => "Please wait $seconds seconds before requesting another code."], 429);
         }
 
@@ -227,25 +230,25 @@ class VerificationController extends Controller
         // Clean the code - remove any spaces or non-digit characters
         $code = preg_replace('/[^0-9]/', '', $request->code);
         $code = str_pad($code, 6, '0', STR_PAD_LEFT);
-        
+
         $email = $request->session()->get('password_reset_email');
-        
-        if (!$email) {
+
+        if (! $email) {
             throw ValidationException::withMessages([
                 'code' => 'Session expired. Please try again.',
             ]);
         }
 
         $user = User::where('email', $email)->first();
-        
-        if (!$user) {
+
+        if (! $user) {
             throw ValidationException::withMessages([
                 'code' => 'User not found.',
             ]);
         }
 
         // Rate limiting
-        $key = 'verify-password-reset-code:' . $request->ip();
+        $key = 'verify-password-reset-code:'.$request->ip();
         if (RateLimiter::tooManyAttempts($key, 5)) {
             $seconds = RateLimiter::availableIn($key);
             throw ValidationException::withMessages([
@@ -253,7 +256,7 @@ class VerificationController extends Controller
             ]);
         }
 
-        if (!$this->verificationService->verifyCode($user, $code, 'password_reset')) {
+        if (! $this->verificationService->verifyCode($user, $code, 'password_reset')) {
             RateLimiter::hit($key, 60);
             throw ValidationException::withMessages([
                 'code' => 'Invalid or expired verification code.',
@@ -275,20 +278,20 @@ class VerificationController extends Controller
     public function showPasswordResetForm(Request $request)
     {
         $userId = $request->session()->get('password_reset_user_id');
-        
-        if (!$userId) {
+
+        if (! $userId) {
             return redirect()->route('password.request');
         }
 
         $user = User::find($userId);
-        
-        if (!$user) {
+
+        if (! $user) {
             return redirect()->route('password.request');
         }
 
         return view('auth.reset-password', [
             'email' => $user->email,
-            'token' => $user->id // Using user ID as token for simplicity
+            'token' => $user->id, // Using user ID as token for simplicity
         ]);
     }
 
@@ -303,8 +306,8 @@ class VerificationController extends Controller
         ]);
 
         $user = User::where('email', $request->email)->first();
-        
-        if (!$user) {
+
+        if (! $user) {
             throw ValidationException::withMessages([
                 'email' => 'User not found.',
             ]);
@@ -312,7 +315,7 @@ class VerificationController extends Controller
 
         // Verify that the user went through the verification process
         $userId = $request->session()->get('password_reset_user_id');
-        if (!$userId || $userId != $user->id) {
+        if (! $userId || $userId != $user->id) {
             throw ValidationException::withMessages([
                 'email' => 'Please complete the verification process first.',
             ]);

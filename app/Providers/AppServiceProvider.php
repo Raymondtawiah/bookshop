@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Services\CartService;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -16,8 +17,8 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         // Register CartService for dependency injection
-        $this->app->singleton(\App\Services\CartService::class, function ($app) {
-            return new \App\Services\CartService();
+        $this->app->singleton(CartService::class, function ($app) {
+            return new CartService;
         });
     }
 

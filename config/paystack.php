@@ -9,14 +9,14 @@ return [
     'publicKey' => env('PAYSTACK_PUBLIC_KEY'),
     'secretKey' => env('PAYSTACK_SECRET_KEY'),
     'merchantEmail' => env('PAYSTACK_MERCHANT_EMAIL', 'raymondtawiah23@gmail.com'),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Paystack API URL
     |--------------------------------------------------------------------------
     */
     'paymentUrl' => env('PAYSTACK_PAYMENT_URL', 'https://api.paystack.co'),
-    
+
     /*
     |--------------------------------------------------------------------------
     | Callback URLs

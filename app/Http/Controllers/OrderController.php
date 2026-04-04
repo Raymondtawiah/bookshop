@@ -2,14 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
+use App\Models\Cart;
 use App\Models\Nationality;
+use App\Models\Order;
 use App\Services\PaystackService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\OrderConfirmation;
 
 class OrderController extends Controller
 {
@@ -27,21 +26,21 @@ class OrderController extends Controller
             'payment_method' => 'required|in:momo,bank',
         ]);
 
-        $cartItems = \App\Models\Cart::where('user_id', Auth::id())->get();
-        
+        $cartItems = Cart::where('user_id', Auth::id())->get();
+
         if ($cartItems->isEmpty()) {
             return redirect()->route('cart')->with('error', 'Your cart is empty!');
         }
 
-        $total = $cartItems->sum(function($item) {
+        $total = $cartItems->sum(function ($item) {
             return $item->product_price * $item->quantity;
         });
 
         $paymentMethod = $request->payment_method;
-        $reference = 'ORD-' . time() . rand(1000, 9999);
+        $reference = 'ORD-'.time().rand(1000, 9999);
 
         // Prepare order items data
-        $orderItems = $cartItems->map(function($item) {
+        $orderItems = $cartItems->map(function ($item) {
             return [
                 'book_id' => $item->book_id,
                 'product_name' => $item->product_name,
@@ -68,7 +67,7 @@ class OrderController extends Controller
         // Don't send email here - it will be sent after payment is confirmed in the callback
         // This ensures we only send email when payment is actually successful
 
-        $paystack = new PaystackService();
+        $paystack = new PaystackService;
 
         if ($paymentMethod === 'momo') {
             // For Mobile Money - use Paystack checkout page with mobile money
@@ -91,11 +90,11 @@ class OrderController extends Controller
 
             // Log the failure for debugging
             Log::error('Paystack payment initialization failed', [
-                'result' => $result, 
-                'message' => $result['message'] ?? 'Unknown error'
+                'result' => $result,
+                'message' => $result['message'] ?? 'Unknown error',
             ]);
 
-            return back()->with('error', 'Payment failed: ' . ($result['message'] ?? 'Please try again.'));
+            return back()->with('error', 'Payment failed: '.($result['message'] ?? 'Please try again.'));
 
         } elseif ($paymentMethod === 'bank') {
             // For Bank Transfer - show bank details from config
@@ -109,11 +108,11 @@ class OrderController extends Controller
             $cartItems->each->delete();
 
             return view('cart.checkout', [
-                'order' => $order, 
+                'order' => $order,
                 'total' => $total,
                 'bankTransfer' => true,
                 'bankDetails' => config('paystack.bankDetails'),
-                'nationalities' => Nationality::orderBy('name')->get()
+                'nationalities' => Nationality::orderBy('name')->get(),
             ]);
         }
 
@@ -127,7 +126,7 @@ class OrderController extends Controller
     {
         // Remove any spaces or dashes
         $phone = preg_replace('/[^0-9]/', '', $phoneNumber);
-        
+
         // Get the first 3 digits after country code (233) or 0
         if (strlen($phone) === 12 && substr($phone, 0, 3) === '233') {
             $prefix = substr($phone, 3, 3);

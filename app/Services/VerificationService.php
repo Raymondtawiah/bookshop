@@ -2,10 +2,10 @@
 
 namespace App\Services;
 
+use App\Mail\VerificationCodeMail;
 use App\Models\User;
 use App\Models\VerificationCode;
 use Illuminate\Support\Facades\Mail;
-use App\Mail\VerificationCodeMail;
 
 class VerificationService
 {

@@ -42,18 +42,18 @@ class Order extends Model
     public function getOrderItemsAttribute($value)
     {
         // If already a proper array (from attribute casting)
-        if (is_array($value) && !empty($value) && !is_string(reset($value))) {
+        if (is_array($value) && ! empty($value) && ! is_string(reset($value))) {
             return collect($value);
         }
-        
+
         // If it's a JSON string
-        if (is_string($value) && !empty($value)) {
+        if (is_string($value) && ! empty($value)) {
             $decoded = json_decode($value, true);
             if (is_array($decoded)) {
                 return collect($decoded);
             }
         }
-        
+
         // If it's an array with a single JSON string element (double-encoded)
         if (is_array($value) && count($value) === 1 && is_string(reset($value))) {
             $decoded = json_decode(reset($value), true);
@@ -61,7 +61,7 @@ class Order extends Model
                 return collect($decoded);
             }
         }
-        
+
         return collect([]);
     }
 

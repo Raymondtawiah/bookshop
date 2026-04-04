@@ -19,8 +19,8 @@ class VerificationCodeMail extends Mailable
 
     public function envelope(): Envelope
     {
-        $type = $this->verificationCode->type === 'login' 
-            ? 'Login Verification Code' 
+        $type = $this->verificationCode->type === 'login'
+            ? 'Login Verification Code'
             : 'Password Reset Verification Code';
 
         return new Envelope(

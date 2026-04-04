@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Book;
+use App\Services\WordToPdfService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -14,7 +15,9 @@ class BookController extends Controller
      */
     private function uploadFile($file)
     {
-        if (!$file) return null;
+        if (! $file) {
+            return null;
+        }
 
         // Generate safe filename
         $filename = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
@@ -30,7 +33,9 @@ class BookController extends Controller
      */
     private function deleteFile($filename)
     {
-        if (!$filename) return;
+        if (! $filename) {
+            return;
+        }
 
         // Delete from public disk
         Storage::disk('public')->delete('books/'.$filename);
@@ -41,7 +46,9 @@ class BookController extends Controller
      */
     private function fileUrl($filename)
     {
-        if (!$filename) return null;
+        if (! $filename) {
+            return null;
+        }
 
         return Storage::disk('public')->url('books/'.$filename);
     }
@@ -73,15 +80,43 @@ class BookController extends Controller
             'is_featured' => 'boolean',
             'is_free' => 'boolean',
             'cover_image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
-            'book_pdf' => 'nullable|mimes:pdf|max:10240',
+            'book_pdfs' => 'nullable|array',
+            'book_pdfs.*' => 'nullable|mimes:pdf,doc,docx|max:10240',
         ]);
+
+        $pdfFiles = $request->file('book_pdfs', []);
+        
+        // Handle multiple PDF/Word files - only process reviewed files
+        $reviewedFiles = $request->input('reviewed_files', []);
+        
+        if (!empty($reviewedFiles)) {
+            $wordService = app(WordToPdfService::class);
+            
+            foreach ($pdfFiles as $index => $file) {
+                // Only process if this file is marked as reviewed
+                if (in_array($index, $reviewedFiles) && $file) {
+                    $extension = $file->getClientOriginalExtension();
+                    
+                    if (in_array($extension, ['doc', 'docx'])) {
+                        $pdfPath = $wordService->convertToPdf($file, $validated['title'] ?? 'document');
+                        if ($pdfPath) {
+                            // Store as book_pdf (single for now - can be extended for multiple)
+                            if (!isset($validated['book_pdf'])) {
+                                $validated['book_pdf'] = $pdfPath;
+                            }
+                        }
+                    } elseif ($extension === 'pdf') {
+                        $pdfPath = $this->uploadFile($file);
+                        if (!isset($validated['book_pdf']) && $pdfPath) {
+                            $validated['book_pdf'] = $pdfPath;
+                        }
+                    }
+                }
+            }
+        }
 
         if ($request->hasFile('cover_image')) {
             $validated['cover_image'] = $this->uploadFile($request->file('cover_image'));
-        }
-
-        if ($request->hasFile('book_pdf')) {
-            $validated['book_pdf'] = $this->uploadFile($request->file('book_pdf'));
         }
 
         $validated['stock'] = $validated['stock'] ?? 0;
