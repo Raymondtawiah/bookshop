@@ -6,6 +6,10 @@
         <title>Edit Book - {{ config('app.name', 'Bookshop') }}</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+        <script>
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        </script>
         <link rel="icon" href="/favicon.ico" sizes="any">
     </head>
     <body class="bg-gray-50 font-sans">
@@ -134,8 +138,11 @@
                             PDF File
                             <span id="pdf-required-indicator" class="text-red-500 text-xs {{ $book->is_free ? '' : 'hidden' }}">(Required for free books)</span>
                         </label>
-                        <div class="mt-1 flex justify-center rounded-lg border-2 border-dashed {{ $book->is_free ? 'border-red-500' : 'border-gray-300' }} px-6 py-6" id="pdf-dropzone">
-                            <div class="text-center" id="pdf-content">
+                        <div class="mt-1 rounded-lg border-2 border-dashed {{ $book->is_free ? 'border-red-500' : 'border-gray-300' }} px-6 py-4 relative" id="pdf-dropzone">
+                            <input id="book_pdf" name="book_pdf" type="file" class="hidden" accept="application/pdf" onchange="handleFileSelect(this)">
+                            
+                            <!-- Empty State -->
+                            <div class="text-center" id="pdf-content" onclick="document.getElementById('book_pdf').click()">
                                 @if($book->pdf_file)
                                     <svg class="mx-auto h-10 w-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
@@ -147,23 +154,26 @@
                                         <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     </svg>
                                 @endif
-                                <div class="mt-2 flex text-sm leading-6 text-gray-600">
-                                    <label for="book_pdf" class="relative cursor-pointer rounded-md bg-white font-semibold text-indigo-600 hover:text-indigo-500">
-                                        <span>{{ $book->book_pdf ? 'Replace PDF' : 'Upload PDF' }}</span>
-                                        <input id="book_pdf" name="book_pdf" type="file" class="sr-only" accept="application/pdf" onchange="updatePdfPreview(this)">
-                                    </label>
+                                <div class="mt-2 flex text-sm leading-6 text-gray-600 justify-center">
+                                    <span class="cursor-pointer rounded-md bg-white font-semibold text-indigo-600 hover:text-indigo-500">
+                                        {{ $book->pdf_file ? 'Replace PDF' : 'Upload PDF' }}
+                                    </span>
                                     @if($book->pdf_file)
                                         <p class="pl-1">or drag and drop</p>
                                     @endif
                                 </div>
                                 <p class="text-xs leading-5 text-gray-500 mt-1">PDF up to 10MB</p>
                             </div>
-                            <!-- PDF Preview -->
-                            <div id="pdf-preview" class="hidden">
-                                <svg class="mx-auto h-10 w-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                </svg>
-                                <p id="pdf-name" class="mt-2 text-sm text-gray-500"></p>
+                            
+                            <!-- Selected Files - Inside Dropzone -->
+                            <div id="pdf-selected" class="hidden">
+                                <div id="file-list" class="space-y-2"></div>
+                                <label for="book_pdf" class="mt-3 cursor-pointer text-sm text-indigo-600 hover:text-indigo-800 inline-flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                    </svg>
+                                    Replace file
+                                </label>
                             </div>
                         </div>
                     </div>
@@ -273,5 +283,265 @@
                 }
             });
         </script>
+
+    <!-- PDF Preview Modal -->
+    <div id="pdf-preview-modal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+                <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900">PDF Preview</h3>
+                    <button type="button" onclick="closePdfPreview()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="flex-1 overflow-auto p-4 bg-gray-100">
+                    <canvas id="pdf-preview-canvas" class="mx-auto shadow-lg"></canvas>
+                </div>
+                <div class="p-4 border-t border-gray-200 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="prevPdfPage()" class="p-2 hover:bg-gray-100 rounded-lg" id="prev-page-btn">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                            </svg>
+                        </button>
+                        <span class="text-sm text-gray-600" id="page-indicator">Page 1</span>
+                        <button type="button" onclick="nextPdfPage()" class="p-2 hover:bg-gray-100 rounded-lg" id="next-page-btn">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <button type="button" onclick="confirmPdfReview()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                        ✓ Confirm Review
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPdfDoc = null;
+        let currentPdfPage = 1;
+        let currentReviewIndex = null;
+        let selectedFiles = [];
+        let reviewedFiles = new Set();
+
+        function handleFileSelect(input) {
+            const files = Array.from(input.files);
+            files.forEach(file => {
+                selectedFiles.push({
+                    index: selectedFiles.length,
+                    name: file.name,
+                    size: (file.size / 1024).toFixed(1) + ' KB',
+                    type: file.type || 'application/pdf',
+                    file: file,
+                    reviewed: false
+                });
+            });
+            renderFileList();
+            input.value = '';
+        }
+
+        function renderFileList() {
+            const fileList = document.getElementById('file-list');
+            const pdfContent = document.getElementById('pdf-content');
+            const pdfSelected = document.getElementById('pdf-selected');
+            
+            if (selectedFiles.length > 0) {
+                pdfContent.classList.add('hidden');
+                pdfSelected.classList.remove('hidden');
+                document.getElementById('pdf-dropzone').classList.remove('py-6');
+                document.getElementById('pdf-dropzone').classList.add('py-4');
+            } else {
+                pdfContent.classList.remove('hidden');
+                pdfSelected.classList.add('hidden');
+                document.getElementById('pdf-dropzone').classList.add('py-6');
+                document.getElementById('pdf-dropzone').classList.remove('py-4');
+            }
+            
+            if (selectedFiles.length === 0) {
+                fileList.innerHTML = '';
+                return;
+            }
+
+            fileList.innerHTML = `
+                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    ${selectedFiles.map((fileData) => `
+                        <div class="relative bg-white rounded-lg border-2 border-gray-200 p-3 flex flex-col items-center justify-center aspect-square" id="file-item-${fileData.index}">
+                            <svg class="w-10 h-10 text-red-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                            </svg>
+                            <p class="text-xs font-medium text-gray-900 text-center truncate w-full px-1" title="${fileData.name}">${fileData.name}</p>
+                            <p class="text-xs text-gray-500">${fileData.size}</p>
+                            
+                            ${fileData.reviewed ? `
+                                <div class="mt-2 text-center">
+                                    <span class="text-green-600 text-xs flex items-center gap-1">
+                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                        Reviewed
+                                    </span>
+                                </div>
+                            ` : `
+                                <button type="button" onclick="reviewFile(${fileData.index})" class="mt-2 bg-indigo-600 text-white px-3 py-1 rounded text-xs hover:bg-indigo-700">
+                                    Review
+                                </button>
+                            `}
+                            
+                            <button type="button" onclick="removeFile(${fileData.index})" class="absolute top-1 right-1 text-red-600 hover:text-red-800">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                </svg>
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        async function reviewFile(index) {
+            const fileData = selectedFiles.find(f => f.index === index);
+            if (!fileData) return;
+            
+            currentReviewIndex = index;
+            currentPdfPage = 1;
+            
+            document.getElementById('pdf-preview-modal').classList.remove('hidden');
+            
+            try {
+                const arrayBuffer = await fileData.file.arrayBuffer();
+                currentPdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                
+                document.getElementById('page-indicator').textContent = `Page 1 of ${currentPdfDoc.numPages}`;
+                document.getElementById('prev-page-btn').disabled = true;
+                document.getElementById('next-page-btn').disabled = currentPdfDoc.numPages === 1;
+                
+                renderPdfPage(currentPdfPage);
+            } catch (error) {
+                console.error('Error loading PDF:', error);
+                alert('Error loading PDF file. Please try again.');
+                closePdfPreview();
+            }
+        }
+
+        async function renderPdfPage(pageNum) {
+            const canvas = document.getElementById('pdf-preview-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const page = await currentPdfDoc.getPage(pageNum);
+            const viewport = page.getViewport({ scale: 1.5 });
+            
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            
+            await page.render({
+                canvasContext: ctx,
+                viewport: viewport
+            }).promise;
+            
+            document.getElementById('page-indicator').textContent = `Page ${pageNum} of ${currentPdfDoc.numPages}`;
+            document.getElementById('prev-page-btn').disabled = pageNum <= 1;
+            document.getElementById('next-page-btn').disabled = pageNum >= currentPdfDoc.numPages;
+        }
+
+        function prevPdfPage() {
+            if (currentPdfPage > 1) {
+                currentPdfPage--;
+                renderPdfPage(currentPdfPage);
+            }
+        }
+
+        function nextPdfPage() {
+            if (currentPdfDoc && currentPdfPage < currentPdfDoc.numPages) {
+                currentPdfPage++;
+                renderPdfPage(currentPdfPage);
+            }
+        }
+
+        function closePdfPreview() {
+            document.getElementById('pdf-preview-modal').classList.add('hidden');
+            currentPdfDoc = null;
+            currentReviewIndex = null;
+        }
+
+        function confirmPdfReview() {
+            if (currentReviewIndex !== null) {
+                const fileData = selectedFiles.find(f => f.index === currentReviewIndex);
+                if (fileData) {
+                    fileData.reviewed = true;
+                    reviewedFiles.add(currentReviewIndex);
+                }
+                renderFileList();
+            }
+            closePdfPreview();
+        }
+
+        function removeFile(index) {
+            selectedFiles = selectedFiles.filter(f => f.index !== index);
+            reviewedFiles.delete(index);
+            renderFileList();
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (!document.getElementById('pdf-preview-modal').classList.contains('hidden')) {
+                if (e.key === 'Escape') {
+                    closePdfPreview();
+                } else if (e.key === 'ArrowLeft') {
+                    prevPdfPage();
+                } else if (e.key === 'ArrowRight') {
+                    nextPdfPage();
+                }
+            }
+        });
+
+        // Override form submit to include files
+        document.querySelector('form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            if (selectedFiles.length > 0 && reviewedFiles.size === 0) {
+                alert('Please review all files before submitting.');
+                return;
+            }
+            
+            const formData = new FormData(this);
+            
+            // Clear the original book_pdf from form
+            formData.delete('book_pdf');
+            
+            // Add all files from our array
+            selectedFiles.forEach((fileData) => {
+                formData.append('book_pdf', fileData.file);
+            });
+            
+            // Clear the original file input
+            const pdfInput = document.getElementById('book_pdf');
+            if (pdfInput) pdfInput.value = '';
+            
+            // Send via fetch
+            fetch(this.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
+                }
+            })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '{{ route("admin.books") }}';
+                } else {
+                    return response.text().then(text => {
+                        alert('Error: ' + text);
+                    });
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred during upload');
+            });
+        });
+    </script>
     </body>
 </html>

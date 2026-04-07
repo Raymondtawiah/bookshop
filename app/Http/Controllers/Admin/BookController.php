@@ -55,6 +55,13 @@ class BookController extends Controller
 
     public function store(Request $request)
     {
+        \Illuminate\Support\Facades\Log::info('BookController store', [
+            'has book_pdfs' => $request->hasFile('book_pdfs'),
+            'book_pdfs raw' => $request->file('book_pdfs'),
+            'all files keys' => array_keys($request->allFiles()),
+            'is_free' => $request->input('is_free'),
+        ]);
+        
         $bookFormService = app(BookFormService::class);
         $validated = $bookFormService->validateBookData($request);
 

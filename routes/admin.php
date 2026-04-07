@@ -42,6 +42,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::post('orders/{order}/generate-text-pdf', [OrderController::class, 'generateFromText'])->name('orders.generateTextPdf');
     Route::post('orders/{order}/send-pdf', [OrderController::class, 'sendPdf'])->name('orders.sendPdf');
     Route::post('orders/{order}/upload-word-pdf', [OrderController::class, 'uploadWordPdf'])->name('orders.uploadWordPdf');
+    Route::post('orders/{order}/upload-pdf', [OrderController::class, 'uploadPdf'])->name('orders.uploadPdf');
     Route::delete('orders/{order}', [OrderController::class, 'destroy'])->name('orders.destroy');
 
     Route::get('settings', function () {

@@ -7,6 +7,10 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <link rel="icon" href="/favicon.ico" sizes="any">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
 </head>
 <body class="bg-gray-50 font-sans">
     <x-flash-message />
@@ -178,33 +182,33 @@
                         </form>
                     </div>
 
-                    <!-- Upload Word File and Convert to PDF -->
+                    <!-- Upload PDF -->
                     <div class="mt-6 pt-6 border-t border-gray-200">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Upload Word Document to PDF</h3>
-                        <p class="text-sm text-gray-600 mb-4">Upload Word documents - review each file before submitting.</p>
+                        <h3 class="text-lg font-medium text-gray-900 mb-4">Upload PDF</h3>
+                        <p class="text-sm text-gray-600 mb-4">Upload PDF files - review each file before submitting.</p>
                         
-                        <form action="{{ route('admin.orders.uploadWordPdf', $order->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4" onsubmit="prepareFormForSubmit(event)">
+                        <form action="{{ route('admin.orders.uploadPdf', $order->id) }}" method="POST" enctype="multipart/form-data" class="space-y-4" onsubmit="prepareFormForSubmit(event)">
                             @csrf
                             
                             <!-- Hidden input to store selected files -->
-                            <input type="file" name="word_file[]" id="word_file_submit" class="hidden" multiple>
+                            <input type="file" name="pdf_file[]" id="pdf_file_submit" class="hidden" multiple>
                             
                             <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Select Word Document(s)</label>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Select PDF File(s)</label>
                                 <div id="drop-zone" class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-indigo-500 transition-colors">
-                                    <input type="file" id="word_file" accept=".doc,.docx,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                                    <input type="file" id="pdf_file" accept=".pdf,application/pdf"
                                         class="hidden"
                                         multiple
                                         onchange="handleFileSelect(this)">
                                     
                                     <div id="files-container" class="space-y-2">
-                                        <label for="word_file" class="cursor-pointer block">
+                                        <label for="pdf_file" class="cursor-pointer block">
                                             <div class="text-gray-500 py-4">
                                                 <svg class="w-10 h-10 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                                                 </svg>
                                                 <p class="text-sm">Drop files here or click to browse</p>
-                                                <p class="text-xs text-gray-400 mt-1">Accepted formats: .doc, .docx (max 10MB each)</p>
+                                                <p class="text-xs text-gray-400 mt-1">Accepted formats: .pdf (max 10MB each)</p>
                                             </div>
                                         </label>
                                     </div>
@@ -216,35 +220,70 @@
                                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
                                 </svg>
-                                Upload & Send as PDF
+                                Upload PDF
                             </button>
                         </form>
                     </div>
 
                     <div class="mt-6 pt-6 border-t border-gray-200">
-                        <button type="button" onclick="openDeleteModal{{ $order->id }}()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 inline-flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                            </svg>
-                            Delete Order
-                        </button>
+                        <form action="{{ route('admin.orders.destroy', $order->id) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this order? This action cannot be undone.')" class="inline">
+                            @csrf
+                            @method('DELETE')
+                            <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 inline-flex items-center gap-2">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                </svg>
+                                Delete Order
+                            </button>
+                        </form>
                     </div>
                 </div>
             </div>
     </main>
 
-    <!-- Delete Modal -->
-    <x-modal-delete 
-        :id="$order->id" 
-        :title="'Delete Order'" 
-        :message="'Are you sure you want to delete this order? This action cannot be undone.'" 
-        :action="route('admin.orders.destroy', $order->id)"
-        confirmText="Delete"
-    />
+    <!-- PDF Preview Modal -->
+    <div id="pdf-preview-modal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+                <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900">PDF Preview</h3>
+                    <button type="button" onclick="closePdfPreview()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="flex-1 overflow-auto p-4 bg-gray-100">
+                    <canvas id="pdf-preview-canvas" class="mx-auto shadow-lg"></canvas>
+                </div>
+                <div class="p-4 border-t border-gray-200 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="prevPdfPage()" class="p-2 hover:bg-gray-100 rounded-lg" id="prev-page-btn">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                            </svg>
+                        </button>
+                        <span class="text-sm text-gray-600" id="page-indicator">Page 1</span>
+                        <button type="button" onclick="nextPdfPage()" class="p-2 hover:bg-gray-100 rounded-lg" id="next-page-btn">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <button type="button" onclick="confirmPdfReview()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                        ✓ Confirm Review
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script>
         let selectedFiles = [];
         let reviewedFiles = new Set();
+        let currentReviewIndex = null;
+        let pdfDoc = null;
+        let currentPage = 1;
 
         function handleFileSelect(input) {
             const files = Array.from(input.files);
@@ -282,13 +321,13 @@
             
             if (selectedFiles.length === 0) {
                 container.innerHTML = `
-                    <label for="word_file" class="cursor-pointer block">
+                    <label for="pdf_file" class="cursor-pointer block">
                         <div class="text-gray-500 py-4">
                             <svg class="w-10 h-10 mx-auto mb-2 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/>
                             </svg>
                             <p class="text-sm">Drop files here or click to browse</p>
-                            <p class="text-xs text-gray-400 mt-1">Accepted formats: .doc, .docx (max 10MB each)</p>
+                            <p class="text-xs text-gray-400 mt-1">Accepted formats: .pdf (max 10MB each)</p>
                         </div>
                     </label>
                 `;
@@ -299,8 +338,8 @@
                 <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                     ${selectedFiles.map((file, index) => `
                         <div class="relative bg-white rounded-lg border-2 border-gray-200 p-3 flex flex-col items-center justify-center aspect-square">
-                            <svg class="w-10 h-10 text-blue-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                            <svg class="w-10 h-10 text-red-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                             </svg>
                             <p class="text-xs font-medium text-gray-900 text-center truncate w-full px-1" title="${file.name}">${file.name}</p>
                             <p class="text-xs text-gray-500">${(file.size / 1024).toFixed(1)} KB</p>
@@ -328,59 +367,82 @@
                         </div>
                     `).join('')}
                 </div>
-                <label for="word_file" class="cursor-pointer block mt-3">
+                <label for="pdf_file" class="cursor-pointer block mt-3">
                     <span class="text-sm text-indigo-600 hover:text-indigo-800">+ Add more files</span>
                 </label>
             `;
         }
 
-        function reviewFile(index) {
+        async function reviewFile(index) {
             const file = selectedFiles[index];
-            const container = document.getElementById('files-container');
+            currentReviewIndex = index;
+            currentPage = 1;
             
-            container.innerHTML = `
-                <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
-                    ${selectedFiles.map((f, i) => `
-                        <div class="relative bg-white rounded-lg border-2 ${i === index ? 'border-indigo-500' : 'border-gray-200'} p-3 flex flex-col items-center justify-center aspect-square ${i === index ? 'ring-2 ring-indigo-300' : ''}">
-                            <svg class="w-10 h-10 text-blue-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                            </svg>
-                            <p class="text-xs font-medium text-gray-900 text-center truncate w-full px-1" title="${f.name}">${f.name}</p>
-                            <p class="text-xs text-gray-500">${(f.size / 1024).toFixed(1)} KB</p>
-                            
-                            ${reviewedFiles.has(i) ? `
-                                <div class="mt-2 text-center">
-                                    <span class="text-green-600 text-xs flex items-center gap-1">
-                                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                        </svg>
-                                        Reviewed
-                                    </span>
-                                </div>
-                            ` : i === index ? `
-                                <button type="button" onclick="confirmReview(${i})" class="mt-2 bg-green-600 text-white px-3 py-1 rounded text-xs hover:bg-green-700">
-                                    ✓ Confirm
-                                </button>
-                            ` : `
-                                <button type="button" onclick="reviewFile(${i})" class="mt-2 bg-indigo-600 text-white px-3 py-1 rounded text-xs hover:bg-indigo-700">
-                                    Review
-                                </button>
-                            `}
-                            
-                            ${i === index ? '' : `
-                                <button type="button" onclick="removeFile(${i})" class="absolute top-1 right-1 text-red-600 hover:text-red-800">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                    </svg>
-                                </button>
-                            `}
-                        </div>
-                    `).join('')}
-                </div>
-                <label for="word_file" class="cursor-pointer block mt-3">
-                    <span class="text-sm text-indigo-600 hover:text-indigo-800">+ Add more files</span>
-                </label>
-            `;
+            document.getElementById('pdf-preview-modal').classList.remove('hidden');
+            
+            try {
+                const arrayBuffer = await file.arrayBuffer();
+                pdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                
+                document.getElementById('page-indicator').textContent = `Page 1 of ${pdfDoc.numPages}`;
+                document.getElementById('prev-page-btn').disabled = true;
+                document.getElementById('next-page-btn').disabled = pdfDoc.numPages === 1;
+                
+                renderPdfPage(currentPage);
+            } catch (error) {
+                console.error('Error loading PDF:', error);
+                alert('Error loading PDF file. Please try again.');
+                closePdfPreview();
+            }
+        }
+
+        async function renderPdfPage(pageNum) {
+            const canvas = document.getElementById('pdf-preview-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const page = await pdfDoc.getPage(pageNum);
+            const viewport = page.getViewport({ scale: 1.5 });
+            
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            
+            await page.render({
+                canvasContext: ctx,
+                viewport: viewport
+            }).promise;
+            
+            document.getElementById('page-indicator').textContent = `Page ${pageNum} of ${pdfDoc.numPages}`;
+            document.getElementById('prev-page-btn').disabled = pageNum <= 1;
+            document.getElementById('next-page-btn').disabled = pageNum >= pdfDoc.numPages;
+        }
+
+        function prevPdfPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                renderPdfPage(currentPage);
+            }
+        }
+
+        function nextPdfPage() {
+            if (pdfDoc && currentPage < pdfDoc.numPages) {
+                currentPage++;
+                renderPdfPage(currentPage);
+            }
+        }
+
+        function closePdfPreview() {
+            document.getElementById('pdf-preview-modal').classList.add('hidden');
+            pdfDoc = null;
+            currentReviewIndex = null;
+        }
+
+        function confirmPdfReview() {
+            if (currentReviewIndex !== null) {
+                reviewedFiles.add(currentReviewIndex);
+                renderFilesInDropZone();
+                updateSubmitButton();
+            }
+            closePdfPreview();
         }
 
         function confirmReview(index) {
@@ -394,7 +456,7 @@
             reviewedFiles = new Set(Array.from(reviewedFiles).map(i => i > index ? i - 1 : i).filter(i => i < selectedFiles.length));
             
             if (selectedFiles.length === 0) {
-                document.getElementById('word_file').value = '';
+                document.getElementById('pdf_file').value = '';
             }
             
             renderFilesInDropZone();
@@ -404,7 +466,7 @@
         function clearFileList() {
             selectedFiles = [];
             reviewedFiles = new Set();
-            document.getElementById('word_file').value = '';
+            document.getElementById('pdf_file').value = '';
             renderFilesInDropZone();
             updateSubmitButton();
         }
@@ -419,11 +481,11 @@
             event.preventDefault();
             
             if (selectedFiles.length === 0) {
-                alert('Please select at least one Word document.');
+                alert('Please select at least one PDF file.');
                 return;
             }
 
-            const hiddenInput = document.getElementById('word_file_submit');
+            const hiddenInput = document.getElementById('pdf_file_submit');
             const dataTransfer = new DataTransfer();
             
             selectedFiles.forEach(file => {
@@ -433,6 +495,18 @@
             hiddenInput.files = dataTransfer.files;
             event.target.submit();
         }
+
+        document.addEventListener('keydown', function(e) {
+            if (!document.getElementById('pdf-preview-modal').classList.contains('hidden')) {
+                if (e.key === 'Escape') {
+                    closePdfPreview();
+                } else if (e.key === 'ArrowLeft') {
+                    prevPdfPage();
+                } else if (e.key === 'ArrowRight') {
+                    nextPdfPage();
+                }
+            }
+        });
     </script>
 </body>
 </html>

@@ -24,6 +24,12 @@ self.addEventListener('fetch', (event) => {
     // Get the pathname
     const pathname = url.pathname;
 
+    // ❌ NEVER cache POST requests (especially file uploads)
+    if (event.request.method !== 'GET') {
+        event.respondWith(fetch(event.request));
+        return;
+    }
+
     // ❌ NEVER cache these routes - always get fresh content
     if (
         pathname === '/' ||

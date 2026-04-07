@@ -621,4 +621,87 @@ class OrderController extends Controller
             return redirect()->back()->withInput()->with('error', 'Failed to convert Word to PDF: '.$e->getMessage());
         }
     }
+
+    /**
+     * Upload PDF files and send to customer
+     */
+    public function uploadPdf(Request $request, $id)
+    {
+        $request->validate([
+            'pdf_file' => 'required|array|max:10240',
+            'pdf_file.*' => 'file|mimes:pdf|max:10240',
+        ]);
+
+        $order = Order::with('user')->findOrFail($id);
+
+        $pdfFiles = $request->file('pdf_file');
+
+        if (empty($pdfFiles)) {
+            return redirect()->back()->withInput()->with('error', 'Please select at least one PDF file.');
+        }
+
+        $pdfPaths = [];
+        $titles = [];
+
+        try {
+            $fullPath = public_path('storage/books/generated');
+
+            if (! is_dir($fullPath)) {
+                mkdir($fullPath, 0755, true);
+            }
+
+            foreach ($pdfFiles as $pdfFile) {
+                $originalName = $pdfFile->getClientOriginalName();
+                $title = pathinfo($originalName, PATHINFO_FILENAME);
+                $titles[] = $title;
+
+                $filename = time().'_'.uniqid().'_'.preg_replace('/[^a-zA-Z0-9_-]/', '_', $title).'.pdf';
+                $destinationPath = $fullPath.'/'.$filename;
+
+                $pdfFile->move($fullPath, $filename);
+
+                if (file_exists($destinationPath)) {
+                    $pdfPaths[] = [
+                        'path' => $destinationPath,
+                        'filename' => $filename,
+                        'title' => $title,
+                    ];
+                }
+            }
+
+            if (empty($pdfPaths)) {
+                return redirect()->back()->withInput()->with('error', 'Failed to upload PDF files. Please try again.');
+            }
+
+            try {
+                $user = $order->user;
+                
+                SendPdfEmailJob::dispatch($user, $pdfPaths, $order->id);
+
+                $order->update([
+                    'status' => 'confirmed',
+                    'pdf_sent' => true,
+                    'pdf_sent_at' => now(),
+                ]);
+
+                return redirect()->back()->with('success', count($pdfPaths).' file(s) uploaded and queued to send to customer!');
+
+            } catch (\Exception $e) {
+                Log::error('Failed to queue PDF email: '.$e->getMessage());
+                
+                $order->update([
+                    'status' => 'confirmed',
+                    'pdf_sent' => true,
+                    'pdf_sent_at' => now(),
+                ]);
+
+                return redirect()->back()->with('success', count($pdfPaths).' file(s) uploaded! (Email may be delayed)');
+            }
+
+        } catch (\Exception $e) {
+            Log::error('PDF upload failed: '.$e->getMessage());
+
+            return redirect()->back()->withInput()->with('error', 'Failed to upload PDF: '.$e->getMessage());
+        }
+    }
 }

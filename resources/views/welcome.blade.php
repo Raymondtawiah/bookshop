@@ -101,7 +101,11 @@
                 @if($books->count() > 0)
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                     @foreach($books as $book)
-                    <div class="bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 group">
+                    @if($book->is_free && $book->book_pdf_url)
+                    <a href="{{ $book->book_pdf_url }}" target="_blank" class="block bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 group">
+                    @else
+                    <a href="{{ route('product.show', $book->id) }}" class="block bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 group">
+                    @endif
                         <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
                             @if($book->cover_image)
                                 <img src="{{ $book->cover_image_url }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
@@ -117,18 +121,24 @@
                             <h3 class="font-semibold text-gray-900 text-sm truncate group-hover:text-indigo-600 transition-colors">{{ $book->title }}</h3>
                             <p class="text-xs text-gray-500 mt-1">{{ $book->author }}</p>
                             <div class="mt-3 flex items-center justify-between">
+                                @if($book->is_free && $book->book_pdf_url)
+                                <p class="font-bold text-xl text-green-600">FREE</p>
+                                @else
                                 <p class="font-bold text-xl text-indigo-600">₵{{ number_format($book->price, 2) }}</p>
+                                @endif
                                 @if($book->category)
                                     <span class="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-full">{{ $book->category }}</span>
                                 @endif
                             </div>
                             @guest
+                            @if(!($book->is_free && $book->book_pdf_url))
                             <a href="{{ route('login') }}" class="block mt-3 text-center px-4 py-2 bg-gray-100 text-gray-600 text-sm font-medium rounded-xl hover:bg-gray-200 transition-colors">
                                 Sign in to Buy
                             </a>
+                            @endif
                             @endguest
                         </div>
-                    </div>
+                    </a>
                     @endforeach
                 </div>
                 @else
