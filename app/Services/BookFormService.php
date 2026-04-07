@@ -9,6 +9,14 @@ class BookFormService
     public function validateBookData(Request $request): array
     {
         $isFree = $request->boolean('is_free');
+        
+        \Illuminate\Support\Facades\Log::info('PDF Upload Debug', [
+            'is_free value' => $request->input('is_free'),
+            'is_free boolean' => $isFree,
+            'book_pdfs files' => $request->hasFile('book_pdfs'),
+            'book_pdfs count' => count($request->file('book_pdfs', [])),
+            'all files' => array_keys($request->allFiles()),
+        ]);
 
         $rules = [
             'title' => 'required|string|max:255',

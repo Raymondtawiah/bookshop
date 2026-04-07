@@ -3,13 +3,19 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="csrf-token" content="{{ csrf_token() }}">
         <title>Add New Book - {{ config('app.name', 'Bookshop') }}</title>
         <script src="https://cdn.tailwindcss.com"></script>
         <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+        <script>
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        </script>
         <link rel="icon" href="/favicon.ico" sizes="any">
     </head>
     <body class="bg-gray-50 font-sans">
-        <x-flash-message />
+        <!-- Error display container -->
+        <div id="error-display" class="hidden fixed top-20 right-5 z-50 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg"></div>
         
         <x-admin-navbar />
             <!-- Header Section -->
@@ -139,30 +145,40 @@
                             PDF Files 
                             <span id="pdf-required-indicator" class="text-red-500 text-xs hidden">(Required for free books)</span>
                         </label>
-                        <div class="mt-1 rounded-lg border-2 border-dashed border-gray-300 px-6 py-16 cursor-pointer hover:border-indigo-400" id="pdf-dropzone" onclick="document.getElementById('book_pdfs').click()">
-                            <div class="text-center" id="pdf-content">
+                        <div class="mt-1 rounded-lg border-2 border-dashed border-gray-300 px-6 py-4 cursor-pointer hover:border-indigo-400 relative" id="pdf-dropzone">
+                            <input id="book_pdfs" name="book_pdfs[]" type="file" class="hidden" accept=".pdf" multiple onchange="handleFilesSelect(this)">
+                            
+                            <!-- Empty State -->
+                            <div class="text-center" id="pdf-content" onclick="document.getElementById('book_pdfs').click()">
                                 <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
                                     <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                     <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                                 </svg>
                                 <div class="mt-4 text-sm leading-6 text-gray-600">
-                                    <label for="book_pdfs" class="cursor-pointer rounded-md font-semibold text-indigo-600 hover:text-indigo-500 inline-block">
+                                    <span class="cursor-pointer rounded-md font-semibold text-indigo-600 hover:text-indigo-500 inline-block">
                                         <span class="inline-flex items-center px-6 py-3 border-2 border-indigo-300 border-dashed rounded-lg hover:bg-indigo-50 text-base">
                                             <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                                             </svg>
                                             Select Files
                                         </span>
-                                    </label>
-                                    <input id="book_pdfs" name="book_pdfs[]" type="file" class="hidden" accept=".pdf" multiple onchange="handleFilesSelect(this)">
+                                    </span>
                                     <p class="mt-3">or drag and drop</p>
                                 </div>
-                                <p class="text-xs leading-5 text-gray-500 mt-2">PDF, DOC, DOCX up to 10MB each</p>
+                                <p class="text-xs leading-5 text-gray-500 mt-2">PDF up to 10MB each</p>
+                            </div>
+                            
+                            <!-- Selected Files - Inside Dropzone -->
+                            <div id="pdf-selected" class="hidden">
+                                <div id="file-list" class="space-y-2"></div>
+                                <label for="book_pdfs" class="mt-3 cursor-pointer text-sm text-indigo-600 hover:text-indigo-800 inline-flex items-center gap-1">
+                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                    </svg>
+                                    Add more files
+                                </label>
                             </div>
                         </div>
-                        
-                        <!-- Selected Files List -->
-                        <div id="file-list" class="mt-4 space-y-3"></div>
                         
                         <!-- Hidden input for reviewed files -->
                         <input type="hidden" name="reviewed_files" id="reviewed_files" value="">
@@ -211,6 +227,8 @@
             function handleFilesSelect(input) {
                 const files = Array.from(input.files);
                 
+                if (files.length === 0) return;
+                
                 // Get current file count to calculate proper indices
                 const startIndex = selectedFiles.length;
                 let addedCount = 0;
@@ -225,8 +243,11 @@
                         file: file
                     };
                     selectedFiles.push(fileData);
+                    reviewedFiles.add(startIndex + addedCount);
                     addedCount++;
                 });
+                
+                // Don't clear the input - let normal form submission work
                 
                 renderFileList();
             }
@@ -235,12 +256,19 @@
                 const fileList = document.getElementById('file-list');
                 const reviewedInput = document.getElementById('reviewed_files');
                 const pdfContent = document.getElementById('pdf-content');
+                const pdfSelected = document.getElementById('pdf-selected');
                 
                 // Show/hide the upload area based on whether we have files
                 if (selectedFiles.length > 0) {
                     pdfContent.classList.add('hidden');
+                    pdfSelected.classList.remove('hidden');
+                    document.getElementById('pdf-dropzone').classList.remove('py-16');
+                    document.getElementById('pdf-dropzone').classList.add('py-4');
                 } else {
                     pdfContent.classList.remove('hidden');
+                    pdfSelected.classList.add('hidden');
+                    document.getElementById('pdf-dropzone').classList.add('py-16');
+                    document.getElementById('pdf-dropzone').classList.remove('py-4');
                 }
                 
                 if (selectedFiles.length === 0) {
@@ -248,42 +276,40 @@
                     return;
                 }
 
-                fileList.innerHTML = selectedFiles.map((fileData) => `
-                    <div class="flex items-center justify-between p-4 bg-gray-50 rounded-lg border border-gray-200" id="file-item-${fileData.index}">
-                        <div class="flex items-center gap-3">
-                            <div class="flex-shrink-0">
-                                <svg class="h-8 w-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                fileList.innerHTML = `
+                    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                        ${selectedFiles.map((fileData) => `
+                            <div class="relative bg-white rounded-lg border-2 border-gray-200 p-3 flex flex-col items-center justify-center aspect-square" id="file-item-${fileData.index}">
+                                <svg class="w-10 h-10 text-red-500 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
                                 </svg>
-                            </div>
-                            <div>
-                                <p class="text-sm font-medium text-gray-900">${fileData.name}</p>
-                                <p class="text-xs text-gray-500">${fileData.size} • ${fileData.type}</p>
-                            </div>
-                        </div>
-                        <div class="flex items-center gap-2">
-                            ${!fileData.reviewed ? `
-                                <button type="button" onclick="reviewFile(${fileData.index})" 
-                                    class="px-3 py-1.5 text-sm font-medium text-blue-700 bg-blue-100 hover:bg-blue-200 rounded-md transition-colors">
-                                    Review
-                                </button>
-                            ` : `
-                                <span class="flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-green-700 bg-green-100 rounded-md">
+                                <p class="text-xs font-medium text-gray-900 text-center truncate w-full px-1" title="${fileData.name}">${fileData.name}</p>
+                                <p class="text-xs text-gray-500">${fileData.size}</p>
+                                
+                                ${fileData.reviewed ? `
+                                    <div class="mt-2 text-center">
+                                        <span class="text-green-600 text-xs flex items-center gap-1">
+                                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                            </svg>
+                                            Reviewed
+                                        </span>
+                                    </div>
+                                ` : `
+                                    <button type="button" onclick="reviewFile(${fileData.index})" class="mt-2 bg-indigo-600 text-white px-3 py-1 rounded text-xs hover:bg-indigo-700">
+                                        Review
+                                    </button>
+                                `}
+                                
+                                <button type="button" onclick="removeFile(${fileData.index})" class="absolute top-1 right-1 text-red-600 hover:text-red-800">
                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
                                     </svg>
-                                    Reviewed
-                                </span>
-                            `}
-                            <button type="button" onclick="removeFile(${fileData.index})" 
-                                class="p-1.5 text-gray-400 hover:text-red-500 transition-colors">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                </svg>
-                            </button>
-                        </div>
+                                </button>
+                            </div>
+                        `).join('')}
                     </div>
-                `).join('');
+                `;
 
                 // Update hidden input with reviewed file indices
                 reviewedInput.value = JSON.stringify(Array.from(reviewedFiles));
@@ -305,51 +331,18 @@
             }
 
             // Override form submit to include files
-            document.querySelector('form').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                // Check if any files are selected
-                if (selectedFiles.length > 0 && reviewedFiles.size === 0) {
-                    alert('Please review all files before submitting.');
-                    return;
+document.querySelector('form').addEventListener('submit', function(e) {
+                // Check if any unreviewed files (just warn, don't block)
+                const unreviewed = selectedFiles.filter(f => !f.reviewed);
+                if (unreviewed.length > 0) {
+                    if (!confirm('You have ' + unreviewed.length + ' unreviewed file(s). Submit anyway?')) {
+                        e.preventDefault();
+                        return;
+                    }
                 }
                 
-                // Create FormData from the form
-                const formData = new FormData(this);
-                
-                // Clear the original book_pdfs from form
-                formData.delete('book_pdfs[]');
-                formData.delete('reviewed_files');
-                
-                // Add all files from our array
-                selectedFiles.forEach((fileData) => {
-                    formData.append('book_pdfs[]', fileData.file);
-                });
-                
-                // Add reviewed files indices
-                formData.append('reviewed_files', JSON.stringify(Array.from(reviewedFiles)));
-                
-                // Send via fetch
-                fetch(this.action, {
-                    method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-CSRF-TOKEN': document.querySelector('input[name="_token"]').value
-                    }
-                })
-                .then(response => {
-                    if (response.ok) {
-                        window.location.href = '{{ route("admin.books") }}';
-                    } else {
-                        return response.text().then(text => {
-                            alert('Error: ' + text);
-                        });
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    alert('An error occurred during upload');
-                });
+                // Normal form submission handles the file input
+                console.log('Submitting form with files in input');
             });
 
             function updateCoverImagePreview(input) {
@@ -377,6 +370,20 @@
             const pdfSection = document.getElementById('pdf-section');
             const pdfRequiredIndicator = document.getElementById('pdf-required-indicator');
             const pdfDropzone = document.getElementById('pdf-dropzone');
+
+            // Initial state check - show PDF section if is_free is already checked
+            if (isFreeCheckbox && isFreeCheckbox.checked && pdfSection) {
+                pdfSection.classList.remove('hidden');
+                if (pdfRequiredIndicator) {
+                    pdfRequiredIndicator.classList.remove('hidden');
+                    pdfDropzone.classList.remove('border-gray-300');
+                    pdfDropzone.classList.add('border-red-500');
+                }
+                if (priceInput) {
+                    priceInput.value = 0;
+                    priceInput.readOnly = true;
+                }
+            }
 
             isFeaturedCheckbox.addEventListener('change', function() {
                 if (this.checked) {
@@ -407,5 +414,137 @@
                 }
             });
         </script>
+
+    <!-- PDF Preview Modal -->
+    <div id="pdf-preview-modal" class="fixed inset-0 bg-black bg-opacity-75 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[90vh] flex flex-col">
+                <div class="p-4 border-b border-gray-200 flex items-center justify-between">
+                    <h3 class="text-lg font-semibold text-gray-900">PDF Preview</h3>
+                    <button type="button" onclick="closePdfPreview()" class="text-gray-400 hover:text-gray-600">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+                <div class="flex-1 overflow-auto p-4 bg-gray-100">
+                    <canvas id="pdf-preview-canvas" class="mx-auto shadow-lg"></canvas>
+                </div>
+                <div class="p-4 border-t border-gray-200 flex justify-between items-center">
+                    <div class="flex items-center gap-2">
+                        <button type="button" onclick="prevPdfPage()" class="p-2 hover:bg-gray-100 rounded-lg" id="prev-page-btn">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+                            </svg>
+                        </button>
+                        <span class="text-sm text-gray-600" id="page-indicator">Page 1</span>
+                        <button type="button" onclick="nextPdfPage()" class="p-2 hover:bg-gray-100 rounded-lg" id="next-page-btn">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <button type="button" onclick="confirmPdfReview()" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">
+                        ✓ Confirm Review
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPdfDoc = null;
+        let currentPdfPage = 1;
+        let currentReviewIndex = null;
+
+        async function reviewFile(index) {
+            const fileData = selectedFiles.find(f => f.index === index);
+            if (!fileData) return;
+            
+            currentReviewIndex = index;
+            currentPdfPage = 1;
+            
+            document.getElementById('pdf-preview-modal').classList.remove('hidden');
+            
+            try {
+                const arrayBuffer = await fileData.file.arrayBuffer();
+                currentPdfDoc = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                
+                document.getElementById('page-indicator').textContent = `Page 1 of ${currentPdfDoc.numPages}`;
+                document.getElementById('prev-page-btn').disabled = true;
+                document.getElementById('next-page-btn').disabled = currentPdfDoc.numPages === 1;
+                
+                renderPdfPage(currentPdfPage);
+            } catch (error) {
+                console.error('Error loading PDF:', error);
+                alert('Error loading PDF file. Please try again.');
+                closePdfPreview();
+            }
+        }
+
+        async function renderPdfPage(pageNum) {
+            const canvas = document.getElementById('pdf-preview-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            const page = await currentPdfDoc.getPage(pageNum);
+            const viewport = page.getViewport({ scale: 1.5 });
+            
+            canvas.height = viewport.height;
+            canvas.width = viewport.width;
+            
+            await page.render({
+                canvasContext: ctx,
+                viewport: viewport
+            }).promise;
+            
+            document.getElementById('page-indicator').textContent = `Page ${pageNum} of ${currentPdfDoc.numPages}`;
+            document.getElementById('prev-page-btn').disabled = pageNum <= 1;
+            document.getElementById('next-page-btn').disabled = pageNum >= currentPdfDoc.numPages;
+        }
+
+        function prevPdfPage() {
+            if (currentPdfPage > 1) {
+                currentPdfPage--;
+                renderPdfPage(currentPdfPage);
+            }
+        }
+
+        function nextPdfPage() {
+            if (currentPdfDoc && currentPdfPage < currentPdfDoc.numPages) {
+                currentPdfPage++;
+                renderPdfPage(currentPdfPage);
+            }
+        }
+
+        function closePdfPreview() {
+            document.getElementById('pdf-preview-modal').classList.add('hidden');
+            currentPdfDoc = null;
+            currentReviewIndex = null;
+        }
+
+        function confirmPdfReview() {
+            if (currentReviewIndex !== null) {
+                const fileData = selectedFiles.find(f => f.index === currentReviewIndex);
+                if (fileData) {
+                    fileData.reviewed = true;
+                    reviewedFiles.add(currentReviewIndex);
+                }
+                renderFileList();
+            }
+            closePdfPreview();
+        }
+
+        document.addEventListener('keydown', function(e) {
+            if (!document.getElementById('pdf-preview-modal').classList.contains('hidden')) {
+                if (e.key === 'Escape') {
+                    closePdfPreview();
+                } else if (e.key === 'ArrowLeft') {
+                    prevPdfPage();
+                } else if (e.key === 'ArrowRight') {
+                    nextPdfPage();
+                }
+            }
+        });
+    </script>
     </body>
 </html>
