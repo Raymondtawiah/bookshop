@@ -320,9 +320,9 @@
                     document.getElementById('meeting-additional').textContent = '';
                 }
                 
-                const minutesUntil = Math.round(meeting.minutes_until);
+                const minutesUntil = Math.max(0, Math.round(meeting.minutes_until));
                 let timeText = '';
-                if (minutesUntil <= 0) {
+                if (minutesUntil === 0) {
                     timeText = 'Now!';
                 } else if (minutesUntil < 60) {
                     timeText = `In ${minutesUntil} minute${minutesUntil !== 1 ? 's' : ''}`;
@@ -345,11 +345,13 @@
                     window.speechSynthesis.speak(utterance);
                 }
                 
-                // Auto dismiss after 2 minutes
+                // Auto dismiss after meeting starts (when minutesUntil <= 0) or after 30 mins
+                const autoDismissTime = minutesUntil <= 0 ? 30000 : Math.min(180000, minutesUntil * 60000);
                 if (notificationTimeout) clearTimeout(notificationTimeout);
                 notificationTimeout = setTimeout(() => {
                     dismissMeetingNotification();
-                }, 120000);
+                    lastMeetingId = null; // Reset so it can show again if new meetings come
+                }, autoDismissTime);
             }
 
             function dismissMeetingNotification() {
