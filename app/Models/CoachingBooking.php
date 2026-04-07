@@ -23,6 +23,10 @@ class CoachingBooking extends Model
         'payment_status',
         'payment_reference',
         'amount',
+        'meeting_link',
+        'meeting_time',
+        'meeting_notes',
+        'reminder_sent_at',
     ];
 
     protected $casts = [
