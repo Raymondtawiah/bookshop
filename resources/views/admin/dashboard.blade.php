@@ -77,23 +77,13 @@
                             <p class="text-sm font-medium text-gray-500">Total Revenue</p>
                             <p class="text-3xl font-bold mt-1 text-gray-900">₵{{ number_format(\App\Models\Order::where('payment_status', 'paid')->sum('total_amount'), 2) }}</p>
                         </div>
-                        <div class="w-14 h-14 bg-yellow-100 rounded-xl flex items-center justify-center">
-                            <svg class="w-7 h-7 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v6a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
-                        </div>
                     </div>
                 </div>
             </div>
 
             <!-- Coaching Statistics -->
             <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-8">
-                <h2 class="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                    </svg>
-                    Coaching
-                </h2>
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Coaching</h2>
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                     <div class="flex items-center justify-between">
                         <div>
@@ -131,16 +121,9 @@
                         </div>
                     </div>
 
-                    <div class="flex items-center justify-between">
-                        <div>
-                            <p class="text-sm font-medium text-gray-500">Total Revenue</p>
-                            <p class="text-2xl font-bold mt-1 text-gray-900">₵{{ number_format(\App\Models\CoachingBooking::where('payment_status', 'paid')->sum('amount'), 2) }}</p>
-                        </div>
-                        <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
-                            <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v6a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
-                            </svg>
-                        </div>
+                    <div>
+                        <p class="text-sm font-medium text-gray-500">Total Revenue</p>
+                        <p class="text-2xl font-bold mt-1 text-gray-900">₵{{ number_format(\App\Models\CoachingBooking::where('payment_status', 'paid')->sum('amount'), 2) }}</p>
                     </div>
                 </div>
             </div>
