@@ -50,14 +50,24 @@
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Package</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Interview</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date & Time</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Request Date</th>
+                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Meeting Sent</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
                                 <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
                                 <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-gray-200">
+                            @php
+                                $bookingService = app(\App\Services\CoachingBookingService::class);
+                            @endphp
                             @foreach($bookings as $booking)
+                                @php
+                                    $statusLabel = $bookingService->getStatusLabel($booking);
+                                    $statusClass = $bookingService->getStatusClass($booking);
+                                    $hasMeetingLink = $bookingService->hasMeetingLinkBeenSent($booking);
+                                    $meetingDetails = $bookingService->getMeetingDetails($booking);
+                                @endphp
                                 <tr class="hover:bg-gray-50">
                                     <td class="px-6 py-4">
                                         <div>
@@ -78,13 +88,20 @@
                                         <p class="text-sm text-gray-900">{{ $booking->interview_date->format('M j, Y') }}</p>
                                         <p class="text-xs text-gray-500">{{ $booking->interview_time }}</p>
                                     </td>
+                                    <td class="px-6 py-4">
+                                        @if($hasMeetingLink)
+                                            <p class="text-sm text-green-600 font-medium">Link Sent</p>
+                                            @if($meetingDetails['time'])
+                                                <p class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($meetingDetails['time'])->format('M j, g:i A') }}</p>
+                                            @endif
+                                        @else
+                                            <p class="text-sm text-gray-400">Not sent</p>
+                                        @endif
+                                    </td>
                                     <td class="px-6 py-4 text-sm font-medium text-gray-900">₵{{ number_format($booking->amount ?? 0, 2) }}</td>
                                     <td class="px-6 py-4">
-                                        <span class="px-2 py-1 text-xs font-medium rounded-full 
-                                            @if($booking->status === 'confirmed') bg-green-100 text-green-800
-                                            @elseif($booking->status === 'completed') bg-blue-100 text-blue-800
-                                            @else bg-gray-100 text-gray-800 @endif">
-                                            {{ ucfirst($booking->status) }}
+                                        <span class="px-2 py-1 text-xs font-medium rounded-full {{ $statusClass }}">
+                                            {{ ucfirst($statusLabel) }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-right">

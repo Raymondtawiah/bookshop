@@ -54,8 +54,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
 
     // Coaching bookings
     Route::get('coachings', [CoachingController::class, 'adminIndex'])->name('coachings.index');
+    Route::get('coachings/upcoming', [CoachingController::class, 'getUpcomingMeetings'])->name('coachings.upcoming');
     Route::put('coachings/{booking}/status', [CoachingController::class, 'updateStatus'])->name('coachings.status');
     Route::post('coachings/{booking}/send-link', [CoachingController::class, 'sendMeetingLink'])->name('coachings.sendLink');
+    Route::post('coachings/{booking}/send-reminder', [CoachingController::class, 'sendReminder'])->name('coachings.sendReminder');
     Route::post('coachings/toggle-active', [CoachingController::class, 'toggleActive'])->name('coachings.toggleActive');
     Route::delete('coachings/{booking}', [CoachingController::class, 'destroy'])->name('coachings.destroy');
 });

@@ -167,9 +167,28 @@ class CoachingController extends Controller
             'meeting_notes' => 'nullable|string',
         ]);
 
+        // Save meeting details to the booking
+        $booking->update([
+            'meeting_link' => $validated['meeting_link'],
+            'meeting_time' => $validated['meeting_time'],
+            'meeting_notes' => $validated['meeting_notes'] ?? null,
+            'status' => 'completed',
+        ]);
+
         Mail::to($booking->email)->send(new \App\Mail\CoachingMeetingLink($booking, $validated['meeting_link'], $validated['meeting_time'], $validated['meeting_notes'] ?? null));
 
         return back()->with('success', 'Meeting link sent to customer successfully.');
+    }
+
+    public function sendReminder(CoachingBooking $booking)
+    {
+        $minutesUntil = now()->diffInMinutes($booking->meeting_time, false);
+        
+        Mail::to($booking->email)->send(new \App\Mail\CoachingMeetingReminder($booking, $minutesUntil));
+        
+        $booking->update(['reminder_sent_at' => now()]);
+
+        return response()->json(['success' => true, 'message' => 'Reminder sent successfully']);
     }
 
     public function toggleActive(Request $request)
@@ -184,5 +203,27 @@ class CoachingController extends Controller
     public function isActive()
     {
         return session('coaching_booking_active', true);
+    }
+
+    public function getUpcomingMeetings()
+    {
+        $now = now();
+        $upcoming = \App\Models\CoachingBooking::whereNotNull('meeting_time')
+            ->where('meeting_time', '>', $now->copy()->subMinutes(30))
+            ->where('meeting_time', '<=', $now->copy()->addMinutes(30))
+            ->where('status', '!=', 'cancelled')
+            ->orderBy('meeting_time')
+            ->get();
+
+        return response()->json([
+            'upcoming' => $upcoming->map(fn($booking) => [
+                'id' => $booking->id,
+                'name' => $booking->name,
+                'email' => $booking->email,
+                'meeting_time' => $booking->meeting_time,
+                'meeting_link' => $booking->meeting_link,
+                'minutes_until' => now()->diffInMinutes($booking->meeting_time),
+            ]),
+        ]);
     }
 }

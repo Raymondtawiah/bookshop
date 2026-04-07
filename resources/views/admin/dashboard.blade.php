@@ -245,6 +245,158 @@
             </div>
         </main>
 
+        <!-- Meeting Notification Container -->
+        <div id="meeting-notification" class="fixed bottom-4 right-4 z-50 max-w-md hidden">
+            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl shadow-2xl p-4">
+                <div class="flex items-start gap-3">
+                    <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                        </svg>
+                    </div>
+                    <div class="flex-1">
+                        <p class="font-semibold">Upcoming Meeting<span id="meeting-count"></span>!</p>
+                        <p id="meeting-customer-name" class="text-sm text-white/90"></p>
+                        <p id="meeting-additional" class="text-xs text-white/70 mt-1"></p>
+                        <p id="meeting-time" class="text-sm text-white/80 mt-1"></p>
+                        <a id="meeting-link" href="#" target="_blank" class="inline-block mt-2 text-sm bg-white text-indigo-600 px-3 py-1 rounded-lg hover:bg-white/90">
+                            Join Meeting →
+                        </a>
+                        <button id="send-reminder-btn" onclick="sendManualReminder()" class="mt-2 ml-2 text-xs bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600">
+                            🔔 Send Reminder
+                        </button>
+                    </div>
+                    <button onclick="dismissMeetingNotification()" class="text-white/60 hover:text-white">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <script>
+            let lastMeetingId = null;
+            let notificationTimeout = null;
+
+            function checkUpcomingMeetings() {
+                fetch('{{ route("admin.coachings.upcoming") }}')
+                    .then(res => res.json())
+                    .then(data => {
+                        const container = document.getElementById('meeting-notification');
+                        if (data.upcoming && data.upcoming.length > 0) {
+                            // Show notification whenever there are upcoming meetings
+                            showMeetingNotification(data.upcoming);
+                        } else {
+                            // Hide when no meetings coming up
+                            container.classList.add('hidden');
+                            lastMeetingId = null;
+                        }
+                    })
+                    .catch(err => console.error('Error checking meetings:', err));
+            }
+
+            function showMeetingNotification(meetings) {
+                const meeting = meetings[0]; // First meeting determines the time
+                currentMeetingId = meeting.id;
+                const container = document.getElementById('meeting-notification');
+                
+                // Show count if multiple meetings at same time
+                if (meetings.length > 1) {
+                    document.getElementById('meeting-count').textContent = ` (${meetings.length} people)`;
+                    const names = meetings.map(m => m.name).join(', ');
+                    document.getElementById('meeting-customer-name').textContent = names;
+                    // Show remaining count if more than 2
+                    if (meetings.length > 2) {
+                        const remaining = meetings.length - 2;
+                        document.getElementById('meeting-additional').textContent = `+${remaining} more`;
+                    } else {
+                        document.getElementById('meeting-additional').textContent = '';
+                    }
+                } else {
+                    document.getElementById('meeting-count').textContent = '';
+                    document.getElementById('meeting-customer-name').textContent = meeting.name;
+                    document.getElementById('meeting-additional').textContent = '';
+                }
+                
+                const minutesUntil = meeting.minutes_until;
+                let timeText = '';
+                if (minutesUntil <= 0) {
+                    timeText = 'Now!';
+                } else if (minutesUntil <= 30) {
+                    timeText = `In ${minutesUntil} minute${minutesUntil !== 1 ? 's' : ''}`;
+                }
+                document.getElementById('meeting-time').textContent = timeText;
+                
+                if (meeting.meeting_link) {
+                    document.getElementById('meeting-link').href = meeting.meeting_link;
+                }
+                
+                container.classList.remove('hidden');
+                
+                // Play notification sound
+                if ('speechSynthesis' in window) {
+                    const utterance = new SpeechSynthesisUtterance(`Meeting with ${meeting.name} in ${minutesUntil} minutes`);
+                    window.speechSynthesis.speak(utterance);
+                }
+                
+                // Auto dismiss after 2 minutes
+                if (notificationTimeout) clearTimeout(notificationTimeout);
+                notificationTimeout = setTimeout(() => {
+                    dismissMeetingNotification();
+                }, 120000);
+            }
+
+            function dismissMeetingNotification() {
+                document.getElementById('meeting-notification').classList.add('hidden');
+            }
+
+            function sendManualReminder() {
+                const btn = document.getElementById('send-reminder-btn');
+                const originalText = btn.textContent;
+                btn.textContent = 'Sending...';
+                btn.disabled = true;
+
+                fetch('/admin/coachings/' + lastMeetingId + '/send-reminder', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        btn.textContent = '✓ Reminder Sent!';
+                        setTimeout(() => {
+                            btn.textContent = originalText;
+                            btn.disabled = false;
+                        }, 3000);
+                    } else {
+                        btn.textContent = 'Failed!';
+                        setTimeout(() => {
+                            btn.textContent = originalText;
+                            btn.disabled = false;
+                        }, 3000);
+                    }
+                })
+                .catch(err => {
+                    btn.textContent = 'Error!';
+                    setTimeout(() => {
+                        btn.textContent = originalText;
+                        btn.disabled = false;
+                    }, 3000);
+                });
+            }
+
+            // Store current meeting ID globally
+            let currentMeetingId = null;
+
+            // Check immediately and then every minute
+            checkUpcomingMeetings();
+            setInterval(checkUpcomingMeetings, 60000);
+        </script>
+
         <!-- Footer -->
         <footer class="bg-white border-t border-gray-200 mt-12">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
