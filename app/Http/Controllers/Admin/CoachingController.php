@@ -182,6 +182,14 @@ class CoachingController extends Controller
 
     public function sendReminder(CoachingBooking $booking)
     {
+        if (!$booking->meeting_time) {
+            return response()->json(['success' => false, 'message' => 'No meeting time set'], 400);
+        }
+        
+        if (!$booking->meeting_link) {
+            return response()->json(['success' => false, 'message' => 'No meeting link sent yet'], 400);
+        }
+        
         $minutesUntil = now()->diffInMinutes($booking->meeting_time, false);
         
         Mail::to($booking->email)->send(new \App\Mail\CoachingMeetingReminder($booking, $minutesUntil));

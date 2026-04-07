@@ -319,12 +319,16 @@
                     document.getElementById('meeting-additional').textContent = '';
                 }
                 
-                const minutesUntil = meeting.minutes_until;
+                const minutesUntil = Math.round(meeting.minutes_until);
                 let timeText = '';
                 if (minutesUntil <= 0) {
                     timeText = 'Now!';
-                } else if (minutesUntil <= 30) {
+                } else if (minutesUntil < 60) {
                     timeText = `In ${minutesUntil} minute${minutesUntil !== 1 ? 's' : ''}`;
+                } else {
+                    const hours = Math.floor(minutesUntil / 60);
+                    const mins = minutesUntil % 60;
+                    timeText = `In ${hours}h ${mins}m`;
                 }
                 document.getElementById('meeting-time').textContent = timeText;
                 
