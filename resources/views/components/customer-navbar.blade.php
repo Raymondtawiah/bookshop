@@ -34,6 +34,7 @@ window.addEventListener('pageshow', function(event) {
                 <a href="{{ route('visa-tip') }}" class="text-gray-700 hover:text-indigo-600">Visa Tips</a>
                 <a href="{{ route('home') }}#about" class="text-gray-700 hover:text-indigo-600">About</a>
                 <a href="{{ route('home') }}#contact" class="text-gray-700 hover:text-indigo-600">Contact</a>
+                <a href="{{ route('coaching.booking') }}" class="text-gray-700 hover:text-indigo-600 font-medium">Visa Coaching</a>
                 
                 @auth
                 @php
@@ -61,6 +62,7 @@ window.addEventListener('pageshow', function(event) {
                     <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden group-hover:block border">
                         <a href="{{ route('profile') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">My Profile</a>
                         <a href="{{ route('my-orders') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">My Orders</a>
+                        <a href="{{ route('customer.my-bookings') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">My Bookings</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <button type="submit" class="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100">

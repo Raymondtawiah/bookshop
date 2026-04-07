@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\Admin\CoachingController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\HomeController;
@@ -206,6 +207,7 @@ Route::middleware(['auth', 'verify.customer'])->group(function () {
     Route::post('checkout/process', [OrderController::class, 'processCheckout'])->name('checkout.process');
     Route::get('order/download/{order}', [OrderController::class, 'downloadPdf'])->name('order.download');
     Route::get('my-orders', [OrderController::class, 'myOrders'])->name('my-orders');
+    Route::get('my-bookings', [CoachingController::class, 'myBookings'])->name('customer.my-bookings');
 
     // Payment routes
     Route::post('payment/initialize', [PaymentController::class, 'initializePayment'])->name('payment.initialize');
