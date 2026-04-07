@@ -33,7 +33,7 @@
         <a href="{{ route('visa-tip') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Tips</a>
         <a href="{{ route('home') }}#about" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">About</a>
         <a href="{{ route('home') }}#contact" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Contact</a>
-        <a href="{{ route('coaching.booking') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Book Coaching</a>
+        <a href="{{ route('coaching.booking') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Coaching</a>
         
         @auth
         <hr class="border-gray-200 my-2">
