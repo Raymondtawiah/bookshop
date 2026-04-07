@@ -276,8 +276,9 @@
         </div>
 
         <script>
-            let lastMeetingId = null;
+            let currentMeetingId = null;
             let notificationTimeout = null;
+            let lastMeetingId = null;
 
             function checkUpcomingMeetings() {
                 fetch('{{ route("admin.coachings.upcoming") }}')
@@ -361,7 +362,7 @@
                 btn.textContent = 'Sending...';
                 btn.disabled = true;
 
-                fetch('/admin/coachings/' + lastMeetingId + '/send-reminder', {
+                fetch('/admin/coachings/' + currentMeetingId + '/send-reminder', {
                     method: 'POST',
                     headers: {
                         'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -392,9 +393,6 @@
                     }, 3000);
                 });
             }
-
-            // Store current meeting ID globally
-            let currentMeetingId = null;
 
             // Check immediately and then every minute
             checkUpcomingMeetings();
