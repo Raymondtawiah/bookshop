@@ -66,7 +66,7 @@ class PaystackService
     /**
      * Initialize a payment transaction
      */
-    public function initializePayment($email, $amount, $reference = null, $currency = 'GHS')
+    public function initializePayment($email, $amount, $reference = null, $currency = 'GHS', $callbackUrl = null)
     {
         $reference = $reference ?? 'TXN-'.time().rand(1000, 9999);
 
@@ -75,7 +75,7 @@ class PaystackService
             'amount' => $amount * 100, // Paystack expects amount in kobo/cents
             'reference' => $reference,
             'currency' => $currency,
-            'callback_url' => url(config('paystack.callbackUrl')),
+            'callback_url' => $callbackUrl ?? url(config('paystack.callbackUrl')),
             'metadata' => [
                 'custom_fields' => [
                     [

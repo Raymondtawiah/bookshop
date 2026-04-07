@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
 class Book extends Model
 {
@@ -42,16 +41,11 @@ class Book extends Model
             return null;
         }
 
-        // Check if it's already a full URL (external storage)
         if (filter_var($this->cover_image, FILTER_VALIDATE_URL)) {
             return $this->cover_image;
         }
 
-        // Use Laravel's Storage facade to generate URL with cache-busting
-        $url = Storage::disk('public')->url('books/'.$this->cover_image);
-
-        // Add timestamp to prevent browser caching
-        return $url.'?v='.$this->updated_at->timestamp;
+        return '/storage/books/'.$this->cover_image;
     }
 
     /**
@@ -63,15 +57,10 @@ class Book extends Model
             return null;
         }
 
-        // Check if it's already a full URL (external storage)
         if (filter_var($this->book_pdf, FILTER_VALIDATE_URL)) {
             return $this->book_pdf;
         }
 
-        // Use Laravel's Storage facade to generate URL with cache-busting
-        $url = Storage::disk('public')->url('books/'.$this->book_pdf);
-
-        // Add timestamp to prevent browser caching
-        return $url.'?v='.$this->updated_at->timestamp;
+        return '/storage/books/'.$this->book_pdf;
     }
 }

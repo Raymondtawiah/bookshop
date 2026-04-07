@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\CoachingController;
 use Illuminate\Support\Facades\Route;
 
 // Admin login routes - accessible without authentication
@@ -12,7 +13,13 @@ Route::prefix('admin')->name('admin.')->middleware(['web'])->group(function () {
     Route::post('login', [AuthController::class, 'login'])->name('login.post');
 });
 
-// Admin authenticated routes - requires login via web guard with is_admin=true
+// Public coaching booking page (no login required) - outside admin prefix
+Route::get('coaching-booking', [CoachingController::class, 'index'])->name('coaching.booking');
+Route::post('coaching-booking', [CoachingController::class, 'store'])->name('coaching.store');
+Route::get('coaching/callback', [CoachingController::class, 'callback'])->name('coaching.callback');
+Route::get('coaching/status', [CoachingController::class, 'getBookingStatus'])->name('coaching.status');
+
+// Admin routes - requires login via web guard with is_admin=true
 Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group(function () {
     Route::get('dashboard', [AuthController::class, 'dashboard'])->name('dashboard');
     Route::post('logout', [AuthController::class, 'logout'])->name('logout');
@@ -43,4 +50,11 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
 
     // Passage preview API route
     Route::get('passages/preview', [OrderController::class, 'previewPassage'])->name('passages.preview');
+
+    // Coaching bookings
+    Route::get('coachings', [CoachingController::class, 'adminIndex'])->name('coachings.index');
+    Route::put('coachings/{booking}/status', [CoachingController::class, 'updateStatus'])->name('coachings.status');
+    Route::post('coachings/{booking}/send-link', [CoachingController::class, 'sendMeetingLink'])->name('coachings.sendLink');
+    Route::post('coachings/toggle-active', [CoachingController::class, 'toggleActive'])->name('coachings.toggleActive');
+    Route::delete('coachings/{booking}', [CoachingController::class, 'destroy'])->name('coachings.destroy');
 });

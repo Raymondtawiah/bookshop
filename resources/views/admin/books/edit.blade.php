@@ -128,10 +128,13 @@
                         </div>
                     </div>
 
-                    <!-- PDF File -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">PDF File</label>
-                        <div class="mt-1 flex justify-center rounded-lg border-2 border-dashed border-gray-300 px-6 py-6" id="pdf-dropzone">
+<!-- PDF File -->
+                    <div id="pdf-section" class="{{ $book->is_free ? '' : 'hidden' }}">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            PDF File
+                            <span id="pdf-required-indicator" class="text-red-500 text-xs {{ $book->is_free ? '' : 'hidden' }}">(Required for free books)</span>
+                        </label>
+                        <div class="mt-1 flex justify-center rounded-lg border-2 border-dashed {{ $book->is_free ? 'border-red-500' : 'border-gray-300' }} px-6 py-6" id="pdf-dropzone">
                             <div class="text-center" id="pdf-content">
                                 @if($book->pdf_file)
                                     <svg class="mx-auto h-10 w-10 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -232,6 +235,43 @@
                     document.getElementById('pdf-dropzone').classList.add('border-green-500');
                 }
             }
+
+            // Mutual exclusivity: Featured vs Free
+            const isFeaturedCheckbox = document.getElementById('is_featured');
+            const isFreeCheckbox = document.getElementById('is_free');
+            const priceInput = document.getElementById('price');
+            const pdfSection = document.getElementById('pdf-section');
+            const pdfRequiredIndicator = document.getElementById('pdf-required-indicator');
+            const pdfDropzone = document.getElementById('pdf-dropzone');
+
+            isFeaturedCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    isFreeCheckbox.checked = false;
+                    if (priceInput) priceInput.readOnly = false;
+                    if (pdfSection) pdfSection.classList.add('hidden');
+                }
+            });
+
+            isFreeCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    isFeaturedCheckbox.checked = false;
+                    if (priceInput) {
+                        priceInput.value = 0;
+                        priceInput.readOnly = true;
+                    }
+                    if (pdfSection) {
+                        pdfSection.classList.remove('hidden');
+                        if (pdfRequiredIndicator) {
+                            pdfRequiredIndicator.classList.remove('hidden');
+                            pdfDropzone.classList.remove('border-gray-300');
+                            pdfDropzone.classList.add('border-red-500');
+                        }
+                    }
+                } else {
+                    if (priceInput) priceInput.readOnly = false;
+                    if (pdfSection) pdfSection.classList.add('hidden');
+                }
+            });
         </script>
     </body>
 </html>

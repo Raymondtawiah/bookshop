@@ -33,6 +33,7 @@
         <a href="{{ route('visa-tip') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Tips</a>
         <a href="{{ route('home') }}#about" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">About</a>
         <a href="{{ route('home') }}#contact" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Contact</a>
+        <a href="{{ route('coaching.booking') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Book Coaching</a>
         
         @auth
         <hr class="border-gray-200 my-2">
@@ -50,6 +51,7 @@
         </div>
         <a href="{{ route('profile') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Settings</a>
         <a href="{{ route('my-orders') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">My Orders</a>
+        <a href="{{ route('customer.my-bookings') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">My Bookings</a>
         <form method="POST" action="{{ route('logout') }}" class="w-full">
             @csrf
             <button type="submit" class="text-left text-red-600 hover:text-red-800 font-medium transition-colors w-full">

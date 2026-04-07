@@ -134,8 +134,11 @@
                     </div>
 
                     <!-- PDF Files -->
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-1">PDF/Word Files (Select Multiple)</label>
+                    <div id="pdf-section" class="hidden">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">
+                            PDF Files 
+                            <span id="pdf-required-indicator" class="text-red-500 text-xs hidden">(Required for free books)</span>
+                        </label>
                         <div class="mt-1 rounded-lg border-2 border-dashed border-gray-300 px-6 py-16 cursor-pointer hover:border-indigo-400" id="pdf-dropzone" onclick="document.getElementById('book_pdfs').click()">
                             <div class="text-center" id="pdf-content">
                                 <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
@@ -151,7 +154,7 @@
                                             Select Files
                                         </span>
                                     </label>
-                                    <input id="book_pdfs" name="book_pdfs[]" type="file" class="hidden" accept=".pdf,.doc,.docx" multiple onchange="handleFilesSelect(this)">
+                                    <input id="book_pdfs" name="book_pdfs[]" type="file" class="hidden" accept=".pdf" multiple onchange="handleFilesSelect(this)">
                                     <p class="mt-3">or drag and drop</p>
                                 </div>
                                 <p class="text-xs leading-5 text-gray-500 mt-2">PDF, DOC, DOCX up to 10MB each</p>
@@ -218,7 +221,7 @@
                         name: file.name,
                         size: (file.size / 1024 / 1024).toFixed(2) + ' MB',
                         type: file.name.split('.').pop().toUpperCase(),
-                        reviewed: false,
+                        reviewed: true,
                         file: file
                     };
                     selectedFiles.push(fileData);
@@ -226,9 +229,6 @@
                 });
                 
                 renderFileList();
-                
-                // Reset the file input but keep the files in our array
-                input.value = '';
             }
 
             function renderFileList() {
@@ -369,6 +369,43 @@
                     reader.readAsDataURL(file);
                 }
             }
+
+            // Mutual exclusivity: Featured vs Free
+            const isFeaturedCheckbox = document.getElementById('is_featured');
+            const isFreeCheckbox = document.getElementById('is_free');
+            const priceInput = document.getElementById('price');
+            const pdfSection = document.getElementById('pdf-section');
+            const pdfRequiredIndicator = document.getElementById('pdf-required-indicator');
+            const pdfDropzone = document.getElementById('pdf-dropzone');
+
+            isFeaturedCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    isFreeCheckbox.checked = false;
+                    if (priceInput) priceInput.readOnly = false;
+                    if (pdfSection) pdfSection.classList.add('hidden');
+                }
+            });
+
+            isFreeCheckbox.addEventListener('change', function() {
+                if (this.checked) {
+                    isFeaturedCheckbox.checked = false;
+                    if (priceInput) {
+                        priceInput.value = 0;
+                        priceInput.readOnly = true;
+                    }
+                    if (pdfSection) {
+                        pdfSection.classList.remove('hidden');
+                        if (pdfRequiredIndicator) {
+                            pdfRequiredIndicator.classList.remove('hidden');
+                            pdfDropzone.classList.remove('border-gray-300');
+                            pdfDropzone.classList.add('border-red-500');
+                        }
+                    }
+                } else {
+                    if (priceInput) priceInput.readOnly = false;
+                    if (pdfSection) pdfSection.classList.add('hidden');
+                }
+            });
         </script>
     </body>
 </html>
