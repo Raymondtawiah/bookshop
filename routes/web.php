@@ -3,6 +3,7 @@
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Admin\CoachingController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
@@ -18,6 +19,16 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
+
+// Chat routes (public - accessible to all)
+Route::middleware(['web'])->group(function () {
+    Route::post('chat', [ChatController::class, 'store'])->name('chat.store');
+    Route::get('chat/messages', [ChatController::class, 'customerChats'])->name('chat.messages');
+    Route::get('chat/unread', [ChatController::class, 'getUnreadCount'])->name('chat.unread');
+    Route::post('chat/read', [ChatController::class, 'markAsRead'])->name('chat.read');
+    Route::delete('chat/clear', [ChatController::class, 'clearAllChats'])->name('chat.clear');
+    Route::delete('chat/{id}', [ChatController::class, 'clearChatMessage'])->name('chat.delete');
+});
 
 // Home and public routes - NO middleware needed
 Route::get('/', [HomeController::class, 'index'])->name('home');

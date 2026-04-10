@@ -98,6 +98,8 @@
 
         <x-install-pwa />
 
+        <x-chat-widget />
+
         @fluxScripts
     </body>
 </html>

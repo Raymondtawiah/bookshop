@@ -1,5 +1,4 @@
 @import 'tailwindcss';
-@plugin '@tailwindcss/line-clamp';
 @import '../../vendor/livewire/flux/dist/flux.css';
 
 @source '../views';
