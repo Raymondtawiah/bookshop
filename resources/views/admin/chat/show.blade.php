@@ -62,15 +62,15 @@
                                     $currentPreview = mb_substr($chat->message, 0, 50);
                                     if (mb_strlen($chat->message) > 50) $currentPreview .= '...';
                                 @endphp
-                                <div class="flex {{ $chat->sender_type === 'admin' ? 'justify-start' : 'justify-end' }} group {{ $repliedChat ? 'reply-highlight' : '' }}" data-chat-id="{{ $chat->id }}" ondblclick="selectReply({{ $chat->id }}, '{{ addslashes($currentPreview) }}')" on touchstart="handleDoubleTap(event, {{ $chat->id }}, '{{ addslashes($currentPreview) }}')">
+                                <div class="flex {{ $chat->sender_type === 'admin' ? 'justify-start' : 'justify-end' }} group {{ $repliedChat ? 'reply-highlight' : '' }}" data-chat-id="{{ $chat->id }}" onclick="selectReply({{ $chat->id }}, '{{ addslashes($currentPreview) }}')" ondblclick="selectReply({{ $chat->id }}, '{{ addslashes($currentPreview) }}')" on touchstart="handleDoubleTap(event, {{ $chat->id }}, '{{ addslashes($currentPreview) }}')">
                                     <div class="max-w-[80%] {{ $chat->sender_type === 'admin' ? 'bg-indigo-600 text-white' : 'bg-gray-100 text-gray-900' }} rounded-2xl px-4 py-3 relative cursor-pointer">
                                         @if($repliedChat)
                                         <div class="text-xs mb-2 px-2 py-1 rounded {{ $chat->sender_type === 'admin' ? 'bg-indigo-500 text-indigo-200' : 'bg-gray-200 text-gray-600' }}">
                                             ↩ {{ $replyPreview }}
                                         </div>
                                         @endif
-                                        <button onclick="selectReply({{ $chat->id }}, '{{ addslashes($currentPreview) }}')" class="absolute -top-2 -right-2 bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity" title="Reply">↩</button>
-                                        <button onclick="deleteMessage({{ $chat->id }})" class="absolute -top-2 -right-8 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity" title="Delete">×</button>
+                                        <button onclick="event.stopPropagation(); selectReply({{ $chat->id }}, '{{ addslashes($currentPreview) }}')" class="absolute -top-2 -right-2 bg-green-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity" title="Reply">↩</button>
+                                        <button onclick="event.stopPropagation(); deleteMessage({{ $chat->id }})" class="absolute -top-2 -right-8 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity" title="Delete">×</button>
                                         <div class="flex items-center gap-2 mb-1">
                                             <span class="text-xs font-semibold {{ $chat->sender_type === 'admin' ? 'text-indigo-200' : 'text-gray-500' }}">
                                                 {{ $chat->sender_type === 'admin' ? 'Admin' : ($chat->name ?? 'Guest') }}
