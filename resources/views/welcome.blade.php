@@ -429,6 +429,8 @@
         <x-customer-footer />
 
         <x-install-pwa />
+
+        <x-chat-widget />
     </body>
 </html>
 

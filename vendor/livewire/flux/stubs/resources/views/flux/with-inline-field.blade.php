@@ -1,7 +1,9 @@
-@blaze(fold: true)
+@blaze(fold: true, unsafe: [
+    'name', 'label', 'description',
+])
 
 @php
-extract(flux::forwardedattributes($attributes, [
+extract(Flux::forwardedattributes($attributes, [
     'name',
     'description',
     'label',

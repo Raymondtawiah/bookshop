@@ -70,5 +70,7 @@
         </div>
 
         @include('components.customer-footer')
+
+        <x-chat-widget />
     </body>
 </html>
