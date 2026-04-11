@@ -55,11 +55,8 @@ document.addEventListener('DOMContentLoaded', function() {
     ];
 
     function initChat() {
-        if (uniqueId) {
-            showChatUI();
-        } else {
-            showQuestionUI();
-        }
+        // Always show chat UI directly - no name/email required
+        showChatUI();
     }
 
     function showQuestionUI() {
