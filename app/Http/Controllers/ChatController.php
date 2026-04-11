@@ -3,12 +3,20 @@
 namespace App\Http\Controllers;
 
 use App\Models\Chat;
+use App\Services\OpenAiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ChatController extends Controller
 {
+    protected OpenAiService $openAiService;
+
+    public function __construct(OpenAiService $openAiService)
+    {
+        $this->openAiService = $openAiService;
+    }
+
     public function store(Request $request)
     {
         \Illuminate\Support\Facades\Log::info('Chat store called', [
@@ -51,6 +59,23 @@ class ChatController extends Controller
             'is_read' => false,
             'replied_message_id' => $request->input('replied_message_id'),
         ]);
+
+        // Generate AI reply using OpenAI
+        $aiReplyText = $this->openAiService->generateResponse($request->message);
+        
+        if ($aiReplyText) {
+            Chat::create([
+                'user_id' => null,
+                'name' => 'AI Assistant',
+                'email' => 'ai@bookshop.test',
+                'message' => $aiReplyText,
+                'ip_address' => $ipAddress,
+                'unique_id' => $uniqueId,
+                'sender_type' => 'admin',
+                'is_read' => true,
+                'replied_message_id' => $chat->id,
+            ]);
+        }
 
         \Illuminate\Support\Facades\Log::info('Chat created', ['chat_id' => $chat->id, 'unique_id' => $chat->unique_id]);
 
