@@ -289,11 +289,17 @@ document.addEventListener('DOMContentLoaded', function() {
             messageDiv.dataset.chatId = chat.id;
             messageDiv.ondblclick = function() { selectReply(chat.id, currentPreview); };
             messageDiv.ontouchstart = function(e) { handleDoubleTapClient(e, chat.id, currentPreview); };
+            const menuButton = `<button onclick="toggleMessageMenu(event, ${chat.id})" class="absolute -top-2 ${isAdmin ? '-right-8' : '-right-2'} bg-gray-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs menu-toggle-btn" title="More">⋮</button>`;
             messageDiv.innerHTML = `
                 <div class="max-w-[80%] ${isAdmin ? 'bg-indigo-600 text-white' : 'bg-gray-200 text-gray-900'} rounded-lg p-3 relative">
-                    <button onclick="deleteMessage(${chat.id})" class="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs opacity-0 group-hover:opacity-100 transition-opacity" title="Delete">×</button>
+                    ${menuButton}
+                    <div id="msg-menu-${chat.id}" class="hidden absolute right-0 top-full mt-1 bg-white rounded-lg shadow-lg border py-1 z-20 w-24">
+                        <button onclick="selectReply(${chat.id}, '${escapeHtml(currentPreview)}')" class="block w-full text-left px-3 py-2 text-sm text-green-600 hover:bg-gray-100">Reply</button>
+                        ${!isAdmin ? `<button onclick="editMessage(${chat.id}, '${escapeHtml(chat.message)}')" class="block w-full text-left px-3 py-2 text-sm text-blue-600 hover:bg-gray-100">Edit</button>` : ''}
+                        ${!isAdmin ? `<button onclick="deleteMessage(${chat.id})" class="block w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-gray-100">Delete</button>` : ''}
+                    </div>
                     ${replyHtml}
-                    <p class="text-sm">${escapeHtml(chat.message)}</p>
+                    <p class="text-sm break-words">${escapeHtml(chat.message)}</p>
                     <div class="flex items-center justify-end gap-1 mt-1">
                         <p class="text-xs ${isAdmin ? 'text-indigo-200' : 'text-gray-500'}">${time}</p>
                         ${!isAdmin ? checkmarks : ''}
@@ -428,6 +434,20 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.reply-highlight').forEach(el => el.classList.remove('reply-highlight'));
         }
     };
+    
+    window.toggleMessageMenu = function(event, chatId) {
+        event.stopPropagation();
+        const menu = document.getElementById('msg-menu-' + chatId);
+        document.querySelectorAll('[id^="msg-menu-"]').forEach(el => {
+            if (el.id !== 'msg-menu-' + chatId) el.classList.add('hidden');
+        });
+        if (menu) menu.classList.toggle('hidden');
+    };
+    
+    // Close menus when clicking elsewhere
+    document.addEventListener('click', function() {
+        document.querySelectorAll('[id^="msg-menu-"]').forEach(el => el.classList.add('hidden'));
+    });
 });
 </script>
 <style>
