@@ -1,16 +1,38 @@
-# Laravel core
-/storage/app/*
+# =========================
+# Dependencies
+# =========================
+/node_modules
+/vendor
+
+# =========================
+# Environment
+# =========================
+.env
+.env.backup
+.env.production
+
+# =========================
+# Laravel storage (ignore runtime files only)
+# =========================
+/storage/*.key
+/storage/logs/*
 /storage/framework/cache/*
 /storage/framework/sessions/*
 /storage/framework/views/*
-/storage/logs/*
 
-# Keep folders but ignore contents
-!/storage/framework/
-!/storage/framework/cache/
-!/storage/framework/sessions/
-!/storage/framework/views/
-!/storage/logs/
+# =========================
+# Bootstrap cache
+# =========================
+/bootstrap/cache/*
 
-# OS / Windows issue
-nul
+# =========================
+# Build output (Vite)
+# =========================
+/public/build
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
