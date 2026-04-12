@@ -4,7 +4,7 @@
 </button>
 
 <!-- Chat Container -->
-<div id="chatWidget" style="position: fixed !important; bottom: 90px !important; right: 20px !important; z-index: 99999 !important; width: 350px !important; background: white !important; border-radius: 16px !important; box-shadow: 0 8px 30px rgba(0,0,0,0.2) !important; overflow: hidden !important; display: none; flex-direction: column !important;">
+<div id="chatWidget" style="position: fixed !important; bottom: 90px !important; right: 20px !important; z-index: 99999 !important; width: 350px !important; max-width: calc(100vw - 40px) !important; background: white !important; border-radius: 16px !important; box-shadow: 0 8px 30px rgba(0,0,0,0.2) !important; overflow: hidden !important; display: none; flex-direction: column !important;">
   <div style="background: #2563eb !important; color: white !important; padding: 16px !important; display: flex !important; justify-content: space-between !important; align-items: center !important;">
     <div>
       <div style="font-weight: 600 !important;">AI Assistant</div>
@@ -13,7 +13,7 @@
     <button id="closeChat" style="background: none !important; border: none !important; color: white !important; font-size: 20px !important; cursor: pointer !important;">✕</button>
   </div>
 
-  <div id="chatMessages" style="flex: 1 !important; padding: 12px !important; overflow-y: auto !important; background: #f9fafb !important; min-height: 250px !important; max-height: 300px !important;"></div>
+  <div id="chatMessages" style="flex: 1 !important; padding: 12px !important; overflow-y: auto !important; background: #f9fafb !important; min-height: 200px !important; max-height: 250px !important;"></div>
 
   <div id="typing" style="padding: 8px 12px !important; font-size: 12px !important; color: #9ca3af !important; display: none !important;">AI is typing...</div>
 
