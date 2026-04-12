@@ -33,34 +33,26 @@ class Book extends Model
     ];
 
     /**
-     * Get the full URL for the cover image from storage
+     * Cover image URL (PUBLIC /books folder)
      */
     public function getCoverImageUrlAttribute()
     {
-        if (! $this->cover_image) {
+        if (!$this->cover_image) {
             return null;
         }
 
-        if (filter_var($this->cover_image, FILTER_VALIDATE_URL)) {
-            return $this->cover_image;
-        }
-
-        return asset('storage/books/'.$this->cover_image);
+        return asset('books/' . $this->cover_image);
     }
 
     /**
-     * Get the full URL for the PDF from storage
+     * PDF URL (PUBLIC /books folder)
      */
     public function getBookPdfUrlAttribute()
     {
-        if (! $this->book_pdf) {
+        if (!$this->book_pdf) {
             return null;
         }
 
-        if (filter_var($this->book_pdf, FILTER_VALIDATE_URL)) {
-            return $this->book_pdf;
-        }
-
-        return '/storage/books/'.$this->book_pdf;
+        return asset('books/' . $this->book_pdf);
     }
 }
