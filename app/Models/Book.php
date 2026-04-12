@@ -41,7 +41,7 @@ class Book extends Model
             return null;
         }
 
-        return asset('storage/books/' . $this->cover_image);
+        return asset('books/' . $this->cover_image);
     }
 
     /**
@@ -53,6 +53,6 @@ class Book extends Model
             return null;
         }
 
-        return asset('storage/books/' . $this->book_pdf);
+        return asset('books/' . $this->book_pdf);
     }
 }
