@@ -1,4 +1,4 @@
-<nav class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md">
+<nav class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md" style="max-width: 100vw; overflow-x: hidden;">
 <script>
 // Handle back-forward cache (bfcache) - ensures fresh content on navigation
 window.addEventListener('pageshow', function(event) {
