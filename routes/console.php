@@ -10,3 +10,6 @@ Artisan::command('inspire', function () {
 
 // Schedule coaching reminder checks every 5 minutes
 Schedule::command('coaching:send-reminders')->everyFiveMinutes();
+
+// Schedule chat cleanup every hour
+Schedule::command('chat:cleanup')->hourly();

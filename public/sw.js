@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bookshop-v6';
+const CACHE_NAME = 'bookshop-v7';
 
 // Only cache static assets - NEVER cache HTML pages
 const urlsToCache = [

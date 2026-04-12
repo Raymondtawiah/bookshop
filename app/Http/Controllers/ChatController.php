@@ -17,8 +17,15 @@ class ChatController extends Controller
         $this->openAiService = $openAiService;
     }
 
+    protected function cleanupOldMessages()
+    {
+        Chat::where('created_at', '<', now()->subHours(24))->delete();
+    }
+
     public function store(Request $request)
     {
+        // Clean up messages older than 24 hours
+        $this->cleanupOldMessages();
         \Illuminate\Support\Facades\Log::info('Chat store called', [
             'message' => $request->input('message'),
             'name' => $request->input('name'),
@@ -79,9 +86,18 @@ class ChatController extends Controller
 
         \Illuminate\Support\Facades\Log::info('Chat created', ['chat_id' => $chat->id, 'unique_id' => $chat->unique_id]);
 
+        $aiReply = null;
+        if ($aiReplyText) {
+            $aiReply = Chat::where('unique_id', $uniqueId)
+                ->where('sender_type', 'admin')
+                ->orderByDesc('id')
+                ->first();
+        }
+
         return response()->json([
             'success' => true,
             'chat' => $chat,
+            'ai_reply' => $aiReply,
         ]);
     }
 
