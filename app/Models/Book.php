@@ -45,7 +45,7 @@ class Book extends Model
     }
 
     /**
-     * PDF URL (storage/books folder)
+     * PDF URL (public/books folder)
      */
     public function getBookPdfUrlAttribute()
     {
@@ -53,6 +53,6 @@ class Book extends Model
             return null;
         }
 
-        return asset('books/' . $this->book_pdf);
+        return asset('public/books/' . $this->book_pdf);
     }
 }

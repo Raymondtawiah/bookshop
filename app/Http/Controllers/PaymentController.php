@@ -180,6 +180,10 @@ class PaymentController extends Controller
 
                 $order->update($updateData);
 
+                // Send admin notifications
+                \App\Services\NotificationService::newOrder($order);
+                \App\Services\NotificationService::paymentReceived($order);
+
                 return redirect()->route('home')
                     ->with('success', 'Payment successful! Order confirmed. Check your email for details.');
             }

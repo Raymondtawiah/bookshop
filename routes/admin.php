@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\CoachingController;
+use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Route;
 
@@ -61,4 +62,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::post('coachings/{booking}/send-reminder', [CoachingController::class, 'sendReminder'])->name('coachings.sendReminder');
     Route::post('coachings/toggle-active', [CoachingController::class, 'toggleActive'])->name('coachings.toggleActive');
     Route::delete('coachings/{booking}', [CoachingController::class, 'destroy'])->name('coachings.destroy');
+
+    // Notifications
+    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications');
+    Route::post('notifications/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
+    Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllRead');
+    Route::get('notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unreadCount');
 });
