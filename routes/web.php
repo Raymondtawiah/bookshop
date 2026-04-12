@@ -124,7 +124,7 @@ Route::middleware(['web'])->group(function () {
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()->route('home');
     })->name('logout');
 
     // Verification Routes - POST needs web
