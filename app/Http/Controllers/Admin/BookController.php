@@ -23,8 +23,8 @@ class BookController extends Controller
         // Generate safe filename
         $filename = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
 
-        // Store in public/storage folder (not storage/app/public)
-        $path = $file->storeAs('books', $filename, 'public');
+        // Store directly in public/books folder
+        $file->move(public_path('books'), $filename);
 
         return $filename;
     }
@@ -38,7 +38,7 @@ class BookController extends Controller
             return;
         }
 
-        Storage::disk('public')->delete('books/'.$filename);
+        @unlink(public_path('books/'.$filename));
     }
 
     public function index()
