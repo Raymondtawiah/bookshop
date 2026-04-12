@@ -15,7 +15,7 @@
     @endauth
 
     <!-- Toggle Button -->
-    <button id="mobile-menu-btn" class="p-2 text-gray-600 hover:text-indigo-600" onclick="toggleCustomerMobileMenu()">
+    <button id="mobile-menu-btn" class="p-2 text-gray-600 hover:text-indigo-600" style="display: block !important;" onclick="toggleCustomerMobileMenu()">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="menu-icon">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
@@ -71,9 +71,12 @@
 
 <script>
     function toggleCustomerMobileMenu() {
+        console.log('Toggle clicked');
         const mobileMenu = document.getElementById('customer-mobile-menu');
         const menuIcon = document.getElementById('menu-icon');
         const closeIcon = document.getElementById('close-icon');
+        
+        console.log('Menu:', mobileMenu.style.display);
         
         // Toggle display only
         if (mobileMenu.style.display === 'none' || mobileMenu.style.display === '') {
