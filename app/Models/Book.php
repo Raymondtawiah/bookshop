@@ -41,7 +41,7 @@ class Book extends Model
             return null;
         }
 
-        return asset('books/' . $this->cover_image);
+        return asset('public/books/' . $this->cover_image);
     }
 
     /**
