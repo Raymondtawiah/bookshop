@@ -23,7 +23,7 @@
                             <div class="bg-white rounded-lg shadow-md p-4 md:p-6 flex flex-col sm:flex-row items-start sm:items-center gap-4">
                                 <div class="w-20 h-24 bg-gray-200 rounded overflow-hidden flex-shrink-0">
                                     @if($item->book && $item->book->cover_image)
-                                        <img src="{{ $item->book->cover_image_url }}" alt="{{ $item->product_name }}" class="w-full h-full object-cover">
+                                        <img src="{{ asset('books/' . $item->book->cover_image) }}" alt="{{ $item->product_name }}" class="w-full h-full object-cover">
                                     @else
                                         <img src="{{ asset('welcome.jpg') }}" alt="{{ $item->product_name }}" class="w-full h-full object-cover">
                                     @endif
