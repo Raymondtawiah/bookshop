@@ -6,45 +6,45 @@ use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Services\BookFormService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class BookController extends Controller
 {
     /**
-     * Upload file (image or PDF) to public storage
+     * Upload file directly to public/books
      */
     private function uploadFile($file)
     {
-        if (! $file) {
+        if (!$file) {
             return null;
         }
 
-        // Generate safe filename
-        $filename = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
+        $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
 
-        // Store in storage/app/public/books
-        $file->storeAs('books', $filename, 'public');
+        // SAVE DIRECTLY TO public/books
+        $file->move(public_path('books'), $filename);
 
         return $filename;
     }
 
     /**
-     * Delete file from public storage
+     * Delete file from public/books
      */
     private function deleteFile($filename)
     {
-        if (! $filename) {
+        if (!$filename) {
             return;
         }
 
-        // PROPER Laravel way
-        Storage::disk('public')->delete('books/'.$filename);
+        $path = public_path('books/' . $filename);
+
+        if (file_exists($path)) {
+            unlink($path);
+        }
     }
 
     public function index()
     {
         $books = Book::latest()->paginate(10);
-
         return view('admin.books.index', compact('books'));
     }
 
@@ -55,20 +55,18 @@ class BookController extends Controller
 
     public function store(Request $request)
     {
-        \Log::info('BookController store', [
-            'has book_pdfs' => $request->hasFile('book_pdfs'),
-            'is_free' => $request->input('is_free'),
+        \Log::info('Book store', [
+            'has_files' => $request->hasFile('cover_image'),
         ]);
 
         $bookFormService = app(BookFormService::class);
         $validated = $bookFormService->validateBookData($request);
 
-        // Handle multiple PDFs if provided
+        // PDF upload
         $pdfFiles = $request->file('book_pdfs', []);
 
         foreach ($pdfFiles as $file) {
             if ($file instanceof \Illuminate\Http\UploadedFile) {
-
                 if (strtolower($file->getClientOriginalExtension()) === 'pdf') {
                     $pdfPath = $this->uploadFile($file);
 
@@ -102,13 +100,11 @@ class BookController extends Controller
         $bookFormService = app(BookFormService::class);
         $validated = $bookFormService->validateBookUpdate($request);
 
-        // Replace cover image
         if ($request->hasFile('cover_image')) {
             $this->deleteFile($book->cover_image);
             $validated['cover_image'] = $this->uploadFile($request->file('cover_image'));
         }
 
-        // Replace PDF
         if ($request->hasFile('book_pdf')) {
             $this->deleteFile($book->book_pdf);
             $validated['book_pdf'] = $this->uploadFile($request->file('book_pdf'));
