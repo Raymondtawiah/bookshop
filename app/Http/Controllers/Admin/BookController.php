@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Services\BookFormService;
-use App\Services\WordToPdfService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 
@@ -23,8 +22,8 @@ class BookController extends Controller
         // Generate safe filename
         $filename = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
 
-        // Store in public/storage/books folder
-        $path = $file->storeAs('books', $filename, 'public');
+        // Store in storage/app/public/books
+        $file->storeAs('books', $filename, 'public');
 
         return $filename;
     }
@@ -38,7 +37,8 @@ class BookController extends Controller
             return;
         }
 
-        @unlink(public_path('books/'.$filename));
+        // PROPER Laravel way
+        Storage::disk('public')->delete('books/'.$filename);
     }
 
     public function index()
@@ -55,24 +55,23 @@ class BookController extends Controller
 
     public function store(Request $request)
     {
-        \Illuminate\Support\Facades\Log::info('BookController store', [
+        \Log::info('BookController store', [
             'has book_pdfs' => $request->hasFile('book_pdfs'),
-            'book_pdfs raw' => $request->file('book_pdfs'),
-            'all files keys' => array_keys($request->allFiles()),
             'is_free' => $request->input('is_free'),
         ]);
-        
+
         $bookFormService = app(BookFormService::class);
         $validated = $bookFormService->validateBookData($request);
 
+        // Handle multiple PDFs if provided
         $pdfFiles = $request->file('book_pdfs', []);
-        
-        foreach ($pdfFiles as $index => $file) {
+
+        foreach ($pdfFiles as $file) {
             if ($file instanceof \Illuminate\Http\UploadedFile) {
-                $extension = $file->getClientOriginalExtension();
-                
-                if (strtolower($extension) === 'pdf') {
+
+                if (strtolower($file->getClientOriginalExtension()) === 'pdf') {
                     $pdfPath = $this->uploadFile($file);
+
                     if (!isset($validated['book_pdf']) && $pdfPath) {
                         $validated['book_pdf'] = $pdfPath;
                     }
@@ -80,6 +79,7 @@ class BookController extends Controller
             }
         }
 
+        // Cover image upload
         if ($request->hasFile('cover_image')) {
             $validated['cover_image'] = $this->uploadFile($request->file('cover_image'));
         }
@@ -88,7 +88,8 @@ class BookController extends Controller
 
         Book::create($validated);
 
-        return redirect()->route('admin.books')->with('success', 'Book added successfully!');
+        return redirect()->route('admin.books')
+            ->with('success', 'Book added successfully!');
     }
 
     public function edit(Book $book)
@@ -101,11 +102,13 @@ class BookController extends Controller
         $bookFormService = app(BookFormService::class);
         $validated = $bookFormService->validateBookUpdate($request);
 
+        // Replace cover image
         if ($request->hasFile('cover_image')) {
             $this->deleteFile($book->cover_image);
             $validated['cover_image'] = $this->uploadFile($request->file('cover_image'));
         }
 
+        // Replace PDF
         if ($request->hasFile('book_pdf')) {
             $this->deleteFile($book->book_pdf);
             $validated['book_pdf'] = $this->uploadFile($request->file('book_pdf'));
@@ -113,7 +116,8 @@ class BookController extends Controller
 
         $book->update($validated);
 
-        return redirect()->route('admin.books')->with('success', 'Book updated successfully!');
+        return redirect()->route('admin.books')
+            ->with('success', 'Book updated successfully!');
     }
 
     public function destroy(Book $book)
@@ -123,6 +127,7 @@ class BookController extends Controller
 
         $book->delete();
 
-        return redirect()->route('admin.books')->with('success', 'Book deleted successfully!');
+        return redirect()->route('admin.books')
+            ->with('success', 'Book deleted successfully!');
     }
 }
