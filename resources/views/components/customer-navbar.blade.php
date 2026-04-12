@@ -78,8 +78,10 @@ window.addEventListener('pageshow', function(event) {
                 @endguest
             </div>
 
-            <!-- Mobile Menu Button -->
-            @include('components.customer-navbar-mobile')
+            <!-- Mobile Menu Button (hidden on desktop) -->
+            <div class="md:hidden">
+                @include('components.customer-navbar-mobile')
+            </div>
         </div>
     </div>
 </nav>
