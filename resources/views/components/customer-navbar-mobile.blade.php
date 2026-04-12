@@ -78,13 +78,11 @@
         
         console.log('Menu:', mobileMenu.style.display);
         
-        // Toggle display only
-        if (mobileMenu.style.display === 'none' || mobileMenu.style.display === '') {
+        // Force toggle display
+        if (mobileMenu.style.display === 'none') {
             mobileMenu.style.display = 'block';
-            mobileMenu.classList.remove('hidden');
         } else {
             mobileMenu.style.display = 'none';
-            mobileMenu.classList.add('hidden');
         }
         menuIcon.classList.toggle('hidden');
         closeIcon.classList.toggle('hidden');
