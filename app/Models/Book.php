@@ -45,7 +45,7 @@ class Book extends Model
             return $this->cover_image;
         }
 
-        return '/books/'.$this->cover_image;
+        return asset('storage/books/'.$this->cover_image);
     }
 
     /**

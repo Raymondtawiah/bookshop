@@ -23,8 +23,8 @@ class BookController extends Controller
         // Generate safe filename
         $filename = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
 
-        // Store directly in public/books folder
-        $file->move(public_path('books'), $filename);
+        // Store in public/storage/books folder
+        $path = $file->storeAs('books', $filename, 'public');
 
         return $filename;
     }
