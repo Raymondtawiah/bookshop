@@ -75,11 +75,13 @@
         const menuIcon = document.getElementById('menu-icon');
         const closeIcon = document.getElementById('close-icon');
         
-        mobileMenu.classList.toggle('hidden');
-        if (mobileMenu.classList.contains('hidden')) {
-            mobileMenu.style.display = 'none';
-        } else {
+        // Toggle display only
+        if (mobileMenu.style.display === 'none' || mobileMenu.style.display === '') {
             mobileMenu.style.display = 'block';
+            mobileMenu.classList.remove('hidden');
+        } else {
+            mobileMenu.style.display = 'none';
+            mobileMenu.classList.add('hidden');
         }
         menuIcon.classList.toggle('hidden');
         closeIcon.classList.toggle('hidden');
