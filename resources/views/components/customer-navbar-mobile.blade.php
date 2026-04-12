@@ -1,5 +1,5 @@
 <!-- Mobile Navigation (Phone View) -->
-<div class="md:hidden flex items-center gap-2">
+<div class="flex items-center gap-2" style="display: flex !important;">
     @auth
     @php
         $mobileCartCount = auth()->check() ? \App\Models\Cart::where('user_id', auth()->id())->sum('quantity') : 0;
@@ -15,7 +15,7 @@
     @endauth
 
     <!-- Toggle Button -->
-    <button id="mobile-menu-btn" class="p-2 text-gray-600 hover:text-indigo-600" style="display: block !important;" onclick="toggleCustomerMobileMenu()">
+    <button id="mobile-menu-btn" class="p-2 text-gray-600 hover:text-indigo-600" onclick="toggleCustomerMobileMenu()">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="menu-icon">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
