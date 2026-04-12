@@ -1,10 +1,5 @@
-<!-- Mobile Navigation (Phone View) -->
-<style>
-@media (min-width: 768px) {
-    .mobile-nav { display: none !important; }
-}
-</style>
-<div class="flex items-center gap-2 mobile-nav">
+<!-- Mobile Navigation -->
+<div class="flex items-center gap-2">
     @auth
     @php
         $mobileCartCount = auth()->check() ? \App\Models\Cart::where('user_id', auth()->id())->sum('quantity') : 0;

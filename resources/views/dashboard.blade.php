@@ -23,7 +23,7 @@
             }
         </style>
     </head>
-    <body class="bg-gray-50 font-sans" style="overflow-x: hidden; max-width: 100vw; margin: 0;">
+    <body class="bg-gray-50 font-sans">
         <x-customer-navbar />
 
       
