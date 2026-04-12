@@ -6,47 +6,35 @@ return [
     |--------------------------------------------------------------------------
     | Default Filesystem Disk
     |--------------------------------------------------------------------------
-    |
-    | Here you may specify the default filesystem disk that should be used
-    | by the framework. The "local" disk, as well as a variety of cloud
-    | based disks are available to your application for file storage.
-    |
     */
 
-    'default' => env('FILESYSTEM_DISK', 'local'),
+    'default' => env('FILESYSTEM_DISK', 'public'),
 
     /*
     |--------------------------------------------------------------------------
     | Filesystem Disks
     |--------------------------------------------------------------------------
-    |
-    | Below you may configure as many filesystem disks as necessary, and you
-    | may even configure multiple disks for the same driver. Examples for
-    | most supported storage drivers are configured here for reference.
-    |
-    | Supported drivers: "local", "ftp", "sftp", "s3"
-    |
     */
 
     'disks' => [
 
+        // ✅ FIXED LOCAL (PRIVATE STORAGE)
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app/private'),
-            'serve' => true,
             'throw' => false,
-            'report' => false,
         ],
 
+        // ✅ MAIN FIX (PUBLIC FILES - IMAGES, PDFs)
         'public' => [
             'driver' => 'local',
-            'root' => base_path('public/storage'),
-            'url' => env('APP_URL').'/storage',
+            'root' => storage_path('app/public'),
+            'url' => env('APP_URL') . '/storage',
             'visibility' => 'public',
             'throw' => false,
-            'report' => false,
         ],
 
+        // OPTIONAL: S3
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),
@@ -57,16 +45,6 @@ return [
             'endpoint' => env('AWS_ENDPOINT'),
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
-            'report' => false,
-        ],
-
-        'external' => [
-            'driver' => 'local',
-            'root' => storage_path('app/public'),
-            'url' => env('EXTERNAL_STORAGE_URL', 'https://srv2111-files.hstgr.io/f5e93c1ee0caf648/files/public_html/storage/app/public'),
-            'visibility' => 'public',
-            'throw' => false,
-            'report' => false,
         ],
 
     ],
@@ -75,13 +53,10 @@ return [
     |--------------------------------------------------------------------------
     | Symbolic Links
     |--------------------------------------------------------------------------
-    |
-    | Here you may configure the symbolic links that will be created when the
-    | `storage:link` Artisan command is executed. The array keys should be
-    | the locations of the links and the values should be their targets.
-    |
     */
 
-    'links' => [],
+    'links' => [
+        public_path('storage') => storage_path('app/public'),
+    ],
 
 ];
