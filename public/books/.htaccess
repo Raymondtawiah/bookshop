@@ -1,6 +1,11 @@
 Options +FollowSymLinks
 IndexIgnore *
 
+<FilesMatch "\.pdf$">
+    Order allow,deny
+    Allow from all
+</FilesMatch>
+
 <IfModule mod_authz_core.c>
     Require all granted
 </IfModule>
