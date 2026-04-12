@@ -113,6 +113,9 @@ class CoachingController extends Controller
 
             Mail::to($booking->email)->send(new CoachingPaymentReceived($booking));
 
+            // Send admin notification
+            \App\Services\NotificationService::newCoachingBooking($booking);
+
             return redirect()->route('home')->with('success', 'Payment successful! Your coaching session is confirmed.');
         }
 
