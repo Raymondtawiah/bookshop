@@ -12,6 +12,7 @@ class OpenAiService
     public function __construct()
     {
         $this->apiKey = config('services.openai.api_key') ?: env('OPENAI_API_KEY', '');
+        Log::info('OpenAI key loaded', ['key_prefix' => substr($this->apiKey, 0, 20)]);
     }
 
     public function generateResponse(string $userMessage): ?string
@@ -61,6 +62,8 @@ PROMPT;
                 'temperature' => 0.3,
                 'max_tokens' => 500,
             ]);
+
+            Log::info('OpenAI response status', ['status' => $response->status(), 'body' => $response->body()]);
 
             if ($response->successful()) {
                 $data = $response->json();

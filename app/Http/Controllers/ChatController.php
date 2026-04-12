@@ -70,6 +70,18 @@ class ChatController extends Controller
         // Generate AI reply using OpenAI
         $aiReplyText = $this->openAiService->generateResponse($request->message);
         
+        // Fallback responses if OpenAI fails
+        if (!$aiReplyText) {
+            $fallbackResponses = [
+                "I'd be happy to help with your visa application. Could you please clarify which type of visa you need?",
+                "For visa applications, please check the embassy website for required documents. Common documents include passport, photos, and application form.",
+                "Visa processing times vary by country. Standard tourist visas typically take 5-14 business days.",
+                "Please provide more details about your travel plans so I can assist better.",
+            ];
+            $aiReplyText = $fallbackResponses[array_rand($fallbackResponses)];
+            Log::info('Using fallback response');
+        }
+        
         if ($aiReplyText) {
             Chat::create([
                 'user_id' => null,
