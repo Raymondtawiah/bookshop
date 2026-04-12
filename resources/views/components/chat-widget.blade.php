@@ -7,8 +7,8 @@
 <div id="chatWidget" style="position: fixed !important; bottom: 90px !important; right: 20px !important; left: auto !important; z-index: 99999 !important; width: 350px !important; max-width: calc(100vw - 40px) !important; background: white !important; border-radius: 16px !important; box-shadow: 0 8px 30px rgba(0,0,0,0.2) !important; overflow: hidden !important; display: none; flex-direction: column !important; box-sizing: border-box !important;">
   <div style="background: #2563eb !important; color: white !important; padding: 16px !important; display: flex !important; justify-content: space-between !important; align-items: center !important;">
     <div>
-      <div style="font-weight: 600 !important;">AI Assistant</div>
-      <div style="font-size: 12px !important; opacity: 0.8 !important;">Ask me anything</div>
+      <div style="font-weight: 600 !important;">Visa Officer Charles</div>
+      <div style="font-size: 12px !important; opacity: 0.8 !important;">Your visa expert assistant</div>
     </div>
     <button id="closeChat" style="background: none !important; border: none !important; color: white !important; font-size: 20px !important; cursor: pointer !important;">✕</button>
   </div>
@@ -140,7 +140,7 @@
         chatMessages.innerHTML = saved;
         scrollToBottom();
     } else {
-        appendAIMessage("Hello 👋, ask me anything!");
+        appendAIMessage("Hello! I'm Visa Officer Charles. Ask me anything about visas, travel, or immigration!");
     }
 })();
 </script>
