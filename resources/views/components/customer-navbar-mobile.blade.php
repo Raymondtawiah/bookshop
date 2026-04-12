@@ -1,5 +1,5 @@
 <!-- Mobile Navigation (Phone View) -->
-<div class="flex items-center gap-2" style="display: flex !important;">
+<div class="md:hidden flex items-center gap-2">
     @auth
     @php
         $mobileCartCount = auth()->check() ? \App\Models\Cart::where('user_id', auth()->id())->sum('quantity') : 0;
@@ -26,7 +26,7 @@
 </div>
 
 <!-- Mobile Menu Dropdown -->
-<div id="customer-mobile-menu" class="hidden absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 p-4" style="display: none;">
+<div id="customer-mobile-menu" class="absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 p-4" style="display: none; width: 100%;">
     <div class="flex flex-col space-y-3">
         <a href="{{ route('home') }}#home" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Home</a>
         <a href="{{ route('home') }}#store" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Store</a>
