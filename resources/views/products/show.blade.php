@@ -36,7 +36,7 @@
                         <!-- Product Image -->
                         <div class="relative h-80 md:h-[500px] bg-gray-100 flex items-center justify-center p-6">
                             @if($book->cover_image)
-                                <img src="{{ $book->cover_image_url }}" alt="{{ $book->title }}" class="max-h-full max-w-full object-contain rounded-lg shadow-lg">
+                                <img src="{{ asset('books/' . $book->cover_image) }}" alt="{{ $book->title }}" class="max-h-full max-w-full object-contain rounded-lg shadow-lg">
                             @else
                                 <img src="{{ asset('welcome.jpg') }}" alt="{{ $book->title }}" class="max-h-full max-w-full object-contain rounded-lg shadow-lg">
                             @endif
@@ -169,7 +169,7 @@
                         <a href="{{ route('product.show', $related->id) }}" class="bg-white rounded-2xl overflow-hidden shadow-lg hover:-translate-y-2 hover:shadow-xl transition-all duration-300">
                             <div class="h-56 bg-gray-100 relative overflow-hidden">
                                 @if($related->cover_image)
-                                    <img src="{{ $related->cover_image_url }}" alt="{{ $related->title }}" class="w-full h-full object-cover">
+                                    <img src="{{ asset('books/' . $related->cover_image) }}" alt="{{ $related->title }}" class="w-full h-full object-cover">
                                 @else
                                     <img src="{{ asset('welcome.jpg') }}" alt="{{ $related->title }}" class="w-full h-full object-cover">
                                 @endif
