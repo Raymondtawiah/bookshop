@@ -61,17 +61,4 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::post('coachings/{booking}/send-reminder', [CoachingController::class, 'sendReminder'])->name('coachings.sendReminder');
     Route::post('coachings/toggle-active', [CoachingController::class, 'toggleActive'])->name('coachings.toggleActive');
     Route::delete('coachings/{booking}', [CoachingController::class, 'destroy'])->name('coachings.destroy');
-
-    // Chat management
-    Route::get('chat', [ChatController::class, 'index'])->name('chat.index');
-    Route::get('chat/unread-count', [ChatController::class, 'getTotalUnreadCount'])->name('chat.unread-count');
-    Route::get('chat/show/{uniqueId}', [ChatController::class, 'showByUniqueId'])->name('chat.show');
-    Route::post('chat/reply/{uniqueId}', [ChatController::class, 'replyByUniqueId'])->name('chat.reply');
-    Route::delete('chat/message/{id}', [ChatController::class, 'clearChatMessage'])->name('chat.message.delete');
-    Route::delete('chat/conversation/{uniqueId}', [ChatController::class, 'deleteConversation'])->name('chat.conversation.delete');
-    
-    // Fallback chat route
-    Route::any('chat/{any}', function() {
-        return redirect()->route('admin.chat.index');
-    })->where('any', '.*');
 });

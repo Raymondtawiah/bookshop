@@ -3,14 +3,29 @@
 namespace App\Http\Controllers;
 
 use App\Models\Chat;
+use App\Services\OpenAiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 
 class ChatController extends Controller
 {
+    protected OpenAiService $openAiService;
+
+    public function __construct(OpenAiService $openAiService)
+    {
+        $this->openAiService = $openAiService;
+    }
+
+    protected function cleanupOldMessages()
+    {
+        Chat::where('created_at', '<', now()->subHours(24))->delete();
+    }
+
     public function store(Request $request)
     {
+        // Clean up messages older than 24 hours
+        $this->cleanupOldMessages();
         \Illuminate\Support\Facades\Log::info('Chat store called', [
             'message' => $request->input('message'),
             'name' => $request->input('name'),
@@ -52,11 +67,37 @@ class ChatController extends Controller
             'replied_message_id' => $request->input('replied_message_id'),
         ]);
 
+        // Generate AI reply using OpenAI
+        $aiReplyText = $this->openAiService->generateResponse($request->message);
+        
+        if ($aiReplyText) {
+            Chat::create([
+                'user_id' => null,
+                'name' => 'AI Assistant',
+                'email' => 'ai@bookshop.test',
+                'message' => $aiReplyText,
+                'ip_address' => $ipAddress,
+                'unique_id' => $uniqueId,
+                'sender_type' => 'admin',
+                'is_read' => true,
+                'replied_message_id' => $chat->id,
+            ]);
+        }
+
         \Illuminate\Support\Facades\Log::info('Chat created', ['chat_id' => $chat->id, 'unique_id' => $chat->unique_id]);
+
+        $aiReply = null;
+        if ($aiReplyText) {
+            $aiReply = Chat::where('unique_id', $uniqueId)
+                ->where('sender_type', 'admin')
+                ->orderByDesc('id')
+                ->first();
+        }
 
         return response()->json([
             'success' => true,
             'chat' => $chat,
+            'ai_reply' => $aiReply,
         ]);
     }
 

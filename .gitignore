@@ -26,9 +26,9 @@
 /bootstrap/cache/*
 
 # =========================
-# Build output (Vite)
+# Build output (Vite) - COMMENTED TO Deploy
 # =========================
-/public/build
+# /public/build
 
 # =========================
 # OS files
