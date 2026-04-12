@@ -1,10 +1,10 @@
-<!-- Mobile Navigation (Phone View) -->
-<div class="md:hidden flex items-center gap-2">
+<!-- Mobile Navigation -->
+<div class="flex items-center gap-2">
     @auth
     @php
         $mobileCartCount = auth()->check() ? \App\Models\Cart::where('user_id', auth()->id())->sum('quantity') : 0;
     @endphp
-    <a href="{{ route('cart') }}" class="relative p-2 text-gray-600 hover:text-indigo-600">
+    <a href="{{ route('cart') }}" class="relative p-2 text-gray-600 hover:text-indigo-600" style="display: inline-flex;">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
         </svg>
@@ -26,7 +26,7 @@
 </div>
 
 <!-- Mobile Menu Dropdown -->
-<div id="customer-mobile-menu" class="hidden absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 p-4" style="display: none;">
+<div id="customer-mobile-menu" class="absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 p-4" style="display: none; width: 100%;">
     <div class="flex flex-col space-y-3">
         <a href="{{ route('home') }}#home" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Home</a>
         <a href="{{ route('home') }}#store" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Store</a>
@@ -71,15 +71,18 @@
 
 <script>
     function toggleCustomerMobileMenu() {
+        console.log('Toggle clicked');
         const mobileMenu = document.getElementById('customer-mobile-menu');
         const menuIcon = document.getElementById('menu-icon');
         const closeIcon = document.getElementById('close-icon');
         
-        mobileMenu.classList.toggle('hidden');
-        if (mobileMenu.classList.contains('hidden')) {
-            mobileMenu.style.display = 'none';
-        } else {
+        console.log('Menu:', mobileMenu.style.display);
+        
+        // Force toggle display
+        if (mobileMenu.style.display === 'none') {
             mobileMenu.style.display = 'block';
+        } else {
+            mobileMenu.style.display = 'none';
         }
         menuIcon.classList.toggle('hidden');
         closeIcon.classList.toggle('hidden');

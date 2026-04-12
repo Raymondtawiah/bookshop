@@ -1,10 +1,10 @@
 <!-- Chat Button -->
-<button id="chatToggle" style="position: fixed !important; bottom: 20px !important; right: 20px !important; z-index: 99999 !important; width: 60px !important; height: 60px !important; border-radius: 50% !important; background: #2563eb !important; color: white !important; border: none !important; cursor: pointer !important; font-size: 24px !important; box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important;">
+<button id="chatToggle" style="position: fixed !important; bottom: 20px !important; right: 20px !important; left: auto !important; z-index: 99999 !important; width: 60px !important; height: 60px !important; border-radius: 50% !important; background: #2563eb !important; color: white !important; border: none !important; cursor: pointer !important; font-size: 24px !important; box-shadow: 0 4px 12px rgba(0,0,0,0.3) !important; overflow: hidden !important;">
   💬
 </button>
 
 <!-- Chat Container -->
-<div id="chatWidget" style="position: fixed !important; bottom: 90px !important; right: 20px !important; z-index: 99999 !important; width: 350px !important; max-width: calc(100vw - 40px) !important; background: white !important; border-radius: 16px !important; box-shadow: 0 8px 30px rgba(0,0,0,0.2) !important; overflow: hidden !important; display: none; flex-direction: column !important;">
+<div id="chatWidget" style="position: fixed !important; bottom: 90px !important; right: 20px !important; left: auto !important; z-index: 99999 !important; width: 350px !important; max-width: calc(100vw - 40px) !important; background: white !important; border-radius: 16px !important; box-shadow: 0 8px 30px rgba(0,0,0,0.2) !important; overflow: hidden !important; display: none; flex-direction: column !important; box-sizing: border-box !important;">
   <div style="background: #2563eb !important; color: white !important; padding: 16px !important; display: flex !important; justify-content: space-between !important; align-items: center !important;">
     <div>
       <div style="font-weight: 600 !important;">AI Assistant</div>

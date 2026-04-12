@@ -4,7 +4,7 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Dashboard - {{ config('app.name', 'Bookshop') }}</title>
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <script src="https://cdn.tailwindcss.com"></script>
         <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="manifest" href="/manifest.json">
         <meta name="theme-color" content="#4f46e5" />
