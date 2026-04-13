@@ -10,7 +10,7 @@
         <div class="flex overflow-x-auto gap-6 pb-4 md:grid md:grid-cols-3 lg:grid-cols-4 md:overflow-x-visible md:gap-6 scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
             @forelse($books as $index => $book)
             <div class="flex-shrink-0 w-40 md:w-auto opacity-0 translate-y-8 transition-all duration-700" data-animate-target style="transition-delay: {{ $index * 100 }}ms;">
-                @if($book->is_free && $book->book_pdf_url)
+                @if($book->isFreePdf())
                 <a href="{{ route('product.download', $book->id) }}" class="block transform group-hover:-translate-y-2 transition-all duration-300" title="Download PDF">
                 @else
                 <a href="{{ route('product.show', $book->id) }}" class="block transform group-hover:-translate-y-2 transition-all duration-300">
@@ -23,7 +23,7 @@
                         @endif
                         
                         <!-- Free/Paid Badge Overlay on Cover -->
-                        @if($book->is_free && $book->book_pdf_url)
+                        @if($book->isFreePdf())
                         <div class="absolute inset-0 bg-gradient-to-t from-green-600/80 via-green-600/20 to-transparent flex flex-col items-center justify-end pb-4">
                             <div class="bg-white rounded-full px-4 py-1.5 shadow-lg flex items-center gap-2">
                                 <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -44,7 +44,7 @@
                 </a>
                 <div class="text-center mt-4">
                     <h3 class="text-base font-bold text-gray-900 truncate w-40 mx-auto group-hover:text-indigo-600 transition-colors duration-300">{{ $book->title }}</h3>
-                    @if($book->is_free && $book->book_pdf_url)
+                    @if($book->isFreePdf())
                     <p class="text-lg font-extrabold text-green-600 mt-1">FREE</p>
                     @else
                     <p class="text-lg font-extrabold text-indigo-600 mt-1">₵{{ number_format($book->price, 2) }}</p>
