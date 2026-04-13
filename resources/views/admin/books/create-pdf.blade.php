@@ -16,47 +16,55 @@
             <!-- Header Section -->
             <div class="flex items-center justify-between mb-8">
                 <div>
-                    <h1 class="text-2xl font-bold text-gray-900">Add New Book</h1>
-                    <p class="text-gray-500">Upload a new book to your inventory</p>
+                    <h1 class="text-2xl font-bold text-gray-900">Add PDF Book (Free)</h1>
+                    <p class="text-gray-500">Upload a free PDF for download</p>
                 </div>
+                <a href="{{ route('admin.books.create') }}" class="px-4 py-2 text-indigo-600 hover:text-indigo-900 hover:bg-indigo-50 rounded-lg transition-colors flex items-center gap-2">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l-7-7m0 0l7-7m-7 7h18"/>
+                    </svg>
+                    Add Book Cover
+                </a>
                 <a href="{{ route('admin.books') }}" class="px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2">
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                     </svg>
-                    Back
+                    Back to Books
                 </a>
             </div>
 
-<!-- Book Type Selection -->
-            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-6">
-                <label class="block text-sm font-medium text-gray-700 mb-3">Select Book Type</label>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <a href="{{ route('admin.books.create') }}" class="p-4 rounded-lg border-2 border-indigo-500 bg-indigo-50 hover:border-indigo-600 transition-all">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="font-medium text-gray-900">Book Cover</p>
-                                <p class="text-sm text-gray-500">For sale with price</p>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="{{ route('admin.books.createPdf') }}" class="p-4 rounded-lg border-2 border-red-500 bg-red-50 hover:border-red-600 transition-all">
-                        <div class="flex items-center gap-3">
-                            <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
-                                <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <p class="font-medium text-gray-900">PDF Book</p>
-                                <p class="text-sm text-gray-500">Free download</p>
+<!-- PDF Book Form -->
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <h2 class="text-lg font-semibold text-gray-900 mb-4">Add PDF Book (Free Download)</h2>
+                
+                <form method="POST" action="{{ route('admin.books.store') }}" enctype="multipart/form-data" class="space-y-6">
+                    @csrf
+                    <input type="hidden" name="book_type" value="pdf">
+                    <input type="hidden" name="is_free" value="1">
+                    <input type="hidden" name="price" value="0">
+                                <div>
+                                    <p class="font-medium text-gray-900">Book Cover</p>
+                                    <p class="text-sm text-gray-500">For sale with price</p>
+                                </div>
                             </div>
                         </div>
-                    </a>
+                    </label>
+                    <label class="relative cursor-pointer">
+                        <input type="radio" name="book_type_selection" value="pdf" class="peer sr-only" onclick="toggleBookType()">
+                        <div class="p-4 rounded-lg border-2 border-gray-200 peer-checked:border-red-500 peer-checked:bg-red-50 hover:border-gray-300 transition-all">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
+                                    <svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                                <div>
+                                    <p class="font-medium text-gray-900">PDF Book</p>
+                                    <p class="text-sm text-gray-500">Free download</p>
+                                </div>
+                            </div>
+                        </div>
+                    </label>
                 </div>
             </div>
 
