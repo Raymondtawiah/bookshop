@@ -120,11 +120,12 @@
                         <div class="p-4">
                             <h3 class="font-semibold text-gray-900 text-sm truncate group-hover:text-indigo-600 transition-colors">{{ $book->title }}</h3>
                             <p class="text-xs text-gray-500 mt-1">{{ $book->author }}</p>
-                            <div class="mt-3 flex items-center justify-between">
+<div class="mt-3 flex items-center justify-between">
                                 @if($book->is_free && $book->book_pdf_url)
                                 <p class="font-bold text-xl text-green-600">FREE</p>
                                 @else
-<p class="font-bold text-xl text-indigo-600">₵{{ number_format($book->price, 2) }}</p>
+                                <p class="font-bold text-xl text-indigo-600">₵{{ number_format($book->price, 2) }}</p>
+                                @endif
                             </div>
                             @guest
                             @if(!($book->is_free && $book->book_pdf_url))
