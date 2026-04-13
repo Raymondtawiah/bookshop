@@ -29,6 +29,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     // Books resource routes
     Route::get('books', [BookController::class, 'index'])->name('books');
     Route::get('books/create', [BookController::class, 'create'])->name('books.create');
+    Route::get('books/create-pdf', [BookController::class, 'createPdf'])->name('books.createPdf');
     Route::post('books', [BookController::class, 'store'])->name('books.store');
     Route::get('books/{book}/edit', [BookController::class, 'edit'])->name('books.edit');
     Route::put('books/{book}', [BookController::class, 'update'])->name('books.update');

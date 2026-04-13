@@ -52,6 +52,11 @@ class BookController extends Controller
         return view('admin.books.create');
     }
 
+    public function createPdf()
+    {
+        return view('admin.books.create-pdf');
+    }
+
     public function store(Request $request)
     {
         // Simple validation - just required fields
