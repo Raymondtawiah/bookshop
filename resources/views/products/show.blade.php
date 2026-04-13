@@ -36,7 +36,7 @@
                         <!-- Product Image -->
                         <div class="relative h-80 md:h-[500px] bg-gray-100 flex items-center justify-center p-6">
                             @if($book->cover_image)
-                                <img src="{{ asset('public/books/' . $book->cover_image) }}" alt="{{ $book->title }}" class="max-h-full max-w-full object-contain rounded-lg shadow-lg">
+                                <img src="{{ $book->cover_image_url }}" alt="{{ $book->title }}" class="max-h-full max-w-full object-contain rounded-lg shadow-lg">
                             @else
                                 <img src="{{ asset('welcome.jpg') }}" alt="{{ $book->title }}" class="max-h-full max-w-full object-contain rounded-lg shadow-lg">
                             @endif
