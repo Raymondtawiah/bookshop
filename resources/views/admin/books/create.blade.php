@@ -138,20 +138,7 @@
 
                     <div>
                         <label class="block text-sm font-medium text-gray-700 mb-1">Cover Image</label>
-                        <div class="mt-1 flex justify-center rounded-lg border-2 border-dashed border-gray-300 px-6 py-6">
-                            <div class="text-center">
-                                <svg class="mx-auto h-10 w-10 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                    <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                </svg>
-                                <div class="mt-2 flex text-sm text-gray-600">
-                                    <label for="cover_image" class="relative cursor-pointer rounded-md font-semibold text-indigo-600 hover:text-indigo-500">
-                                        <span>Upload</span>
-                                        <input id="cover_image" name="cover_image" type="file" class="sr-only" accept="image/*" onchange="handleCoverImage(this)">
-                                    </label>
-                                </div>
-                                <p class="text-xs text-gray-500">PNG, JPG up to 2MB</p>
-                            </div>
-                        </div>
+                        <input type="file" name="cover_image" accept="image/*" class="border p-2 w-full">
                     </div>
 
                     <div class="flex items-center">
@@ -218,20 +205,7 @@
 
                         <div>
                             <label class="block text-sm font-medium text-gray-700 mb-1">Cover Image</label>
-                            <div class="mt-1 flex justify-center rounded-lg border-2 border-dashed border-gray-300 px-6 py-6">
-                                <div class="text-center">
-                                    <svg class="mx-auto h-10 w-10 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48">
-                                        <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
-                                    </svg>
-                                    <div class="mt-2 flex text-sm text-gray-600">
-                                        <label for="pdf_cover_image" class="relative cursor-pointer rounded-md font-semibold text-indigo-600 hover:text-indigo-500">
-                                            <span>Upload</span>
-                                            <input id="pdf_cover_image" name="cover_image" type="file" class="sr-only" accept="image/*" onchange="handleCoverImage(this)">
-                                        </label>
-                                    </div>
-                                    <p class="text-xs text-gray-500">PNG, JPG up to 2MB</p>
-                                </div>
-                            </div>
+                            <input type="file" name="cover_image" accept="image/*" class="border p-2 w-full">
                         </div>
 
                         <div>

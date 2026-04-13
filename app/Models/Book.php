@@ -32,21 +32,15 @@ class Book extends Model
         'stock' => 'integer',
     ];
 
-    /**
-     * Cover image URL (PUBLIC /books folder)
-     */
     public function getCoverImageUrlAttribute()
     {
         if (!$this->cover_image) {
             return null;
         }
 
-        return asset('public/books/' . $this->cover_image);
+        return asset('books/' . $this->cover_image);
     }
 
-    /**
-     * PDF download URL (uses route for proper download)
-     */
     public function getBookPdfUrlAttribute()
     {
         if (!$this->book_pdf) {
@@ -54,5 +48,10 @@ class Book extends Model
         }
 
         return route('product.download', $this->id);
+    }
+
+    public function hasCoverImage(): bool
+    {
+        return !empty($this->cover_image);
     }
 }

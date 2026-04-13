@@ -4,15 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Book;
-use App\Services\BookFormService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class BookController extends Controller
 {
-    /**
-     * Upload file directly to public/books
-     */
     private function uploadFile($file)
     {
         if (!$file) {
@@ -20,16 +16,11 @@ class BookController extends Controller
         }
 
         $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-
-        // SAVE DIRECTLY TO public/books
         $file->move(public_path('books'), $filename);
 
         return $filename;
     }
 
-    /**
-     * Delete file from public/books
-     */
     private function deleteFile($filename)
     {
         if (!$filename) {
@@ -56,34 +47,40 @@ class BookController extends Controller
 
     public function store(Request $request)
     {
-        $bookFormService = app(BookFormService::class);
-        $validated = $bookFormService->validateBookData($request);
+        // Simple validation - just required fields
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+            'price' => 'required|numeric|min:0',
+        ]);
 
-        $isPdf = ($request->input('book_type') === 'pdf');
-
-        // PDF upload
-        if ($isPdf) {
-            $pdfFile = $request->file('book_pdfs');
-            if ($pdfFile) {
-                if (strtolower($pdfFile->getClientOriginalExtension()) === 'pdf') {
-                    $pdfPath = $this->uploadFile($pdfFile);
-                    $validated['book_pdf'] = $pdfPath;
-                }
-            }
-        }
-
-        // Cover image upload
+        // Upload cover image
+        $coverImage = null;
         if ($request->hasFile('cover_image')) {
-            $coverFile = $request->file('cover_image');
-            $validated['cover_image'] = $this->uploadFile($coverFile);
+            $coverImage = $this->uploadFile($request->file('cover_image'));
         }
 
-        // Only set stock for cover books
-        if (!$isPdf) {
-            $validated['stock'] = $validated['stock'] ?? 0;
+        // Upload PDF if PDF book type
+        $bookPdf = null;
+        if ($request->input('book_type') === 'pdf' && $request->hasFile('book_pdfs')) {
+            $bookPdf = $this->uploadFile($request->file('book_pdfs'));
         }
 
-        Book::create($validated);
+        $book = Book::create([
+            'title' => $request->title,
+            'author' => $request->author,
+            'description' => $request->description,
+            'price' => $request->price,
+            'category' => $request->category,
+            'isbn' => $request->isbn,
+            'pages' => $request->pages,
+            'published_year' => $request->published_year,
+            'cover_image' => $coverImage,
+            'book_pdf' => $bookPdf,
+            'is_free' => $request->boolean('is_free'),
+            'stock' => $request->input('stock', 0),
+            'is_featured' => $request->boolean('is_featured'),
+        ]);
 
         return redirect()->route('admin.books')
             ->with('success', 'Book added successfully!');
@@ -96,24 +93,38 @@ class BookController extends Controller
 
     public function update(Request $request, Book $book)
     {
-        $bookFormService = app(BookFormService::class);
-        $validated = $bookFormService->validateBookUpdate($request);
+        // Simple validation
+        $request->validate([
+            'title' => 'required|string|max:255',
+            'author' => 'required|string|max:255',
+        ]);
 
-        $isPdf = ($request->input('book_type') === 'pdf');
+        $data = [
+            'title' => $request->title,
+            'author' => $request->author,
+            'description' => $request->description,
+            'price' => $request->price,
+            'category' => $request->category,
+            'isbn' => $request->isbn,
+            'pages' => $request->pages,
+            'published_year' => $request->published_year,
+            'stock' => $request->stock,
+            'is_featured' => $request->boolean('is_featured'),
+        ];
 
-        // Cover image upload
+        // Update cover image if new one uploaded
         if ($request->hasFile('cover_image')) {
             $this->deleteFile($book->cover_image);
-            $validated['cover_image'] = $this->uploadFile($request->file('cover_image'));
+            $data['cover_image'] = $this->uploadFile($request->file('cover_image'));
         }
 
-        // PDF upload
-        if ($isPdf && $request->hasFile('book_pdfs')) {
+        // Update PDF if new one uploaded
+        if ($request->hasFile('book_pdfs')) {
             $this->deleteFile($book->book_pdf);
-            $validated['book_pdf'] = $this->uploadFile($request->file('book_pdfs'));
+            $data['book_pdf'] = $this->uploadFile($request->file('book_pdfs'));
         }
 
-        $book->update($validated);
+        $book->update($data);
 
         return redirect()->route('admin.books')
             ->with('success', 'Book updated successfully!');
