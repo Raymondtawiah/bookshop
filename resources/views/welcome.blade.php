@@ -101,7 +101,7 @@
                 @if($books->count() > 0)
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                     @foreach($books as $book)
-                    @if($book->is_free && $book->book_pdf_url)
+                    @if($book->book_type === 'pdf')
                     <a href="{{ route('product.download', $book->id) }}" class="block bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 group">
                     @else
                     <a href="{{ route('product.show', $book->id) }}" class="block bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 group">
@@ -120,15 +120,15 @@
                         <div class="p-4">
                             <h3 class="font-semibold text-gray-900 text-sm truncate group-hover:text-indigo-600 transition-colors">{{ $book->title }}</h3>
                             <p class="text-xs text-gray-500 mt-1">{{ $book->author }}</p>
-<div class="mt-3 flex items-center justify-between">
-@if($book->isFreePdf())
+                            <div class="mt-3 flex items-center justify-between">
+                                 @if($book->book_type === 'pdf')
                                 <p class="font-bold text-xl text-green-600">FREE</p>
                                 @else
                                 <p class="font-bold text-xl text-indigo-600">₵{{ number_format($book->price, 2) }}</p>
                                 @endif
                             </div>
                             @guest
-                            @if(!$book->isFreePdf())
+                            @if($book->book_type !== 'pdf')
                             <a href="{{ route('login') }}" class="block mt-3 text-center px-4 py-2 bg-gray-100 text-gray-600 text-sm font-medium rounded-xl hover:bg-gray-200 transition-colors">
                                 Sign in to Buy
                             </a>
