@@ -54,14 +54,6 @@ class BookController extends Controller
 
     public function store(Request $request)
     {
-        // DEBUG
-        Log::info('Upload Debug', [
-            'public_path' => public_path('books'),
-            'hasFile' => $request->hasFile('cover_image'),
-            'book_dir_exists' => is_dir(public_path('books')),
-            'book_dir_writable' => is_writable(public_path('books')),
-        ]);
-
         // Simple validation - just required fields
         $request->validate([
             'title' => 'required|string|max:255',
@@ -73,12 +65,6 @@ class BookController extends Controller
         $coverImage = null;
         if ($request->hasFile('cover_image')) {
             $coverImage = $this->uploadFile($request->file('cover_image'));
-            $actualPath = public_path('books') . '/' . $coverImage;
-            Log::info('Uploaded cover', [
-                'coverImage' => $coverImage,
-                'actualPath' => $actualPath,
-                'exists' => file_exists($actualPath),
-            ]);
         }
 
         // Upload PDF if PDF book type
@@ -103,11 +89,8 @@ class BookController extends Controller
             'is_featured' => $request->boolean('is_featured'),
         ]);
 
-        $msg = 'Book added! Cover: ' . ($coverImage ?? 'none');
-        $msg .= ' | Path: ' . public_path('books');
-        
         return redirect()->route('admin.books')
-            ->with('success', $msg);
+            ->with('success', 'Book added successfully!');
     }
 
     public function edit(Book $book)
