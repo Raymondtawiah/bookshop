@@ -42,9 +42,7 @@
                             @endif
 
                             @if($book->category)
-                            <div class="absolute top-4 right-4 bg-indigo-600 text-white text-sm font-bold px-3 py-1 rounded">
-                                {{ $book->category }}
-                            </div>
+</div>
                             @endif
                         </div>
 
@@ -111,12 +109,7 @@
                                     <p class="font-medium text-gray-900">{{ $book->published_year }}</p>
                                 </div>
                                 @endif
-                                @if($book->category)
-                                <div class="bg-gray-50 rounded-lg p-3">
-                                    <span class="text-gray-500">Category</span>
-                                    <p class="font-medium text-gray-900">{{ $book->category }}</p>
-                                </div>
-                                @endif
+
                             </div>
 
                             <!-- Add to Cart -->
@@ -176,7 +169,7 @@
                             </div>
                             <div class="p-5">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ $related->title }}</h3>
-                                <p class="text-sm text-gray-500 mb-2">{{ $related->category ?? 'Uncategorized' }}</p>
+                                
                                 <span class="text-xl font-bold text-indigo-600">₵{{ number_format($related->price, 2) }}</span>
                             </div>
                         </a>

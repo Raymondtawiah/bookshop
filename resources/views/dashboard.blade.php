@@ -382,9 +382,7 @@
                                 @endif
                                 <div class="mt-3 flex items-center justify-between">
                                     <p class="font-bold text-lg text-indigo-600">₵{{ number_format($book->price, 2) }}</p>
-                                    @if($book->category)
-                                        <span class="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-full">{{ $book->category }}</span>
-                                    @endif
+                                    
                                 </div>
                             </div>
                         </div>
@@ -494,9 +492,6 @@
                             @endif
                             <div class="mt-3 flex items-center justify-between">
                                 <p class="font-bold text-xl text-indigo-600">₵{{ number_format($book->price, 2) }}</p>
-                                @if($book->category)
-                                    <span class="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-full">{{ $book->category }}</span>
-                                @endif
                             </div>
                             @auth
                             <form action="{{ route('cart.add') }}" method="POST" class="mt-3">

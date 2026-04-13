@@ -124,11 +124,7 @@
                                 @if($book->is_free && $book->book_pdf_url)
                                 <p class="font-bold text-xl text-green-600">FREE</p>
                                 @else
-                                <p class="font-bold text-xl text-indigo-600">₵{{ number_format($book->price, 2) }}</p>
-                                @endif
-                                @if($book->category)
-                                    <span class="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-full">{{ $book->category }}</span>
-                                @endif
+<p class="font-bold text-xl text-indigo-600">₵{{ number_format($book->price, 2) }}</p>
                             </div>
                             @guest
                             @if(!($book->is_free && $book->book_pdf_url))

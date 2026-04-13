@@ -38,9 +38,7 @@
                                     <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Cover</th>
                                     <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Title</th>
                                     <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Author</th>
-                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Category</th>
                                     <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Price</th>
-                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Stock</th>
                                     <th class="px-6 py-4 text-right text-sm font-semibold text-gray-900">Actions</th>
                                 </tr>
                             </thead>
@@ -67,15 +65,7 @@
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-gray-600">{{ $book->author }}</td>
-                                        <td class="px-6 py-4 text-gray-600">{{ $book->category ?? '-' }}</td>
                                         <td class="px-6 py-4 font-medium text-gray-900">₵{{ number_format($book->price, 2) }}</td>
-                                        <td class="px-6 py-4">
-                                            @if($book->stock > 0)
-                                                <span class="text-green-600">{{ $book->stock }}</span>
-                                            @else
-                                                <span class="text-red-600">Out of stock</span>
-                                            @endif
-                                        </td>
                                         <td class="px-6 py-4 text-right">
                                             <div class="flex items-center justify-end gap-2">
                                                 <a href="{{ route('admin.books.edit', $book->id) }}" class="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Edit">

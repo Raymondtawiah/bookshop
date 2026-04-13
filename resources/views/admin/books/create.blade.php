@@ -104,11 +104,6 @@
                             </div>
                         </div>
                         <div>
-                            <label for="category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                            <input type="text" name="category" id="category" value="{{ old('category') }}" placeholder="e.g., Fiction"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                        </div>
-                        <div>
                             <label for="isbn" class="block text-sm font-medium text-gray-700 mb-1">ISBN</label>
                             <input type="text" name="isbn" id="isbn" value="{{ old('isbn') }}"
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
@@ -124,13 +119,6 @@
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
                         <div>
-                            <label for="stock" class="block text-sm font-medium text-gray-700 mb-1">Stock Quantity</label>
-                            <input type="number" name="stock" id="stock" value="{{ old('stock', 0) }}" min="0"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                        </div>
-                    </div>
-
-                    <div>
                         <label for="description" class="block text-sm font-medium text-gray-700 mb-1">Description</label>
                         <textarea name="description" id="description" rows="3"
                             class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">{{ old('description') }}</textarea>
@@ -189,12 +177,6 @@
                                 <input type="text" name="author" id="pdf_author" required
                                     class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                             </div>
-                        </div>
-
-                        <div>
-                            <label for="pdf_category" class="block text-sm font-medium text-gray-700 mb-1">Category</label>
-                            <input type="text" name="category" id="pdf_category" placeholder="e.g., Fiction"
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
 
                         <div>
