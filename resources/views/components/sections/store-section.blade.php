@@ -11,7 +11,7 @@
             @forelse($books as $index => $book)
             <div class="flex-shrink-0 w-40 md:w-auto opacity-0 translate-y-8 transition-all duration-700" data-animate-target style="transition-delay: {{ $index * 100 }}ms;">
                 @if($book->is_free && $book->book_pdf_url)
-                <a href="{{ $book->book_pdf_url }}" class="block transform group-hover:-translate-y-2 transition-all duration-300" title="Download PDF">
+                <a href="{{ route('product.download', $book->id) }}" class="block transform group-hover:-translate-y-2 transition-all duration-300" title="Download PDF">
                 @else
                 <a href="{{ route('product.show', $book->id) }}" class="block transform group-hover:-translate-y-2 transition-all duration-300">
                 @endif

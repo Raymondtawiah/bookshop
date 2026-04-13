@@ -102,7 +102,7 @@
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
                     @foreach($books as $book)
                     @if($book->is_free && $book->book_pdf_url)
-                    <a href="{{ $book->book_pdf_url }}" class="block bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 group">
+                    <a href="{{ route('product.download', $book->id) }}" class="block bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 group">
                     @else
                     <a href="{{ route('product.show', $book->id) }}" class="block bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 group">
                     @endif
