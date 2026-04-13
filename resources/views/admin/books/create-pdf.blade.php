@@ -131,14 +131,6 @@
                         <input type="file" name="cover_image" accept="image/*" class="border p-2 w-full">
                     </div>
 
-                    <div class="flex items-center">
-                        <input type="checkbox" name="is_featured" id="is_featured" value="1" {{ old('is_featured') ? 'checked' : '' }}
-                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600">
-                        <label for="is_featured" class="ml-2 block text-sm font-medium text-gray-700">
-                            Mark as featured
-                        </label>
-                    </div>
-
                     <div class="flex justify-end pt-4">
                         <button type="submit" class="px-6 py-2.5 bg-indigo-600 text-white font-medium rounded-lg hover:bg-indigo-700 transition-colors">
                             Add Book
