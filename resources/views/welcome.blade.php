@@ -100,44 +100,71 @@
                 <h2 class="text-2xl font-bold text-gray-900 mb-6">Search Results for "{{ $query }}"</h2>
                 @if($books->count() > 0)
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-                    @foreach($books as $book)
-                    @if($book->book_type === 'pdf')
-                    <a href="{{ route('product.download', $book->id) }}" class="block bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 group">
-                    @else
-                    <a href="{{ route('product.show', $book->id) }}" class="block bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 group">
-                    @endif
-                        <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
+    @foreach($books as $book)
+
+        {{-- Detect PDF using book_pdf --}}
+        @if($book->book_pdf)
+            <a href="{{ route('product.download', $book->id) }}" 
+               class="block bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 group">
+        @else
+            <a href="{{ route('product.show', $book->id) }}" 
+               class="block bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 group">
+        @endif
+
+            <!-- Cover -->
+            <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
+
                             @if($book->cover_image)
-                                <img src="{{ $book->cover_image_url }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                <img src="{{ $book->cover_image_url }}" 
+                                    alt="{{ $book->title }}" 
+                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                             @else
                                 <div class="w-full h-full flex items-center justify-center">
                                     <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
+                                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                                     </svg>
                                 </div>
                             @endif
+
                         </div>
+
+                        <!-- Content -->
                         <div class="p-4">
-                            <h3 class="font-semibold text-gray-900 text-sm truncate group-hover:text-indigo-600 transition-colors">{{ $book->title }}</h3>
-                            <p class="text-xs text-gray-500 mt-1">{{ $book->author }}</p>
+                            <h3 class="font-semibold text-gray-900 text-sm truncate group-hover:text-indigo-600 transition-colors">
+                                {{ $book->title }}
+                            </h3>
+
+                            <p class="text-xs text-gray-500 mt-1">
+                                {{ $book->author }}
+                            </p>
+
+                            <!-- Price / FREE -->
                             <div class="mt-3 flex items-center justify-between">
-                                 @if($book->book_type === 'pdf')
-                                <p class="font-bold text-xl text-green-600">FREE</p>
+                                @if($book->book_pdf)
+                                    <p class="font-bold text-xl text-green-600">FREE</p>
                                 @else
-                                <p class="font-bold text-xl text-indigo-600">₵{{ number_format($book->price, 2) }}</p>
+                                    <p class="font-bold text-xl text-indigo-600">
+                                        ₵{{ number_format($book->price, 2) }}
+                                    </p>
                                 @endif
                             </div>
+
+                            <!-- Login prompt only for paid books -->
                             @guest
-                            @if($book->book_type !== 'pdf')
-                            <a href="{{ route('login') }}" class="block mt-3 text-center px-4 py-2 bg-gray-100 text-gray-600 text-sm font-medium rounded-xl hover:bg-gray-200 transition-colors">
-                                Sign in to Buy
-                            </a>
-                            @endif
+                                @if(!$book->book_pdf)
+                                    <a href="{{ route('login') }}"
+                                    class="block mt-3 text-center px-4 py-2 bg-gray-100 text-gray-600 text-sm font-medium rounded-xl hover:bg-gray-200 transition-colors">
+                                        Sign in to Buy
+                                    </a>
+                                @endif
                             @endguest
                         </div>
+
                     </a>
-                    @endforeach
-                </div>
+
+                @endforeach
+            </div>
                 @else
                 <p class="text-gray-600">No books found matching "{{ $query }}".</p>
                 @endif
