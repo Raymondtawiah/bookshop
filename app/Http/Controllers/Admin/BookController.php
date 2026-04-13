@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Book;
 use App\Services\BookFormService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class BookController extends Controller
 {
@@ -55,34 +56,32 @@ class BookController extends Controller
 
     public function store(Request $request)
     {
-        \Log::info('Book store', [
-            'has_files' => $request->hasFile('cover_image'),
-        ]);
-
         $bookFormService = app(BookFormService::class);
         $validated = $bookFormService->validateBookData($request);
 
+        $isPdf = ($request->input('book_type') === 'pdf');
+
         // PDF upload
-        $pdfFiles = $request->file('book_pdfs', []);
-
-        foreach ($pdfFiles as $file) {
-            if ($file instanceof \Illuminate\Http\UploadedFile) {
-                if (strtolower($file->getClientOriginalExtension()) === 'pdf') {
-                    $pdfPath = $this->uploadFile($file);
-
-                    if (!isset($validated['book_pdf']) && $pdfPath) {
-                        $validated['book_pdf'] = $pdfPath;
-                    }
+        if ($isPdf) {
+            $pdfFile = $request->file('book_pdfs');
+            if ($pdfFile) {
+                if (strtolower($pdfFile->getClientOriginalExtension()) === 'pdf') {
+                    $pdfPath = $this->uploadFile($pdfFile);
+                    $validated['book_pdf'] = $pdfPath;
                 }
             }
         }
 
         // Cover image upload
         if ($request->hasFile('cover_image')) {
-            $validated['cover_image'] = $this->uploadFile($request->file('cover_image'));
+            $coverFile = $request->file('cover_image');
+            $validated['cover_image'] = $this->uploadFile($coverFile);
         }
 
-        $validated['stock'] = $validated['stock'] ?? 0;
+        // Only set stock for cover books
+        if (!$isPdf) {
+            $validated['stock'] = $validated['stock'] ?? 0;
+        }
 
         Book::create($validated);
 
@@ -100,14 +99,18 @@ class BookController extends Controller
         $bookFormService = app(BookFormService::class);
         $validated = $bookFormService->validateBookUpdate($request);
 
+        $isPdf = ($request->input('book_type') === 'pdf');
+
+        // Cover image upload
         if ($request->hasFile('cover_image')) {
             $this->deleteFile($book->cover_image);
             $validated['cover_image'] = $this->uploadFile($request->file('cover_image'));
         }
 
-        if ($request->hasFile('book_pdf')) {
+        // PDF upload
+        if ($isPdf && $request->hasFile('book_pdfs')) {
             $this->deleteFile($book->book_pdf);
-            $validated['book_pdf'] = $this->uploadFile($request->file('book_pdf'));
+            $validated['book_pdf'] = $this->uploadFile($request->file('book_pdfs'));
         }
 
         $book->update($validated);
