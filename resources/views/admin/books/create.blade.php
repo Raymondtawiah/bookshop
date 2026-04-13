@@ -32,7 +32,7 @@
                 <label class="block text-sm font-medium text-gray-700 mb-3">Select Book Type</label>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <label class="relative cursor-pointer">
-                        <input type="radio" name="book_type_selection" value="cover" class="peer sr-only" checked onchange="toggleBookType()">
+                        <input type="radio" name="book_type_selection" value="cover" class="peer sr-only" checked onclick="toggleBookType()">
                         <div class="p-4 rounded-lg border-2 border-gray-200 peer-checked:border-indigo-500 peer-checked:bg-indigo-50 hover:border-gray-300 transition-all">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-full bg-indigo-100 flex items-center justify-center">
@@ -48,7 +48,7 @@
                         </div>
                     </label>
                     <label class="relative cursor-pointer">
-                        <input type="radio" name="book_type_selection" value="pdf" class="peer sr-only" onchange="toggleBookType()">
+                        <input type="radio" name="book_type_selection" value="pdf" class="peer sr-only" onclick="toggleBookType()">
                         <div class="p-4 rounded-lg border-2 border-gray-200 peer-checked:border-red-500 peer-checked:bg-red-50 hover:border-gray-300 transition-all">
                             <div class="flex items-center gap-3">
                                 <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center">
@@ -234,6 +234,7 @@
         <script>
             function toggleBookType() {
                 const bookType = document.querySelector('input[name="book_type_selection"]:checked').value;
+                console.log('Toggle:', bookType);
                 const coverOnlySection = document.getElementById('cover-only-section');
                 const pdfSection = document.getElementById('pdf-section-container');
                 
@@ -245,6 +246,11 @@
                     pdfSection.classList.remove('hidden');
                 }
             }
+            
+            // Run on page load
+            window.onload = function() {
+                toggleBookType();
+            };
 
             function handleCoverImage(input) {
                 if (input.files && input.files[0]) {
