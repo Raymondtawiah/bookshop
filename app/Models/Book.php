@@ -32,7 +32,7 @@ class Book extends Model
             return null;
         }
 
-        return asset('books/' . $this->cover_image);
+        return asset('public/books/' . $this->cover_image);
     }
 
     public function getBookPdfUrlAttribute()
@@ -41,7 +41,7 @@ class Book extends Model
             return null;
         }
 
-        return asset('books/' . $this->book_pdf);
+        return asset('public/books/' . $this->book_pdf);
     }
 
     public function hasCoverImage(): bool
