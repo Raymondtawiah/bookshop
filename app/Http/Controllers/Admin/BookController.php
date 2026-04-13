@@ -73,7 +73,12 @@ class BookController extends Controller
         $coverImage = null;
         if ($request->hasFile('cover_image')) {
             $coverImage = $this->uploadFile($request->file('cover_image'));
-            Log::info('Uploaded cover', ['coverImage' => $coverImage]);
+            $actualPath = public_path('books') . '/' . $coverImage;
+            Log::info('Uploaded cover', [
+                'coverImage' => $coverImage,
+                'actualPath' => $actualPath,
+                'exists' => file_exists($actualPath),
+            ]);
         }
 
         // Upload PDF if PDF book type
@@ -98,7 +103,8 @@ class BookController extends Controller
             'is_featured' => $request->boolean('is_featured'),
         ]);
 
-        $msg = 'Book added! Cover: ' . ($coverImage ?? 'none') . ' | Dir: ' . public_path('books');
+        $msg = 'Book added! Cover: ' . ($coverImage ?? 'none');
+        $msg .= ' | Path: ' . public_path('books');
         
         return redirect()->route('admin.books')
             ->with('success', $msg);
