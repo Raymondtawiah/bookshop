@@ -15,8 +15,15 @@ class BookController extends Controller
             return null;
         }
 
+        $booksDir = public_path('books');
+        
+        // Create books directory if it doesn't exist
+        if (!is_dir($booksDir)) {
+            mkdir($booksDir, 0755, true);
+        }
+
         $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
-        $file->move(public_path('books'), $filename);
+        $file->move($booksDir, $filename);
 
         return $filename;
     }
