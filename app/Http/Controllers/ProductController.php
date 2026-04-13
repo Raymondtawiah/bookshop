@@ -35,16 +35,24 @@ class ProductController extends Controller
             abort(403, 'This book is not available for free download.');
         }
 
-        // Get file path from public/books
-        $filePath = public_path('books/' . $book->book_pdf);
+        // Get file path from public/books (works for both local and production)
+        $filePath = public_path('public/books/' . $book->book_pdf);
+
+        // Check if file exists in public/books
+        if (!file_exists($filePath)) {
+            // Try public/books as fallback
+            $filePath = public_path('books/' . $book->book_pdf);
+        }
 
         // Check if file exists
-        if (! file_exists($filePath)) {
+        if (!file_exists($filePath)) {
             abort(404, 'PDF file not found.');
         }
 
+        // Force download
         return response()->download($filePath, $book->book_pdf, [
             'Content-Type' => 'application/pdf',
+            'Content-Disposition' => 'attachment; filename="' . $book->book_pdf . '"',
         ]);
     }
 }
