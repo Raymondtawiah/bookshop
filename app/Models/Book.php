@@ -47,7 +47,7 @@ class Book extends Model
             return null;
         }
 
-        return route('product.download', $this->id);
+        return asset('books/' . $this->book_pdf);
     }
 
     public function hasCoverImage(): bool
