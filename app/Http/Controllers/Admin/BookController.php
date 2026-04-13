@@ -78,14 +78,12 @@ class BookController extends Controller
             'author' => $request->author,
             'description' => $request->description,
             'price' => $request->price,
-            'category' => $request->category,
             'isbn' => $request->isbn,
             'pages' => $request->pages,
             'published_year' => $request->published_year,
             'cover_image' => $coverImage,
             'book_pdf' => $bookPdf,
             'is_free' => $request->boolean('is_free'),
-            'stock' => $request->input('stock', 0),
             'is_featured' => $request->boolean('is_featured'),
         ]);
 
@@ -111,11 +109,9 @@ class BookController extends Controller
             'author' => $request->author,
             'description' => $request->description,
             'price' => $request->price,
-            'category' => $request->category,
             'isbn' => $request->isbn,
             'pages' => $request->pages,
             'published_year' => $request->published_year,
-            'stock' => $request->stock,
             'is_featured' => $request->boolean('is_featured'),
         ];
 

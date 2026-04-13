@@ -14,14 +14,9 @@ class Book extends Model
         'author',
         'description',
         'price',
-        'category',
-        'isbn',
-        'pages',
-        'published_year',
         'cover_image',
         'book_pdf',
         'is_free',
-        'stock',
         'is_featured',
     ];
 
@@ -29,7 +24,6 @@ class Book extends Model
         'price' => 'decimal:2',
         'is_featured' => 'boolean',
         'is_free' => 'boolean',
-        'stock' => 'integer',
     ];
 
     public function getCoverImageUrlAttribute()
@@ -38,7 +32,7 @@ class Book extends Model
             return null;
         }
 
-        return asset('public/books/' . $this->cover_image);
+        return asset('books/' . $this->cover_image);
     }
 
     public function getBookPdfUrlAttribute()
@@ -47,7 +41,7 @@ class Book extends Model
             return null;
         }
 
-        return asset('public/books/' . $this->book_pdf);
+        return asset('books/' . $this->book_pdf);
     }
 
     public function hasCoverImage(): bool
