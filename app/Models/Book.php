@@ -18,6 +18,10 @@ class Book extends Model
         'book_pdf',
         'is_free',
         'is_featured',
+        'isbn',
+        'pages',
+        'published_year',
+        'category',
     ];
 
     protected $casts = [
