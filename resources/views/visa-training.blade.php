@@ -12,13 +12,15 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
+            padding-top: 5rem;
+            padding-bottom: 1rem;
         }
         .chat-container {
             display: flex;
             flex-direction: column;
-            height: calc(100vh - 280px);
-            min-height: 400px;
-            max-height: 600px;
+            height: 60vh;
+            min-height: 350px;
+            max-height: 500px;
         }
         .chat-messages {
             flex: 1;
@@ -56,9 +58,13 @@
             to { opacity: 1; transform: translateY(0); }
         }
         @media (max-width: 640px) {
+            body {
+                padding-top: 4.5rem;
+                padding-bottom: 0.5rem;
+            }
             .chat-container {
-                height: calc(100vh - 240px);
-                min-height: 350px;
+                height: 55vh;
+                min-height: 300px;
             }
             .chat-bubble {
                 max-width: 90%;
@@ -69,7 +75,7 @@
 <body class="bg-gray-50 min-h-screen">
     @include('components.customer-navbar')
     
-    <div class="pt-14 pb-4 px-2 sm:px-4">
+    <div class="px-2 sm:px-4 pb-4">
         <div class="max-w-3xl mx-auto">
             <!-- Header -->
             <div class="text-center mb-3 sm:mb-4">
