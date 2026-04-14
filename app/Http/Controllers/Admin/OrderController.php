@@ -464,51 +464,22 @@ class OrderController extends Controller
         $filename = 'order-'.($order->order_number ?? $order->id).'.pdf';
         $pdfPath = $pdfFile->storeAs('books/pdfs', $filename, 'public');
 
-        // Get full path from storage
-        $fullPath = Storage::disk('public')->path($pdfPath);
+        // Update order status to confirmed, set payment to paid (if not already), and mark PDF as sent
+        $currentPaymentStatus = $order->payment_status;
+        $isAlreadyPaid = in_array($currentPaymentStatus, ['paid', 'completed']);
+        
+        $order->update([
+            'status' => 'confirmed',
+            'payment_status' => $isAlreadyPaid ? $currentPaymentStatus : 'paid',
+            'paid_at' => $order->paid_at ?? now(),
+            'pdf_sent' => true,
+            'pdf_sent_at' => now(),
+        ]);
 
-        Log::info('PDF stored at: '.$fullPath);
+        // Dispatch job to send email asynchronously
+        SendPdfEmailJob::dispatch($order->user, $pdfPath, $order->id);
 
-        // Send email with PDF attachment
-        try {
-            // Get cart items for this order
-            $cartItems = Cart::where('user_id', $order->user_id)->get();
-            $adminName = auth()->user()->name ?? 'Admin';
-
-            Mail::send(
-                'emails.order-confirmation',
-                [
-                    'order' => $order,
-                    'user' => $order->user,
-                    'cartItems' => $cartItems,
-                    'adminName' => $adminName,
-                ],
-                function ($message) use ($order, $fullPath, $filename) {
-                    $message->to($order->email, $order->customer_name)
-                        ->subject('Your Visa Resource Order #'.($order->order_number ?? $order->id))
-                        ->attach($fullPath, [
-                            'as' => $filename,
-                            'mime' => 'application/pdf',
-                        ]);
-                }
-            );
-
-            Log::info('Email sent to: '.$order->email);
-
-            // Update order status to confirmed and mark PDF as sent
-            $order->update([
-                'status' => 'confirmed',
-                'pdf_sent' => true,
-                'pdf_sent_at' => now(),
-            ]);
-
-            return redirect()->back()->with('success', 'PDF sent to customer successfully!');
-
-        } catch (\Exception $e) {
-            Log::error('Failed to send PDF: '.$e->getMessage());
-
-            return redirect()->back()->withInput()->with('error', 'Failed to send PDF: '.$e->getMessage());
-        }
+        return redirect()->route('admin.orders')->with('success', 'PDF sent to customer successfully!');
     }
 
     /**
