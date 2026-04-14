@@ -13,8 +13,22 @@
         body {
             font-family: 'Inter', sans-serif;
         }
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 280px);
+            min-height: 400px;
+            max-height: 600px;
+        }
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+        }
+        .chat-input-area {
+            flex-shrink: 0;
+        }
         .chat-bubble {
-            max-width: 80%;
+            max-width: 85%;
             word-wrap: break-word;
         }
         .chat-bubble-user {
@@ -41,21 +55,30 @@
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
         }
+        @media (max-width: 640px) {
+            .chat-container {
+                height: calc(100vh - 240px);
+                min-height: 350px;
+            }
+            .chat-bubble {
+                max-width: 90%;
+            }
+        }
     </style>
 </head>
 <body class="bg-gray-50 min-h-screen">
     @include('components.customer-navbar')
     
-    <div class="pt-16 pb-20">
-        <div class="max-w-3xl mx-auto px-4 py-8">
+    <div class="pt-14 pb-4 px-2 sm:px-4">
+        <div class="max-w-3xl mx-auto">
             <!-- Header -->
-            <div class="text-center mb-6">
-                <h1 class="text-2xl font-bold text-gray-900">Visa Training</h1>
-                <p class="text-gray-600 mt-1">Learn visa applications through interactive questions</p>
+            <div class="text-center mb-3 sm:mb-4">
+                <h1 class="text-xl sm:text-2xl font-bold text-gray-900">Visa Training</h1>
+                <p class="text-sm sm:text-base text-gray-600 mt-1">Learn visa applications through interactive questions</p>
             </div>
             
             <!-- Progress Bar -->
-            <div class="bg-white rounded-xl shadow-sm border p-4 mb-4">
+            <div class="bg-white rounded-lg sm:rounded-xl shadow-sm border p-3 sm:p-4 mb-3 sm:mb-4">
                 <div class="flex items-center justify-between mb-2">
                     <span class="text-sm font-medium text-gray-700">Progress</span>
                     <span class="text-sm text-gray-500">{{ $currentStep }} / {{ $totalQuestions }}</span>
@@ -66,19 +89,19 @@
             </div>
             
             <!-- Chat Container -->
-            <div class="bg-white rounded-xl shadow-lg border overflow-hidden" style="height: 500px;">
+            <div class="chat-container bg-white rounded-xl shadow-lg border overflow-hidden">
                 <!-- Chat Messages -->
-                <div id="chat-messages" class="p-4 overflow-y-auto" style="height: calc(100% - 80px);">
+                <div class="chat-messages p-3 sm:p-4">
                     @foreach($conversationHistory as $index => $message)
-                        <div class="flex {{ $message['role'] === 'user' ? 'justify-end' : 'justify-start' }} mb-4 fade-in">
-                            <div class="chat-bubble {{ $message['role'] === 'user' ? 'chat-bubble-user' : 'chat-bubble-assistant' }} rounded-2xl px-4 py-3">
-                                <div class="text-sm whitespace-pre-line">{!! $message['content'] !!}</div>
+                        <div class="flex {{ $message['role'] === 'user' ? 'justify-end' : 'justify-start' }} mb-3 sm:mb-4 fade-in">
+                            <div class="chat-bubble {{ $message['role'] === 'user' ? 'chat-bubble-user' : 'chat-bubble-assistant' }} rounded-2xl px-3 sm:px-4 py-2 sm:py-3">
+                                <div class="text-xs sm:text-sm whitespace-pre-line">{!! $message['content'] !!}</div>
                             </div>
                         </div>
                     @endforeach
                     
                     <!-- Typing Indicator (hidden by default) -->
-                    <div id="typing-indicator" class="hidden justify-start mb-4">
+                    <div id="typing-indicator" class="hidden justify-start mb-3 sm:mb-4">
                         <div class="chat-bubble chat-bubble-assistant rounded-2xl px-4 py-3">
                             <div class="typing-indicator flex items-center space-x-1">
                                 <span class="w-2 h-2 bg-gray-400 rounded-full"></span>
@@ -90,19 +113,19 @@
                 </div>
                 
                 <!-- Input Area -->
-                <div class="border-t p-4" style="height: 80px;">
-                    <form id="chat-form" class="flex items-center space-x-2">
+                <div class="chat-input-area border-t p-3 sm:p-4">
+                    <form id="chat-form" class="flex items-center gap-2 sm:space-x-3">
                         @csrf
                         <input type="text" 
                                id="user-input" 
                                name="message" 
-                               class="flex-1 border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                               class="flex-1 border border-gray-300 rounded-lg px-3 sm:px-4 py-2 text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
                                placeholder="Type your answer here..."
                                autocomplete="off"
                                @if($isCompleted) disabled @endif
                         >
                         <button type="submit" 
-                                class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                                class="bg-indigo-600 text-white px-4 sm:px-6 py-2 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm sm:text-base whitespace-nowrap"
                                 @if($isCompleted) disabled @endif
                         >
                             Send
@@ -112,7 +135,7 @@
             </div>
             
             <!-- Action Buttons -->
-            <div class="flex justify-center mt-4 space-x-4">
+            <div class="flex justify-center mt-3 sm:mt-4">
                 <a href="{{ route('visa-training.reset') }}" 
                    class="text-gray-600 hover:text-indigo-600 text-sm"
                 >
@@ -135,10 +158,10 @@
         
         function addMessage(content, role) {
             const bubble = document.createElement('div');
-            bubble.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'} mb-4 fade-in`;
+            bubble.className = `flex ${role === 'user' ? 'justify-end' : 'justify-start'} mb-3 sm:mb-4 fade-in`;
             bubble.innerHTML = `
-                <div class="chat-bubble ${role === 'user' ? 'chat-bubble-user' : 'chat-bubble-assistant'} rounded-2xl px-4 py-3">
-                    <div class="text-sm whitespace-pre-line">${content}</div>
+                <div class="chat-bubble ${role === 'user' ? 'chat-bubble-user' : 'chat-bubble-assistant'} rounded-2xl px-3 sm:px-4 py-2 sm:py-3">
+                    <div class="text-xs sm:text-sm whitespace-pre-line">${content}</div>
                 </div>
             `;
             chatMessages.appendChild(bubble);
