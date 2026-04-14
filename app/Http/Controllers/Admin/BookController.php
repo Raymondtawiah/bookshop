@@ -74,8 +74,8 @@ class BookController extends Controller
 
         // Upload PDF if PDF book type
         $bookPdf = null;
-        if ($request->hasFile('book_pdfs')) {
-            $bookPdf = $this->uploadFile($request->file('book_pdfs'));
+        if ($request->hasFile('book_pdf')) {
+            $bookPdf = $this->uploadFile($request->file('book_pdf'));
         }
 
         $book = Book::create([
@@ -127,9 +127,9 @@ class BookController extends Controller
         }
 
         // Update PDF if new one uploaded
-        if ($request->hasFile('book_pdfs')) {
+        if ($request->hasFile('book_pdf')) {
             $this->deleteFile($book->book_pdf);
-            $data['book_pdf'] = $this->uploadFile($request->file('book_pdfs'));
+            $data['book_pdf'] = $this->uploadFile($request->file('book_pdf'));
         }
 
         $book->update($data);
