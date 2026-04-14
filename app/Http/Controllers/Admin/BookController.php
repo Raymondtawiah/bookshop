@@ -74,7 +74,7 @@ class BookController extends Controller
 
         // Upload PDF if PDF book type
         $bookPdf = null;
-        if ($request->input('book_type') === 'pdf' && $request->hasFile('book_pdfs')) {
+        if ($request->hasFile('book_pdfs')) {
             $bookPdf = $this->uploadFile($request->file('book_pdfs'));
         }
 
