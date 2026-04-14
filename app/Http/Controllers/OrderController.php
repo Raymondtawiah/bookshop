@@ -163,4 +163,16 @@ class OrderController extends Controller
 
         return view('customer.orders', compact('orders'));
     }
+
+    /**
+     * View user's order detail.
+     */
+    public function myOrderDetail(Order $order)
+    {
+        if ($order->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized access to this order.');
+        }
+
+        return view('customer.order-detail', compact('order'));
+    }
 }

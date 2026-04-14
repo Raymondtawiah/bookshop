@@ -39,7 +39,7 @@
                 @if($orders->count() > 0)
                     <div class="divide-y divide-gray-100">
                         @foreach($orders as $order)
-                            <div class="p-6">
+                            <a href="{{ route('my-order.show', $order->id) }}" class="block p-6 hover:bg-gray-50 transition-colors">
                                 <div class="flex items-center justify-between mb-4">
                                     <div>
                                         <h3 class="text-lg font-semibold text-gray-900">Order #{{ $order->id }}</h3>
@@ -80,7 +80,7 @@
                                 </div>
                                 @endif
 
-                            </div>
+                            </a>
                         @endforeach
                     </div>
                     

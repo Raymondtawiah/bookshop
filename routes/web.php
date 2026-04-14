@@ -218,6 +218,7 @@ Route::middleware(['auth', 'verify.customer'])->group(function () {
     Route::post('checkout/process', [OrderController::class, 'processCheckout'])->name('checkout.process');
     Route::get('order/download/{order}', [OrderController::class, 'downloadPdf'])->name('order.download');
     Route::get('my-orders', [OrderController::class, 'myOrders'])->name('my-orders');
+    Route::get('my-order/{order}', [OrderController::class, 'myOrderDetail'])->name('my-order.show');
     Route::get('my-bookings', [CoachingController::class, 'myBookings'])->name('customer.my-bookings');
 
     // Payment routes
