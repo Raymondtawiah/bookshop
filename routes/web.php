@@ -10,6 +10,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\VerificationController;
+use App\Http\Controllers\VisaTrainingController;
 use App\Models\User;
 use App\Services\VerificationService;
 use Illuminate\Auth\Access\Authorization;
@@ -42,6 +43,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
 Route::get('visa-tip', function () {
     return view('visa-tip');
 })->name('visa-tip');
+
+// Visa Training routes
+Route::get('visa-training', [VisaTrainingController::class, 'index'])->name('visa-training');
+Route::post('visa-training/chat', [VisaTrainingController::class, 'chat'])->name('visa-training.chat');
+Route::get('visa-training/reset', [VisaTrainingController::class, 'reset'])->name('visa-training.reset');
 
 // Google OAuth - needs web middleware for session
 Route::middleware(['web'])->group(function () {

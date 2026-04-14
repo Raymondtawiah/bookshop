@@ -186,7 +186,5 @@
         </section>
 
       <x-customer-footer />
-
-        <x-chat-widget />
     </body>
 </html>

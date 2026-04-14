@@ -110,7 +110,5 @@
                 <p class="text-center text-sm text-gray-500">&copy; {{ date('Y') }} Bookshop. All rights reserved.</p>
             </div>
         </footer>
-
-        <x-chat-widget />
     </body>
 </html>

@@ -23,7 +23,7 @@ window.addEventListener('pageshow', function(event) {
         <div class="flex justify-between items-center h-14">
             <!-- Logo -->
             <a href="{{ route('home') }}" class="font-bold text-indigo-600 text-lg">
-                Nathaniel Gyarteng
+                VISA WITH NATHANIEL
             </a>
 
             <!-- Desktop Menu -->
@@ -32,6 +32,7 @@ window.addEventListener('pageshow', function(event) {
                 <!-- Always show Store link - it will scroll to store section -->
                 <a href="{{ route('home') }}#store" class="text-gray-700 hover:text-indigo-600">Store</a>
                 <a href="{{ route('visa-tip') }}" class="text-gray-700 hover:text-indigo-600">Visa Tips</a>
+                <a href="{{ route('visa-training') }}" class="text-gray-700 hover:text-indigo-600">Visa Training</a>
                 <a href="{{ route('home') }}#about" class="text-gray-700 hover:text-indigo-600">About</a>
                 <a href="{{ route('home') }}#contact" class="text-gray-700 hover:text-indigo-600">Contact</a>
                 <a href="{{ route('coaching.booking') }}" class="text-gray-700 hover:text-indigo-600 font-medium">Visa Coaching</a>

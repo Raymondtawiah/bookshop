@@ -385,8 +385,6 @@
 
         @include('components.customer-footer')
 
-        <x-chat-widget />
-
         <script>
             function checkBookingStatus() {
                 fetch('{{ route("coaching.status") }}')

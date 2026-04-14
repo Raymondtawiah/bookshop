@@ -9,6 +9,7 @@
                 <a href="{{ route('home') }}#about" class="hover:text-white transition-colors">About</a>
                 <a href="{{ route('home') }}#contact" class="hover:text-white transition-colors">Contact</a>
                 <a href="{{ route('visa-tip') }}" class="hover:text-white transition-colors">Visa Tips</a>
+                <a href="{{ route('visa-training') }}" class="hover:text-white transition-colors">Visa Training</a>
             </div>
         </div>
     </div>
