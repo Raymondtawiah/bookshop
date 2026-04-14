@@ -7,6 +7,7 @@ use App\Services\OpenAiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class ChatController extends Controller
 {
@@ -19,7 +20,7 @@ class ChatController extends Controller
 
     protected function cleanupOldMessages()
     {
-        Chat::where('created_at', '<', now()->subHours(24))->delete();
+        Chat::where('created_at', '<', now()->subHours(12))->delete();
     }
 
     public function store(Request $request)

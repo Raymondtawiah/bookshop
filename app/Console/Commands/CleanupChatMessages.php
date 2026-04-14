@@ -8,11 +8,11 @@ use Illuminate\Console\Command;
 class CleanupChatMessages extends Command
 {
     protected $signature = 'chat:cleanup';
-    protected $description = 'Delete chat messages older than 24 hours';
+    protected $description = 'Delete chat messages older than 12 hours';
 
     public function handle()
     {
-        $deleted = Chat::where('created_at', '<', now()->subHours(24))->delete();
+        $deleted = Chat::where('created_at', '<', now()->subHours(12))->delete();
         $this->info("Deleted {$deleted} chat messages older than 24 hours.");
         return 0;
     }
