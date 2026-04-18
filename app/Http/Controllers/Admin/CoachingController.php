@@ -3,15 +3,16 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Mail\CoachingMeetingLink;
+use App\Mail\CoachingMeetingReminder;
+use App\Mail\CoachingPaymentReceived;
 use App\Models\CoachingBooking;
 use App\Models\SiteSetting;
+use App\Services\NotificationService;
+use App\Services\PaystackService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
-use App\Mail\CoachingBookingConfirmation;
-use App\Mail\CoachingPaymentReceived;
-use App\Services\PaystackService;
-use Illuminate\Support\Facades\Log;
 
 class CoachingController extends Controller
 {
@@ -30,6 +31,7 @@ class CoachingController extends Controller
     public function getBookingStatus()
     {
         $isActive = SiteSetting::get('coaching_booking_active', 'true');
+
         return response()->json(['is_active' => $isActive === 'true']);
     }
 
@@ -51,7 +53,8 @@ class CoachingController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        $packagePrice = $validated['package'] === 'premium' ? 500 : 300;
+        $packagePrice = $validated['package'] === 'premium' ? 249 : 150;
+        $packageCurrency = $validated['package'] === 'premium' ? 'USD' : 'USD';
         $reference = 'COACH-'.time().rand(1000, 9999);
 
         $booking = CoachingBooking::create([
@@ -74,7 +77,7 @@ class CoachingController extends Controller
             $booking->email,
             $packagePrice,
             $reference,
-            'GHS',
+            'USD',
             route('coaching.callback')
         );
 
@@ -89,13 +92,13 @@ class CoachingController extends Controller
     {
         $reference = $request->reference;
 
-        if (!$reference) {
+        if (! $reference) {
             return redirect()->route('coaching.booking')->with('error', 'Payment reference not found.');
         }
 
         $booking = CoachingBooking::where('payment_reference', $reference)->first();
 
-        if (!$booking) {
+        if (! $booking) {
             return redirect()->route('coaching.booking')->with('error', 'Booking not found.');
         }
 
@@ -114,12 +117,13 @@ class CoachingController extends Controller
             Mail::to($booking->email)->send(new CoachingPaymentReceived($booking));
 
             // Send admin notification
-            \App\Services\NotificationService::newCoachingBooking($booking);
+            NotificationService::newCoachingBooking($booking);
 
             return redirect()->route('home')->with('success', 'Payment successful! Your coaching session is confirmed.');
         }
 
         $booking->update(['payment_status' => 'failed']);
+
         return redirect()->route('coaching.booking')->with('error', 'Payment verification failed. Please try again.');
     }
 
@@ -137,6 +141,7 @@ class CoachingController extends Controller
         $bookings = CoachingBooking::where('payment_status', 'paid')
             ->orderBy('created_at', 'desc')
             ->get();
+
         return view('admin.coaching.index', compact('bookings'));
     }
 
@@ -159,6 +164,7 @@ class CoachingController extends Controller
     public function destroy(CoachingBooking $booking)
     {
         $booking->delete();
+
         return back()->with('success', 'Booking deleted successfully.');
     }
 
@@ -178,25 +184,25 @@ class CoachingController extends Controller
             'status' => 'completed',
         ]);
 
-        Mail::to($booking->email)->send(new \App\Mail\CoachingMeetingLink($booking, $validated['meeting_link'], $validated['meeting_time'], $validated['meeting_notes'] ?? null));
+        Mail::to($booking->email)->send(new CoachingMeetingLink($booking, $validated['meeting_link'], $validated['meeting_time'], $validated['meeting_notes'] ?? null));
 
         return back()->with('success', 'Meeting link sent to customer successfully.');
     }
 
     public function sendReminder(CoachingBooking $booking)
     {
-        if (!$booking->meeting_time) {
+        if (! $booking->meeting_time) {
             return response()->json(['success' => false, 'message' => 'No meeting time set'], 400);
         }
-        
-        if (!$booking->meeting_link) {
+
+        if (! $booking->meeting_link) {
             return response()->json(['success' => false, 'message' => 'No meeting link sent yet'], 400);
         }
-        
+
         $minutesUntil = now()->diffInMinutes($booking->meeting_time, false);
-        
-        Mail::to($booking->email)->send(new \App\Mail\CoachingMeetingReminder($booking, $minutesUntil));
-        
+
+        Mail::to($booking->email)->send(new CoachingMeetingReminder($booking, $minutesUntil));
+
         $booking->update(['reminder_sent_at' => now()]);
 
         return response()->json(['success' => true, 'message' => 'Reminder sent successfully']);
@@ -205,9 +211,9 @@ class CoachingController extends Controller
     public function toggleActive(Request $request)
     {
         $isActive = $request->boolean('is_active');
-        
+
         SiteSetting::set('coaching_booking_active', $isActive ? 'true' : 'false');
-        
+
         return back()->with('success', $isActive ? 'Booking page is now enabled.' : 'Booking page is now disabled.');
     }
 
@@ -219,7 +225,7 @@ class CoachingController extends Controller
     public function getUpcomingMeetings()
     {
         $now = now();
-        $upcoming = \App\Models\CoachingBooking::whereNotNull('meeting_time')
+        $upcoming = CoachingBooking::whereNotNull('meeting_time')
             ->where('meeting_time', '>', $now->copy()->subMinutes(30))
             ->where('meeting_time', '<=', $now->copy()->addMinutes(30))
             ->where('status', '!=', 'cancelled')
@@ -227,7 +233,7 @@ class CoachingController extends Controller
             ->get();
 
         return response()->json([
-            'upcoming' => $upcoming->map(fn($booking) => [
+            'upcoming' => $upcoming->map(fn ($booking) => [
                 'id' => $booking->id,
                 'name' => $booking->name,
                 'email' => $booking->email,

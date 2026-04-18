@@ -59,7 +59,7 @@
                                     </div>
                                 </div>
                                 <div class="text-right">
-                                    <p class="text-2xl font-bold text-indigo-600">₵{{ number_format($booking->amount ?? 0, 2) }}</p>
+                                    <p class="text-2xl font-bold text-indigo-600">${{ number_format($booking->amount ?? 0, 2) }}</p>
                                     <p class="text-sm text-gray-500">Booked on {{ $booking->created_at->format('M j, Y') }}</p>
                                 </div>
                             </div>

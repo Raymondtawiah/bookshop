@@ -221,7 +221,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm text-gray-500">Total Spent</p>
-                            <p class="text-2xl font-bold text-gray-900">₵{{ number_format(\App\Models\Order::where('user_id', auth()->id())->sum('total_amount'), 2) }}</p>
+                            <p class="text-2xl font-bold text-gray-900">${{ number_format(\App\Models\Order::where('user_id', auth()->id())->sum('total_amount'), 2) }}</p>
                         </div>
                         <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
                             <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -381,7 +381,7 @@
                                 </div>
                                 @endif
                                 <div class="mt-3 flex items-center justify-between">
-                                    <p class="font-bold text-lg text-indigo-600">₵{{ number_format($book->price, 2) }}</p>
+                                    <p class="font-bold text-lg text-indigo-600">${{ number_format($book->price, 2) }}</p>
                                     
                                 </div>
                             </div>
@@ -491,7 +491,7 @@
                             </div>
                             @endif
                             <div class="mt-3 flex items-center justify-between">
-                                <p class="font-bold text-xl text-indigo-600">₵{{ number_format($book->price, 2) }}</p>
+                                <p class="font-bold text-xl text-indigo-600">${{ number_format($book->price, 2) }}</p>
                             </div>
                             @auth
                             <form action="{{ route('cart.add') }}" method="POST" class="mt-3">
@@ -561,7 +561,7 @@
                                     @endif
                                 </td>
                                 <td class="px-6 py-4 font-medium text-gray-900">
-                                    ₵{{ number_format($order->total_amount, 2) }}
+                                    ${{ number_format($order->total_amount, 2) }}
                                 </td>
                                 <td class="px-6 py-4 text-right">
                                     <a href="{{ route('customer.orders') }}" class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">View</a>

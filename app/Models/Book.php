@@ -43,7 +43,7 @@ class Book extends Model
      */
     public function hasCoverImage(): bool
     {
-        return !empty($this->cover_image);
+        return ! empty($this->cover_image);
     }
 
     /**
@@ -51,7 +51,7 @@ class Book extends Model
      */
     public function hasBookPdf(): bool
     {
-        return !empty($this->book_pdf);
+        return ! empty($this->book_pdf);
     }
 
     /**
@@ -59,8 +59,8 @@ class Book extends Model
      */
     public function getCoverImageUrlAttribute(): ?string
     {
-        return $this->hasCoverImage() 
-            ? asset('public/books/' . $this->cover_image)
+        return $this->hasCoverImage()
+            ? asset('public/books/'.$this->cover_image)
             : null;
     }
 
@@ -79,6 +79,6 @@ class Book extends Model
      */
     public function getFormattedPriceAttribute(): string
     {
-        return '₵' . number_format($this->price, 2);
+        return '$'.number_format($this->price, 2);
     }
 }

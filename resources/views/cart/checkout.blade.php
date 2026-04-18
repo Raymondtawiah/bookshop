@@ -127,7 +127,7 @@
                                     <div class="border-t pt-3 mt-3">
                                         <div class="flex justify-between">
                                             <span class="text-gray-600 font-semibold">Amount:</span>
-                                            <span class="font-bold text-indigo-600 text-lg">₵{{ number_format($total, 2) }}</span>
+                                            <span class="font-bold text-indigo-600 text-lg">${{ number_format($total, 2) }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -154,7 +154,7 @@
                     <div class="border-t pt-6">
                         <div class="flex justify-between text-lg mb-2">
                             <span class="font-semibold">Total Amount Paid:</span>
-                            <span class="font-bold text-indigo-600">₵{{ number_format($total, 2) }}</span>
+                            <span class="font-bold text-indigo-600">${{ number_format($total, 2) }}</span>
                         </div>
                         @if($order->customer_name)
                         <div class="flex justify-between text-lg mb-2">
@@ -209,13 +209,13 @@
                                     <p class="font-medium text-gray-900">{{ $item->product_name }}</p>
                                     <p class="text-sm text-gray-500">Qty: {{ $item->quantity }}</p>
                                 </div>
-                                <p class="font-medium">₵{{ number_format($item->product_price * $item->quantity, 2) }}</p>
+                                <p class="font-medium">${{ number_format($item->product_price * $item->quantity, 2) }}</p>
                             </div>
                             @endforeach
                         </div>
                         <div class="flex justify-between items-center mt-4 pt-4 border-t">
                             <span class="text-lg font-bold">Total</span>
-                            <span class="text-lg font-bold text-indigo-600">₵{{ number_format($total, 2) }}</span>
+                            <span class="text-lg font-bold text-indigo-600">${{ number_format($total, 2) }}</span>
                         </div>
                     </div>
 

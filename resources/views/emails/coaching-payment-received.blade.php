@@ -11,7 +11,7 @@ Great news! Your payment has been successfully processed and your coaching sessi
 **Interview Type:** {{ $booking->interview_type }}
 **Interview Date:** {{ $booking->interview_date->format('F j, Y') }}
 **Interview Time:** {{ $booking->interview_time }}
-**Amount Paid:** ₵{{ number_format($booking->amount, 2) }}
+**Amount Paid:** ${{ number_format($booking->amount, 2) }}
 
 @if($booking->notes)
 **Your Notes:** {{ $booking->notes }}

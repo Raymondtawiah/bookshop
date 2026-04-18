@@ -98,7 +98,7 @@
                                             <p class="text-sm text-gray-400">Not sent</p>
                                         @endif
                                     </td>
-                                    <td class="px-6 py-4 text-sm font-medium text-gray-900">₵{{ number_format($booking->amount ?? 0, 2) }}</td>
+                                    <td class="px-6 py-4 text-sm font-medium text-gray-900">${{ number_format($booking->amount ?? 0, 2) }}</td>
                                     <td class="px-6 py-4">
                                         <span class="px-2 py-1 text-xs font-medium rounded-full {{ $statusClass }}">
                                             {{ ucfirst($statusLabel) }}
@@ -198,7 +198,7 @@
                         </div>
                         <div>
                             <h4 class="text-sm font-medium text-gray-500 mb-2">Payment</h4>
-                            <p class="text-2xl font-bold text-indigo-600">₵${booking.amount ? parseFloat(booking.amount).toFixed(2) : '0.00'}</p>
+                            <p class="text-2xl font-bold text-indigo-600">$${booking.amount ? parseFloat(booking.amount).toFixed(2) : '0.00'}</p>
                             <span class="inline-block mt-2 px-2 py-1 text-xs font-medium rounded-full ${booking.payment_status === 'paid' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}">
                                 ${booking.payment_status.charAt(0).toUpperCase() + booking.payment_status.slice(1)}
                             </span>

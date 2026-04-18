@@ -75,7 +75,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-500">Total Revenue</p>
-                            <p class="text-3xl font-bold mt-1 text-gray-900">₵{{ number_format(\App\Models\Order::where('payment_status', 'paid')->sum('total_amount'), 2) }}</p>
+                            <p class="text-3xl font-bold mt-1 text-gray-900">${{ number_format(\App\Models\Order::where('payment_status', 'paid')->sum('total_amount'), 2) }}</p>
                         </div>
                     </div>
                 </div>
@@ -123,7 +123,7 @@
 
                     <div>
                         <p class="text-sm font-medium text-gray-500">Total Revenue</p>
-                        <p class="text-2xl font-bold mt-1 text-gray-900">₵{{ number_format(\App\Models\CoachingBooking::where('payment_status', 'paid')->sum('amount'), 2) }}</p>
+                        <p class="text-2xl font-bold mt-1 text-gray-900">${{ number_format(\App\Models\CoachingBooking::where('payment_status', 'paid')->sum('amount'), 2) }}</p>
                     </div>
                 </div>
             </div>
@@ -206,7 +206,7 @@
                                     {{ $order->customer_name ?? $order->user->name ?? 'N/A' }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                    ₵{{ number_format($order->total_amount, 2) }}
+                                    ${{ number_format($order->total_amount, 2) }}
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     @php

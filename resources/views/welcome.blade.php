@@ -145,7 +145,7 @@
                                     <p class="font-bold text-xl text-green-600">FREE</p>
                                 @else
                                     <p class="font-bold text-xl text-indigo-600">
-                                        ₵{{ number_format($book->price, 2) }}
+                                        ${{ number_format($book->price, 2) }}
                                     </p>
                                 @endif
                             </div>
@@ -339,7 +339,7 @@
                             </svg>
                         </div>
                         <h3 class="font-semibold text-gray-900 mb-2">Free Shipping</h3>
-                        <p class="text-gray-600 text-sm">On orders over ₵100</p>
+                        <p class="text-gray-600 text-sm">On orders over $100</p>
                     </div>
                     <div class="flex-shrink-0 w-40 text-center">
                         <div class="w-16 h-16 bg-white rounded-2xl shadow-md flex items-center justify-center mx-auto mb-4">
