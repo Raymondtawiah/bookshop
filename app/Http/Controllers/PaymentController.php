@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\OrderConfirmation;
 use App\Models\Cart;
 use App\Models\Order;
+use App\Services\NotificationService;
 use App\Services\PaystackService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -57,7 +58,7 @@ class PaymentController extends Controller
 
         // For all payment methods, use Paystack checkout page
         // This allows user to select their preferred payment method (card, mobile money, bank)
-        $result = $this->paystack->initializePayment($email, $total, $reference, 'GHS');
+        $result = $this->paystack->initializePayment($email, $total, $reference, 'USD');
 
         if ($result['success']) {
             // Create pending order
@@ -181,8 +182,8 @@ class PaymentController extends Controller
                 $order->update($updateData);
 
                 // Send admin notifications
-                \App\Services\NotificationService::newOrder($order);
-                \App\Services\NotificationService::paymentReceived($order);
+                NotificationService::newOrder($order);
+                NotificationService::paymentReceived($order);
 
                 return redirect()->route('home')
                     ->with('success', 'Payment successful! Order confirmed. Check your email for details.');

@@ -60,15 +60,9 @@
         <!-- Hero Section -->
         <section class="gradient-bg text-white py-20">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <div x-data="{ countdown: 60, active: true }" x-init="setInterval(() => { if (countdown > 0) countdown--; else active = false; }, 60000)" class="inline-flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full mb-6 countdown-pulse">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                    <span class="text-sm font-medium" x-text="active ? `Session expires in ${countdown} min` : 'Session expired'"></span>
-                </div>
-                
-                <h1 class="text-4xl md:text-5xl font-bold mb-4">One Last Session to Prepare for Your Interview</h1>
-                <p class="text-xl text-indigo-100 mb-8">Book a personalized one-on-one coaching session within a week of your interview</p>
+                <h1 class="text-4xl md:text-5xl font-bold mb-6">Visa Interview Coaching</h1>
+                <p class="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">I help people prepare for visa interviews so they can walk in feeling confident, clear, and ready. Many qualified applicants get rejected simply because they were not well prepared for the questions and pressure.</p>
+                <p class="text-lg text-indigo-200 mb-8">I coach applicants for student, work, and travel visas (F-1, J-1, H-1B, B-1/B-2, and more).</p>
                 <a href="#booking-form" class="inline-flex items-center gap-2 bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition-colors">
                     Book Your Session Now
                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -82,116 +76,129 @@
             </div>
         </section>
 
-        <!-- How It Works Section -->
-        <section class="py-16 bg-white">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">How It Works</h2>
-                
-                <div class="grid md:grid-cols-3 gap-8">
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">1. Choose Date & Time</h3>
-                        <p class="text-gray-600">Select your preferred date and time based on your interview schedule</p>
-                    </div>
-                    
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">2. Secure Your Spot</h3>
-                        <p class="text-gray-600">Make a safe and seamless online payment through Paystack</p>
-                    </div>
-                    
-                    <div class="text-center">
-                        <div class="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                            </svg>
-                        </div>
-                        <h3 class="text-lg font-semibold text-gray-900 mb-2">3. Attend Your Session</h3>
-                        <p class="text-gray-600">Join a one-on-one coaching session to refine your responses and build confidence</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
         <!-- Pricing Section -->
         <section class="py-16 bg-white">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Choose Your Package</h2>
+                <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Choose Your Plan</h2>
                 
                 <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
                     <div class="border-2 border-gray-200 rounded-2xl p-8 hover:border-indigo-300 transition-colors">
-                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Single Session</h3>
-                        <p class="text-3xl font-bold text-indigo-600 mb-4">₵300</p>
-                        <ul class="space-y-3 text-gray-600">
-                            <li class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">1 Week Interview Intensive</h3>
+                        <p class="text-3xl font-bold text-indigo-600 mb-4">$1,200</p>
+                        <p class="text-gray-500 mb-4">Perfect if your interview is coming up soon and you need fast focused preparation.</p>
+                        <p class="font-medium text-gray-900 mb-3">What you get:</p>
+                        <ul class="space-y-2 text-gray-600 mb-6">
+                            <li class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                 </svg>
-                                One 45-minute session
+                                Two high-intensity 60-minute coaching sessions
                             </li>
-                            <li class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <li class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                 </svg>
-                                Interview Q&A practice
+                                Realistic mock interview practice
                             </li>
-                            <li class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <li class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                 </svg>
-                                Confidence building tips
+                                Strong natural answers to common and tricky questions
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Document review and feedback
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Final strategy and confidence building
                             </li>
                         </ul>
+                        <p class="text-sm text-gray-500 mb-6">You will feel ready in one week.</p>
+                        <button onclick="document.getElementById('package').value='single'; document.getElementById('booking-form').scrollIntoView({behavior: 'smooth'})" class="w-full gradient-bg text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                            Book 1 Week Intensive
+                        </button>
                     </div>
                     
                     <div class="border-2 border-indigo-500 rounded-2xl p-8 relative">
                         <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-4 py-1 rounded-full text-sm font-medium">Most Popular</div>
-                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Premium</h3>
-                        <p class="text-3xl font-bold text-indigo-600 mb-4">₵500</p>
-                        <ul class="space-y-3 text-gray-600">
-                            <li class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Full Coaching Program</h3>
+                        <p class="text-3xl font-bold text-indigo-600 mb-4">$2,000</p>
+                        <p class="text-gray-500 mb-4">For deeper preparation and lasting skills.</p>
+                        <p class="font-medium text-gray-900 mb-3">What you get:</p>
+                        <ul class="space-y-2 text-gray-600 mb-6">
+                            <li class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                 </svg>
-                                One 45-minute session
+                                Four high-intensity 60-minute coaching sessions
                             </li>
-                            <li class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <li class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                 </svg>
-                                Interview Q&A practice
+                                Complete interview strategy and preparation
                             </li>
-                            <li class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <li class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                 </svg>
-                                Confidence building tips
+                                Multiple mock interviews with detailed feedback
                             </li>
-                            <li class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <li class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                 </svg>
-                                Follow-up notes & action plan
+                                Document review and feedback
                             </li>
-                            <li class="flex items-center gap-2">
-                                <svg class="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <li class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                                 </svg>
-                                24/7 support until interview
+                                Confidence and communication training
                             </li>
                         </ul>
+                        <button onclick="document.getElementById('package').value='premium'; document.getElementById('booking-form').scrollIntoView({behavior: 'smooth'})" class="w-full gradient-bg text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                            Book Full Coaching
+                        </button>
                     </div>
                 </div>
                 
-                <p class="text-center text-gray-500 mt-4">Secure payment via Paystack</p>
+                <div class="mt-12 text-center">
+                    <p class="text-lg text-gray-700 font-medium italic">"It is not about the hours we meet. It is about the intensity."</p>
+                    <p class="text-gray-500 mt-2">Every session is highly focused and practical. We do not waste time. We drill what actually matters so you can handle the real interview with clarity and confidence.</p>
+                </div>
+                
+                <p class="text-center text-gray-500 mt-8">Secure payment via Paystack</p>
+            </div>
+        </section>
+
+        <!-- Who This Is For Section -->
+        <section class="py-16 bg-gray-50">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-3xl font-bold text-center text-gray-900 mb-8">Who This Is For</h2>
+                <div class="bg-white rounded-2xl shadow-sm p-8 text-center">
+                    <p class="text-lg text-gray-700">Anyone preparing for a U.S. or international visa interview. First-timers or those who want to improve after a previous challenge.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Ready to Start Section -->
+        <section class="py-16 bg-white">
+            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                <h2 class="text-3xl font-bold text-gray-900 mb-4">Ready to Start?</h2>
+                <p class="text-lg text-gray-600 mb-8">Choose your plan and book today. After payment you will get immediate next steps, scheduling links, and preparation materials.</p>
+                <a href="#booking-form" class="inline-flex items-center gap-2 gradient-bg text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                    Book Now
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
+                    </svg>
+                </a>
             </div>
         </section>
 
@@ -278,14 +285,14 @@
                         </div>
                         
                         <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Select Package *</label>
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Select Plan *</label>
                             <div class="grid md:grid-cols-2 gap-4">
                                 <label class="relative border-2 border-gray-200 rounded-xl p-4 cursor-pointer hover:border-indigo-300 transition-colors has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50">
                                     <input type="radio" name="package" value="single" class="sr-only" {{ old('package') == 'single' ? 'checked' : '' }}>
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <p class="font-semibold text-gray-900">Single Session</p>
-                                            <p class="text-sm text-gray-500">₵300</p>
+                                            <p class="font-semibold text-gray-900">1 Week Interview Intensive</p>
+                                            <p class="text-sm text-gray-500">$1,200</p>
                                         </div>
                                         <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500">
                                             <div class="w-2 h-2 rounded-full bg-white hidden has-[:checked]:block"></div>
@@ -296,8 +303,8 @@
                                     <input type="radio" name="package" value="premium" class="sr-only" {{ old('package', 'premium') == 'premium' ? 'checked' : '' }}>
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <p class="font-semibold text-gray-900">Premium</p>
-                                            <p class="text-sm text-gray-500">₵500</p>
+                                            <p class="font-semibold text-gray-900">Full Coaching Program</p>
+                                            <p class="text-sm text-gray-500">$2,000</p>
                                         </div>
                                         <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500">
                                             <div class="w-2 h-2 rounded-full bg-white hidden has-[:checked]:block"></div>
