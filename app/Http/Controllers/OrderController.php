@@ -32,24 +32,31 @@ class OrderController extends Controller
             return redirect()->route('cart')->with('error', 'Your cart is empty!');
         }
 
-        $total = $cartItems->sum(function ($item) {
-            return $item->product_price * $item->quantity;
+        $totalUsd = $cartItems->sum(function ($item) {
+            return $item->unit_price_usd * $item->quantity;
         });
 
         $paymentMethod = $request->payment_method;
         $reference = 'ORD-'.time().rand(1000, 9999);
 
-        // Convert USD to GHS for Paystack
-        $exchangeRate = config('settings.usd_to_ghs_rate', 12.50);
-        $totalGhs = $total * $exchangeRate;
+        // Lock exchange rate for this order - NEVER recalculate after payment
+        $exchangeRateService = new ExchangeRateService;
+        $lockedRate = $exchangeRateService->lockRateForOrder($totalUsd);
+        $exchangeRate = $lockedRate['exchange_rate'];
+        $totalGhs = $lockedRate['total_ghs'];
 
-        // Prepare order items data
-        $orderItems = $cartItems->map(function ($item) {
+        // Prepare order items data with USD and converted GHS prices
+        $orderItems = $cartItems->map(function ($item) use ($exchangeRate) {
+            $unitPriceGhs = round($item->unit_price_usd * $exchangeRate, 2);
+
             return [
                 'book_id' => $item->book_id,
                 'product_name' => $item->product_name,
-                'product_price' => $item->product_price,
+                'unit_price_usd' => $item->unit_price_usd,
+                'price_ghs' => $unitPriceGhs,
                 'quantity' => $item->quantity,
+                'total_price_usd' => $item->unit_price_usd * $item->quantity,
+                'total_price_ghs' => $unitPriceGhs * $item->quantity,
             ];
         })->toArray();
 
@@ -62,7 +69,7 @@ class OrderController extends Controller
             'nationality' => $request->nationality,
             'contact' => $request->contact,
             'payment_method' => $paymentMethod,
-            'total_amount' => $total,
+            'total_amount' => $totalUsd,
             'total_amount_ghs' => $totalGhs,
             'exchange_rate' => $exchangeRate,
             'status' => 'pending',
@@ -116,7 +123,8 @@ class OrderController extends Controller
 
             return view('cart.checkout', [
                 'order' => $order,
-                'total' => $total,
+                'total' => $totalUsd,
+                'exchangeRate' => $exchangeRate,
                 'bankTransfer' => true,
                 'bankDetails' => config('paystack.bankDetails'),
                 'nationalities' => Nationality::orderBy('name')->get(),

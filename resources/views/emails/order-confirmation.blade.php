@@ -99,9 +99,9 @@
                 <div>
                     <strong>{{ $item->product_name }}</strong>
                     <br>
-                    <small>Qty: {{ $item->quantity }} × ${{ number_format($item->product_price, 2) }}</small>
+                    <small>Qty: {{ $item->quantity }} × ${{ number_format($item->unit_price_usd ?? $item->product_price, 2) }}</small>
                 </div>
-                <div>${{ number_format($item->product_price * $item->quantity, 2) }}</div>
+                <div>${{ number_format(($item->unit_price_usd ?? $item->product_price) * $item->quantity, 2) }}</div>
             </div>
             @endforeach
             

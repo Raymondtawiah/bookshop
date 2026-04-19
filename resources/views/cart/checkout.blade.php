@@ -213,7 +213,7 @@
                                     <p class="font-medium text-gray-900">{{ $item->product_name }}</p>
                                     <p class="text-sm text-gray-500">Qty: {{ $item->quantity }}</p>
                                 </div>
-                                <p class="font-medium">${{ number_format($item->product_price * $item->quantity, 2) }}</p>
+                                <p class="font-medium">${{ number_format($item->unit_price_usd * $item->quantity, 2) }}</p>
                             </div>
                             @endforeach
                         </div>

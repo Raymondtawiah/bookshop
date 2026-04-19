@@ -13,7 +13,7 @@ class Book extends Model
         'title',
         'author',
         'description',
-        'price',
+        'price_usd',
         'cover_image',
         'book_pdf',
         'is_free',
@@ -25,10 +25,27 @@ class Book extends Model
     ];
 
     protected $casts = [
-        'price' => 'decimal:2',
+        'price_usd' => 'decimal:2',
         'is_featured' => 'boolean',
         'is_free' => 'boolean',
     ];
+
+    public function getPriceUsdAttribute(): float
+    {
+        return (float) $this->attributes['price_usd'];
+    }
+
+    public function getFormattedPriceAttribute(): string
+    {
+        return '$'.number_format($this->price_usd, 2);
+    }
+
+    public function getFormattedPriceGhsAttribute(float $exchangeRate): string
+    {
+        $ghs = round($this->price_usd * $exchangeRate, 2);
+
+        return '₵'.number_format($ghs, 2);
+    }
 
     /**
      * Check if book is available for free download
@@ -72,13 +89,5 @@ class Book extends Model
         return $this->hasBookPdf()
             ? route('product.download', $this->id)
             : null;
-    }
-
-    /**
-     * Formatted price
-     */
-    public function getFormattedPriceAttribute(): string
-    {
-        return '$'.number_format($this->price, 2);
     }
 }

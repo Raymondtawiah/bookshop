@@ -16,7 +16,7 @@ class CartController extends Controller
     {
         $request->validate([
             'product_name' => 'required|string|max:255',
-            'product_price' => 'required|numeric|min:0',
+            'unit_price_usd' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:1',
             'book_id' => 'nullable|exists:books,id',
         ]);
@@ -40,7 +40,7 @@ class CartController extends Controller
             'user_id' => Auth::id(),
             'book_id' => $request->book_id,
             'product_name' => $request->product_name,
-            'product_price' => $request->product_price,
+            'unit_price_usd' => $request->unit_price_usd,
             'quantity' => $request->quantity,
         ]);
 
@@ -54,7 +54,7 @@ class CartController extends Controller
     {
         $cartItems = Cart::where('user_id', Auth::id())->with('book')->get();
         $total = $cartItems->sum(function ($item) {
-            return $item->product_price * $item->quantity;
+            return $item->unit_price_usd * $item->quantity;
         });
 
         return view('cart.index', compact('cartItems', 'total'));
@@ -99,7 +99,7 @@ class CartController extends Controller
             ->get();
 
         $total = $cartItems->sum(function ($item) {
-            return $item->product_price * $item->quantity;
+            return $item->unit_price_usd * $item->quantity;
         });
 
         $nationalities = Nationality::orderBy('name')->get();

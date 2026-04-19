@@ -42,8 +42,8 @@ class PaymentController extends Controller
             ]);
         }
 
-        $total = $cartItems->sum(function ($item) {
-            return $item->product_price * $item->quantity;
+        $totalUsd = $cartItems->sum(function ($item) {
+            return $item->unit_price_usd * $item->quantity;
         });
 
         $email = $request->email ?? Auth::user()->email;
@@ -56,9 +56,11 @@ class PaymentController extends Controller
             Log::info('Processing mobile money payment');
         }
 
-        // Convert dollars to cedis for Paystack (Paystack Ghana uses GHS)
-        $exchangeRate = config('settings.usd_to_ghs_rate', 12.50);
-        $totalInGhs = $total * $exchangeRate;
+        // Lock exchange rate for this order - NEVER recalculate after payment
+        $exchangeRateService = new ExchangeRateService;
+        $lockedRate = $exchangeRateService->lockRateForOrder($totalUsd);
+        $exchangeRate = $lockedRate['exchange_rate'];
+        $totalInGhs = $lockedRate['total_ghs'];
 
         // For all payment methods, use Paystack checkout page
         // This allows user to select their preferred payment method (card, mobile money, bank)
@@ -66,7 +68,7 @@ class PaymentController extends Controller
 
         if ($result['success']) {
             // Create pending order with both USD and GHS amounts
-            $order = $this->createPendingOrder($request, $total, $reference, $totalInGhs, $exchangeRate);
+            $order = $this->createPendingOrder($request, $totalUsd, $reference, $totalInGhs, $exchangeRate);
 
             return response()->json([
                 'success' => true,
@@ -134,32 +136,53 @@ class PaymentController extends Controller
             $order = Order::where('order_number', $reference)->first();
 
             if ($order) {
+                // Verify GHS amount matches order total_ghs as final security check
+                $expectedGhs = $order->total_amount_ghs;
+                $paidGhs = $result['amount'];
+                $tolerance = 1; // Allow 1 GHS tolerance for rounding
+
+                if (abs($paidGhs - $expectedGhs) > $tolerance) {
+                    Log::error('Payment amount mismatch', [
+                        'order_id' => $order->id,
+                        'expected_ghs' => $expectedGhs,
+                        'paid_ghs' => $paidGhs,
+                    ]);
+
+                    return redirect()->route('checkout')
+                        ->with('error', 'Payment amount mismatch. Please contact support.');
+                }
+
                 // Get cart items before clearing
                 $cartItems = Cart::where('user_id', Auth::id())->get();
 
-                // Prepare order items data from cart
-                $orderItems = $cartItems->map(function ($item) {
+                // Prepare order items data from cart with USD and GHS prices
+                $orderItems = $cartItems->map(function ($item) use ($order) {
+                    $unitPriceGhs = round($item->unit_price_usd * $order->exchange_rate, 2);
+
                     return [
                         'book_id' => $item->book_id,
                         'product_name' => $item->product_name,
-                        'product_price' => $item->product_price,
+                        'unit_price_usd' => $item->unit_price_usd,
+                        'price_ghs' => $unitPriceGhs,
                         'quantity' => $item->quantity,
+                        'total_price_usd' => $item->unit_price_usd * $item->quantity,
+                        'total_price_ghs' => $unitPriceGhs * $item->quantity,
                     ];
                 })->toArray();
 
                 // Send confirmation email to customer
                 try {
-                    \Log::info('Attempting to send order confirmation email', [
+                    Log::info('Attempting to send order confirmation email', [
                         'order_id' => $order->id,
                         'email' => $order->email,
                     ]);
 
-                    \Mail::to($order->email)->send(new OrderConfirmation($order, $cartItems, $order->total_amount));
+                    Mail::to($order->email)->send(new OrderConfirmation($order, $cartItems, $order->total_amount));
 
-                    \Log::info('Order confirmation email sent successfully', ['order_id' => $order->id]);
+                    Log::info('Order confirmation email sent successfully', ['order_id' => $order->id]);
                 } catch (\Exception $e) {
                     // Log email error but don't fail the order
-                    \Log::error('Failed to send order confirmation email: '.$e->getMessage());
+                    Log::error('Failed to send order confirmation email: '.$e->getMessage());
                 }
 
                 // Clear cart
@@ -233,19 +256,24 @@ class PaymentController extends Controller
 
         $cartItems = Cart::where('user_id', $user->id)->get();
 
-        // Prepare order items data from cart
-        $orderItems = $cartItems->map(function ($item) {
+        // Use provided GHS amount and rate, or calculate from locked rate
+        $ghsAmount = $totalGhs ?? $totalUsd;
+        $rate = $exchangeRate ?? 1;
+
+        // Prepare order items data from cart with USD and GHS prices
+        $orderItems = $cartItems->map(function ($item) use ($rate) {
+            $unitPriceGhs = round($item->unit_price_usd * $rate, 2);
+
             return [
                 'book_id' => $item->book_id,
                 'product_name' => $item->product_name,
-                'product_price' => $item->product_price,
+                'unit_price_usd' => $item->unit_price_usd,
+                'price_ghs' => $unitPriceGhs,
                 'quantity' => $item->quantity,
+                'total_price_usd' => $item->unit_price_usd * $item->quantity,
+                'total_price_ghs' => $unitPriceGhs * $item->quantity,
             ];
         })->toArray();
-
-        // Use GHS amount if provided, otherwise calculate from USD
-        $ghsAmount = $totalGhs ?? ($totalUsd * config('settings.usd_to_ghs_rate', 12.50));
-        $rate = $exchangeRate ?? config('settings.usd_to_ghs_rate', 12.50);
 
         $order = Order::create([
             'user_id' => $user->id,

@@ -125,7 +125,7 @@
                                     <form action="{{ route('cart.add') }}" method="POST" class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                                         @csrf
                                         <input type="hidden" name="product_name" value="{{ $book->title }}">
-                                        <input type="hidden" name="product_price" value="{{ $book->price }}">
+                                        <input type="hidden" name="unit_price_usd" value="{{ $book->price_usd }}">
                                         <input type="hidden" name="book_id" value="{{ $book->id }}">
                                         <input type="hidden" name="quantity" value="1">
                                         
