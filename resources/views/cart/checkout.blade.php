@@ -230,6 +230,7 @@
                     <!-- Customer Name Form -->
                     <form action="{{ route('checkout.process') }}" method="POST" id="checkout-form">
                         @csrf
+                        <input type="hidden" name="email" value="{{ auth()->user()->email ?? '' }}">
                         
                         <div class="mb-6">
                             <label for="customer_name" class="block text-sm font-medium text-gray-700 mb-1">Customer Name *</label>
