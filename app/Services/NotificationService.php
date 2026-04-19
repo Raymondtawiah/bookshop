@@ -8,10 +8,11 @@ class NotificationService
 {
     public static function newOrder($order): void
     {
+        $amountGhs = $order->total_amount_ghs ?? ($order->total_amount * config('settings.usd_to_ghs_rate', 12.50));
         AdminNotification::createNotification(
             'order',
             'New Order Received',
-            "Order #{$order->order_number} - ₵" . number_format($order->total_amount, 2),
+            "Order #{$order->order_number} - $".number_format($amountGhs, 2),
             route('admin.orders.show', $order->id)
         );
     }
@@ -38,10 +39,11 @@ class NotificationService
 
     public static function paymentReceived($order): void
     {
+        $amountGhs = $order->total_amount_ghs ?? ($order->total_amount * config('settings.usd_to_ghs_rate', 12.50));
         AdminNotification::createNotification(
             'payment',
             'Payment Received',
-            "Order #{$order->order_number} has been paid - ₵" . number_format($order->total_amount, 2),
+            "Order #{$order->order_number} has been paid - $".number_format($amountGhs, 2),
             route('admin.orders.show', $order->id)
         );
     }

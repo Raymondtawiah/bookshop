@@ -125,10 +125,12 @@
                                         <span class="font-bold text-gray-900">{{ $bankDetails['branch'] ?? 'N/A' }}</span>
                                     </div>
                                     <div class="border-t pt-3 mt-3">
+                                        @php($exchangeRate = config('settings.usd_to_ghs_rate', 12.50))
                                         <div class="flex justify-between">
                                             <span class="text-gray-600 font-semibold">Amount:</span>
-                                            <span class="font-bold text-indigo-600 text-lg">${{ number_format($total, 2) }}</span>
+                                            <span class="font-bold text-indigo-600 text-lg">₵{{ number_format($total * $exchangeRate, 2) }}</span>
                                         </div>
+                                        <p class="text-xs text-gray-500 mt-1">(${{ number_format($total, 2) }} @ {{ $exchangeRate }} rate)</p>
                                     </div>
                                 </div>
                             </div>
@@ -152,10 +154,12 @@
                     @endif
 
                     <div class="border-t pt-6">
+                        @php($exchangeRate = config('settings.usd_to_ghs_rate', 12.50))
                         <div class="flex justify-between text-lg mb-2">
                             <span class="font-semibold">Total Amount Paid:</span>
-                            <span class="font-bold text-indigo-600">${{ number_format($total, 2) }}</span>
+                            <span class="font-bold text-indigo-600">${{ number_format($total * $exchangeRate, 2) }}</span>
                         </div>
+                        <p class="text-sm text-gray-500 text-right">(${{ number_format($total, 2) }} @ {{ $exchangeRate }} rate)</p>
                         @if($order->customer_name)
                         <div class="flex justify-between text-lg mb-2">
                             <span class="font-semibold">Customer Name:</span>
@@ -215,7 +219,11 @@
                         </div>
                         <div class="flex justify-between items-center mt-4 pt-4 border-t">
                             <span class="text-lg font-bold">Total</span>
-                            <span class="text-lg font-bold text-indigo-600">${{ number_format($total, 2) }}</span>
+                            <div class="text-right">
+                                <span class="text-lg font-bold text-indigo-600">${{ number_format($total, 2) }}</span>
+                                @php($exchangeRate = config('settings.usd_to_ghs_rate', 12.50))
+                                <p class="text-sm text-gray-500">₵{{ number_format($total * $exchangeRate, 2) }} ({{ $exchangeRate }} rate)</p>
+                            </div>
                         </div>
                     </div>
 

@@ -19,6 +19,8 @@ class Order extends Model
         'contact',
         'payment_method',
         'total_amount',
+        'total_amount_ghs',
+        'exchange_rate',
         'status',
         'order_number',
         'payment_status',
@@ -30,6 +32,8 @@ class Order extends Model
 
     protected $casts = [
         'total_amount' => 'decimal:2',
+        'total_amount_ghs' => 'decimal:2',
+        'exchange_rate' => 'decimal:2',
         'paid_at' => 'datetime',
         'pdf_sent' => 'boolean',
         'pdf_sent_at' => 'datetime',

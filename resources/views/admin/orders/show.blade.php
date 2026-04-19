@@ -105,7 +105,10 @@
                                 </div>
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">Total Amount</dt>
-                                    <dd class="text-xl font-bold text-indigo-600">${{ number_format($order->total_amount, 2) }}</dd>
+                                    @php($exchangeRate = $order->exchange_rate ?? config('settings.usd_to_ghs_rate', 12.50))
+                                    @php($amountGhs = $order->total_amount_ghs ?? ($order->total_amount * $exchangeRate))
+                                    <dd class="text-xl font-bold text-indigo-600">${{ number_format($amountGhs, 2) }}</dd>
+                                    <dd class="text-sm text-gray-500">(${{ number_format($order->total_amount, 2) }} @ {{ $exchangeRate }})</dd>
                                 </div>
                             </dl>
                         </div>

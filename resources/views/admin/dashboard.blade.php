@@ -75,7 +75,12 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-500">Total Revenue</p>
-                            <p class="text-3xl font-bold mt-1 text-gray-900">${{ number_format(\App\Models\Order::where('payment_status', 'paid')->sum('total_amount'), 2) }}</p>
+                            @php($exchangeRate = config('settings.usd_to_ghs_rate', 12.50))
+                            @php($totalUsd = \App\Models\Order::where('payment_status', 'paid')->sum('total_amount'))
+                            @php($totalGhs = \App\Models\Order::where('payment_status', 'paid')->sum('total_amount_ghs'))
+                            @php($displayGhs = $totalGhs ?? ($totalUsd * $exchangeRate))
+                            <p class="text-3xl font-bold mt-1 text-gray-900">${{ number_format($displayGhs, 2) }}</p>
+                            <p class="text-xs text-gray-500">(${{ number_format($totalUsd, 2) }})</p>
                         </div>
                     </div>
                 </div>

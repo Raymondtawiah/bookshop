@@ -221,7 +221,12 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm text-gray-500">Total Spent</p>
-                            <p class="text-2xl font-bold text-gray-900">${{ number_format(\App\Models\Order::where('user_id', auth()->id())->sum('total_amount'), 2) }}</p>
+                            @php($exchangeRate = config('settings.usd_to_ghs_rate', 12.50))
+                            @php($totalUsd = \App\Models\Order::where('user_id', auth()->id())->where('payment_status', 'paid')->sum('total_amount'))
+                            @php($totalGhs = \App\Models\Order::where('user_id', auth()->id())->where('payment_status', 'paid')->sum('total_amount_ghs'))
+                            @php($displayGhs = $totalGhs ?? ($totalUsd * $exchangeRate))
+                            <p class="text-2xl font-bold text-gray-900">${{ number_format($displayGhs, 2) }}</p>
+                            <p class="text-xs text-gray-500">(${{ number_format($totalUsd, 2) }})</p>
                         </div>
                         <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
                             <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
