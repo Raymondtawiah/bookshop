@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -68,6 +69,8 @@ class AuthController extends Controller
      */
     public function dashboard()
     {
-        return view('admin.dashboard');
+        $recentOrders = Order::with('user')->orderBy('created_at', 'desc')->take(10)->get();
+
+        return view('admin.dashboard', compact('recentOrders'));
     }
 }
