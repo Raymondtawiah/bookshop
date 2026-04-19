@@ -502,7 +502,7 @@
                             <form action="{{ route('cart.add') }}" method="POST" class="mt-3">
                                 @csrf
                                 <input type="hidden" name="product_name" value="{{ $book->title }}">
-                                <input type="hidden" name="product_price" value="{{ $book->price }}">
+                                <input type="hidden" name="unit_price_usd" value="{{ $book->price_usd }}">
                                 <input type="hidden" name="book_id" value="{{ $book->id }}">
                                 <input type="hidden" name="quantity" value="1">
                                 <button type="submit" class="w-full px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-medium rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">

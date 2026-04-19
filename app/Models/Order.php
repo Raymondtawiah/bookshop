@@ -76,4 +76,34 @@ class Order extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function getTotalUsdAttribute(): float
+    {
+        return (float) $this->attributes['total_amount'];
+    }
+
+    public function getTotalGhsAttribute(): float
+    {
+        return (float) $this->attributes['total_amount_ghs'];
+    }
+
+    public function getFormattedTotalUsdAttribute(): string
+    {
+        return '$'.number_format($this->total_usd, 2);
+    }
+
+    public function getFormattedTotalGhsAttribute(): string
+    {
+        return '₵'.number_format($this->total_ghs, 2);
+    }
+
+    public function getEquivalentGhsAttribute(): string
+    {
+        return '₵'.number_format($this->total_usd * $this->exchange_rate, 2);
+    }
+
+    public function isPaid(): bool
+    {
+        return $this->payment_status === 'paid' && $this->paid_at !== null;
+    }
 }

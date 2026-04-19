@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\Admin\CoachingController;
+use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Customer\ProfileController;
@@ -233,6 +233,10 @@ Route::middleware(['auth', 'verify.customer'])->group(function () {
     Route::get('payment/status', [PaymentController::class, 'checkPaymentStatus'])->name('payment.status');
     Route::get('payment/banks', [PaymentController::class, 'getBanks'])->name('payment.banks');
 });
+
+// Paystack Webhook - NO middleware (must be publicly accessible)
+Route::post('api/paystack/webhook', [PaystackWebhookController::class, 'handleWebhook'])->name('paystack.webhook');
+Route::get('api/paystack/verify/{reference}', [PaystackWebhookController::class, 'verifyPayment'])->name('paystack.verify');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
