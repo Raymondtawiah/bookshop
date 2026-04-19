@@ -38,7 +38,7 @@
                                         @method('PUT')
                                         <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" class="w-16 px-2 py-1 border rounded text-center quantity-input" onchange="this.form.submit()">
                                     </form>
-                                    <button type="button" onclick="openDeleteModal({{ $item->id }})" class="text-sm text-red-600 hover:underline whitespace-nowrap">Remove</button>
+                                    <button type="button" class="text-sm text-red-600 hover:underline whitespace-nowrap" data-modal="deleteModal{{ $item->id }}">Remove</button>
                                 </div>
                                 <div class="text-left sm:text-right w-full sm:w-auto">
                                     <p class="text-lg font-bold text-gray-900">${{ number_format($item->unit_price_usd * $item->quantity, 2) }}</p>
@@ -86,5 +86,14 @@
             @endif
         </div>
         <x-customer-footer />
+    
+    <script>
+        document.querySelectorAll('[data-modal]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var modalId = this.getAttribute('data-modal');
+                document.getElementById(modalId).classList.remove('hidden');
+            });
+        });
+    </script>
     </body>
 </html>
