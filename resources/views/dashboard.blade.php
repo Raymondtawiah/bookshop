@@ -386,7 +386,7 @@
                                 </div>
                                 @endif
                                 <div class="mt-3 flex items-center justify-between">
-                                    <p class="font-bold text-lg text-indigo-600">${{ number_format($book->price, 2) }}</p>
+                                    <p class="font-bold text-lg text-indigo-600">${{ number_format($book->price_usd, 2) }}</p>
                                     
                                 </div>
                             </div>
@@ -496,7 +496,7 @@
                             </div>
                             @endif
                             <div class="mt-3 flex items-center justify-between">
-                                <p class="font-bold text-xl text-indigo-600">${{ number_format($book->price, 2) }}</p>
+                                <p class="font-bold text-xl text-indigo-600">${{ number_format($book->price_usd, 2) }}</p>
                             </div>
                             @auth
                             <form action="{{ route('cart.add') }}" method="POST" class="mt-3">

@@ -145,7 +145,7 @@
                                     <p class="font-bold text-xl text-green-600">FREE</p>
                                 @else
                                     <p class="font-bold text-xl text-indigo-600">
-                                        ${{ number_format($book->price, 2) }}
+                                        ${{ number_format($book->price_usd, 2) }}
                                     </p>
                                 @endif
                             </div>

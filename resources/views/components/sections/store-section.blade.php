@@ -47,7 +47,7 @@
                     @if($book->isFreePdf())
                     <p class="text-lg font-extrabold text-green-600 mt-1">FREE</p>
                     @else
-                    <p class="text-lg font-extrabold text-indigo-600 mt-1">${{ number_format($book->price, 2) }}</p>
+                    <p class="text-lg font-extrabold text-indigo-600 mt-1">${{ number_format($book->price_usd, 2) }}</p>
                     @endif
                     @if(!($book->is_free && $book->book_pdf_url))
                     @auth
