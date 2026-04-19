@@ -5,24 +5,23 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Book;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class BookController extends Controller
 {
     private function uploadFile($file)
     {
-        if (!$file) {
+        if (! $file) {
             return null;
         }
 
         $booksDir = public_path('books');
-        
+
         // Create books directory if it doesn't exist
-        if (!is_dir($booksDir)) {
+        if (! is_dir($booksDir)) {
             mkdir($booksDir, 0755, true);
         }
 
-        $filename = time() . '_' . uniqid() . '.' . $file->getClientOriginalExtension();
+        $filename = time().'_'.uniqid().'.'.$file->getClientOriginalExtension();
         $file->move($booksDir, $filename);
 
         return $filename;
@@ -30,11 +29,11 @@ class BookController extends Controller
 
     private function deleteFile($filename)
     {
-        if (!$filename) {
+        if (! $filename) {
             return;
         }
 
-        $path = public_path('books/' . $filename);
+        $path = public_path('books/'.$filename);
 
         if (file_exists($path)) {
             unlink($path);
@@ -44,6 +43,7 @@ class BookController extends Controller
     public function index()
     {
         $books = Book::latest()->paginate(10);
+
         return view('admin.books.index', compact('books'));
     }
 
@@ -82,7 +82,7 @@ class BookController extends Controller
             'title' => $request->title,
             'author' => $request->author,
             'description' => $request->description,
-            'price' => $request->price,
+            'price_usd' => $request->price_usd,
             'isbn' => $request->isbn,
             'pages' => $request->pages,
             'published_year' => $request->published_year,
@@ -113,7 +113,7 @@ class BookController extends Controller
             'title' => $request->title,
             'author' => $request->author,
             'description' => $request->description,
-            'price' => $request->price,
+            'price_usd' => $request->price_usd,
             'isbn' => $request->isbn,
             'pages' => $request->pages,
             'published_year' => $request->published_year,

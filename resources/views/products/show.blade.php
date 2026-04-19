@@ -56,7 +56,7 @@
                                 @if($book->is_free)
                                     <span class="text-4xl font-bold text-green-600">FREE</span>
                                 @else
-                                    <span class="text-4xl font-bold text-indigo-600">${{ number_format($book->price, 2) }}</span>
+                                    <span class="text-4xl font-bold text-indigo-600">${{ number_format($book->price_usd, 2) }}</span>
                                 @endif
                             </div>
 
@@ -170,7 +170,7 @@
                             <div class="p-5">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ $related->title }}</h3>
                                 
-                                <span class="text-xl font-bold text-indigo-600">${{ number_format($related->price, 2) }}</span>
+                                <span class="text-xl font-bold text-indigo-600">${{ number_format($related->price_usd, 2) }}</span>
                             </div>
                         </a>
                         @endforeach
