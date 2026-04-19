@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Mail\OrderConfirmation;
 use App\Models\Cart;
 use App\Models\Order;
+use App\Services\ExchangeRateService;
 use App\Services\NotificationService;
 use App\Services\PaystackService;
 use Illuminate\Http\Request;
@@ -28,6 +29,7 @@ class PaymentController extends Controller
     {
         $request->validate([
             'payment_method' => 'required|in:momo,bank,card',
+            'email' => 'nullable|email',
             'contact' => 'required|string',
             'customer_name' => 'required|string',
             'residence' => 'required|string',
@@ -46,7 +48,14 @@ class PaymentController extends Controller
             return $item->unit_price_usd * $item->quantity;
         });
 
-        $email = $request->email ?? Auth::user()->email;
+        $email = $request->input('email') ?? (Auth::check() ? Auth::user()->email : null);
+
+        if (! $email) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email is required',
+            ], 400);
+        }
 
         // Generate unique reference
         $reference = 'ORD-'.time().rand(1000, 9999);
