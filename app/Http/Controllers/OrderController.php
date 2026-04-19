@@ -39,6 +39,10 @@ class OrderController extends Controller
         $paymentMethod = $request->payment_method;
         $reference = 'ORD-'.time().rand(1000, 9999);
 
+        // Convert USD to GHS for Paystack
+        $exchangeRate = config('settings.usd_to_ghs_rate', 12.50);
+        $totalGhs = $total * $exchangeRate;
+
         // Prepare order items data
         $orderItems = $cartItems->map(function ($item) {
             return [
@@ -59,6 +63,8 @@ class OrderController extends Controller
             'contact' => $request->contact,
             'payment_method' => $paymentMethod,
             'total_amount' => $total,
+            'total_amount_ghs' => $totalGhs,
+            'exchange_rate' => $exchangeRate,
             'status' => 'pending',
             'order_number' => $reference,
             'order_items' => $orderItems,
@@ -74,8 +80,9 @@ class OrderController extends Controller
             // This redirects to Paystack where user can select mobile money as payment option
             $result = $paystack->initializePayment(
                 $request->email,
-                $total,
-                $reference
+                $totalGhs,
+                $reference,
+                'GHS'
             );
 
             Log::info('Paystack Payment Init Response for MoMo', ['result' => $result]);

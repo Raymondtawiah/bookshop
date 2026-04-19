@@ -56,13 +56,17 @@ class PaymentController extends Controller
             Log::info('Processing mobile money payment');
         }
 
+        // Convert dollars to cedis for Paystack (Paystack Ghana uses GHS)
+        $exchangeRate = config('settings.usd_to_ghs_rate', 12.50);
+        $totalInGhs = $total * $exchangeRate;
+
         // For all payment methods, use Paystack checkout page
         // This allows user to select their preferred payment method (card, mobile money, bank)
-        $result = $this->paystack->initializePayment($email, $total, $reference, 'USD');
+        $result = $this->paystack->initializePayment($email, $totalInGhs, $reference, 'GHS');
 
         if ($result['success']) {
-            // Create pending order
-            $order = $this->createPendingOrder($request, $total, $reference);
+            // Create pending order with both USD and GHS amounts
+            $order = $this->createPendingOrder($request, $total, $reference, $totalInGhs, $exchangeRate);
 
             return response()->json([
                 'success' => true,
@@ -223,7 +227,7 @@ class PaymentController extends Controller
     /**
      * Create pending order
      */
-    protected function createPendingOrder(Request $request, $total, $reference)
+    protected function createPendingOrder(Request $request, $totalUsd, $reference, $totalGhs = null, $exchangeRate = null)
     {
         $user = Auth::user();
 
@@ -239,6 +243,10 @@ class PaymentController extends Controller
             ];
         })->toArray();
 
+        // Use GHS amount if provided, otherwise calculate from USD
+        $ghsAmount = $totalGhs ?? ($totalUsd * config('settings.usd_to_ghs_rate', 12.50));
+        $rate = $exchangeRate ?? config('settings.usd_to_ghs_rate', 12.50);
+
         $order = Order::create([
             'user_id' => $user->id,
             'order_number' => $reference,
@@ -248,7 +256,9 @@ class PaymentController extends Controller
             'residence' => $request->residence ?? '',
             'nationality' => $request->nationality ?? '',
             'payment_method' => $request->payment_method,
-            'total_amount' => $total,
+            'total_amount' => $totalUsd,
+            'total_amount_ghs' => $ghsAmount,
+            'exchange_rate' => $rate,
             'status' => 'pending',
             'payment_status' => 'pending',
             'order_items' => $orderItems,
