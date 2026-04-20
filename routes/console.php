@@ -13,3 +13,6 @@ Schedule::command('coaching:send-reminders')->everyFiveMinutes();
 
 // Schedule chat cleanup every hour
 Schedule::command('chat:cleanup')->hourly();
+
+// Schedule notification cleanup every hour (delete notifications older than 12 hours)
+Schedule::command('notifications:cleanup')->hourly();
