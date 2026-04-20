@@ -2,7 +2,7 @@
     <div class="max-w-7xl mx-auto px-4">
         <div class="flex flex-col md:flex-row justify-between items-center gap-4">
             <div class="text-center md:text-left">
-                <p class="text-sm">&copy; {{ date('Y') }} Nathaniel Gyarteng. All rights reserved.</p>
+                <p class="text-sm">&copy; {{ date('Y') }} Visa With Nathaniel. All rights reserved.</p>
 
             </div>
             <div class="flex items-center gap-6 text-sm">

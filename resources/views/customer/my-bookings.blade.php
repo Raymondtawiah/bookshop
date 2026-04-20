@@ -1,16 +1,8 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>My Bookings - {{ config('app.name', 'Nathaniel Gyarteng') }}</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="icon" href="/favicon.ico" sizes="any">
-    </head>
-    <body class="bg-gray-50 font-sans">
-        <x-flash-message />
-        
-        @include('components.customer-navbar')
+@extends('layouts.customer')
+
+@section('title', 'My Bookings')
+
+@section('content')
 
         <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
             <div class="mb-8">
@@ -69,6 +61,4 @@
             @endif
         </div>
 
-        @include('components.customer-footer')
-    </body>
-</html>
+@endsection
