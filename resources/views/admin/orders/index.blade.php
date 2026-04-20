@@ -71,9 +71,7 @@
                                     <div class="text-sm text-gray-600 max-w-xs truncate">{{ $order->residence ?? 'N/A' }}</div>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
-                                    @php($exchangeRate = $order->exchange_rate ?? config('settings.usd_to_ghs_rate', 12.50))
-                                    @php($amountGhs = $order->total_amount_ghs ?? ($order->total_amount * $exchangeRate))
-                                    <span class="text-sm font-bold text-gray-900">₵{{ number_format($amountGhs, 2) }}</span>
+                                    <span class="text-sm font-bold text-gray-900">${{ number_format($order->total_amount, 2) }}</span>
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap">
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
