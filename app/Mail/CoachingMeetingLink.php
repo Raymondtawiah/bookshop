@@ -14,8 +14,11 @@ class CoachingMeetingLink extends Mailable
     use Queueable, SerializesModels;
 
     public $booking;
+
     public $meetingLink;
+
     public $meetingTime;
+
     public $meetingNotes;
 
     public function __construct(CoachingBooking $booking, $meetingLink, $meetingTime, $meetingNotes = null)

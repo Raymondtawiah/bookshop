@@ -59,17 +59,19 @@ class WordToPdfService implements WordToPdfInterface
 
             // Try PHPWord native PDF writer (preserves more formatting)
             $result = $this->convertWithPhpWord($wordFilePath, $outputPath);
-            
+
             if ($result) {
                 Log::info("Word converted to PDF using PHPWord: {$outputPath}");
+
                 return true;
             }
 
             // Try LibreOffice conversion (preserves formatting)
             $result = $this->convertWithLibreOffice($wordFilePath, $outputPath);
-            
+
             if ($result) {
                 Log::info("Word converted to PDF using LibreOffice: {$outputPath}");
+
                 return true;
             }
 
@@ -127,16 +129,18 @@ class WordToPdfService implements WordToPdfInterface
             $sections = $phpWord->getSections();
             if (count($sections) === 0) {
                 Log::warning('No sections found in Word document');
+
                 return false;
             }
 
             $htmlWriter = IOFactory::createWriter($phpWord, 'HTML');
-            
+
             $tempHtml = sys_get_temp_dir().'/'.uniqid().'.html';
             $htmlWriter->save($tempHtml);
 
             if (! file_exists($tempHtml)) {
                 Log::warning('Failed to create HTML from Word document');
+
                 return false;
             }
 
@@ -145,6 +149,7 @@ class WordToPdfService implements WordToPdfInterface
 
             if (! $htmlContent) {
                 Log::warning('Empty HTML content from Word document');
+
                 return false;
             }
 
@@ -159,11 +164,11 @@ class WordToPdfService implements WordToPdfInterface
             }
 
             // Use Dompdf for better HTML rendering
-            $options = new Options();
+            $options = new Options;
             $options->set('isHtml5ParserEnabled', true);
             $options->set('isRemoteEnabled', false);
             $options->set('defaultFont', 'Arial');
-            
+
             $dompdf = new Dompdf($options);
             $dompdf->loadHtml($htmlContent);
             $dompdf->setPaper('A4', 'portrait');
@@ -176,6 +181,7 @@ class WordToPdfService implements WordToPdfInterface
 
         } catch (\Exception $e) {
             Log::error('PHPWord Dompdf conversion error: '.$e->getMessage());
+
             return false;
         }
     }
@@ -185,43 +191,43 @@ class WordToPdfService implements WordToPdfInterface
         // Remove Word-specific comments and styles
         $html = preg_replace('/<!--[\s\S]*?-->/', '', $html);
         $html = preg_replace('/<![CDATA[\s\S]*?]]>/', '', $html);
-        
+
         // Fix Word's abnormal hyphenation and special characters
         $html = str_replace('­', '', $html); // Soft hyphen
         $html = str_replace('&shy;', '', $html);
-        
+
         // Decode HTML entities that might be double-encoded
         $html = html_entity_decode($html, ENT_QUOTES | ENT_HTML5, 'UTF-8');
-        
+
         // Remove empty style tags
         $html = preg_replace('/<style[^>]*>\s*<\/style>/', '', $html);
-        
+
         // Clean up Word-generated class names
         $html = preg_replace('/class="Mso[a-zA-Z0-9_-]*"/', '', $html);
         $html = preg_replace('/class="[^"]*"/', '', $html);
-        
+
         // Fix list spacing that Word creates
         $html = str_replace('margin-top:0pt;', '', $html);
         $html = str_replace('margin-bottom:0pt;', '', $html);
-        
+
         // Remove Word namespaces
         $html = preg_replace('/xmlns:[a-z-]+="[^"]*"/', '', $html);
         $html = preg_replace('/xml:space="[^"]*"/', '', $html);
-        
+
         // Remove style attributes that might cause issues
         $html = preg_replace('/style="[^"]*"/', '', $html);
-        
+
         // Fix tab characters
         $html = str_replace("\t", ' ', $html);
-        
+
         // Ensure proper UTF-8 encoding
         $html = mb_convert_encoding($html, 'HTML-ENTITIES', 'UTF-8');
-        
+
         // Ensure body content is properly formatted
         if (preg_match('/<body[^>]*>([\s\S]*)<\/body>/i', $html, $matches)) {
             $html = $matches[1];
         }
-        
+
         return $html;
     }
 
@@ -229,11 +235,11 @@ class WordToPdfService implements WordToPdfInterface
     {
         // Just basic cleaning - let TCPDF handle most of it
         $html = preg_replace('/<!--[\s\S]*?-->/', '', $html);
-        
+
         if (preg_match('/<body[^>]*>([\s\S]*)<\/body>/i', $html, $matches)) {
             return $matches[1];
         }
-        
+
         return $html;
     }
 
@@ -242,44 +248,47 @@ class WordToPdfService implements WordToPdfInterface
         try {
             $tempDir = sys_get_temp_dir();
             $tempFile = $tempDir.'/'.uniqid().'.'.pathinfo($wordFilePath, PATHINFO_EXTENSION);
-            
+
             copy($wordFilePath, $tempFile);
 
             $outputDir = dirname($outputPath);
-            
+
             // Use LibreOffice to convert
             $command = sprintf(
                 'libreoffice --headless --convert-to pdf --outdir "%s" "%s" 2>&1',
                 $outputDir,
                 $tempFile
             );
-            
+
             exec($command, $output, $returnCode);
-            
+
             // Clean up temp file
             if (file_exists($tempFile)) {
                 unlink($tempFile);
             }
-            
+
             if ($returnCode === 0) {
                 // LibreOffice creates PDF with same name as input
                 $expectedPdf = $outputDir.'/'.pathinfo($tempFile, PATHINFO_FILENAME).'.pdf';
-                
+
                 if (file_exists($expectedPdf)) {
                     // Rename to our desired output path
                     if (file_exists($outputPath)) {
                         unlink($outputPath);
                     }
                     rename($expectedPdf, $outputPath);
+
                     return true;
                 }
             }
-            
+
             Log::warning('LibreOffice conversion returned code: '.$returnCode);
+
             return false;
-            
+
         } catch (\Exception $e) {
             Log::error('LibreOffice conversion error: '.$e->getMessage());
+
             return false;
         }
     }
@@ -374,10 +383,10 @@ class WordToPdfService implements WordToPdfInterface
                     if ($content) {
                         $xml = simplexml_load_string($content);
                         $xml->registerXPathNamespace('w', 'http://schemas.openxmlformats.org/wordprocessingml/2006/main');
-                        
+
                         // Get all paragraphs with their text
                         $paragraphs = $xml->xpath('//w:p');
-                        
+
                         $text = '';
                         foreach ($paragraphs as $p) {
                             $ps = $p->xpath('.//w:t');
@@ -389,7 +398,7 @@ class WordToPdfService implements WordToPdfInterface
                                 $text .= $paraText."\n";
                             }
                         }
-                        
+
                         // If no paragraphs, try getting all text nodes
                         if (trim($text) === '') {
                             $textNodes = $xml->xpath('//w:t');

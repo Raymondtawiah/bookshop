@@ -16,10 +16,13 @@ class SendPdfEmailJob implements ShouldQueue
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public $tries = 3;
+
     public $timeout = 120;
 
     protected $user;
+
     protected $pdfPaths;
+
     protected $orderId;
 
     public function __construct($user, $pdfPaths, $orderId)

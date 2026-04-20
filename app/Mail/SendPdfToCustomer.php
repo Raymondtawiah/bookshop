@@ -14,7 +14,9 @@ class SendPdfToCustomer extends Mailable
     use Queueable, SerializesModels;
 
     public $user;
+
     public $pdfPaths;
+
     public $orderId;
 
     public function __construct($user, $pdfPaths, $orderId)
@@ -41,7 +43,7 @@ class SendPdfToCustomer extends Mailable
     public function attachments(): array
     {
         $attachments = [];
-        
+
         foreach ($this->pdfPaths as $pdf) {
             if (file_exists($pdf['path'])) {
                 $attachments[] = Attachment::fromPath($pdf['path'])
@@ -49,7 +51,7 @@ class SendPdfToCustomer extends Mailable
                     ->withMime('application/pdf');
             }
         }
-        
+
         return $attachments;
     }
 }

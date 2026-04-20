@@ -26,19 +26,21 @@ class NotificationController extends Controller
         if ($notification) {
             $notification->markAsRead();
         }
+
         return response()->json(['success' => true]);
     }
 
     public function markAllAsRead(): JsonResponse
     {
         AdminNotification::markAllAsRead();
+
         return response()->json(['success' => true]);
     }
 
     public function unreadCount(): JsonResponse
     {
         return response()->json([
-            'unread_count' => AdminNotification::getUnreadCount()
+            'unread_count' => AdminNotification::getUnreadCount(),
         ]);
     }
 }

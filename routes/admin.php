@@ -2,11 +2,10 @@
 
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BookController;
-use App\Http\Controllers\Admin\CustomerController;
-use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\CoachingController;
+use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\NotificationController;
-use App\Http\Controllers\ChatController;
+use App\Http\Controllers\Admin\OrderController;
 use Illuminate\Support\Facades\Route;
 
 // Admin login routes - accessible without authentication

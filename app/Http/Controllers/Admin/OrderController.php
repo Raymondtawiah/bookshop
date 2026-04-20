@@ -2,19 +2,16 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Jobs\SendPdfEmailJob;
 use App\Http\Controllers\Controller;
+use App\Jobs\SendPdfEmailJob;
 use App\Models\Book;
 use App\Models\Cart;
 use App\Models\Order;
 use App\Services\OrderPdfService;
 use App\Services\PassageService;
-use App\Services\PdfGeneratorService;
 use App\Services\WordToPdfService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Storage;
 use TCPDF;
 
 class OrderController extends Controller
@@ -467,7 +464,7 @@ class OrderController extends Controller
         // Update order status to confirmed, set payment to paid (if not already), and mark PDF as sent
         $currentPaymentStatus = $order->payment_status;
         $isAlreadyPaid = in_array($currentPaymentStatus, ['paid', 'completed']);
-        
+
         $order->update([
             'status' => 'confirmed',
             'payment_status' => $isAlreadyPaid ? $currentPaymentStatus : 'paid',
@@ -561,7 +558,7 @@ class OrderController extends Controller
             // Send email with PDF attachments using queue for faster delivery
             try {
                 $user = $order->user;
-                
+
                 // Dispatch to queue for faster delivery
                 SendPdfEmailJob::dispatch($user, $pdfPaths, $order->id);
 
@@ -575,7 +572,7 @@ class OrderController extends Controller
 
             } catch (\Exception $e) {
                 Log::error('Failed to queue PDF email: '.$e->getMessage());
-                
+
                 // Still update order even if email fails
                 $order->update([
                     'status' => 'confirmed',
@@ -646,7 +643,7 @@ class OrderController extends Controller
 
             try {
                 $user = $order->user;
-                
+
                 SendPdfEmailJob::dispatch($user, $pdfPaths, $order->id);
 
                 $order->update([
@@ -659,7 +656,7 @@ class OrderController extends Controller
 
             } catch (\Exception $e) {
                 Log::error('Failed to queue PDF email: '.$e->getMessage());
-                
+
                 $order->update([
                     'status' => 'confirmed',
                     'pdf_sent' => true,

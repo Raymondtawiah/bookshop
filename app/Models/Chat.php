@@ -43,12 +43,14 @@ class Chat extends Model
         if ($existingChat && $existingChat->unique_id) {
             return $existingChat->unique_id;
         }
+
         return uniqid('chat_', true);
     }
 
     public static function getUniqueIdByIp($ipAddress)
     {
         $chat = static::where('ip_address', $ipAddress)->first();
+
         return $chat?->unique_id;
     }
 
@@ -88,6 +90,7 @@ class Chat extends Model
                     ->where('sender_type', 'customer')
                     ->where('is_read', false)
                     ->count();
+
                 return $chat;
             });
     }
