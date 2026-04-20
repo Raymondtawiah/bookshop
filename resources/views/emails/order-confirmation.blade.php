@@ -105,14 +105,10 @@
             </div>
             @endforeach
             
-            @php($exchangeRate = $order->exchange_rate ?? config('settings.usd_to_ghs_rate', 12.50))
-            @php($amountGhs = $order->total_amount_ghs ?? ($order->total_amount * $exchangeRate))
             <div class="order-item total">
                 <span>Total Amount</span>
                 <div>
-                    <span>${{ number_format($amountGhs, 2) }}</span>
-                    <br>
-                    <small style="color: #6b7280;">(${{ number_format($order->total_amount, 2) }} @ {{ $exchangeRate }} rate)</small>
+                    <span>${{ number_format($order->total_amount, 2) }}</span>
                 </div>
             </div>
         </div>

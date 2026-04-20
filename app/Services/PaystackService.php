@@ -66,7 +66,7 @@ class PaystackService
     /**
      * Initialize a payment transaction
      */
-    public function initializePayment($email, $amount, $reference = null, $currency = 'GHS', $callbackUrl = null)
+    public function initializePayment($email, $amount, $reference = null, $currency = 'USD', $callbackUrl = null)
     {
         $reference = $reference ?? 'TXN-'.time().rand(1000, 9999);
 
@@ -151,7 +151,7 @@ class PaystackService
             'email' => $email,
             'amount' => $amount * 100,
             'reference' => $reference,
-            'currency' => 'GHS',
+            'currency' => 'USD',
             'mobile' => $formattedPhone,
             'network' => $network,
             'authorization_type' => 'mobile_money',
