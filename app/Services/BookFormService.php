@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class BookFormService
 {
@@ -10,8 +11,8 @@ class BookFormService
     {
         $bookType = $request->input('book_type', 'cover');
         $isPdf = $bookType === 'pdf';
-        
-        \Illuminate\Support\Facades\Log::info('Book Creation Debug', [
+
+        Log::info('Book Creation Debug', [
             'book_type' => $bookType,
             'is_pdf' => $isPdf,
             'is_free value' => $request->input('is_free'),
@@ -27,7 +28,7 @@ class BookFormService
         ];
 
         // Add price rules only for cover books
-        if (!$isPdf) {
+        if (! $isPdf) {
             $rules['price'] = 'required|numeric|min:0';
             $rules['isbn'] = 'nullable|string|max:20';
             $rules['pages'] = 'nullable|integer|min:1';
@@ -69,7 +70,7 @@ class BookFormService
     {
         $bookType = $request->input('book_type', ($request->boolean('is_free') ? 'pdf' : 'cover'));
         $isPdf = $bookType === 'pdf';
-        
+
         $rules = [
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
@@ -79,7 +80,7 @@ class BookFormService
             'cover_image' => 'nullable|file|mimes:jpeg,png,jpg,gif|max:2048',
         ];
 
-        if (!$isPdf) {
+        if (! $isPdf) {
             $rules['price'] = 'required|numeric|min:0';
             $rules['isbn'] = 'nullable|string|max:20';
             $rules['pages'] = 'nullable|integer|min:1';

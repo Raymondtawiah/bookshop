@@ -6,8 +6,6 @@ use App\Models\Chat;
 use App\Services\OpenAiService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class ChatController extends Controller
 {
@@ -37,7 +35,7 @@ class ChatController extends Controller
         // stable unique ID
         $uniqueId = $request->input('unique_id');
 
-        if (!$uniqueId) {
+        if (! $uniqueId) {
             $uniqueId = Chat::where('ip_address', $ipAddress)
                 ->whereNotNull('unique_id')
                 ->value('unique_id')
@@ -59,7 +57,7 @@ class ChatController extends Controller
         // AI response
         $aiReplyText = $this->openAiService->generateResponse($request->message);
 
-        if (!$aiReplyText) {
+        if (! $aiReplyText) {
             $aiReplyText = "I'm having trouble responding right now. Please try again shortly.";
         }
 

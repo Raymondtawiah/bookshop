@@ -50,6 +50,7 @@ class HomeController extends Controller
         if (Auth::check()) {
             $cartService = app(CartService::class);
             $cartCount = $cartService->getItemCount();
+
             return view('dashboard', compact('books', 'query', 'cartCount'));
         }
 

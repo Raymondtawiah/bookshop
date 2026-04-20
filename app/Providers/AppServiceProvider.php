@@ -2,7 +2,11 @@
 
 namespace App\Providers;
 
+use App\Contracts\FCMNotificationInterface;
+use App\Contracts\FirebaseAuthInterface;
 use App\Services\CartService;
+use App\Services\FCMNotificationService;
+use App\Services\FirebaseAuthService;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -16,9 +20,18 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        // Register CartService for dependency injection
         $this->app->singleton(CartService::class, function ($app) {
             return new CartService;
+        });
+
+        $this->app->singleton(FirebaseAuthInterface::class, function ($app) {
+            return new FirebaseAuthService;
+        });
+
+        $this->app->singleton(FCMNotificationInterface::class, function ($app) {
+            return new FCMNotificationService(
+                $app->make(FirebaseAuthInterface::class)
+            );
         });
     }
 

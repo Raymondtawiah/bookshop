@@ -5,6 +5,7 @@ namespace App\Actions\Fortify;
 use App\Concerns\PasswordValidationRules;
 use App\Concerns\ProfileValidationRules;
 use App\Models\User;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Fortify\Contracts\CreatesNewUsers;
 
@@ -31,8 +32,8 @@ class CreateNewUser implements CreatesNewUsers
             'is_admin' => isset($input['is_admin']) ? true : false,
             'email_verified_at' => isset($input['is_admin']) && $input['is_admin'] ? now() : null, // Only admins are auto-verified
         ])->tap(function ($user) {
-            if (!$user->is_admin) {
-                \App\Services\NotificationService::newCustomer($user);
+            if (! $user->is_admin) {
+                NotificationService::newCustomer($user);
             }
         });
     }

@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -23,7 +24,7 @@ class AdminNotification extends Model
         'is_read' => 'boolean',
     ];
 
-    public static function createNotification(string $type, string $title, string $message = null, string $link = null): self
+    public static function createNotification(string $type, string $title, ?string $message = null, ?string $link = null): self
     {
         return self::create([
             'type' => $type,
@@ -39,7 +40,7 @@ class AdminNotification extends Model
         return self::where('is_read', false)->count();
     }
 
-    public static function getLatest(int $limit = 10): \Illuminate\Database\Eloquent\Collection
+    public static function getLatest(int $limit = 10): Collection
     {
         return self::latest()->limit($limit)->get();
     }

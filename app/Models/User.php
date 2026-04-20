@@ -80,6 +80,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->is_admin !== true;
     }
 
+    public function deviceTokens()
+    {
+        return $this->hasMany(DeviceToken::class);
+    }
+
     /**
      * Determine if the user should verify their email
      * Only customers need to verify, admins don't

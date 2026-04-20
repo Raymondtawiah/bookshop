@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
-use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -36,23 +35,23 @@ class ProductController extends Controller
         }
 
         // Get file path from public/books (works for both local and production)
-        $filePath = public_path('public/books/' . $book->book_pdf);
+        $filePath = public_path('public/books/'.$book->book_pdf);
 
         // Check if file exists in public/books
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             // Try public/books as fallback
-            $filePath = public_path('books/' . $book->book_pdf);
+            $filePath = public_path('books/'.$book->book_pdf);
         }
 
         // Check if file exists
-        if (!file_exists($filePath)) {
+        if (! file_exists($filePath)) {
             abort(404, 'PDF file not found.');
         }
 
         // Force download
         return response()->download($filePath, $book->book_pdf, [
             'Content-Type' => 'application/pdf',
-            'Content-Disposition' => 'attachment; filename="' . $book->book_pdf . '"',
+            'Content-Disposition' => 'attachment; filename="'.$book->book_pdf.'"',
         ]);
     }
 }
