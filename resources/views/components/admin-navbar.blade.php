@@ -47,7 +47,7 @@
                     </button>
                     
                     <!-- Notification Dropdown -->
-                    <div id="notification-dropdown" class="hidden absolute right-4 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50">
+                    <div id="notification-dropdown" class="hidden absolute right-0 mt-2 w-80 bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden z-50">
                         <div class="px-4 py-3 border-b border-gray-100 flex justify-between items-center">
                             <h3 class="font-semibold text-gray-900">Notifications</h3>
                             <button onclick="markAllAsRead()" class="text-xs text-indigo-600 hover:text-indigo-800">Mark all read</button>
