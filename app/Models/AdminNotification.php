@@ -54,4 +54,9 @@ class AdminNotification extends Model
     {
         self::where('is_read', false)->update(['is_read' => true]);
     }
+
+    public static function deleteOlderThan(int $hours = 12): int
+    {
+        return self::where('created_at', '<', now()->subHours($hours))->delete();
+    }
 }
