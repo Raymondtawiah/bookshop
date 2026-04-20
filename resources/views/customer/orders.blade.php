@@ -36,10 +36,7 @@
                                         <p class="text-sm text-gray-500">{{ $order->created_at->format('M d, Y h:i A') }}</p>
                                     </div>
                                     <div class="text-right">
-                                        @php($exchangeRate = $order->exchange_rate ?? config('settings.usd_to_ghs_rate', 12.50))
-                                        @php($amountGhs = $order->total_amount_ghs ?? ($order->total_amount * $exchangeRate))
-                                        <p class="text-lg font-bold text-gray-900">₵{{ number_format($amountGhs, 2) }}</p>
-                                        <p class="text-xs text-gray-500">(${{ number_format($order->total_amount, 2) }})</p>
+                                        <p class="text-lg font-bold text-gray-900">${{ number_format($order->total_amount, 2) }}</p>
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
                                             @if($order->status === 'delivered') bg-green-100 text-green-800
                                             @elseif($order->status === 'confirmed') bg-blue-100 text-blue-800
