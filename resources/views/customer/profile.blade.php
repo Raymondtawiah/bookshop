@@ -1,17 +1,8 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Profile - {{ config('app.name', 'Bookshop') }}</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="icon" href="/favicon.ico" sizes="any">
-    </head>
-    <body class="bg-gray-50 font-sans">
-        <x-customer-navbar />
+@extends('layouts.customer')
 
-        <!-- Main Content -->
-        <main class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">
+@section('title', 'Profile')
+
+@section('content')
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
                     <h2 class="text-lg font-semibold text-gray-900">Edit Profile</h2>
@@ -89,13 +80,4 @@
                     </div>
                 </form>
             </div>
-        </main>
-
-        <!-- Footer -->
-        <footer class="bg-white border-t border-gray-200 mt-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <p class="text-center text-sm text-gray-500">&copy; {{ date('Y') }} Bookshop. All rights reserved.</p>
-            </div>
-        </footer>
-    </body>
-</html>
+        @endsection

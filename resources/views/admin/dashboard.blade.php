@@ -1,20 +1,8 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Admin Dashboard - {{ config('app.name', 'Bookshop') }}</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-        <link rel="icon" href="/favicon.ico" sizes="any">
-    </head>
-    <body class="bg-gray-50 font-sans">
-        <x-flash-message />
-        
-        <x-admin-navbar />
+@extends('layouts.admin')
 
-        <!-- Main Content -->
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+@section('title', 'Admin Dashboard')
+
+@section('content')
             <!-- Welcome Section with Wave -->
             <div class="relative bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 mb-8 text-white overflow-hidden">
                 <h1 class="text-3xl font-bold mb-2">Welcome back, {{ auth()->user()->name }}! ⚙️</h1>
@@ -345,11 +333,4 @@
             setInterval(checkUpcomingMeetings, 60000);
         </script>
 
-        <!-- Footer -->
-        <footer class="bg-white border-t border-gray-200 mt-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <p class="text-center text-sm text-gray-500">&copy; {{ date('Y') }} Bookshop Admin. All rights reserved.</p>
-            </div>
-        </footer>
-    </body>
-</html>
+@endsection
