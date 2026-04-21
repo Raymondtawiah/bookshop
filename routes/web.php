@@ -17,6 +17,7 @@ use Illuminate\Auth\Access\Authorization;
 use Illuminate\Hashing\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
@@ -62,18 +63,23 @@ Route::middleware(['web'])->group(function () {
     })->middleware(['guest'])->name('login');
 
     Route::post('login', function (Request $request) {
+        Log::info('Login attempt started', ['email' => $request->email]);
+
         $credentials = $request->only('email', 'password');
         $remember = $request->boolean('remember');
 
         $user = User::where('email', $credentials['email'])->first();
 
         if (! $user || ! Illuminate\Support\Facades\Hash::check($credentials['password'], $user->password)) {
+            Log::info('Login failed - invalid credentials');
+
             return back()->withErrors([
                 'email' => 'The provided credentials do not match our records.',
             ])->onlyInput('email');
         }
 
         if ($user->is_admin) {
+            Log::info('Admin login - redirecting to admin dashboard');
             Auth::login($user, $remember);
             $request->session()->regenerate();
 
@@ -81,8 +87,11 @@ Route::middleware(['web'])->group(function () {
         }
 
         // Always verify customers on login (admin doesn't need verification)
+        Log::info('Customer login - sending verification code', ['user_id' => $user->id]);
         $request->session()->put('pending_login_user_id', $user->id);
         app(VerificationService::class)->sendCode($user, 'login');
+
+        Log::info('Redirecting to verification.login');
 
         return redirect()->route('verification.login');
     })->name('login.store');
@@ -224,8 +233,8 @@ Route::middleware(['auth', 'verify.customer'])->group(function () {
 });
 
 // Paystack Webhook - NO middleware (must be publicly accessible)
-Route::post('api/paystack/webhook', [PaystackWebhookController::class, 'handleWebhook'])->name('paystack.webhook');
-Route::get('api/paystack/verify/{reference}', [PaystackWebhookController::class, 'verifyPayment'])->name('paystack.verify');
+// Route::post('api/paystack/webhook', [PaystackWebhookController::class, 'handleWebhook'])->name('paystack.webhook');
+// Route::get('api/paystack/verify/{reference}', [PaystackWebhookController::class, 'verifyPayment'])->name('paystack.verify');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
