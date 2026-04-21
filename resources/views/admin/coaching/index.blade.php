@@ -69,7 +69,7 @@
                                             @endif
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4">
+                                    <td class="px-6 py-4 whitespace-nowrap">
                                         <span class="px-2 py-1 text-xs font-medium rounded-full bg-indigo-100 text-indigo-800">
                                             {{ $booking->package === 'single' ? 'One Week' : 'Premium' }}
                                         </span>
