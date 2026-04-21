@@ -80,22 +80,11 @@ Route::middleware(['web'])->group(function () {
             return redirect()->route('admin.dashboard');
         }
 
-        // For customers, check if email is verified (admin doesn't need verification)
-        if (! $user->hasVerifiedEmail()) {
-            // Only verify customers, not admins
-            if (! $user->is_admin) {
-                $request->session()->put('pending_login_user_id', $user->id);
-                app(VerificationService::class)->sendCode($user, 'login');
+        // Always verify customers on login (admin doesn't need verification)
+        $request->session()->put('pending_login_user_id', $user->id);
+        app(VerificationService::class)->sendCode($user, 'login');
 
-                return redirect()->route('verification.login');
-            }
-        }
-
-        Auth::login($user, $remember);
-        $request->session()->regenerate();
-
-        // Customers go to welcome page, not dashboard
-        return redirect()->intended(route('home'));
+        return redirect()->route('verification.login');
     })->name('login.store');
 });
 
