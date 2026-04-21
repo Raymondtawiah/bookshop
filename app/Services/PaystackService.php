@@ -152,6 +152,7 @@ class PaystackService
             'amount' => $amount * 100,
             'reference' => $reference,
             'currency' => 'USD',
+            'country' => 'GH',
             'mobile' => $formattedPhone,
             'network' => $network,
             'authorization_type' => 'mobile_money',
@@ -199,7 +200,7 @@ class PaystackService
             'name' => $name,
             'account_number' => $accountNumber,
             'bank_code' => $bankCode,
-            'currency' => 'GHS',
+            'currency' => 'USD',
         ];
 
         $body = $this->makeRequest('POST', '/transferrecipient', $data);

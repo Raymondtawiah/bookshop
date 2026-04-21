@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Mail\OrderConfirmation;
 use App\Models\Cart;
 use App\Models\Order;
-use App\Services\ExchangeRateService;
 use App\Services\NotificationService;
 use App\Services\PaystackService;
 use Illuminate\Http\Request;
@@ -65,19 +64,12 @@ class PaymentController extends Controller
             Log::info('Processing mobile money payment');
         }
 
-        // Lock exchange rate for this order - NEVER recalculate after payment
-        $exchangeRateService = new ExchangeRateService;
-        $lockedRate = $exchangeRateService->lockRateForOrder($totalUsd);
-        $exchangeRate = $lockedRate['exchange_rate'];
-        $totalInGhs = $lockedRate['total_ghs'];
-
-        // For all payment methods, use Paystack checkout page
-        // This allows user to select their preferred payment method (card, mobile money, bank)
-        $result = $this->paystack->initializePayment($email, $totalInGhs, $reference, 'GHS');
+        // For all payment methods, use Paystack checkout page with USD
+        $result = $this->paystack->initializePayment($email, $totalUsd, $reference, 'USD');
 
         if ($result['success']) {
-            // Create pending order with both USD and GHS amounts
-            $order = $this->createPendingOrder($request, $totalUsd, $reference, $totalInGhs, $exchangeRate);
+            // Create pending order in USD
+            $order = $this->createPendingOrder($request, $totalUsd, $reference);
 
             return response()->json([
                 'success' => true,
@@ -145,16 +137,16 @@ class PaymentController extends Controller
             $order = Order::where('order_number', $reference)->first();
 
             if ($order) {
-                // Verify GHS amount matches order total_ghs as final security check
-                $expectedGhs = $order->total_amount_ghs;
-                $paidGhs = $result['amount'];
-                $tolerance = 1; // Allow 1 GHS tolerance for rounding
+                // Verify USD amount matches order total as final security check
+                $expectedUsd = $order->total_amount;
+                $paidUsd = $result['amount'];
+                $tolerance = 0.01; // Allow 1 cent tolerance for rounding
 
-                if (abs($paidGhs - $expectedGhs) > $tolerance) {
+                if (abs($paidUsd - $expectedUsd) > $tolerance) {
                     Log::error('Payment amount mismatch', [
                         'order_id' => $order->id,
-                        'expected_ghs' => $expectedGhs,
-                        'paid_ghs' => $paidGhs,
+                        'expected_usd' => $expectedUsd,
+                        'paid_usd' => $paidUsd,
                     ]);
 
                     return redirect()->route('checkout')
@@ -164,18 +156,14 @@ class PaymentController extends Controller
                 // Get cart items before clearing
                 $cartItems = Cart::where('user_id', Auth::id())->get();
 
-                // Prepare order items data from cart with USD and GHS prices
-                $orderItems = $cartItems->map(function ($item) use ($order) {
-                    $unitPriceGhs = round($item->unit_price_usd * $order->exchange_rate, 2);
-
+                // Prepare order items data from cart with USD prices only
+                $orderItems = $cartItems->map(function ($item) {
                     return [
                         'book_id' => $item->book_id,
                         'product_name' => $item->product_name,
                         'unit_price_usd' => $item->unit_price_usd,
-                        'price_ghs' => $unitPriceGhs,
                         'quantity' => $item->quantity,
                         'total_price_usd' => $item->unit_price_usd * $item->quantity,
-                        'total_price_ghs' => $unitPriceGhs * $item->quantity,
                     ];
                 })->toArray();
 
@@ -259,28 +247,20 @@ class PaymentController extends Controller
     /**
      * Create pending order
      */
-    protected function createPendingOrder(Request $request, $totalUsd, $reference, $totalGhs = null, $exchangeRate = null)
+    protected function createPendingOrder(Request $request, $totalUsd, $reference)
     {
         $user = Auth::user();
 
         $cartItems = Cart::where('user_id', $user->id)->get();
 
-        // Use provided GHS amount and rate, or calculate from locked rate
-        $ghsAmount = $totalGhs ?? $totalUsd;
-        $rate = $exchangeRate ?? 1;
-
-        // Prepare order items data from cart with USD and GHS prices
-        $orderItems = $cartItems->map(function ($item) use ($rate) {
-            $unitPriceGhs = round($item->unit_price_usd * $rate, 2);
-
+        // Prepare order items data from cart with USD prices only
+        $orderItems = $cartItems->map(function ($item) {
             return [
                 'book_id' => $item->book_id,
                 'product_name' => $item->product_name,
                 'unit_price_usd' => $item->unit_price_usd,
-                'price_ghs' => $unitPriceGhs,
                 'quantity' => $item->quantity,
                 'total_price_usd' => $item->unit_price_usd * $item->quantity,
-                'total_price_ghs' => $unitPriceGhs * $item->quantity,
             ];
         })->toArray();
 
@@ -294,8 +274,6 @@ class PaymentController extends Controller
             'nationality' => $request->nationality ?? '',
             'payment_method' => $request->payment_method,
             'total_amount' => $totalUsd,
-            'total_amount_ghs' => $ghsAmount,
-            'exchange_rate' => $rate,
             'status' => 'pending',
             'payment_status' => 'pending',
             'order_items' => $orderItems,

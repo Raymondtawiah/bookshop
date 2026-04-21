@@ -54,8 +54,6 @@ class CoachingController extends Controller
         ]);
 
         $packagePrice = $validated['package'] === 'premium' ? 249 : 150;
-        $exchangeRate = config('settings.usd_to_ghs_rate', 12.50);
-        $packagePriceGhs = $packagePrice * $exchangeRate;
         $reference = 'COACH-'.time().rand(1000, 9999);
 
         $booking = CoachingBooking::create([
@@ -74,12 +72,12 @@ class CoachingController extends Controller
             'amount' => $packagePrice,
         ]);
 
-        // Convert USD to GHS for Paystack
+        // Use USD for Paystack
         $paymentResult = $this->paystack->initializePayment(
             $booking->email,
-            $packagePriceGhs,
+            $packagePrice,
             $reference,
-            'GHS',
+            'USD',
             route('coaching.callback')
         );
 
