@@ -53,7 +53,7 @@ class CoachingController extends Controller
             'notes' => 'nullable|string',
         ]);
 
-        $packagePrice = $validated['package'] === 'premium' ? 249 : 150;
+        $packagePrice = $validated['package'] === 'premium' ? 249 : 129;
         $reference = 'COACH-'.time().rand(1000, 9999);
 
         $booking = CoachingBooking::create([
