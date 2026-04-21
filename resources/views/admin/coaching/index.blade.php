@@ -71,7 +71,7 @@
                                     </td>
                                     <td class="px-6 py-4">
                                         <span class="px-2 py-1 text-xs font-medium rounded-full bg-indigo-100 text-indigo-800">
-                                            {{ ucfirst($booking->package) }}
+                                            {{ $booking->package === 'single' ? 'One Week' : 'Premium' }}
                                         </span>
                                     </td>
                                     <td class="px-6 py-4 text-sm text-gray-900">{{ $booking->interview_type }}</td>
@@ -182,7 +182,7 @@
                         </div>
                         <div>
                             <h4 class="text-sm font-medium text-gray-500 mb-2">Session Details</h4>
-                            <p class="text-gray-900"><span class="font-medium">Package:</span> ${booking.package.charAt(0).toUpperCase() + booking.package.slice(1)}</p>
+                            <p class="text-gray-900"><span class="font-medium">Package:</span> ${booking.package === 'single' ? 'One Week' : 'Premium'}</p>
                             <p class="text-gray-900"><span class="font-medium">Interview:</span> ${booking.interview_type}</p>
                             <p class="text-gray-900"><span class="font-medium">Date:</span> ${new Date(booking.interview_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                             <p class="text-gray-900"><span class="font-medium">Time:</span> ${booking.interview_time}</p>
