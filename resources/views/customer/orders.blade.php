@@ -36,7 +36,7 @@
                                         <p class="text-sm text-gray-500">{{ $order->created_at->format('M d, Y h:i A') }}</p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-lg font-bold text-gray-900">${{ number_format($order->total_amount, 2) }}</p>
+                                        <p class="text-lg font-bold text-gray-900">₵{{ number_format($order->total_amount, 2) }}</p>
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
                                             @if($order->status === 'delivered') bg-green-100 text-green-800
                                             @elseif($order->status === 'confirmed') bg-blue-100 text-blue-800
@@ -63,7 +63,7 @@
                                         <div class="flex items-center justify-between text-sm">
                                             <span class="text-gray-900">{{ is_array($item) ? ($item['product_name'] ?? 'Unknown') : 'Unknown' }}</span>
                                             <span class="text-gray-500">x{{ is_array($item) ? ($item['quantity'] ?? 1) : 1 }}</span>
-                                            <span class="font-medium text-gray-900">${{ number_format((is_array($item) ? ($item['product_price'] ?? 0) : 0) * (is_array($item) ? ($item['quantity'] ?? 1) : 1), 2) }}</span>
+                                            <span class="font-medium text-gray-900">₵{{ number_format((is_array($item) ? ($item['product_price'] ?? 0) : 0) * (is_array($item) ? ($item['quantity'] ?? 1) : 1), 2) }}</span>
                                         </div>
                                         @endforeach
                                     </div>

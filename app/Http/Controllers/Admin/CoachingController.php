@@ -72,12 +72,12 @@ class CoachingController extends Controller
             'amount' => $packagePrice,
         ]);
 
-        // Use USD for Paystack
+        // Use GHS for Paystack
         $paymentResult = $this->paystack->initializePayment(
             $booking->email,
             $packagePrice,
             $reference,
-            'USD',
+            'GHS',
             route('coaching.callback')
         );
 
