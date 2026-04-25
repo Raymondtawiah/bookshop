@@ -13,6 +13,7 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <link rel="icon" href="/favicon.ico" sizes="any">
         <link rel="apple-touch-icon" href="/favicon.ico">
+        <script src="https://cdn.tailwindcss.com"></script>
         <script>
             // Register service worker for PWA
             if ('serviceWorker' in navigator) {
