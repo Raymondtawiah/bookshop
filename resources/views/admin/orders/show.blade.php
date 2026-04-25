@@ -1,16 +1,11 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Details - Bookshop Admin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Order Details - {{ config('app.name', 'Bookshop') }}</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="icon" href="/favicon.ico" sizes="any">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
-    <script>
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
-    </script>
 </head>
 <body class="bg-gray-50 font-sans">
     <x-flash-message />
@@ -137,9 +132,9 @@
                                                 <div class="text-xs text-gray-500">Book ID: {{ is_array($item) ? ($item['book_id'] ?? '') : ($item->book_id ?? '') }}</div>
                                             @endif
                                         </td>
-                                        <td class="px-2 py-3 text-sm text-gray-900 whitespace-nowrap">${{ number_format(is_array($item) ? ($item['unit_price_usd'] ?? $item['product_price'] ?? 0) : ($item->unit_price_usd ?? $item->product_price ?? 0), 2) }}</td>
+                                        <td class="px-2 py-3 text-sm text-gray-900 whitespace-nowrap">₵{{ number_format(is_array($item) ? ($item['unit_price_usd'] ?? $item['product_price'] ?? 0) : ($item->unit_price_usd ?? $item->product_price ?? 0), 2) }}</td>
                                         <td class="px-2 py-3 text-sm text-gray-900 whitespace-nowrap">{{ is_array($item) ? ($item['quantity'] ?? 1) : ($item->quantity ?? 1) }}</td>
-                                        <td class="px-2 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">${{ number_format((is_array($item) ? ($item['unit_price_usd'] ?? $item['product_price'] ?? 0) : ($item->unit_price_usd ?? $item->product_price ?? 0)) * (is_array($item) ? ($item['quantity'] ?? 1) : ($item->quantity ?? 1)), 2) }}</td>
+                                        <td class="px-2 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">₵{{ number_format((is_array($item) ? ($item['unit_price_usd'] ?? $item['product_price'] ?? 0) : ($item->unit_price_usd ?? $item->product_price ?? 0)) * (is_array($item) ? ($item['quantity'] ?? 1) : ($item->quantity ?? 1)), 2) }}</td>
                                     </tr>
                                     @endforeach
                                 </tbody>
