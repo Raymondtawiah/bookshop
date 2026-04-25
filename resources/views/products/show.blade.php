@@ -1,16 +1,12 @@
- i<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <title>{{ $book->title }} - {{ config('app.name', 'Bookshop') }}</title>
-
-        <link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-
-        <!-- Using Tailwind CDN -->
-        <script src="https://cdn.tailwindcss.com"></script>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ $book->title }} - {{ config('app.name', 'Bookshop') }}</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     </head>
     <body class="antialiased bg-gray-50">
         <x-flash-message />
@@ -56,7 +52,7 @@
                                 @if($book->is_free)
                                     <span class="text-4xl font-bold text-green-600">FREE</span>
                                 @else
-                                    <span class="text-4xl font-bold text-indigo-600">${{ number_format($book->price_usd, 2) }}</span>
+                                    <span class="text-4xl font-bold text-indigo-600">₵{{ number_format($book->price_usd, 2) }}</span>
                                 @endif
                             </div>
 
@@ -170,7 +166,7 @@
                             <div class="p-5">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ $related->title }}</h3>
                                 
-                                <span class="text-xl font-bold text-indigo-600">${{ number_format($related->price_usd, 2) }}</span>
+                                <span class="text-xl font-bold text-indigo-600">₵{{ number_format($related->price_usd, 2) }}</span>
                             </div>
                         </a>
                         @endforeach

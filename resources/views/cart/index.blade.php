@@ -66,7 +66,7 @@
                              </div>
                             <div class="flex justify-between text-gray-600">
                                 <span>Tax</span>
-                                <span>$0.00</span>
+                                <span>₵0.00</span>
                             </div>
 <div class="border-t pt-2 flex justify-between text-lg font-bold">
                                  <span>Total</span>
