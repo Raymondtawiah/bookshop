@@ -83,8 +83,8 @@
                 
                 <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
                     <div class="border-2 border-gray-200 rounded-2xl p-8 hover:border-indigo-300 transition-colors">
-                        <h3 class="text-xl font-semibold text-gray-900 mb-2">1 Week Interview Intensive</h3>
-                        <p class="text-3xl font-bold text-indigo-600 mb-4">$129</p>
+<h3 class="text-xl font-semibold text-gray-900 mb-2">1 Week Interview Intensive</h3>
+<p class="text-3xl font-bold text-indigo-600 mb-4">₵129</p>
                         <p class="text-gray-500 mb-4">Perfect if your interview is coming up soon and you need fast focused preparation.</p>
                         <p class="font-medium text-gray-900 mb-3">What you get:</p>
                         <ul class="space-y-2 text-gray-600 mb-6">
@@ -127,8 +127,8 @@
                     
                     <div class="border-2 border-indigo-500 rounded-2xl p-8 relative">
                         <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-4 py-1 rounded-full text-sm font-medium">Most Popular</div>
-                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Full Coaching Program</h3>
-                        <p class="text-3xl font-bold text-indigo-600 mb-4">$249</p>
+<h3 class="text-xl font-semibold text-gray-900 mb-2">Full Coaching Program</h3>
+<p class="text-3xl font-bold text-indigo-600 mb-4">₵249</p>
                         <p class="text-gray-500 mb-4">For deeper preparation and lasting skills.</p>
                         <p class="font-medium text-gray-900 mb-3">What you get:</p>
                         <ul class="space-y-2 text-gray-600 mb-6">
@@ -292,7 +292,7 @@
                                     <div class="flex items-center justify-between">
                                         <div>
                                             <p class="font-semibold text-gray-900">One Week Intensive</p>
-                                            <p class="text-sm text-gray-500">$129</p>
+                                            <p class="text-sm text-gray-500">₵129</p>
                                         </div>
                                         <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500">
                                             <div class="w-2 h-2 rounded-full bg-white hidden has-[:checked]:block"></div>
@@ -303,8 +303,8 @@
                                     <input type="radio" name="package" value="premium" class="sr-only" {{ old('package', 'premium') == 'premium' ? 'checked' : '' }}>
                                     <div class="flex items-center justify-between">
                                         <div>
-                                            <p class="font-semibold text-gray-900">Full Coaching Program</p>
-                                            <p class="text-sm text-gray-500">$249</p>
+<p class="font-semibold text-gray-900">Full Coaching Program</p>
+<p class="text-sm text-gray-500">₵249</p>
                                         </div>
                                         <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500">
                                             <div class="w-2 h-2 rounded-full bg-white hidden has-[:checked]:block"></div>

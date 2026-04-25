@@ -127,7 +127,7 @@
                                     <div class="border-t pt-3 mt-3">
                                         <div class="flex justify-between">
                                             <span class="text-gray-600 font-semibold">Amount:</span>
-                                            <span class="font-bold text-indigo-600 text-lg">${{ number_format($total, 2) }}</span>
+                                            <span class="font-bold text-indigo-600 text-lg">₵{{ number_format($total, 2) }}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -154,7 +154,7 @@
                     <div class="border-t pt-6">
                         <div class="flex justify-between text-lg mb-2">
                             <span class="font-semibold">Total Amount Paid:</span>
-                            <span class="font-bold text-indigo-600">${{ number_format($total, 2) }}</span>
+                            <span class="font-bold text-indigo-600">₵{{ number_format($total, 2) }}</span>
                         </div>
                         @if($order->customer_name)
                         <div class="flex justify-between text-lg mb-2">

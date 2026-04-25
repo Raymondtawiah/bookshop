@@ -14,6 +14,6 @@ return [
     |--------------------------------------------------------------------------
     */
     'site_name' => env('APP_NAME', 'Bookshop'),
-    'currency_symbol' => '$',
-    'currency_code' => 'USD',
+    'currency_symbol' => '₵',
+    'currency_code' => 'GHS',
 ];

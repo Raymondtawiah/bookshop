@@ -47,6 +47,11 @@ class PaymentController extends Controller
             return $item->unit_price_usd * $item->quantity;
         });
 
+        // Convert USD to GHS for Paystack transaction
+        $exchangeRateService = new ExchangeRateService;
+        $lockedRate = $exchangeRateService->lockRateForOrder($totalUsd);
+        $totalGhs = $lockedRate['total_ghs'];
+
         $email = $request->input('email') ?? (Auth::check() ? Auth::user()->email : null);
 
         if (! $email) {
@@ -64,8 +69,8 @@ class PaymentController extends Controller
             Log::info('Processing mobile money payment');
         }
 
-        // For all payment methods, use Paystack checkout page with USD
-        $result = $this->paystack->initializePayment($email, $totalUsd, $reference, 'USD');
+        // For all payment methods, use Paystack checkout page with GHS
+        $result = $this->paystack->initializePayment($email, $totalGhs, $reference, 'GHS');
 
         if ($result['success']) {
             // Create pending order in USD

@@ -105,7 +105,7 @@
                                 </div>
                                 <div>
                                     <dt class="text-sm font-medium text-gray-500">Total Amount</dt>
-                                    <dd class="text-xl font-bold text-indigo-600">${{ number_format($order->total_amount, 2) }}</dd>
+                                    <dd class="text-xl font-bold text-indigo-600">₵{{ number_format($order->total_amount, 2) }}</dd>
                                 </div>
                             </dl>
                         </div>
