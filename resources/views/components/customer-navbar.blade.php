@@ -1,4 +1,4 @@
-<nav class="fixed top-0 left-0 right-0 z-50 bg-white shadow-md overflow-x-hidden">
+<nav class="fixed top-0 left-0 right-0 z-[9999] bg-white shadow-md" style="z-index: 9999 !important;">
 <script>
 // Handle back-forward cache (bfcache) - ensures fresh content on navigation
 window.addEventListener('pageshow', function(event) {
@@ -60,7 +60,7 @@ window.addEventListener('pageshow', function(event) {
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </button>
-                    <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden group-hover:block border">
+                     <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden group-hover:block border z-[9999]" style="z-index: 9999 !important;">
                         <a href="{{ route('profile') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">My Profile</a>
                         <a href="{{ route('my-orders') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">My Orders</a>
                         <form method="POST" action="{{ route('logout') }}">

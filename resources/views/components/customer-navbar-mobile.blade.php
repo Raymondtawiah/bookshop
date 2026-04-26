@@ -25,16 +25,16 @@
     </button>
 </div>
 
-<!-- Mobile Menu Dropdown -->
-<div id="customer-mobile-menu" class="absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 p-4" style="display: none; width: 100%;">
+ <!-- Mobile Menu Dropdown -->
+ <div id="customer-mobile-menu" class="absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 p-4 z-[9999] overflow-visible" style="display: none; width: 100%; min-width: 100vw; opacity: 1 !important; visibility: visible !important;">
     <div class="flex flex-col space-y-3">
-        <a href="{{ route('home') }}#home" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Home</a>
-        <a href="{{ route('home') }}#store" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Store</a>
-        <a href="{{ route('visa-tip') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Tips</a>
+                     <a href="{{ route('home') }}#home" class="block py-3 px-4 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Home</a>
+                     <a href="{{ route('home') }}#store" class="block py-3 px-4 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Store</a>
+                     <a href="{{ route('visa-tip') }}" class="block py-3 px-4 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Visa Tips</a>
         {{-- <a href="{{ route('visa-training') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Training</a> --}}
-        <a href="{{ route('home') }}#about" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">About</a>
-        <a href="{{ route('home') }}#contact" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Contact</a>
-        <a href="{{ route('coaching.booking') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Coaching</a>
+         <a href="{{ route('home') }}#about" class="block py-3 px-4 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">About</a>
+         <a href="{{ route('home') }}#contact" class="block py-3 px-4 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Contact</a>
+         <a href="{{ route('coaching.booking') }}" class="block py-3 px-4 text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Coaching</a>
         
         @auth
         <hr class="border-gray-200 my-2">
@@ -50,23 +50,24 @@
                 <p class="text-xs text-gray-500">{{ auth()->user()->email }}</p>
             </div>
         </div>
-        <a href="{{ route('profile') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Settings</a>
-        <a href="{{ route('my-orders') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">My Orders</a>
-        <form method="POST" action="{{ route('logout') }}" class="w-full">
-            @csrf
-            <button type="submit" class="text-left text-red-600 hover:text-red-800 font-medium transition-colors w-full">
-                Logout
-            </button>
-        </form>
-        @endauth
-
-        @guest
-        <hr class="border-gray-200 my-2">
-        <a href="{{ route('login') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Sign In</a>
-        @if (Route::has('register'))
-        <a href="{{ route('register') }}" class="text-indigo-600 hover:text-indigo-800 font-medium transition-colors">Register</a>
-        @endif
-        @endguest
+         <a href="{{ route('profile') }}" class="block py-3 px-4 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Settings</a>
+         <a href="{{ route('my-orders') }}" class="block py-3 px-4 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">My Orders</a>
+         <form method="POST" action="{{ route('logout') }}" class="w-full">
+             @csrf
+             <button type="submit" class="w-full text-left px-4 py-3 text-red-600 hover:text-red-800 font-medium transition-colors border-b border-gray-100">
+                 Logout
+             </button>
+          </form>
+          @endauth
+                     </div>
+            
+                     @guest
+                     <hr class="border-gray-200 my-2">
+         <a href="{{ route('login') }}" class="block py-3 px-4 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Sign In</a>
+         @if (Route::has('register'))
+         <a href="{{ route('register') }}" class="block py-3 px-4 text-indigo-600 hover:text-indigo-800 font-medium transition-colors">Register</a>
+         @endif
+         @endguest
     </div>
 </div>
 
@@ -79,11 +80,13 @@
         
         console.log('Menu:', mobileMenu.style.display);
         
-        // Force toggle display
+        // Force toggle display - add/remove a class instead of inline style
         if (mobileMenu.style.display === 'none') {
             mobileMenu.style.display = 'block';
+            mobileMenu.classList.remove('hidden');
         } else {
             mobileMenu.style.display = 'none';
+            mobileMenu.classList.add('hidden');
         }
         menuIcon.classList.toggle('hidden');
         closeIcon.classList.toggle('hidden');

@@ -4,13 +4,25 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Visa Tips - {{ config('app.name', 'Bookshop') }}</title>
-        <script src="https://cdn.tailwindcss.com"></script>
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
         <link rel="icon" href="/favicon.ico" sizes="any">
+        <style>
+            html, body {
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+            }
+            #app, body > div:first-child {
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+            }
+        </style>
     </head>
-    <body class="antialiased">
+    <body class="antialiased m-0 p-0 box-border w-full min-w-0">
         <x-flash-message />
         <x-customer-navbar />
-
+        
+        <div class="w-full overflow-x-hidden min-w-0">
+        
         <!-- Hero Section with S-Wave -->
         <section class="relative pt-32 pb-20 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700">
             <!-- Background Image -->
@@ -184,6 +196,7 @@
                 </div>
             </div>
         </section>
+        </div>
 
       <x-customer-footer />
     </body>

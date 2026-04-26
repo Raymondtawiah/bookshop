@@ -7,7 +7,7 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="icon" href="/favicon.ico" sizes="any">
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
+     <style>
         [x-cloak] { display: none !important; }
         .gradient-bg { background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%); }
         .countdown-pulse { animation: pulse 2s infinite; }
@@ -15,13 +15,19 @@
             0%, 100% { opacity: 1; }
             50% { opacity: 0.7; }
         }
+        html, body {
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+        }
     </style>
 </head>
-    <body class="bg-gray-50 font-sans pt-14">
+    <body class="bg-gray-50 font-sans pt-14 m-0 p-0 box-border w-full min-w-0">
         <x-flash-message />
         
         @include('components.customer-navbar')
-
+        
+        <div class="w-full overflow-x-hidden min-w-0">
+        
         @php
             $isActive = \App\Models\SiteSetting::get('coaching_booking_active', 'true') === 'true';
             $isAdmin = auth()->check() && auth()->user()->is_admin;
@@ -421,5 +427,6 @@
             checkBookingStatus();
             setInterval(checkBookingStatus, 10000);
         </script>
+        </div>
     </body>
 </html>

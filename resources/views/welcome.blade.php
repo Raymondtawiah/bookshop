@@ -38,7 +38,7 @@
         }
     </style>
     </head>
-    <body class="antialiased overflow-x-hidden m-0 p-0 box-border w-full min-w-0 relative">
+    <body class="antialiased overflow-x-hidden m-0 p-0 box-border w-full min-w-0">
         <x-flash-message />
         <!-- Navigation -->
         <x-customer-navbar />
@@ -61,25 +61,29 @@
                     <p class="text-xl md:text-2xl text-white/90 mb-6 max-w-2xl mx-auto">
                         Practical guides to help students and travelers understand visa interviews, avoid common mistakes, and answer visa officer questions with confidence.
                     </p>
-                    <div class="mb-8">
-                        <form action="{{ route('search') }}" method="GET" class="flex gap-2 max-w-xl mx-auto">
-                            <div class="relative flex-1">
-                                <input 
-                                    type="text" 
-                                    name="q" 
-                                    value="{{ $query ?? '' }}"
-                                    placeholder="Search books by title, author, category..." 
-                                    class="w-full px-5 py-3 pl-12 rounded-xl border border-white/20 bg-white/10 text-white placeholder-white/70 focus:bg-white focus:text-gray-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
-                                >
-                                <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                                </svg>
-                            </div>
-                            <button type="submit" class="px-6 py-3 bg-white text-indigo-600 font-medium rounded-xl hover:bg-gray-100 transition-colors">
-                                Search
-                            </button>
-                        </form>
-                    </div>
+                     <div class="mb-8">
+                         <form action="{{ route('search') }}" method="GET" class="flex gap-2 max-w-xl mx-auto" id="searchForm">
+                             <div class="relative flex-1">
+                                 <input 
+                                     type="text" 
+                                     name="q" 
+                                     id="liveSearch" 
+                                     value="{{ $query ?? '' }}"
+                                     placeholder="Search books by title, author, category..." 
+                                     class="w-full px-5 py-3 pl-12 rounded-xl border border-white/20 bg-white/10 text-white placeholder-white/70 focus:bg-white focus:text-gray-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
+                                 >
+                                 <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                                 </svg>
+                             </div>
+                             <button type="submit" class="px-6 py-3 bg-white text-indigo-600 font-medium rounded-xl hover:bg-gray-100 transition-colors">
+                                 Search
+                             </button>
+                     </form>
+                     <div id="searchResults" class="mt-4 text-center">
+                         <p class="text-indigo-200 text-sm">Start typing to search books...</p>
+                     </div>
+                 </div>
                     <div class="flex flex-col sm:flex-row items-center justify-center gap-4 top-1.5">
                         @if(\App\Models\Book::count() > 0)
                         <a href="#store" class="px-6 py-3 bg-white text-indigo-600 font-medium rounded-lg hover:bg-gray-100 transition-colors">
@@ -401,8 +405,48 @@
             }
         </style>
 
-        <script>
-            // Newsletter subscription handler
+         <script>
+             // Live search handler
+             let searchTimeout = null;
+             const searchInput = document.getElementById('liveSearch');
+             const searchResults = document.getElementById('searchResults');
+             const storeSection = document.getElementById('store');
+             
+             if (searchInput && searchResults) {
+                 searchInput.addEventListener('input', function(e) {
+                     clearTimeout(searchTimeout);
+                     const query = e.target.value.trim();
+                     
+                     if (query.length === 0) {
+                         // Show original store section
+                         document.getElementById('searchForm').action = '{{ route('search') }}';
+                         if (document.querySelector('input[name="q"]')) {
+                             document.querySelector('input[name="q"]').value = '';
+                         }
+                         // In a real implementation, you'd reload or show original content
+                         searchResults.innerHTML = '<p class="text-indigo-200 text-sm">Start typing to search books...</p>';
+                         return;
+                     }
+                     
+                     // Update form action
+                     document.getElementById('searchForm').action = '{{ route('search') }}?q=' + encodeURIComponent(query);
+                     document.querySelector('input[name="q"]').value = query;
+                     
+                     searchTimeout = setTimeout(() => {
+                         fetch('{{ route("search") }}?q=' + encodeURIComponent(query) + '&ajax=1')
+                             .then(response => response.text())
+                             .then(html => {
+                                 searchResults.innerHTML = html;
+                             })
+                             .catch(error => {
+                                 console.error('Search error:', error);
+                                 searchResults.innerHTML = '<p class="text-red-400 text-sm">Error loading results</p>';
+                             });
+                     }, 300);
+                 });
+             }
+             
+             // Newsletter subscription handler
             function handleSubscribe(event) {
                 event.preventDefault();
                 
