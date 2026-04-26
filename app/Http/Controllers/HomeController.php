@@ -47,6 +47,11 @@ class HomeController extends Controller
             ->latest()
             ->get();
 
+        // AJAX request - return only the results HTML
+        if ($request->ajax || $request->input('ajax') == 1) {
+            return view('components.sections.store-section', compact('books'));
+        }
+
         if (Auth::check()) {
             $cartService = app(CartService::class);
             $cartCount = $cartService->getItemCount();
