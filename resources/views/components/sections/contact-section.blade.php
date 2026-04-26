@@ -6,8 +6,8 @@
             <p class="text-xl text-gray-600">Have questions? We'd love to hear from you!</p>
         </div>
         <div class="max-w-2xl mx-auto">
-            <!-- Horizontal scroll on mobile, grid on desktop -->
-            <div class="flex overflow-x-auto gap-6 pb-4 md:grid md:grid-cols-3 md:gap-8 md:overflow-x-visible md:pb-0 scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
+             <!-- Horizontal scroll on mobile, grid on desktop -->
+             <div class="grid grid-cols-3 gap-4 md:gap-8">
                 <div class="flex-shrink-0 w-40 text-center opacity-0 translate-y-8 transition-all duration-700 delay-100" data-animate-target>
                     <div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">

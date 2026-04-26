@@ -6,16 +6,16 @@
             <p class="text-xl text-gray-600 max-w-2xl mx-auto">Handpicked selections from our latest collection</p>
         </div>
         
-        <!-- Horizontal scroll on mobile, grid on desktop -->
-        <div class="flex overflow-x-auto gap-6 pb-4 md:grid md:grid-cols-3 lg:grid-cols-4 md:overflow-x-visible md:gap-6 scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
+         <!-- Horizontal scroll on mobile, grid on desktop -->
+         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
             @forelse($books as $index => $book)
-            <div class="flex-shrink-0 w-40 md:w-auto opacity-0 translate-y-8 transition-all duration-700" data-animate-target style="transition-delay: {{ $index * 100 }}ms;">
+             <div class="opacity-0 translate-y-8 transition-all duration-700" data-animate-target style="transition-delay: {{ $index * 100 }}ms;">
                 @if($book->isFreePdf())
                 <a href="{{ route('product.download', $book->id) }}" class="block transform group-hover:-translate-y-2 transition-all duration-300" title="Download PDF">
                 @else
                 <a href="{{ route('product.show', $book->id) }}" class="block transform group-hover:-translate-y-2 transition-all duration-300">
                 @endif
-                    <div class="w-40 h-60 md:w-full md:h-96 rounded-xl shadow-lg overflow-hidden relative z-10 bg-white border border-gray-100 group-hover:shadow-2xl group-hover:border-indigo-200 transition-all duration-300">
+                     <div class="w-full h-60 md:h-96 rounded-xl shadow-lg overflow-hidden relative z-10 bg-white border border-gray-100 group-hover:shadow-2xl group-hover:border-indigo-200 transition-all duration-300">
                         @if($book->cover_image)
                             <img src="{{ $book->cover_image_url }}" alt="{{ $book->title }}" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
                         @else
@@ -43,7 +43,7 @@
                     </div>
                 </a>
                 <div class="text-center mt-4">
-                    <h3 class="text-base font-bold text-gray-900 truncate w-40 mx-auto group-hover:text-indigo-600 transition-colors duration-300">{{ $book->title }}</h3>
+                     <h3 class="text-base font-bold text-gray-900 truncate mx-auto group-hover:text-indigo-600 transition-colors duration-300">{{ $book->title }}</h3>
                     @if($book->isFreePdf())
                     <p class="text-lg font-extrabold text-green-600 mt-1">FREE</p>
                     @else
