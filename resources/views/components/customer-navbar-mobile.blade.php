@@ -28,13 +28,13 @@
  <!-- Mobile Menu Dropdown -->
  <div id="customer-mobile-menu" class="absolute top-full left-0 right-0 bg-white shadow-lg border-t border-gray-200 p-4 z-[9999] overflow-visible" style="display: none; width: 100%; min-width: 100vw; opacity: 1 !important; visibility: visible !important;">
     <div class="flex flex-col space-y-3">
-                     <a href="{{ route('home') }}#home" class="block py-3 px-4 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Home</a>
-                     <a href="{{ route('home') }}#store" class="block py-3 px-4 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Store</a>
-                     <a href="{{ route('visa-tip') }}" class="block py-3 px-4 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Visa Tips</a>
+                      <a href="{{ route('home') }}#home" class="block py-2 px-3 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Home</a>
+                      <a href="{{ route('home') }}#store" class="block py-2 px-3 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Store</a>
+                      <a href="{{ route('visa-tip') }}" class="block py-2 px-3 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Visa Tips</a>
         {{-- <a href="{{ route('visa-training') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Training</a> --}}
-         <a href="{{ route('home') }}#about" class="block py-3 px-4 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">About</a>
-         <a href="{{ route('home') }}#contact" class="block py-3 px-4 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Contact</a>
-         <a href="{{ route('coaching.booking') }}" class="block py-3 px-4 text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Coaching</a>
+          <a href="{{ route('home') }}#about" class="block py-2 px-3 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">About</a>
+          <a href="{{ route('home') }}#contact" class="block py-2 px-3 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Contact</a>
+          <a href="{{ route('coaching.booking') }}" class="block py-2 px-3 text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Coaching</a>
         
         @auth
         <hr class="border-gray-200 my-2">
@@ -50,22 +50,22 @@
                 <p class="text-xs text-gray-500">{{ auth()->user()->email }}</p>
             </div>
         </div>
-         <a href="{{ route('profile') }}" class="block py-3 px-4 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Settings</a>
-         <a href="{{ route('my-orders') }}" class="block py-3 px-4 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">My Orders</a>
+         <a href="{{ route('profile') }}" class="block py-2 px-3 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Settings</a>
+         <a href="{{ route('my-orders') }}" class="block py-2 px-3 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">My Orders</a>
          <form method="POST" action="{{ route('logout') }}" class="w-full">
              @csrf
-             <button type="submit" class="w-full text-left px-4 py-3 text-red-600 hover:text-red-800 font-medium transition-colors border-b border-gray-100">
+             <button type="submit" class="w-full text-left px-3 py-2 text-red-600 hover:text-red-800 font-medium transition-colors border-b border-gray-100">
                  Logout
              </button>
-          </form>
+         </form>
           @endauth
                      </div>
             
                      @guest
                      <hr class="border-gray-200 my-2">
-         <a href="{{ route('login') }}" class="block py-3 px-4 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Sign In</a>
+         <a href="{{ route('login') }}" class="block py-2 px-3 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Sign In</a>
          @if (Route::has('register'))
-         <a href="{{ route('register') }}" class="block py-3 px-4 text-indigo-600 hover:text-indigo-800 font-medium transition-colors">Register</a>
+         <a href="{{ route('register') }}" class="block py-2 px-3 text-indigo-600 hover:text-indigo-800 font-medium transition-colors">Register</a>
          @endif
          @endguest
     </div>

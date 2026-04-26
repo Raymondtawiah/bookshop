@@ -62,12 +62,11 @@
                         Practical guides to help students and travelers understand visa interviews, avoid common mistakes, and answer visa officer questions with confidence.
                     </p>
                      <div class="mb-8">
-                         <form action="{{ route('search') }}" method="GET" class="flex gap-2 max-w-xl mx-auto" id="searchForm">
+                         <form action="{{ route('search') }}" method="GET" class="flex gap-2 max-w-xl mx-auto">
                              <div class="relative flex-1">
                                  <input 
                                      type="text" 
                                      name="q" 
-                                     id="liveSearch" 
                                      value="{{ $query ?? '' }}"
                                      placeholder="Search books by title, author, category..." 
                                      class="w-full px-5 py-3 pl-12 rounded-xl border border-white/20 bg-white/10 text-white placeholder-white/70 focus:bg-white focus:text-gray-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
@@ -79,11 +78,8 @@
                              <button type="submit" class="px-6 py-3 bg-white text-indigo-600 font-medium rounded-xl hover:bg-gray-100 transition-colors">
                                  Search
                              </button>
-                     </form>
-                     <div id="searchResults" class="mt-4 text-center">
-                         <p class="text-indigo-200 text-sm">Start typing to search books...</p>
+                         </form>
                      </div>
-                 </div>
                     <div class="flex flex-col sm:flex-row items-center justify-center gap-4 top-1.5">
                         @if(\App\Models\Book::count() > 0)
                         <a href="#store" class="px-6 py-3 bg-white text-indigo-600 font-medium rounded-lg hover:bg-gray-100 transition-colors">
@@ -388,123 +384,60 @@
         </section>
         
 
-        <style>
-            @keyframes slideInFromRight {
-                from {
-                    transform: translateX(100%);
-                    opacity: 0;
-                }
-                to {
-                    transform: translateX(0);
-                    opacity: 1;
-                }
-            }
-            
-            .animate-slide-in {
-                animation: slideInFromRight 0.3s ease-out forwards;
-            }
-        </style>
-
-         <script>
-             // Live search handler
-             let searchTimeout = null;
-             const searchInput = document.getElementById('liveSearch');
-             const searchResults = document.getElementById('searchResults');
-             const storeSection = document.getElementById('store');
-             
-             if (searchInput && searchResults) {
-                 searchInput.addEventListener('input', function(e) {
-                     clearTimeout(searchTimeout);
-                     const query = e.target.value.trim();
-                     
-                     if (query.length === 0) {
-                         // Show original store section
-                         document.getElementById('searchForm').action = '{{ route('search') }}';
-                         if (document.querySelector('input[name="q"]')) {
-                             document.querySelector('input[name="q"]').value = '';
-                         }
-                         // In a real implementation, you'd reload or show original content
-                         searchResults.innerHTML = '<p class="text-indigo-200 text-sm">Start typing to search books...</p>';
-                         return;
-                     }
-                     
-                     // Update form action
-                     document.getElementById('searchForm').action = '{{ route('search') }}?q=' + encodeURIComponent(query);
-                     document.querySelector('input[name="q"]').value = query;
-                     
-                     searchTimeout = setTimeout(() => {
-                         fetch('{{ route("search") }}?q=' + encodeURIComponent(query) + '&ajax=1')
-                             .then(response => response.text())
-                             .then(html => {
-                                 searchResults.innerHTML = html;
-                             })
-                             .catch(error => {
-                                 console.error('Search error:', error);
-                                 searchResults.innerHTML = '<p class="text-red-400 text-sm">Error loading results</p>';
-                             });
-                     }, 300);
-                 });
+         <style>
+             @keyframes slideInFromRight {
+                 from {
+                     transform: translateX(100%);
+                     opacity: 0;
+                 }
+                 to {
+                     transform: translateX(0);
+                     opacity: 1;
+                 }
              }
              
+             .animate-slide-in {
+                 animation: slideInFromRight 0.3s ease-out forwards;
+             }
+         </style>
+
+         <script>
              // Newsletter subscription handler
-            function handleSubscribe(event) {
-                event.preventDefault();
-                
-                // Show success flash message
-                const flashHtml = `
-                    <div class="fixed top-20 right-4 z-50 max-w-sm animate-slide-in" id="newsletter-flash">
-                        <div class="flex items-center p-6 rounded-xl shadow-2xl bg-green-50 border-2 border-green-200">
-                            <div class="flex-shrink-0 mr-4">
-                                <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                                </svg>
-                            </div>
-                            <div class="flex-1">
-                                <p class="text-lg font-bold text-green-800">Thank you for subscribing!</p>
-                                <p class="text-sm text-green-700 mt-1">You'll receive our latest updates.</p>
-                            </div>
-                            <button onclick="this.parentElement.parentElement.remove()" class="flex-shrink-0 ml-2 text-gray-500 hover:text-gray-700">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                                </svg>
-                            </button>
-                        </div>
-                    </div>
-                `;
-                
-                document.body.insertAdjacentHTML('beforeend', flashHtml);
-                
-                // Clear the input
-                document.getElementById('newsletter-email').value = '';
-                
-                // Remove after 5 seconds
-                setTimeout(() => {
-                    const flash = document.getElementById('newsletter-flash');
-                    if (flash) flash.remove();
-                }, 5000);
-            }
-
-            document.addEventListener('DOMContentLoaded', function() {
-                const counters = document.querySelectorAll('.counter');
-                const speed = 20;
-
-                counters.forEach(counter => {
-                    const updateCount = () => {
-                        const target = +counter.getAttribute('data-target');
-                        const count = +counter.innerText;
-                        const inc = target / speed;
-
-                        if (count < target) {
-                            counter.innerText = Math.ceil(count + inc);
-                            setTimeout(updateCount, 10);
-                        } else {
-                            counter.innerText = target + '+';
-                        }
-                    };
-                    updateCount();
-                });
-            });
-        </script>
+             function handleSubscribe(event) {
+                 event.preventDefault();
+                 
+                 // Show success flash message
+                 const flashHtml = `
+                     <div class="fixed top-20 right-4 z-50 max-w-sm animate-slide-in" id="newsletter-flash">
+                         <div class="flex items-center p-6 rounded-xl shadow-2xl bg-green-50 border-2 border-green-200">
+                             <div class="flex-shrink-0 mr-4">
+                                 <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                 </svg>
+                             </div>
+                             <div class="flex-1">
+                                 <p class="text-lg font-bold text-green-800">Thank you for subscribing!</p>
+                                 <p class="text-sm text-green-700 mt-1">You'll receive our latest updates.</p>
+                             </div>
+                             <button onclick="this.parentElement.parentElement.remove()" class="flex-shrink-0 ml-2 text-gray-500 hover:text-gray-700">
+                                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                 </svg>
+                             </button>
+                         </div>
+                     </div>
+                 `;
+                 document.body.insertAdjacentHTML('beforeend', flashHtml);
+                 
+                 // Remove flash message after 5 seconds
+                 setTimeout(() => {
+                     const flash = document.getElementById('newsletter-flash');
+                     if (flash) {
+                         flash.remove();
+                     }
+                 }, 5000);
+             }
+         </script>
         <x-customer-footer />
 
         <x-install-pwa />

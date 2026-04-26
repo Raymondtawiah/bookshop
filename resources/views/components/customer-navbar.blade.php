@@ -26,8 +26,8 @@ window.addEventListener('pageshow', function(event) {
                 VISA WITH NATHANIEL
             </a>
 
-            <!-- Desktop Menu -->
-            <div class="hidden md:flex items-center space-x-6">
+             <!-- Desktop Menu -->
+             <div class="hidden md:flex items-center space-x-8">
                 <a href="{{ route('home') }}#home" class="text-gray-700 hover:text-indigo-600">Home</a>
                 <!-- Always show Store link - it will scroll to store section -->
                 <a href="{{ route('home') }}#store" class="text-gray-700 hover:text-indigo-600">Store</a>
