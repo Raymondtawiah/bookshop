@@ -30,11 +30,6 @@ class Book extends Model
         'is_free' => 'boolean',
     ];
 
-    public function getPriceAttribute(): float
-    {
-        return (float) $this->attributes['price'];
-    }
-
     public function getFormattedPriceAttribute(): string
     {
         return '₵'.number_format($this->price, 2);
