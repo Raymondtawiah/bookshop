@@ -8,7 +8,6 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="BookShop" />
     <link rel="manifest" href="/manifest.json">
-    <script src="https://cdn.tailwindcss.com"></script>
     <title>{{ config('app.name', 'Bookshop') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="icon" href="/favicon.ico" sizes="any">
@@ -28,7 +27,7 @@
             }
         </script>
     </head>
-    <body class="antialiased" style="overflow-x: hidden; max-width: 100vw;">
+    <body class="antialiased">
         <x-flash-message />
         <!-- Navigation -->
         <x-customer-navbar />
@@ -37,7 +36,7 @@
         <section id="home" class="relative pt-32 pb-20 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700">
             <!-- Background Image -->
             <div class="absolute inset-0">
-                <img src="{{ asset('welcome.jpg') }}" alt="Bookshop" class="w-full h-full object-cover object-[center_70%]">
+                <img src="{{ asset('welcome.jpg') }}" alt="Bookshop" class="w-full h-full object-cover" style="object-position: center 70%;">
                 <div class="absolute inset-0 bg-gradient-to-r from-indigo-900/80 to-purple-900/80"></div>
             </div>
             <div class="max-w-7xl mx-auto px-6 relative z-10">
@@ -141,11 +140,11 @@
 
                             <!-- Price / FREE -->
                             <div class="mt-3 flex items-center justify-between">
-                                @if($book->book_pdf)
+                            @if($book->book_pdf)
                                     <p class="font-bold text-xl text-green-600">FREE</p>
                                 @else
-<p class="font-bold text-xl text-indigo-600">
-                                         ₵{{ number_format($book->price_usd, 2) }}
+    <p class="font-bold text-xl text-indigo-600">
+                                         ₵{{ number_format($book->price, 2) }}
                                      </p>
                                 @endif
                             </div>

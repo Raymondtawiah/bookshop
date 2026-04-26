@@ -41,7 +41,7 @@
                     @csrf
                     <input type="hidden" name="book_type" value="pdf">
                     <input type="hidden" name="is_free" value="1">
-                    <input type="hidden" name="price_usd" value="0">
+                    <input type="hidden" name="price" value="0">
                                 <div>
                                     <p class="font-medium text-gray-900">Book Cover</p>
                                     <p class="text-sm text-gray-500">For sale with price</p>
@@ -98,10 +98,10 @@
                                 class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
                         <div>
-                            <label for="price_usd" class="block text-sm font-medium text-gray-700 mb-1">Price (USD) *</label>
+                            <label for="price" class="block text-sm font-medium text-gray-700 mb-1">Price (₵) *</label>
                             <div class="relative">
-                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">$</span>
-                                <input type="number" name="price_usd" id="price_usd" value="{{ old('price_usd') }}" step="0.01" min="0" required
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500">₵</span>
+                                <input type="number" name="price" id="price" value="{{ old('price') }}" step="0.01" min="0" required
                                     class="w-full pl-7 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                             </div>
                         </div>
@@ -148,7 +148,7 @@
                         @csrf
                         <input type="hidden" name="book_type" value="pdf">
                         <input type="hidden" name="is_free" value="1">
-                        <input type="hidden" name="price_usd" value="0">
+                    <input type="hidden" name="price" value="0">
                         
                         @if($errors->any())
                         <div class="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg">
