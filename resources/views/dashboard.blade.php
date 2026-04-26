@@ -353,9 +353,9 @@
                 </div>
                 
                 <!-- Horizontal scroll container -->
-                <div class="flex overflow-x-auto gap-6 pb-4 scrollbar-hide -mx-4 px-4">
-                    @foreach($featuredBooks as $book)
-                    <a href="{{ route('products.show', $book->id) }}" class="flex-shrink-0 w-44 group">
+                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+                     @foreach($featuredBooks as $book)
+                     <a href="{{ route('products.show', $book->id) }}" class="group">
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:border-indigo-200 transition-all duration-300">
                             <div class="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative overflow-hidden">
                                 @if($book->cover_image)

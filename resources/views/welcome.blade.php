@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
+    <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="overflow-x-hidden">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,14 +26,27 @@
                 });
             }
         </script>
+    <style>
+        html, body {
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+            position: relative;
+        }
+        #app, body > div:first-child {
+            max-width: 100% !important;
+            overflow-x: hidden !important;
+        }
+    </style>
     </head>
-    <body class="antialiased overflow-x-hidden">
+    <body class="antialiased overflow-x-hidden m-0 p-0 box-border w-full min-w-0 relative">
         <x-flash-message />
         <!-- Navigation -->
         <x-customer-navbar />
+        
+        <div class="w-full overflow-x-hidden min-w-0 mx-0 px-0">
 
-        <!-- Hero Section with S-Wave -->
-        <section id="home" class="relative pt-32 pb-20 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700">
+         <!-- Hero Section with S-Wave -->
+         <section id="home" class="relative pt-32 pb-20 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 max-w-full">
             <!-- Background Image -->
             <div class="absolute inset-0">
                 <img src="{{ asset('welcome.jpg') }}" alt="Bookshop" class="w-full h-full object-cover" style="object-position: center 70%;">
@@ -94,7 +107,7 @@
 
         <!-- Search Results -->
         @if(isset($query) && $query)
-        <section class="py-12 bg-gray-50">
+        <section class="py-12 bg-gray-50 max-w-full">
             <div class="max-w-7xl mx-auto px-6">
                 <h2 class="text-2xl font-bold text-gray-900 mb-6">Search Results for "{{ $query }}"</h2>
                 @if($books->count() > 0)
@@ -172,7 +185,7 @@
         @endif
 
         <!-- Visa Guide Promo Section -->
-        <section class="py-20 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700">
+        <section class="py-20 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 max-w-full">
             
             <div class="max-w-5xl mx-auto px-6 pt-16">
                 <!-- Main Headline -->
@@ -312,7 +325,7 @@
         @include('components.sections.animation-script')
 
         <!-- Newsletter Section -->
-        <section class="py-16 bg-gradient-to-r from-indigo-600 to-purple-600">
+        <section class="py-16 bg-gradient-to-r from-indigo-600 to-purple-600 max-w-full">
             <div class="max-w-4xl mx-auto px-6 text-center">
                 <h2 class="text-3xl font-bold text-white mb-4">Stay Updated</h2>
                 <p class="text-indigo-100 mb-8">Subscribe to our newsletter for exclusive deals, new arrivals, and reading recommendations!</p>
@@ -326,48 +339,47 @@
             </div>
         </section>
 
-        <!-- Features Section - Horizontal scroll on mobile, grid on desktop -->
-        <section class="py-16 bg-gray-50 overflow-hidden">
-            <div class="max-w-7xl mx-auto px-6">
-                <!-- Horizontal scroll on mobile, grid on desktop -->
-                <div class="flex overflow-x-auto gap-6 pb-4 md:grid md:grid-cols-4 md:gap-8 md:overflow-x-visible md:pb-0 scrollbar-hide -mx-6 px-6 md:mx-0 md:px-0">
-                    <div class="flex-shrink-0 w-40 text-center">
-                        <div class="w-16 h-16 bg-white rounded-2xl shadow-md flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
-                            </svg>
-                        </div>
-                        <h3 class="font-semibold text-gray-900 mb-2">Free Shipping</h3>
-                        <p class="text-gray-600 text-sm">On orders over ₵100</p>
-                    </div>
-                    <div class="flex-shrink-0 w-40 text-center">
-                        <div class="w-16 h-16 bg-white rounded-2xl shadow-md flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                            </svg>
-                        </div>
-                        <h3 class="font-semibold text-gray-900 mb-2">Quality Books</h3>
-                        <p class="text-gray-600 text-sm">100% authentic products</p>
-                    </div>
-                    <div class="flex-shrink-0 w-40 text-center">
-                        <div class="w-16 h-16 bg-white rounded-2xl shadow-md flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-                            </svg>
-                        </div>
-                        <h3 class="font-semibold text-gray-900 mb-2">Easy Returns</h3>
-                        <p class="text-gray-600 text-sm">30-day return policy</p>
-                    </div>
-                    <div class="flex-shrink-0 w-40 text-center">
-                        <div class="w-16 h-16 bg-white rounded-2xl shadow-md flex items-center justify-center mx-auto mb-4">
-                            <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
-                            </svg>
-                        </div>
-                        <h3 class="font-semibold text-gray-900 mb-2">24/7 Support</h3>
-                        <p class="text-gray-600 text-sm">Dedicated customer care</p>
-                    </div>
-                </div>
+         <!-- Features Section - Horizontal scroll on mobile, grid on desktop -->
+         <section class="py-16 bg-gray-50 overflow-hidden">
+             <div class="max-w-7xl mx-auto px-6">
+                  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-8">
+                     <div class="text-center">
+                         <div class="w-16 h-16 bg-white rounded-2xl shadow-md flex items-center justify-center mx-auto mb-4">
+                             <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
+                             </svg>
+                         </div>
+                         <h3 class="font-semibold text-gray-900 mb-2">Free Shipping</h3>
+                         <p class="text-gray-600 text-sm">On orders over ₵100</p>
+                     </div>
+                     <div class="text-center">
+                         <div class="w-16 h-16 bg-white rounded-2xl shadow-md flex items-center justify-center mx-auto mb-4">
+                             <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                             </svg>
+                         </div>
+                         <h3 class="font-semibold text-gray-900 mb-2">Quality Books</h3>
+                         <p class="text-gray-600 text-sm">100% authentic products</p>
+                     </div>
+                     <div class="text-center">
+                         <div class="w-16 h-16 bg-white rounded-2xl shadow-md flex items-center justify-center mx-auto mb-4">
+                             <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                             </svg>
+                         </div>
+                         <h3 class="font-semibold text-gray-900 mb-2">Easy Returns</h3>
+                         <p class="text-gray-600 text-sm">30-day return policy</p>
+                     </div>
+                     <div class="text-center">
+                         <div class="w-16 h-16 bg-white rounded-2xl shadow-md flex items-center justify-center mx-auto mb-4">
+                             <svg class="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"/>
+                             </svg>
+                         </div>
+                         <h3 class="font-semibold text-gray-900 mb-2">24/7 Support</h3>
+                         <p class="text-gray-600 text-sm">Dedicated customer care</p>
+                     </div>
+                 </div>
             </div>
         </section>
         
@@ -452,6 +464,7 @@
         <x-customer-footer />
 
         <x-install-pwa />
+        </div>
     </body>
 </html>
 
