@@ -43,14 +43,10 @@ class PaymentController extends Controller
             ]);
         }
 
-        $totalUsd = $cartItems->sum(function ($item) {
-            return $item->unit_price_usd * $item->quantity;
+        // Calculate total in GHS (prices stored in GHS)
+        $totalGhs = $cartItems->sum(function ($item) {
+            return $item->unit_price * $item->quantity;
         });
-
-        // Convert USD to GHS for Paystack transaction
-        $exchangeRateService = new ExchangeRateService;
-        $lockedRate = $exchangeRateService->lockRateForOrder($totalUsd);
-        $totalGhs = $lockedRate['total_ghs'];
 
         $email = $request->input('email') ?? (Auth::check() ? Auth::user()->email : null);
 
@@ -73,8 +69,8 @@ class PaymentController extends Controller
         $result = $this->paystack->initializePayment($email, $totalGhs, $reference, 'GHS');
 
         if ($result['success']) {
-            // Create pending order in USD
-            $order = $this->createPendingOrder($request, $totalUsd, $reference);
+            // Create pending order in GHS
+            $order = $this->createPendingOrder($request, $totalGhs, $reference);
 
             return response()->json([
                 'success' => true,
@@ -142,16 +138,16 @@ class PaymentController extends Controller
             $order = Order::where('order_number', $reference)->first();
 
             if ($order) {
-                // Verify USD amount matches order total as final security check
-                $expectedUsd = $order->total_amount;
-                $paidUsd = $result['amount'];
-                $tolerance = 0.01; // Allow 1 cent tolerance for rounding
+                // Verify GHS amount matches order total
+                $expectedGhs = $order->total_amount;
+                $paidGhs = $result['amount'];
+                $tolerance = 0.01;
 
-                if (abs($paidUsd - $expectedUsd) > $tolerance) {
+                if (abs($paidGhs - $expectedGhs) > $tolerance) {
                     Log::error('Payment amount mismatch', [
                         'order_id' => $order->id,
-                        'expected_usd' => $expectedUsd,
-                        'paid_usd' => $paidUsd,
+                        'expected_ghs' => $expectedGhs,
+                        'paid_ghs' => $paidGhs,
                     ]);
 
                     return redirect()->route('checkout')
@@ -161,14 +157,14 @@ class PaymentController extends Controller
                 // Get cart items before clearing
                 $cartItems = Cart::where('user_id', Auth::id())->get();
 
-                // Prepare order items data from cart with USD prices only
+                // Prepare order items data from cart with GHS prices only
                 $orderItems = $cartItems->map(function ($item) {
                     return [
                         'book_id' => $item->book_id,
                         'product_name' => $item->product_name,
-                        'unit_price_usd' => $item->unit_price_usd,
+                        'unit_price_ghs' => $item->unit_price,
                         'quantity' => $item->quantity,
-                        'total_price_usd' => $item->unit_price_usd * $item->quantity,
+                        'total_price_ghs' => $item->unit_price * $item->quantity,
                     ];
                 })->toArray();
 
@@ -183,32 +179,19 @@ class PaymentController extends Controller
 
                     Log::info('Order confirmation email sent successfully', ['order_id' => $order->id]);
                 } catch (\Exception $e) {
-                    // Log email error but don't fail the order
                     Log::error('Failed to send order confirmation email: '.$e->getMessage());
                 }
 
                 // Clear cart
                 Cart::where('user_id', Auth::id())->delete();
 
-                // Only update order_items if cart had items or order doesn't already have items
-                // This prevents overwriting existing order_items when cart was already cleared
-                $existingItems = $order->order_items;
-                $hasExistingItems = ! empty($existingItems) && (is_array($existingItems) ? count($existingItems) > 0 : $existingItems->count() > 0);
-
-                $updateData = [
+                // Update order with order items and mark as paid
+                $order->update([
                     'status' => 'paid',
                     'payment_status' => 'completed',
                     'paid_at' => now(),
-                ];
-
-                if (! empty($orderItems)) {
-                    $updateData['order_items'] = $orderItems;
-                } elseif (! $hasExistingItems) {
-                    $updateData['order_items'] = $orderItems; // Save empty array if nothing exists
-                }
-                // If cart is empty but order already has items, don't overwrite
-
-                $order->update($updateData);
+                    'order_items' => !empty($orderItems) ? $orderItems : $order->order_items,
+                ]);
 
                 // Send admin notifications
                 NotificationService::newOrder($order);
@@ -252,20 +235,20 @@ class PaymentController extends Controller
     /**
      * Create pending order
      */
-    protected function createPendingOrder(Request $request, $totalUsd, $reference)
+    protected function createPendingOrder(Request $request, $totalGhs, $reference)
     {
         $user = Auth::user();
 
         $cartItems = Cart::where('user_id', $user->id)->get();
 
-        // Prepare order items data from cart with USD prices only
+        // Prepare order items data with GHS prices
         $orderItems = $cartItems->map(function ($item) {
             return [
                 'book_id' => $item->book_id,
                 'product_name' => $item->product_name,
-                'unit_price_usd' => $item->unit_price_usd,
+                'unit_price_ghs' => $item->unit_price,
                 'quantity' => $item->quantity,
-                'total_price_usd' => $item->unit_price_usd * $item->quantity,
+                'total_price_ghs' => $item->unit_price * $item->quantity,
             ];
         })->toArray();
 
@@ -278,7 +261,7 @@ class PaymentController extends Controller
             'residence' => $request->residence ?? '',
             'nationality' => $request->nationality ?? '',
             'payment_method' => $request->payment_method,
-            'total_amount' => $totalUsd,
+            'total_amount' => $totalGhs,
             'status' => 'pending',
             'payment_status' => 'pending',
             'order_items' => $orderItems,
@@ -305,13 +288,9 @@ class PaymentController extends Controller
                 $cartItems = collect([]);
             }
 
-            // Get admin name from settings or use default
-            $adminName = 'The Bookshop Team';
-
             Mail::to($order->email)->send(new OrderConfirmation($order, $cartItems, $order->total_amount));
 
             Log::info('Order confirmation email sent', ['order_id' => $order->id]);
-
         } catch (\Exception $e) {
             Log::error('Failed to send order confirmation email', [
                 'error' => $e->getMessage(),

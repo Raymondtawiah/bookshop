@@ -79,7 +79,7 @@
                 <input type="text" name="author" value="{{ old('author') }}" placeholder="Author" required
                        class="input">
 
-                <input type="number" name="price_usd" value="{{ old('price_usd') }}" placeholder="Price (USD)" required
+                <input type="number" name="price" value="{{ old('price') }}" placeholder="Price (₵)" required
                        class="input">
 
                 <input type="text" name="isbn" value="{{ old('isbn') }}" placeholder="ISBN"
@@ -126,7 +126,7 @@
             @csrf
             <input type="hidden" name="book_type" value="pdf">
             <input type="hidden" name="is_free" value="1">
-            <input type="hidden" name="price_usd" value="0">
+            <input type="hidden" name="price" value="0">
 
             @if($errors->any())
                 <div class="bg-red-50 border border-red-200 text-red-700 p-4 rounded-lg text-sm">

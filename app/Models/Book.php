@@ -13,7 +13,7 @@ class Book extends Model
         'title',
         'author',
         'description',
-        'price_usd',
+        'price',
         'cover_image',
         'book_pdf',
         'is_free',
@@ -25,26 +25,19 @@ class Book extends Model
     ];
 
     protected $casts = [
-        'price_usd' => 'decimal:2',
+        'price' => 'decimal:2',
         'is_featured' => 'boolean',
         'is_free' => 'boolean',
     ];
 
-    public function getPriceUsdAttribute(): float
+    public function getPriceAttribute(): float
     {
-        return (float) $this->attributes['price_usd'];
+        return (float) $this->attributes['price'];
     }
 
     public function getFormattedPriceAttribute(): string
     {
-        return '$'.number_format($this->price_usd, 2);
-    }
-
-    public function getFormattedPriceGhsAttribute(float $exchangeRate): string
-    {
-        $ghs = round($this->price_usd * $exchangeRate, 2);
-
-        return '₵'.number_format($ghs, 2);
+        return '₵'.number_format($this->price, 2);
     }
 
     /**

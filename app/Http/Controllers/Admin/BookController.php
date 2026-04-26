@@ -63,7 +63,7 @@ class BookController extends Controller
         $request->validate([
             'title' => 'required|string|max:255',
             'author' => 'required|string|max:255',
-            'price_usd' => 'nullable|numeric|min:0',
+            'price' => 'nullable|numeric|min:0',
         ]);
 
         // Upload cover image
@@ -82,7 +82,7 @@ class BookController extends Controller
             'title' => $request->title,
             'author' => $request->author,
             'description' => $request->description,
-            'price_usd' => $request->price_usd ?? 0,
+            'price' => $request->price ?? 0,
             'isbn' => $request->isbn,
             'pages' => $request->pages,
             'published_year' => $request->published_year,
@@ -113,7 +113,7 @@ class BookController extends Controller
             'title' => $request->title,
             'author' => $request->author,
             'description' => $request->description,
-            'price_usd' => $request->price_usd ?? 0,
+            'price' => $request->price ?? 0,
             'isbn' => $request->isbn,
             'pages' => $request->pages,
             'published_year' => $request->published_year,

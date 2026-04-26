@@ -1,5 +1,5 @@
 <!-- About Section with Scroll Animation -->
-<section id="about" class="py-20 bg-gray-50" data-animate style="max-width: 100vw; overflow-x: hidden;">
+<section id="about" class="py-20 bg-gray-50" data-animate>
     <div class="max-w-7xl mx-auto px-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
             <div class="opacity-0 translate-x-[-50px] transition-all duration-700" data-animate-target>

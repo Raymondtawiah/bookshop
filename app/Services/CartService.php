@@ -55,7 +55,7 @@ class CartService
     public function getTotalPrice(): float
     {
         return (float) $this->getUserCart()
-            ->selectRaw('SUM(unit_price_usd * quantity) as total')
+            ->selectRaw('SUM(unit_price * quantity) as total')
             ->value('total') ?? 0;
     }
 

@@ -95,7 +95,7 @@ class PaystackWebhookController extends Controller
             return response()->json(['status' => 'already_processed']);
         }
 
-        $expectedAmountGhs = $order->total_amount_ghs;
+        $expectedAmountGhs = $order->total_amount;
         $tolerance = 1;
 
         if (abs($amountGhs - $expectedAmountGhs) > $tolerance) {
@@ -167,7 +167,7 @@ class PaystackWebhookController extends Controller
         }
 
         $amountGhs = $result['amount'];
-        $expectedAmountGhs = $order->total_amount_ghs;
+        $expectedAmountGhs = $order->total_amount;
         $tolerance = 1;
 
         if (abs($amountGhs - $expectedAmountGhs) > $tolerance) {

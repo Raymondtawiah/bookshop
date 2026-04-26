@@ -52,7 +52,7 @@
                                 @if($book->is_free)
                                     <span class="text-4xl font-bold text-green-600">FREE</span>
                                 @else
-                                    <span class="text-4xl font-bold text-indigo-600">₵{{ number_format($book->price_usd, 2) }}</span>
+                                    <span class="text-4xl font-bold text-indigo-600">₵{{ number_format($book->price, 2) }}</span>
                                 @endif
                             </div>
 
@@ -121,7 +121,7 @@
                                     <form action="{{ route('cart.add') }}" method="POST" class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                                         @csrf
                                         <input type="hidden" name="product_name" value="{{ $book->title }}">
-                                        <input type="hidden" name="unit_price_usd" value="{{ $book->price_usd }}">
+                                        <input type="hidden" name="unit_price" value="{{ $book->price }}">
                                         <input type="hidden" name="book_id" value="{{ $book->id }}">
                                         <input type="hidden" name="quantity" value="1">
                                         
@@ -166,7 +166,7 @@
                             <div class="p-5">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ $related->title }}</h3>
                                 
-                                <span class="text-xl font-bold text-indigo-600">₵{{ number_format($related->price_usd, 2) }}</span>
+                                <span class="text-xl font-bold text-indigo-600">₵{{ number_format($related->price, 2) }}</span>
                             </div>
                         </a>
                         @endforeach

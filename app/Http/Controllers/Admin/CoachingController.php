@@ -53,7 +53,9 @@ class CoachingController extends Controller
             'notes' => 'nullable|string',
         ]);
 
+        // Prices in GHS (direct amounts)
         $packagePrice = $validated['package'] === 'premium' ? 249 : 129;
+
         $reference = 'COACH-'.time().rand(1000, 9999);
 
         $booking = CoachingBooking::create([

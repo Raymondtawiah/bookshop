@@ -26,37 +26,28 @@ class OrderController extends Controller
             'payment_method' => 'required|in:momo,bank',
         ]);
 
-        $cartItems = Cart::where('user_id', Auth::id())->get();
+        $cartItems = Cart::where('user_id', Auth::id())->with('book')->get();
 
         if ($cartItems->isEmpty()) {
             return redirect()->route('cart')->with('error', 'Your cart is empty!');
         }
 
-        $totalUsd = $cartItems->sum(function ($item) {
-            return $item->unit_price_usd * $item->quantity;
+        // Calculate total in GHS directly (prices are stored in GHS)
+        $totalGhs = $cartItems->sum(function ($item) {
+            return $item->unit_price * $item->quantity;
         });
 
         $paymentMethod = $request->payment_method;
         $reference = 'ORD-'.time().rand(1000, 9999);
 
-        // Lock exchange rate for this order - NEVER recalculate after payment
-        $exchangeRateService = new ExchangeRateService;
-        $lockedRate = $exchangeRateService->lockRateForOrder($totalUsd);
-        $exchangeRate = $lockedRate['exchange_rate'];
-        $totalGhs = $lockedRate['total_ghs'];
-
-        // Prepare order items data with USD and converted GHS prices
-        $orderItems = $cartItems->map(function ($item) use ($exchangeRate) {
-            $unitPriceGhs = round($item->unit_price_usd * $exchangeRate, 2);
-
+        // Prepare order items data with GHS prices
+        $orderItems = $cartItems->map(function ($item) {
             return [
                 'book_id' => $item->book_id,
                 'product_name' => $item->product_name,
-                'unit_price_usd' => $item->unit_price_usd,
-                'price_ghs' => $unitPriceGhs,
+                'unit_price_ghs' => $item->unit_price,
                 'quantity' => $item->quantity,
-                'total_price_usd' => $item->unit_price_usd * $item->quantity,
-                'total_price_ghs' => $unitPriceGhs * $item->quantity,
+                'total_price_ghs' => $item->unit_price * $item->quantity,
             ];
         })->toArray();
 
@@ -69,22 +60,15 @@ class OrderController extends Controller
             'nationality' => $request->nationality,
             'contact' => $request->contact,
             'payment_method' => $paymentMethod,
-            'total_amount' => $totalUsd,
-            'total_amount_ghs' => $totalGhs,
-            'exchange_rate' => $exchangeRate,
+            'total_amount' => $totalGhs,
             'status' => 'pending',
             'order_number' => $reference,
             'order_items' => $orderItems,
         ]);
 
-        // Don't send email here - it will be sent after payment is confirmed in the callback
-        // This ensures we only send email when payment is actually successful
-
         $paystack = new PaystackService;
 
         if ($paymentMethod === 'momo') {
-            // For Mobile Money - use Paystack checkout page with mobile money
-            // This redirects to Paystack where user can select mobile money as payment option
             $result = $paystack->initializePayment(
                 $request->email,
                 $totalGhs,
@@ -95,36 +79,27 @@ class OrderController extends Controller
             Log::info('Paystack Payment Init Response for MoMo', ['result' => $result]);
 
             if ($result['success']) {
-                // Don't clear cart here - it will be cleared in the payment callback
-                // after payment is confirmed. The order already has order_items saved.
-
-                // Redirect to Paystack checkout
                 return redirect($result['authorization_url']);
             }
 
-            // Log the failure for debugging
             Log::error('Paystack payment initialization failed', [
                 'result' => $result,
                 'message' => $result['message'] ?? 'Unknown error',
             ]);
 
             return back()->with('error', 'Payment failed: '.($result['message'] ?? 'Please try again.'));
-
         } elseif ($paymentMethod === 'bank') {
-            // For Bank Transfer - show bank details from config
             $order->update([
                 'payment_status' => 'pending',
                 'status' => 'pending_payment',
                 'order_items' => $orderItems,
             ]);
 
-            // Clear cart
             $cartItems->each->delete();
 
             return view('cart.checkout', [
                 'order' => $order,
-                'total' => $totalUsd,
-                'exchangeRate' => $exchangeRate,
+                'total' => $totalGhs,
                 'bankTransfer' => true,
                 'bankDetails' => config('paystack.bankDetails'),
                 'nationalities' => Nationality::orderBy('name')->get(),

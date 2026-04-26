@@ -19,8 +19,6 @@ class Order extends Model
         'contact',
         'payment_method',
         'total_amount',
-        'total_amount_ghs',
-        'exchange_rate',
         'status',
         'order_number',
         'payment_status',
@@ -32,8 +30,6 @@ class Order extends Model
 
     protected $casts = [
         'total_amount' => 'decimal:2',
-        'total_amount_ghs' => 'decimal:2',
-        'exchange_rate' => 'decimal:2',
         'paid_at' => 'datetime',
         'pdf_sent' => 'boolean',
         'pdf_sent_at' => 'datetime',
@@ -77,29 +73,14 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function getTotalUsdAttribute(): float
+    public function getTotalAmountAttribute(): float
     {
         return (float) $this->attributes['total_amount'];
     }
 
-    public function getTotalGhsAttribute(): float
+    public function getFormattedTotalAmountAttribute(): string
     {
-        return (float) $this->attributes['total_amount_ghs'];
-    }
-
-    public function getFormattedTotalUsdAttribute(): string
-    {
-        return '$'.number_format($this->total_usd, 2);
-    }
-
-    public function getFormattedTotalGhsAttribute(): string
-    {
-        return '₵'.number_format($this->total_ghs, 2);
-    }
-
-    public function getEquivalentGhsAttribute(): string
-    {
-        return '₵'.number_format($this->total_usd * $this->exchange_rate, 2);
+        return '₵'.number_format($this->total_amount, 2);
     }
 
     public function isPaid(): bool

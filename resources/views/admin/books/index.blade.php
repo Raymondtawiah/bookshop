@@ -54,7 +54,7 @@
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-gray-600">{{ $book->author }}</td>
-                                        <td class="px-6 py-4 font-medium text-gray-900">${{ number_format($book->price_usd, 2) }}</td>
+                                        <td class="px-6 py-4 font-medium text-gray-900">₵{{ number_format($book->price, 2) }}</td>
                                         <td class="px-6 py-4 text-right">
                                             <div class="flex items-center justify-end gap-2">
                                                 <a href="{{ route('admin.books.edit', $book->id) }}" class="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Edit">
