@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Checkout - Bookshop</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="icon" href="/favicon.ico" sizes="any">
-    </head>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Checkout - Bookshop</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="icon" href="/favicon.ico" sizes="any">
+</head>
     <body class="bg-gray-50 antialiased">
         <x-flash-message />
         <x-customer-navbar />
@@ -209,13 +209,13 @@
                                     <p class="font-medium text-gray-900">{{ $item->product_name }}</p>
                                     <p class="text-sm text-gray-500">Qty: {{ $item->quantity }}</p>
                                 </div>
-                                <p class="font-medium">${{ number_format($item->unit_price_usd * $item->quantity, 2) }}</p>
+                                <p class="font-medium">₵{{ number_format($item->unit_price_usd * $item->quantity, 2) }}</p>
                             </div>
                             @endforeach
                         </div>
                         <div class="flex justify-between items-center mt-4 pt-4 border-t">
                             <span class="text-lg font-bold">Total</span>
-                            <span class="text-lg font-bold text-indigo-600">${{ number_format($total, 2) }}</span>
+                            <span class="text-lg font-bold text-indigo-600">₵{{ number_format($total, 2) }}</span>
                         </div>
                     </div>
 

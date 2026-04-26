@@ -8,6 +8,7 @@
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
     <meta name="apple-mobile-web-app-title" content="BookShop" />
     <link rel="manifest" href="/manifest.json">
+    <script src="https://cdn.tailwindcss.com"></script>
     <title>{{ config('app.name', 'Bookshop') }}</title>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     <link rel="icon" href="/favicon.ico" sizes="any">
