@@ -376,27 +376,27 @@
                             const paymentMethod = formData.get('payment_method');
                             const contact = formData.get('contact');
                             
-                            const data = {
-                                customer_name: formData.get('customer_name'),
-                                email: formData.get('email'),
-                                residence: formData.get('residence'),
-                                nationality: formData.get('nationality'),
-                                contact: contact,
-                                payment_method: paymentMethod,
-                                mobile_number: contact,
-                                network: detectNetwork(contact),
-                                _token: '{{ csrf_token() }}'
-                            };
+                             const data = {
+                                 customer_name: formData.get('customer_name'),
+                                 email: formData.get('email'),
+                                 residence: formData.get('residence'),
+                                 nationality: formData.get('nationality'),
+                                 contact: contact,
+                                 payment_method: paymentMethod,
+                                 mobile_number: contact,
+                                 network: detectNetwork(contact)
+                             };
                             
-                            try {
-                                const response = await fetch('{{ route("payment.initialize") }}', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                    },
-                                    body: JSON.stringify(data)
-                                });
+                             try {
+                                 const response = await fetch('{{ route("payment.initialize") }}', {
+                                     method: 'POST',
+                                     headers: {
+                                         'Content-Type': 'application/json',
+                                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                     },
+                                     credentials: 'include',
+                                     body: JSON.stringify(data)
+                                 });
                                 
                                 const result = await response.json();
                                 
