@@ -54,7 +54,7 @@ class CoachingController extends Controller
         ]);
 
         // Prices in GHS (direct amounts)
-        $packagePrice = $validated['package'] === 'premium' ? 249 : 129;
+        $packagePrice = $validated['package'] === 'premium' ? 2499 : 1499;
 
         $reference = 'COACH-'.time().rand(1000, 9999);
 

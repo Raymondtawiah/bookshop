@@ -6,9 +6,9 @@
             <p class="text-xl text-gray-600">Have questions? We'd love to hear from you!</p>
         </div>
         <div class="max-w-2xl mx-auto">
-             <!-- Horizontal scroll on mobile, grid on desktop -->
-             <div class="grid grid-cols-3 gap-4 md:gap-8">
-                <div class="flex-shrink-0 w-40 text-center opacity-0 translate-y-8 transition-all duration-700 delay-100" data-animate-target>
+             <!-- Responsive grid: 1 column on mobile, 3 on larger screens -->
+             <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+                <div class="text-center opacity-0 translate-y-8 transition-all duration-700 delay-100" data-animate-target>
                     <div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -17,7 +17,7 @@
                     <h3 class="font-semibold text-gray-900 mb-2">Email</h3>
                     <p class="text-gray-600">info@bookshop.com</p>
                 </div>
-                <div class="flex-shrink-0 w-40 text-center opacity-0 translate-y-8 transition-all duration-700 delay-200" data-animate-target>
+                <div class="text-center opacity-0 translate-y-8 transition-all duration-700 delay-200" data-animate-target>
                     <div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg class="w-6 h-6 text-indigo-600" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M20.2 15.7l-1.7-1.7c-.4-.4-1-.6-1.5-.3-1.7.8-3.5-1-4.2-2.7-.4-1 .1-2.2.9-3l1.5-1.5C13.9 3.5 12.6 3 11.2 3c-2.8 0-5.3 2.1-5.7 5-.3 1.9.4 3.8 1.9 5.1 1.5 1.3 3.4 1.6 5 1.7 1.5.1 2.7-.3 3.7-1.2l1.4 1.4c.3.3.8.4 1.2.2l2.1-1c.5-.2.7-.8.5-1.3l-.8-2.2c-.3-.7-.9-1.3-1.6-1.6l-2.2-.8c-.5-.2-1.1 0-1.3.5l-1 2z"/>
@@ -26,7 +26,7 @@
                     <h3 class="font-semibold text-gray-900 mb-2">Phone</h3>
                     <p class="text-gray-600">+1 (304) 517-4553</p>
                 </div>
-                <div class="flex-shrink-0 w-40 text-center opacity-0 translate-y-8 transition-all duration-700 delay-300" data-animate-target>
+                <div class="text-center opacity-0 translate-y-8 transition-all duration-700 delay-300" data-animate-target>
                     <div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
@@ -53,7 +53,7 @@
                     </svg>
                 </a>
                 <!-- YouTube -->
-                <a href="https://youtube.com/@nathanielgyarteng?si=6MDqGBKPLO9HnoCr" target="_blank" class="w-10 h-10 md:w-12 md:h-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-indigo-100 transition-colors">
+                <a href="https://youtu.be/lF_7C-pa3z0" target="_blank" class="w-10 h-10 md:w-12 md:h-12 bg-gray-100 rounded-full flex items-center justify-center hover:bg-indigo-100 transition-colors">
                     <svg class="w-5 h-5 text-gray-700 hover:text-indigo-600" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M23.498 6.186a3.016 3.016 0 00-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 00.502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 002.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 002.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
                     </svg>

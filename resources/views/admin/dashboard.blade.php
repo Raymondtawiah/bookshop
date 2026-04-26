@@ -21,7 +21,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-500">Total Books</p>
-                            <p class="text-3xl font-bold mt-1 text-gray-900">{{ \App\Models\Book::count() }}</p>
+                            <p class="text-2xl font-bold mt-1 text-gray-900">{{ \App\Models\Book::count() }}</p>
                         </div>
                         <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
                             <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -35,7 +35,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-500">Total Customers</p>
-                            <p class="text-3xl font-bold mt-1 text-gray-900">{{ \App\Models\User::where('is_admin', false)->count() }}</p>
+                            <p class="text-2xl font-bold mt-1 text-gray-900">{{ \App\Models\User::where('is_admin', false)->count() }}</p>
                         </div>
                         <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
                             <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -49,7 +49,7 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm font-medium text-gray-500">Total Orders</p>
-                            <p class="text-3xl font-bold mt-1 text-gray-900">{{ \App\Models\Order::count() }}</p>
+                            <p class="text-2xl font-bold mt-1 text-gray-900">{{ \App\Models\Order::count() }}</p>
                         </div>
                         <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
                             <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -64,7 +64,7 @@
                         <div>
                             <p class="text-sm font-medium text-gray-500">Total Revenue</p>
                             @php($totalUsd = \App\Models\Order::where('payment_status', 'paid')->sum('total_amount'))
-                            <p class="text-3xl font-bold mt-1 text-gray-900">₵{{ number_format($totalUsd, 2) }}</p>
+                            <p class="text-2xl font-bold mt-1 text-gray-900 break-words">₵{{ number_format($totalUsd, 2) }}</p>
                         </div>
                     </div>
                 </div>
@@ -112,7 +112,7 @@
 
                     <div>
                         <p class="text-sm font-medium text-gray-500">Total Revenue</p>
-                        <p class="text-2xl font-bold mt-1 text-gray-900">₵{{ number_format(\App\Models\CoachingBooking::where('payment_status', 'paid')->sum('amount'), 2) }}</p>
+                        <p class="text-xl font-bold mt-1 text-gray-900 break-words">₵{{ number_format(\App\Models\CoachingBooking::where('payment_status', 'paid')->sum('amount'), 2) }}</p>
                     </div>
                 </div>
             </div>
