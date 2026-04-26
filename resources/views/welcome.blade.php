@@ -27,7 +27,7 @@
             }
         </script>
     </head>
-    <body class="antialiased">
+    <body class="antialiased overflow-x-hidden">
         <x-flash-message />
         <!-- Navigation -->
         <x-customer-navbar />
