@@ -68,7 +68,7 @@
                                      type="text" 
                                      name="q" 
                                      value="{{ $query ?? '' }}"
-                                     placeholder="Search books by title, author, category..." 
+                                      placeholder="Search books by title, author..."
                                      class="w-full px-5 py-3 pl-12 rounded-xl border border-white/20 bg-white/10 text-white placeholder-white/70 focus:bg-white focus:text-gray-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
                                  >
                                  <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/70" fill="none" stroke="currentColor" viewBox="0 0 24 24">

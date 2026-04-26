@@ -40,9 +40,19 @@ class BookController extends Controller
         }
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        $books = Book::latest()->paginate(10);
+        $query = $request->input('q');
+        
+        if ($query) {
+            $books = Book::where('title', 'like', "%{$query}%")
+                ->orWhere('author', 'like', "%{$query}%")
+                ->orWhere('published_year', $query)
+                ->latest()
+                ->paginate(10);
+        } else {
+            $books = Book::latest()->paginate(10);
+        }
 
         return view('admin.books.index', compact('books'));
     }

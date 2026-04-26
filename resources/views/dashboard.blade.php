@@ -147,7 +147,7 @@
                     </script>
                 </div>
             </div>
-        </header>
+         </header>
 
         <!-- Main Content -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 py-8">
@@ -160,12 +160,16 @@
             <!-- Search Bar -->
             <div class="mb-8">
                 <form action="{{ route('search') }}" method="GET" class="flex gap-2">
+
+            <!-- Search Bar -->
+            <div class="mb-8">
+                <form action="{{ route('search') }}" method="GET" class="flex gap-2">
                     <div class="relative flex-1">
                         <input 
                             type="text" 
                             name="q" 
                             value="{{ $query ?? '' }}"
-                            placeholder="Search books by title, author, category..." 
+                            placeholder="Search books by title, author..." 
                             class="w-full px-5 py-3 pl-12 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
                         >
                         <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
