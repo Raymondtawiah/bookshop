@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             NationalitySeeder::class,
             AdminSeeder::class,
+            WebinarSeeder::class,
         ]);
     }
 }

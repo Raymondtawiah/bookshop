@@ -1,36 +1,9 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Dashboard - {{ config('app.name', 'Bookshop') }}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <link rel="icon" href="/favicon.ico" sizes="any">
-    <link rel="manifest" href="/manifest.json">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <meta name="theme-color" content="#4f46e5" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-    <meta name="apple-mobile-web-app-title" content="BookShop" />
-        <style>
-            /* Hide scrollbar for Chrome, Safari and Opera */
-            .scrollbar-hide::-webkit-scrollbar {
-                display: none;
-            }
-            /* Hide scrollbar for IE, Edge and Firefox */
-            .scrollbar-hide {
-                -ms-overflow-style: none;  /* IE and Edge */
-                scrollbar-width: none;  /* Firefox */
-            }
-        </style>
-    </head>
-    <body class="bg-gray-50 font-sans">
-        <x-customer-navbar />
+@extends('layouts.app')
 
-      
-        <!-- Main Content -->
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-16">
+@section('title', 'Dashboard')
+
+@section('content')
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <!-- Logo -->
                     <div class="flex items-center">
                         <a href="{{ route('home') }}" class="flex items-center gap-2">
@@ -307,36 +280,7 @@
                 </div>
             </div>
 
-            <!-- Categories Section -->
-            <div class="mb-8">
-                <h2 class="text-xl font-bold text-gray-900 mb-4">Browse by Category</h2>
-                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    @php
-                        $categories = \App\Models\Book::select('category')->distinct()->whereNotNull('category')->pluck('category');
-                    @endphp
-                    @foreach($categories as $category)
-                    <a href="{{ route('home') }}?category={{ $category }}" class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all text-center">
-                        <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-2">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                            </svg>
-                        </div>
-                        <p class="font-medium text-gray-900 text-sm">{{ $category }}</p>
-                        <p class="text-xs text-gray-500">{{ \App\Models\Book::where('category', $category)->count() }} books</p>
-                    </a>
-                    @endforeach
-                    @if($categories->isEmpty())
-                    <div class="col-span-6 text-center py-8">
-                        <p class="text-gray-500">No categories available yet.</p>
-                    </div>
-                    @endif
-                </div>
-            </div>
-
             <!-- Featured Books Section -->
-            @php
-                $featuredBooks = \App\Models\Book::latest()->take(8)->get();
-            @endphp
             @if($featuredBooks->count() > 0)
             <div class="mb-12">
                 <div class="flex items-center justify-between mb-6">
@@ -445,9 +389,6 @@
             </div>
 
             <!-- Available Books Section -->
-            @php
-                $availableBooks = \App\Models\Book::latest()->take(4)->get();
-            @endphp
             @if($availableBooks && $availableBooks->count() > 0)
             <div class="mb-12">
                 <div class="flex items-center justify-between mb-6">
@@ -526,9 +467,6 @@
             @endif
 
             <!-- Recent Orders -->
-            @php
-                $recentOrders = \App\Models\Order::where('user_id', auth()->id())->orderBy('created_at', 'desc')->take(5)->get();
-            @endphp
             @if($recentOrders->count() > 0)
             <div class="mb-8">
                 <div class="flex items-center justify-between mb-4">
@@ -622,15 +560,6 @@
                 </div>
                 <div class="p-6">
                     <!-- Profile Completeness -->
-                    @php
-                        $profileComplete = 0;
-                        $totalFields = 4;
-                        if(auth()->user()->name) $profileComplete++;
-                        if(auth()->user()->email) $profileComplete++;
-                        if(auth()->user()->phone) $profileComplete++;
-                        if(auth()->user()->address) $profileComplete++;
-                        $percentage = round(($profileComplete / $totalFields) * 100);
-                    @endphp
                     <div class="mb-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-sm font-medium text-gray-700">Profile Completeness</span>
@@ -728,13 +657,4 @@
             </div>
         </main>
 
-        <!-- Footer -->
-        <footer class="bg-white border-t border-gray-200 mt-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <p class="text-center text-sm text-gray-500">&copy; {{ date('Y') }} Bookshop. All rights reserved.</p>
-            </div>
-        </footer>
-
-        <x-install-pwa />
-    </body>
-</html>
+        @endsection

@@ -2,8 +2,8 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
-use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
@@ -25,7 +25,7 @@ return new class extends Migration
 
             // Copy and convert data
             DB::table('books')->update([
-                'price_ghs' => DB::raw('ROUND(price_usd * '.$rate.', 2)')
+                'price_ghs' => DB::raw('ROUND(price_usd * '.$rate.', 2)'),
             ]);
 
             // Drop old column and rename new one
@@ -45,7 +45,7 @@ return new class extends Migration
             });
 
             DB::table('carts')->update([
-                'unit_price_ghs' => DB::raw('ROUND(unit_price_usd * '.$rate.', 2)')
+                'unit_price_ghs' => DB::raw('ROUND(unit_price_usd * '.$rate.', 2)'),
             ]);
 
             Schema::table('carts', function (Blueprint $table) {
@@ -61,7 +61,7 @@ return new class extends Migration
         if (Schema::hasColumn('orders', 'total_amount') && Schema::hasColumn('orders', 'total_amount_ghs')) {
             // Update total_amount to be in GHS
             DB::table('orders')->whereNotNull('total_amount')->update([
-                'total_amount' => DB::raw('ROUND(total_amount * '.$rate.', 2)')
+                'total_amount' => DB::raw('ROUND(total_amount * '.$rate.', 2)'),
             ]);
 
             // Drop the now-redundant GHS columns
@@ -80,29 +80,29 @@ return new class extends Migration
         $rate = config('settings.usd_to_ghs_rate', 12.50);
 
         // Books: add back price_usd
-        if (!Schema::hasColumn('books', 'price_usd')) {
+        if (! Schema::hasColumn('books', 'price_usd')) {
             Schema::table('books', function (Blueprint $table) {
                 $table->decimal('price_usd', 10, 2)->nullable()->after('price');
             });
 
             DB::table('books')->update([
-                'price_usd' => DB::raw('ROUND(price / '.$rate.', 2)')
+                'price_usd' => DB::raw('ROUND(price / '.$rate.', 2)'),
             ]);
         }
 
         // Carts: add back unit_price_usd
-        if (!Schema::hasColumn('carts', 'unit_price_usd')) {
+        if (! Schema::hasColumn('carts', 'unit_price_usd')) {
             Schema::table('carts', function (Blueprint $table) {
                 $table->decimal('unit_price_usd', 10, 2)->nullable()->after('unit_price');
             });
 
             DB::table('carts')->update([
-                'unit_price_usd' => DB::raw('ROUND(unit_price / '.$rate.', 2)')
+                'unit_price_usd' => DB::raw('ROUND(unit_price / '.$rate.', 2)'),
             ]);
         }
 
         // Orders: restore total_amount_ghs and exchange_rate
-        if (!Schema::hasColumn('orders', 'total_amount_ghs')) {
+        if (! Schema::hasColumn('orders', 'total_amount_ghs')) {
             Schema::table('orders', function (Blueprint $table) {
                 $table->decimal('total_amount_ghs', 10, 2)->nullable()->after('total_amount');
                 $table->decimal('exchange_rate', 10, 2)->nullable()->after('total_amount_ghs');
@@ -110,7 +110,7 @@ return new class extends Migration
 
             DB::table('orders')->update([
                 'total_amount_ghs' => DB::raw('ROUND(total_amount / '.$rate.', 2)'),
-                'exchange_rate' => $rate
+                'exchange_rate' => $rate,
             ]);
         }
     }

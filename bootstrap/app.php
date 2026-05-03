@@ -2,6 +2,8 @@
 
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CheckUserActivity;
+use App\Http\Middleware\ProtectWebinarLink;
+use App\Http\Middleware\ValidateWebinarAccessToken;
 use App\Http\Middleware\VerifyCustomerEmail;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
@@ -18,6 +20,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'admin' => AdminMiddleware::class,
             'verify.customer' => VerifyCustomerEmail::class,
             'user.activity' => CheckUserActivity::class,
+            'webinar.access.token' => ValidateWebinarAccessToken::class,
+            'protect.webinar.link' => ProtectWebinarLink::class,
         ]);
 
         $middleware->web(append: [

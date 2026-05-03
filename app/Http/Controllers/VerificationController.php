@@ -48,13 +48,13 @@ class VerificationController extends Controller
         $userId = Session::get('pending_login_user_id');
 
         if (! $userId) {
-            return response()->json(['error' => 'Session expired. Please login again.'], 422);
+            return redirect()->route('login')->with('error', 'Session expired. Please login again.');
         }
 
         $user = User::find($userId);
 
         if (! $user) {
-            return response()->json(['error' => 'User not found.'], 422);
+            return redirect()->route('login')->with('error', 'User not found.');
         }
 
         // Rate limiting - only allow 3 resend requests per minute
@@ -62,14 +62,14 @@ class VerificationController extends Controller
         if (RateLimiter::tooManyAttempts($key, 3)) {
             $seconds = RateLimiter::availableIn($key);
 
-            return response()->json(['error' => "Please wait $seconds seconds before requesting another code."], 429);
+            return redirect()->back()->with('error', "Please wait $seconds seconds before requesting another code.");
         }
 
         RateLimiter::hit($key, 60);
 
         $this->verificationService->resendCode($user, 'login');
 
-        return response()->json(['message' => 'Verification code sent successfully!']);
+        return redirect()->back()->with('success', 'Verification code sent successfully!');
     }
 
     /**
@@ -194,13 +194,13 @@ class VerificationController extends Controller
         $email = $request->session()->get('password_reset_email');
 
         if (! $email) {
-            return response()->json(['error' => 'Session expired. Please try again.'], 422);
+            return redirect()->route('password.request')->with('error', 'Session expired. Please try again.');
         }
 
         $user = User::where('email', $email)->first();
 
         if (! $user) {
-            return response()->json(['error' => 'User not found.'], 422);
+            return redirect()->route('password.request')->with('error', 'User not found.');
         }
 
         // Rate limiting
@@ -208,14 +208,14 @@ class VerificationController extends Controller
         if (RateLimiter::tooManyAttempts($key, 3)) {
             $seconds = RateLimiter::availableIn($key);
 
-            return response()->json(['error' => "Please wait $seconds seconds before requesting another code."], 429);
+            return redirect()->back()->with('error', "Please wait $seconds seconds before requesting another code.");
         }
 
         RateLimiter::hit($key, 60);
 
         $this->verificationService->resendCode($user, 'password_reset');
 
-        return response()->json(['message' => 'Verification code sent successfully!']);
+        return redirect()->back()->with('message', 'Verification code sent successfully!');
     }
 
     /**

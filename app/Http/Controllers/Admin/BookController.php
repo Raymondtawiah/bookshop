@@ -43,7 +43,7 @@ class BookController extends Controller
     public function index(Request $request)
     {
         $query = $request->input('q');
-        
+
         if ($query) {
             $books = Book::where('title', 'like', "%{$query}%")
                 ->orWhere('author', 'like', "%{$query}%")

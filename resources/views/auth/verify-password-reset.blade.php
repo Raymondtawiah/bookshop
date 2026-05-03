@@ -1,174 +1,135 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Password Reset Verification - Bookshop</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" href="/favicon.ico" sizes="any">
-    <style>
-        @keyframes gradient-shift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        .animate-gradient {
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 300% 300%;
-            animation: gradient-shift 3s ease infinite;
-        }
-        .code-input:focus {
-            outline: none;
-            border-color: #4f46e5;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
-        }
-    </style>
-</head>
-<body class="bg-gray-50 min-h-screen flex items-center justify-center">
-    <x-flash-message />
-    <div class="max-w-md w-full mx-4">
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-            <!-- Header -->
-            <div class="animate-gradient p-8 text-center">
-                <svg class="w-16 h-16 mx-auto text-white mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
-                </svg>
-                <h2 class="text-2xl font-bold text-white">Reset Your Password</h2>
-                <p class="text-white/80 mt-2">Enter the 6-digit code sent to your email</p>
-            </div>
+<x-layouts::auth.clean :title="__('Password Reset Verification')">
+    <!-- Logo/Brand -->
+    <div class="text-center mb-6">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-2xl mb-4">
+            <svg class="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 7a2 2 0 012 2m4 0a6 6 0 01-7.743 5.743L11 17H9v2H7v2H4a1 1 0 01-1-1v-2.586a1 1 0 01.293-.707l5.964-5.964A6 6 0 1121 9z"/>
+            </svg>
+        </div>
+        <h1 class="text-2xl font-bold text-gray-800">BookShop</h1>
+        <p class="text-gray-500 mt-1">Your Online Book Store</p>
+    </div>
 
-            <!-- Form -->
-            <div class="p-8">
-                <div class="text-center mb-6">
-                    <p class="text-gray-600">
-                        We've sent a verification code to<br>
-                        <span class="font-semibold text-indigo-600">{{ $user->email }}</span>
-                    </p>
-                </div>
+    <h2 class="text-xl font-bold text-gray-800 mb-1">Password Reset Verification</h2>
+    <p class="text-gray-500 text-sm mb-5">Enter the 6-digit code sent to your email</p>
 
-                <form id="verification-form" method="POST" action="{{ route('verification.password-reset.verify') }}">
-                    @csrf
-                    
-                    <div class="mb-6">
-                        <label for="code" class="block text-sm font-medium text-gray-700 mb-2">Verification Code</label>
-                        <input type="text" 
-                               name="code" 
-                               id="code" 
-                               maxlength="6" 
-                               class="code-input w-full px-4 py-3 text-center text-2xl tracking-[0.5em] border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                               placeholder="000000"
-                               required
-                               autofocus>
-                        @error('code')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+    <!-- Session Status -->
+    @if (session('message'))
+        <div class="mb-4 p-3 bg-green-100 border border-green-400 text-green-700 rounded-lg text-sm">
+            {{ session('message') }}
+        </div>
+    @endif
 
-                    <button type="submit" 
-                            class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
-                        Verify Code
-                    </button>
-                </form>
+    @if (session('error'))
+        <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+            {{ session('error') }}
+        </div>
+    @endif
 
-                <div class="mt-6 text-center">
-                    <p class="text-gray-600 text-sm">Didn't receive the code?</p>
-                    <button type="button" 
-                            id="resend-btn"
-                            class="mt-2 text-indigo-600 font-medium hover:text-indigo-800 disabled:opacity-50 disabled:cursor-not-allowed">
-                        Resend Code
-                    </button>
-                    <p id="countdown" class="text-sm text-gray-500 mt-2 hidden"></p>
-                </div>
+    @if ($errors->any())
+        <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+            @foreach ($errors->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach
+        </div>
+    @endif
 
-                <div class="mt-6 pt-6 border-t border-gray-200 text-center">
-                    <a href="{{ route('password.request') }}" class="text-gray-600 hover:text-indigo-600 text-sm">
-                        ← Back to Forgot Password
-                    </a>
-                </div>
-            </div>
+    <div class="text-center mb-4">
+        <p class="text-gray-600">
+            We've sent a verification code to<br>
+            <span class="font-semibold text-indigo-600">{{ $user->email }}</span>
+        </p>
+    </div>
+
+    <form id="verification-form" method="POST" action="{{ route('verification.password-reset.verify') }}" class="space-y-4">
+        @csrf
+
+        <!-- Verification Code -->
+        <div>
+            <label for="code" class="block text-sm font-medium text-gray-700 mb-1">Verification Code</label>
+            <input 
+                type="text" 
+                name="code" 
+                id="code"
+                maxlength="6" 
+                required 
+                autofocus
+                placeholder="000000"
+                class="w-full px-4 py-3 text-center text-2xl tracking-[0.5em] border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-white text-gray-900"
+            >
+            @error('code')
+                <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
+            @enderror
+        </div>
+
+        <!-- Submit -->
+        <button 
+            type="submit" 
+            class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg"
+        >
+            Verify Code
+        </button>
+    </form>
+
+    <!-- Resend Section -->
+    <div class="mt-5 text-center">
+        <p class="text-gray-600 text-sm mb-2">{{ __("Didn't receive the code?") }}</p>
+        <form method="POST" action="{{ route('verification.password-reset.resend') }}" class="inline">
+            @csrf
+            <button type="submit" class="text-indigo-600 hover:text-indigo-800 font-medium text-sm">
+                {{ __('Resend Code') }}
+            </button>
+        </form>
+    </div>
+
+    <!-- Back to Forgot Password -->
+    <div class="mt-5 p-4 bg-gray-100 rounded-lg">
+        <div class="flex items-center justify-center gap-2">
+            <svg class="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+            </svg>
+            <span class="text-gray-600 text-sm">Back to</span>
+            <a href="{{ route('password.request') }}" class="text-indigo-600 hover:text-indigo-800 font-medium text-sm">
+                Forgot Password
+            </a>
         </div>
     </div>
 
     <script>
         const form = document.getElementById('verification-form');
-        const codeInput = document.getElementById('code');
-        const resendBtn = document.getElementById('resend-btn');
-        const countdown = document.getElementById('countdown');
+        const codeInput = document.querySelector('input[name="code"]');
 
         // Auto-format input to only numbers
-        codeInput.addEventListener('input', function(e) {
-            this.value = this.value.replace(/[^0-9]/g, '');
-        });
-
-        // Resend code functionality
-        let canResend = true;
-        resendBtn.addEventListener('click', function() {
-            if (!canResend) return;
-            
-            fetch('{{ route("verification.password-reset.resend") }}', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    alert(data.message);
-                    // Start countdown
-                    canResend = false;
-                    resendBtn.disabled = true;
-                    let seconds = 60;
-                    countdown.classList.remove('hidden');
-                    countdown.textContent = `Resend code in ${seconds}s`;
-                    
-                    const interval = setInterval(() => {
-                        seconds--;
-                        countdown.textContent = `Resend code in ${seconds}s`;
-                        if (seconds <= 0) {
-                            clearInterval(interval);
-                            canResend = true;
-                            resendBtn.disabled = false;
-                            countdown.classList.add('hidden');
-                        }
-                    }, 1000);
-                }
-            })
-            .catch(error => {
-                if (error.response && error.response.data && error.response.data.error) {
-                    alert(error.response.data.error);
-                }
+        if (codeInput) {
+            codeInput.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
             });
-        });
+        }
 
         // Handle form submission with AJAX
-        form.addEventListener('submit', function(e) {
-            e.preventDefault();
-            
-            const formData = new FormData(form);
-            
-            fetch('{{ route("verification.verify.password-reset") }}', {
-                method: 'POST',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                },
-                body: formData
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message === 'Code verified successfully!' && data.redirect) {
-                    window.location.href = data.redirect;
-                }
-            })
-            .catch(error => {
-                if (error.response && error.response.data && error.response.data.errors) {
-                    const errors = error.response.data.errors;
-                    if (errors.code) {
-                        alert(errors.code[0]);
+        if (form) {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const formData = new FormData(form);
+                
+                fetch('{{ route('verification.password-reset.verify') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: formData
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.message === 'Code verified successfully!' && data.redirect) {
+                        window.location.href = data.redirect;
                     }
-                }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
             });
-        });
+        }
     </script>
-</body>
-</html>
+</x-layouts::auth>
