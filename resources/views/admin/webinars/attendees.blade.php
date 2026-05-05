@@ -27,7 +27,7 @@
         </div>
 
         <!-- Stats Cards -->
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-6 mb-8">
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                 <div class="text-sm text-gray-500 mb-1">Total Registrations</div>
                 <div class="text-3xl font-bold text-gray-900">{{ $webinar->total_registrations }}</div>
@@ -43,6 +43,10 @@
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                 <div class="text-sm text-gray-500 mb-1">Joined Webinar</div>
                 <div class="text-3xl font-bold text-blue-600">{{ $webinar->registrations()->whereNotNull('joined_at')->count() }}</div>
+            </div>
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                <div class="text-sm text-gray-500 mb-1">Total Revenue</div>
+                <div class="text-3xl font-bold text-emerald-600">₵{{ number_format($webinar->registrations()->where('payment_status', 'paid')->sum('amount_paid'), 2) }}</div>
             </div>
         </div>
 

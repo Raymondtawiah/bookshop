@@ -27,7 +27,7 @@
             </div>
 
             <!-- Webinar Info Cards -->
-            <div class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 mb-8">
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
                     <div class="text-xs sm:text-sm text-gray-500 mb-1">Total Registrations</div>
                     <div class="text-2xl sm:text-3xl font-bold text-gray-900">{{ $webinar->total_registrations }}</div>
@@ -42,7 +42,14 @@
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
                     <div class="text-xs sm:text-sm text-gray-500 mb-1">Webinar Price</div>
-                    <div class="text-2xl sm:text-3xl font-bold text-indigo-600">₵{{ number_format($webinar->price, 2) }}</div>
+                    <div class="text-2xl sm:text-3xl font-bold text-indigo-600">₵{{ number_format($webinar->current_price, 2) }}</div>
+                    <p class="text-xs text-gray-500 mt-1">{{ $webinar->price_tier }}</p>
+                </div>
+                <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-4 sm:p-6">
+                    <div class="text-xs sm:text-sm text-gray-500 mb-1">Total Revenue</div>
+                    <div class="text-2xl sm:text-3xl font-bold text-emerald-600">
+                        ₵{{ number_format($webinar->registrations()->where('payment_status', 'paid')->sum('amount_paid'), 2) }}
+                    </div>
                 </div>
             </div>
 
@@ -78,7 +85,113 @@
                         <label class="block text-sm text-gray-500">Duration</label>
                         <p class="text-gray-900">{{ $webinar->duration_minutes ? $webinar->duration_minutes . ' minutes' : 'Not specified' }}</p>
                     </div>
+                    <div>
+                        <label class="block text-sm text-gray-500">Payment Status</label>
+                        @if($webinar->arePaymentsOpen())
+                            <span class="inline-block px-2 py-1 rounded text-sm mt-1 bg-green-100 text-green-700">
+                                Open (Sunday - Thursday)
+                            </span>
+                            <p class="text-xs text-gray-500 mt-1">Customers can register and pay</p>
+                        @else
+                            <span class="inline-block px-2 py-1 rounded text-sm mt-1 bg-red-100 text-red-700">
+                                Closed (Friday - Saturday)
+                            </span>
+                            <p class="text-xs text-gray-500 mt-1">Registration closed until Sunday</p>
+                        @endif
+                    </div>
+                    <div>
+                        <label class="block text-sm text-gray-500">Current Price</label>
+                        <p class="text-gray-900 font-semibold">₵{{ number_format($webinar->current_price, 2) }} - {{ $webinar->price_tier }}</p>
+                    </div>
                 </div>
+            </div>
+
+            <!-- Reminder Management Section -->
+            @php
+                $now = now();
+                $scheduledAt = $webinar->scheduled_at;
+                $isUpcoming = $scheduledAt && $scheduledAt > $now;
+                $hoursUntil = $isUpcoming ? $now->diffInHours($scheduledAt, false) : 0;
+                $daysUntil = $isUpcoming ? $now->diffInDays($scheduledAt, false) : 0;
+                
+                // Get paid registrations without reminders (no notification sent to them)
+                $reminderNotification = $webinar->notifications()->where('type', 'reminder')->latest()->first();
+                $remindedUserIds = $reminderNotification ? $reminderNotification->recipients()->pluck('user_id')->toArray() : [];
+                $unremindedRegistrations = $webinar->registrations()
+                    ->where('payment_status', 'paid')
+                    ->whereNotIn('user_id', $remindedUserIds)
+                    ->whereNotNull('user_id')
+                    ->count();
+                
+                // For guest registrations (no user_id), count separately
+                $guestRegistrations = $webinar->registrations()
+                    ->where('payment_status', 'paid')
+                    ->whereNull('user_id')
+                    ->count();
+            @endphp
+            
+            <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
+                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-4">
+                    <div>
+                        <h3 class="text-lg font-semibold text-gray-900">Reminder Management</h3>
+                        @if($isUpcoming)
+                            <p class="text-sm text-gray-500">
+                                Webinar is in 
+                                @if($daysUntil > 0)
+                                    <span class="font-semibold text-indigo-600">{{ round($daysUntil) }} day{{ round($daysUntil) != 1 ? 's' : '' }}</span>
+                                @else
+                                    <span class="font-semibold text-orange-600">{{ round($hoursUntil) }} hour{{ round($hoursUntil) != 1 ? 's' : '' }}</span>
+                                @endif
+                            </p>
+                        @else
+                            <p class="text-sm text-gray-500">Webinar has passed</p>
+                        @endif
+                    </div>
+                    @if($isUpcoming && ($unremindedRegistrations > 0 || $guestRegistrations > 0))
+                        <a href="{{ route('admin.webinars.notifications.create', ['webinar' => $webinar->id, 'type' => 'reminder']) }}" 
+                           class="px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors text-sm font-medium flex items-center justify-center gap-2 w-full sm:w-auto animate-pulse">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                            </svg>
+                            Send Reminder ({{ $unremindedRegistrations + $guestRegistrations }})
+                        </a>
+                    @endif
+                </div>
+                
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div class="bg-orange-50 rounded-lg p-4 border border-orange-200">
+                        <div class="text-sm text-orange-700 mb-1">Need Reminder</div>
+                        <div class="text-2xl font-bold text-orange-800">{{ $unremindedRegistrations + $guestRegistrations }}</div>
+                        <p class="text-xs text-orange-600">Paid users not yet reminded</p>
+                    </div>
+                    <div class="bg-green-50 rounded-lg p-4 border border-green-200">
+                        <div class="text-sm text-green-700 mb-1">Already Reminded</div>
+                        <div class="text-2xl font-bold text-green-800">{{ count($remindedUserIds) }}</div>
+                        <p class="text-xs text-green-600">Users who received reminder</p>
+                    </div>
+                    <div class="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                        <div class="text-sm text-blue-700 mb-1">Total Paid</div>
+                        <div class="text-2xl font-bold text-blue-800">{{ $webinar->total_paid_registrations }}</div>
+                        <p class="text-xs text-blue-600">Confirmed attendees</p>
+                    </div>
+                </div>
+                
+                @if($isUpcoming && $hoursUntil <= 24 && ($unremindedRegistrations > 0 || $guestRegistrations > 0))
+                    <div class="mt-4 bg-red-50 border border-red-200 rounded-lg p-4">
+                        <div class="flex items-start gap-3">
+                            <svg class="w-5 h-5 text-red-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                            </svg>
+                            <div>
+                                <p class="font-semibold text-red-800">Webinar is within 24 hours!</p>
+                                <p class="text-sm text-red-700">
+                                    {{ $unremindedRegistrations + $guestRegistrations }} paid attendee{{ ($unremindedRegistrations + $guestRegistrations) != 1 ? 's' : '' }} haven't received a reminder yet. 
+                                    <a href="{{ route('admin.webinars.notifications.create', ['webinar' => $webinar->id, 'type' => 'reminder']) }}" class="font-semibold underline">Send reminder now</a>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                @endif
             </div>
 
             <!-- Notification History -->

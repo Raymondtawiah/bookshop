@@ -47,6 +47,7 @@
                                     <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Price</th>
                                     <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Registrations</th>
                                     <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Paid</th>
+                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Revenue</th>
                                     <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Status</th>
                                     <th class="px-6 py-4 text-right text-sm font-semibold text-gray-900">Attendees</th>
                                 </tr>
@@ -68,13 +69,17 @@
                                             </span>
                                         </td>
                                         <td class="px-6 py-4">
-                                            <span class="font-medium text-gray-900">₵{{ number_format($webinar->price, 2) }}</span>
+                                            <span class="font-medium text-gray-900">₵{{ number_format($webinar->current_price, 2) }}</span>
+                                            <span class="text-xs text-gray-500 block">{{ $webinar->price_tier }}</span>
                                         </td>
                                         <td class="px-6 py-4">
                                             <span class="text-sm text-gray-600">{{ $webinar->total_registrations }}</span>
                                         </td>
                                         <td class="px-6 py-4">
                                             <span class="text-sm text-gray-600">{{ $webinar->total_paid_registrations }}</span>
+                                        </td>
+                                        <td class="px-6 py-4">
+                                            <span class="font-semibold text-emerald-600">₵{{ number_format($webinar->registrations()->where('payment_status', 'paid')->sum('amount_paid'), 2) }}</span>
                                         </td>
                                         <td class="px-6 py-4">
                                             @if($webinar->status === 'active')

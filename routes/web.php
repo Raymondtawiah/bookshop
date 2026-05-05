@@ -46,6 +46,13 @@ Route::get('visa-tip', function () {
     return view('visa-tip');
 })->name('visa-tip');
 
+// Privacy Policy - Public route (no authentication required)
+//Is for someone having mobile app needing a privacy policy url
+//so pardon the me Thank you.
+Route::get('realgalaxyfc_privacy', function () {
+    return view('privacy');
+})->name('privacy');
+
 // Visa Training routes
 Route::get('visa-training', [VisaTrainingController::class, 'index'])->name('visa-training');
 Route::post('visa-training/chat', [VisaTrainingController::class, 'chat'])->name('visa-training.chat');
@@ -239,28 +246,39 @@ Route::post('webinar/webhook/paystack', [WebinarRegistrationController::class, '
 Route::get('webinars', [WebinarController::class, 'index'])->name('webinars.index');
 Route::get('webinar/{webinar}', [WebinarController::class, 'show'])->name('webinars.show');
 
-// Webinar registration routes - requires auth
+// Public webinar registration (guests can register)
+Route::post('webinar/{webinar}/register', [WebinarRegistrationController::class, 'storeRegistration'])
+    ->name('webinars.register.store');
+
+// Webinar payment routes (guests allowed)
+Route::get('webinar/{webinar}/payment/{registration}', [WebinarRegistrationController::class, 'payment'])
+    ->name('webinars.payment');
+Route::post('webinar/{webinar}/payment/initiate/{registration}', [WebinarRegistrationController::class, 'initializePayment'])
+    ->name('webinars.payment.initiate');
+Route::get('webinar/payment/callback', [WebinarRegistrationController::class, 'paymentCallback'])
+    ->name('webinars.payment.callback');
+
+// Webinar success page (guests allowed)
+Route::get('webinar/{webinar}/success/{registration}', [WebinarRegistrationController::class, 'paymentSuccess'])
+    ->name('webinars.success');
+
+// Webinar routes - requires auth
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::post('webinar/{webinar}/register', [WebinarRegistrationController::class, 'register'])
+    Route::get('webinar/{webinar}/register', [WebinarRegistrationController::class, 'register'])
         ->name('webinars.register');
-    Route::get('webinar/{webinar}/payment/{registration}', [WebinarRegistrationController::class, 'payment'])
-        ->name('webinars.payment');
-    Route::post('webinar/{webinar}/payment/initiate/{registration}', [WebinarRegistrationController::class, 'initializePayment'])
-        ->name('webinars.payment.initiate');
-    Route::get('webinar/payment/callback', [WebinarRegistrationController::class, 'paymentCallback'])
-        ->name('webinars.payment.callback');
     Route::get('webinar/{webinar}/join', [WebinarRegistrationController::class, 'join'])
-        ->middleware(['auth', 'verified'])
         ->name('webinars.join');
     Route::get('webinar/{webinar}/verify/{registration}', [WebinarRegistrationController::class, 'showVerification'])
-        ->middleware(['auth', 'verified'])
         ->name('webinars.verify.join');
     Route::post('webinar/{webinar}/verify/{registration}', [WebinarRegistrationController::class, 'processVerification'])
-        ->middleware(['auth', 'verified'])
         ->name('webinars.verify.process');
     Route::get('webinar/{webinar}/verified/{registration}', [WebinarRegistrationController::class, 'showVerifiedJoin'])
-        ->middleware(['auth', 'verified', 'protect.webinar.link'])
+        ->middleware(['protect.webinar.link'])
         ->name('webinars.join.verified');
 });
+
+// Public webinar access via encrypted link
+Route::get('webinar/{webinar}/access/{token}', [WebinarRegistrationController::class, 'access'])
+    ->name('webinars.access');
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

@@ -69,8 +69,9 @@
                 <!-- Notification Type -->
                 <div>
                     <label class="block text-sm font-medium text-gray-700 mb-2">Notification Type</label>
-                    <select name="type" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                    <select name="type" id="notificationType" required class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
                         <option value="info">General Information</option>
+                        <option value="reminder">Reminder (Meeting Soon)</option>
                         <option value="urgent">Urgent Update</option>
                         <option value="schedule">Schedule Update</option>
                         <option value="zoom_update">Zoom Meeting Update</option>
@@ -197,6 +198,27 @@
             } else {
                 expirationSection.classList.add('hidden');
                 expiresAtInput.value = '';
+            }
+        });
+
+        // Pre-select reminder type if URL has type=reminder
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const typeParam = urlParams.get('type');
+            if (typeParam === 'reminder') {
+                const typeSelect = document.getElementById('notificationType');
+                typeSelect.value = 'reminder';
+                // Also auto-fill reminder template
+                const titleField = document.getElementById('title');
+                const messageField = document.getElementById('message');
+                if (titleField && !titleField.value) {
+                    titleField.value = 'Reminder: Webinar Starts Soon!';
+                }
+                if (messageField && !messageField.value) {
+                    const webinarDate = '{{ $webinar->scheduled_at ? $webinar->scheduled_at->format("l, F j, Y \\a\\t g:i A") : "TBA" }}';
+                    const webinarLink = '{{ $webinar->webinar_link }}';
+                    messageField.value = 'Hi there,\n\nThis is a friendly reminder that our webinar is coming up soon!\n\n📅 Date & Time: ' + webinarDate + '\n💻 Join Link: ' + webinarLink + '\n\nPlease join a few minutes early to ensure everything is working properly.\n\nSee you there!';
+                }
             }
         });
 

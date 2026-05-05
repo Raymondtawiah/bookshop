@@ -60,8 +60,12 @@
                     <!-- Payment Amount -->
                     <div class="bg-gray-50 rounded-xl p-6 text-center mb-6">
                         <p class="text-sm text-gray-500 mb-2">Amount to Pay</p>
-                        <p class="text-4xl font-bold text-indigo-600 mb-2">₵{{ number_format($webinar->price, 2) }}</p>
-                        <p class="text-sm text-gray-500">Pay via Paystack</p>
+                        <p class="text-4xl font-bold text-indigo-600 mb-2">₵{{ number_format($webinar->current_price, 2) }}</p>
+                        <p class="text-sm text-gray-500 mb-1">{{ $webinar->price_tier }}</p>
+                        @if($webinar->is_early_bird_pricing)
+                            <p class="text-xs text-amber-600 font-medium">⏰ Early Bird Pricing - Limited Time!</p>
+                        @endif
+                        <p class="text-sm text-gray-500 mt-2">Pay via Paystack</p>
                     </div>
                 </div>
             </div>

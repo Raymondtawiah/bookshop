@@ -91,30 +91,34 @@
                         });
                     </script>
                     <script>
-                        function toggleDesc(bookId, full, truncated) {
+                        function toggleDesc(button) {
+                            var bookId = button.dataset.bookId;
+                            var full = button.dataset.fullDesc;
+                            var truncated = button.dataset.truncDesc;
                             var el = document.getElementById('desc-' + bookId);
-                            var btn = el.nextElementSibling;
                             if (el.dataset.expanded === 'true') {
                                 el.textContent = truncated;
                                 el.dataset.expanded = 'false';
-                                btn.textContent = 'Show more';
+                                button.textContent = 'Show more';
                             } else {
                                 el.textContent = full;
                                 el.dataset.expanded = 'true';
-                                btn.textContent = 'Show less';
+                                button.textContent = 'Show less';
                             }
                         }
-                        function toggleAvailDesc(bookId, full, truncated) {
+                        function toggleAvailDesc(button) {
+                            var bookId = button.dataset.bookId;
+                            var full = button.dataset.fullDesc;
+                            var truncated = button.dataset.truncDesc;
                             var el = document.getElementById('avail-' + bookId);
-                            var btn = el.nextElementSibling;
                             if (el.dataset.expanded === 'true') {
                                 el.textContent = truncated;
                                 el.dataset.expanded = 'false';
-                                btn.textContent = 'Show more';
+                                button.textContent = 'Show more';
                             } else {
                                 el.textContent = full;
                                 el.dataset.expanded = 'true';
-                                btn.textContent = 'Show less';
+                                button.textContent = 'Show less';
                             }
                         }
                     </script>
@@ -326,7 +330,7 @@
                                 <div class="mt-2">
                                     <p id="desc-{{ $book->id }}" class="text-xs text-gray-500 line-clamp-2">{{ Str::limit($book->description, 60) }}</p>
                                     @if(strlen($book->description) > 60)
-                                    <button onclick="toggleDesc({{ $book->id }}, {!! json_encode($book->description) !!}, {!! json_encode(Str::limit($book->description, 60)) !!})" class="text-xs text-indigo-600 font-medium mt-1 hover:text-indigo-700">Show more</button>
+                                    <button data-book-id="{{ $book->id }}" data-full-desc="{!! json_encode($book->description) !!}" data-trunc-desc="{!! json_encode(Str::limit($book->description, 60)) !!}" onclick="toggleDesc(this)" class="text-xs text-indigo-600 font-medium mt-1 hover:text-indigo-700">Show more</button>
                                     @endif
                                 </div>
                                 @endif
@@ -433,7 +437,7 @@
                             <div class="mt-2">
                                 <p id="avail-{{ $book->id }}" class="text-xs text-gray-500 line-clamp-2">{{ Str::limit($book->description, 60) }}</p>
                                 @if(strlen($book->description) > 60)
-                                <button onclick="toggleAvailDesc({{ $book->id }}, {!! json_encode($book->description) !!}, {!! json_encode(Str::limit($book->description, 60)) !!})" class="text-xs text-indigo-600 font-medium mt-1 hover:text-indigo-700">Show more</button>
+                                <button data-book-id="{{ $book->id }}" data-full-desc="{!! json_encode($book->description) !!}" data-trunc-desc="{!! json_encode(Str::limit($book->description, 60)) !!}" onclick="toggleAvailDesc(this)" class="text-xs text-indigo-600 font-medium mt-1 hover:text-indigo-700">Show more</button>
                                 @endif
                             </div>
                             @endif
@@ -566,7 +570,7 @@
                             <span class="text-sm font-bold text-indigo-600">{{ $percentage }}%</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 h-2 rounded-full" style="width: {{ $percentage }}%"></div>
+                            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 h-2 rounded-full" style="--progress-width: {{ $percentage }}%; width: var(--progress-width)"></div>
                         </div>
                         @if($percentage < 100)
                         <p class="text-xs text-gray-500 mt-2">Complete your profile to get the most out of your account!</p>
