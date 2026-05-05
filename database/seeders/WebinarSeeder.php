@@ -26,7 +26,7 @@ class WebinarSeeder extends Seeder
             // Create one webinar with Zoom link
             Webinar::create([
                 'title' => 'Webinar',
-                'description' => 'Join us for an exclusive webinar on business growth strategies.',
+                'description' => 'Master your visa interview with expert guidance. Learn proven strategies, common questions, and how to answer confidently to get your visa approved. Weekly live sessions every Friday.',
                 'webinar_link' => 'https://zoom.us/j/bookshop-' . Str::random(10),
                 'scheduled_at' => now()->addDays(7),
                 'duration_minutes' => 60,
