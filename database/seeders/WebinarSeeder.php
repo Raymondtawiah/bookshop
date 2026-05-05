@@ -23,12 +23,18 @@ class WebinarSeeder extends Seeder
                 throw new \Exception('Admin user not found. Please run AdminSeeder first.');
             }
 
-            // Create one webinar with Zoom link
+            // Create weekly webinar (every Friday 4-5 PM)
+            $nextFriday = now()->copy();
+            while ($nextFriday->dayOfWeek !== 5) { // 5 = Friday
+                $nextFriday->addDay();
+            }
+            $nextFriday->setTime(16, 0, 0);
+
             Webinar::create([
-                'title' => 'Visa Interview Webinar',
-                'description' => 'Master your visa interview with expert guidance. Learn proven strategies, common questions, and how to answer confidently to get your visa approved. Weekly live sessions every Friday.',
-                'webinar_link' => 'https://zoom.us/j/bookshop-' . Str::random(10),
-                'scheduled_at' => now()->addDays(7),
+                'title' => 'Weekly Webinars',
+                'description' => 'Weekly Visa Interview Webinar. Join us every Friday, 4–5 PM. Master your visa interview with expert guidance. Learn proven strategies, common questions, and how to answer confidently to get your visa approved.',
+                'webinar_link' => 'https://meet.google.com/fwk-hngm-jva',
+                'scheduled_at' => $nextFriday,
                 'duration_minutes' => 60,
                 'status' => 'active',
                 'created_by' => $admin->id,
