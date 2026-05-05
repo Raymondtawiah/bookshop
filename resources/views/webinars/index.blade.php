@@ -110,44 +110,6 @@
         </div>
     </section>
 
-    <!-- Featured Speakers -->
-    <section id="speakers" class="py-20 bg-white">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold mb-4">Expert Instructors</h2>
-                <p class="text-xl text-slate-600">
-                    Learn from visa interview experts
-                </p>
-            </div>
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="flex gap-6 p-8 rounded-xl bg-slate-50 border border-slate-200">
-                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center flex-shrink-0">
-                        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-2xl font-semibold mb-1">Dr. Ama Wilson</h3>
-                        <p class="text-blue-600 mb-3">Visa Consultant & Former Embassy Officer</p>
-                        <p class="text-slate-600">Former visa officer with 15+ years experience. Has helped over 5,000 students successfully obtain their visas through expert coaching.</p>
-                    </div>
-                </div>
-                <div class="flex gap-6 p-8 rounded-xl bg-slate-50 border border-slate-200">
-                    <div class="w-24 h-24 rounded-full bg-gradient-to-br from-emerald-500 to-green-600 flex items-center justify-center flex-shrink-0">
-                        <svg class="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                        </svg>
-                    </div>
-                    <div>
-                        <h3 class="text-2xl font-semibold mb-1">Kwame Asante</h3>
-                        <p class="text-blue-600 mb-3">Immigration Law Expert</p>
-                        <p class="text-slate-600">Specialist in student visa applications with a 95% success rate. Expert in handling complex visa cases and appeals.</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
     <!-- Registration Form -->
     <section id="register" class="py-20 bg-gradient-to-r from-blue-600 to-indigo-700">
         <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
