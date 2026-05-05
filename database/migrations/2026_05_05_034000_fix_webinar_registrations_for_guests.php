@@ -15,8 +15,8 @@ return new class extends Migration
             // Step 1: Drop the foreign key constraint FIRST
             $table->dropForeign(['user_id']);
             
-            // Step 2: Drop the unique constraint that requires user_id
-            $table->dropUnique('webinar_registrations_webinar_id_user_id_unique');
+            // Step 2: Drop unique constraint that requires user_id
+            $table->dropUnique(['webinar_id', 'user_id']);
             
             // Step 3: Make user_id nullable for guest registrations
             $table->unsignedBigInteger('user_id')->nullable()->change();

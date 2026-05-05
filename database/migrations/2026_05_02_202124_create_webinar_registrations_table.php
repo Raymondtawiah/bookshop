@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('webinar_registrations', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('webinar_id')->constrained()->onDelete('cascade');
+            $table->foreignId('webinar_id')->constrained('webinar_sessions')->onDelete('cascade');
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->string('full_name');
             $table->string('email');
