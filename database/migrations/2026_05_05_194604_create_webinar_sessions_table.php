@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('webinars', function (Blueprint $table) {
+        Schema::create('webinar_sessions', function (Blueprint $table) {
             $table->id();
             $table->string('title');
             $table->text('description')->nullable();
@@ -22,6 +22,7 @@ return new class extends Migration
             $table->string('status')->default('active');
             $table->unsignedBigInteger('created_by')->nullable();
             $table->timestamps();
+            
             $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
         });
     }
@@ -31,6 +32,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('webinars');
+        Schema::dropIfExists('webinar_sessions');
     }
 };
