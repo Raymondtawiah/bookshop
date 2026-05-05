@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Webinar;
+use App\Models\WebinarSession;
 use Illuminate\Support\Facades\Auth;
 
 class WebinarController extends Controller
@@ -12,7 +12,7 @@ class WebinarController extends Controller
      */
     public function index()
     {
-        $webinars = Webinar::active()->upcoming()->paginate(12);
+        $webinars = WebinarSession::active()->upcoming()->paginate(12);
 
         return view('webinars.index', compact('webinars'));
     }
@@ -20,7 +20,7 @@ class WebinarController extends Controller
     /**
      * Show a specific webinar and handle access.
      */
-    public function show(Webinar $webinar)
+    public function show(WebinarSession $webinar)
     {
         $user = Auth::user();
 

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Webinar;
+use App\Models\WebinarSession;
 use App\Models\WebinarRegistration;
 use App\Services\PaystackService;
 use App\Services\WebinarAccessService;
@@ -26,7 +26,7 @@ class WebinarRegistrationController extends Controller
     /**
      * Show registration form for webinar.
      */
-    public function register(Request $request, Webinar $webinar)
+    public function register(Request $request, WebinarSession $webinar)
     {
         $user = Auth::user();
 
@@ -105,7 +105,7 @@ class WebinarRegistrationController extends Controller
     /**
      * Show payment page.
      */
-    public function payment(Webinar $webinar, WebinarRegistration $registration)
+    public function payment(Request $request, WebinarSession $webinar, WebinarRegistration $registration)
     {
         $this->authorizePayment($registration);
 
@@ -120,7 +120,7 @@ class WebinarRegistrationController extends Controller
     /**
      * Initialize Paystack payment.
      */
-    public function initializePayment(Webinar $webinar, WebinarRegistration $registration)
+    public function initializePayment(Request $request, WebinarSession $webinar, WebinarRegistration $registration)
     {
         $this->authorizePayment($registration);
 
@@ -260,7 +260,7 @@ class WebinarRegistrationController extends Controller
     /**
      * Show verification page before joining webinar.
      */
-    public function showVerification(Webinar $webinar, WebinarRegistration $registration)
+    public function showVerification(WebinarSession $webinar, WebinarRegistration $registration)
     {
         $user = Auth::user();
 
@@ -284,7 +284,7 @@ class WebinarRegistrationController extends Controller
     /**
      * Process verification and show actual join link.
      */
-    public function processVerification(Webinar $webinar, WebinarRegistration $registration, Request $request)
+    public function processVerification(Request $request, WebinarSession $webinar, WebinarRegistration $registration)
     {
         $user = Auth::user();
 
@@ -319,7 +319,7 @@ class WebinarRegistrationController extends Controller
     /**
      * Show verified join page with actual Zoom link.
      */
-    public function showVerifiedJoin(Webinar $webinar, WebinarRegistration $registration)
+    public function showVerifiedJoin(WebinarSession $webinar, WebinarRegistration $registration)
     {
         // Mark as joined if not already set
         if (!$registration->joined_at) {
@@ -334,7 +334,7 @@ class WebinarRegistrationController extends Controller
     /**
      * Show success page with access link after payment (guests allowed)
      */
-    public function paymentSuccess(Webinar $webinar, WebinarRegistration $registration)
+    public function paymentSuccess(WebinarSession $webinar, WebinarRegistration $registration)
     {
         // Verify payment is completed
         if (!$registration->isPaid()) {

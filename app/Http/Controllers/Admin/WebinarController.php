@@ -3,10 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Webinar;
+use App\Models\WebinarSession;
 use App\Models\WebinarNotification;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class WebinarController extends Controller
 {
@@ -15,7 +17,7 @@ class WebinarController extends Controller
      */
     public function index(Request $request)
     {
-        $query = Webinar::query();
+        $query = WebinarSession::query();
 
         if ($request->has('q')) {
             $query->where('title', 'like', '%'.$request->input('q').'%')
@@ -43,7 +45,7 @@ class WebinarController extends Controller
         $validated = $this->validateWebinar($request);
         $validated['created_by'] = auth()->id();
 
-        Webinar::create($validated);
+        WebinarSession::create($validated);
 
         return redirect()->route('admin.webinars.index')
             ->with('success', 'Webinar created successfully!');
@@ -52,7 +54,7 @@ class WebinarController extends Controller
     /**
      * Show a specific webinar with attendees.
      */
-    public function show(Webinar $webinar)
+    public function show(WebinarSession $webinar)
     {
         $query = $webinar->registrations()->with('user');
 
@@ -82,7 +84,7 @@ class WebinarController extends Controller
     /**
      * Show edit webinar form.
      */
-    public function edit(Webinar $webinar)
+    public function edit(WebinarSession $webinar)
     {
         return view('admin.webinars.edit', compact('webinar'));
     }
@@ -90,7 +92,7 @@ class WebinarController extends Controller
     /**
      * Update a webinar.
      */
-    public function update(Request $request, Webinar $webinar)
+    public function update(Request $request, WebinarSession $webinar)
     {
         $validated = $this->validateWebinar($request, false);
 
@@ -103,7 +105,7 @@ class WebinarController extends Controller
     /**
      * Delete a webinar.
      */
-    public function destroy(Webinar $webinar)
+    public function destroy(WebinarSession $webinar)
     {
         $webinar->delete();
 
@@ -114,7 +116,7 @@ class WebinarController extends Controller
     /**
      * Show attendees for a webinar.
      */
-    public function attendees(Webinar $webinar)
+    public function attendees(WebinarSession $webinar)
     {
         $registrations = $webinar->registrations()
             ->with('user')
@@ -147,7 +149,7 @@ class WebinarController extends Controller
     /**
      * Show notification creation form.
      */
-    public function createNotification(Webinar $webinar)
+    public function createNotification(WebinarSession $webinar)
     {
         return view('admin.webinars.notifications', compact('webinar'));
     }
@@ -186,7 +188,7 @@ class WebinarController extends Controller
     /**
      * Send email notifications to paid attendees only.
      */
-    private function sendEmailNotifications(Webinar $webinar, WebinarNotification $notification)
+    private function sendEmailNotifications(WebinarSession $webinar, WebinarNotification $notification)
     {
         // Get only paid attendees with their user information
         $attendees = $webinar->registrations()
@@ -240,7 +242,7 @@ class WebinarController extends Controller
     /**
      * Send notification to specific users who missed it.
      */
-    public function sendNotificationToUsers(Request $request, Webinar $webinar, WebinarNotification $notification)
+    public function sendNotificationToUsers(Request $request, WebinarSession $webinar, WebinarNotification $notification)
     {
         $request->validate([
             'user_ids' => 'required|array',
