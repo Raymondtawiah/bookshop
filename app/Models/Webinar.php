@@ -10,6 +10,8 @@ class Webinar extends Model
 {
     use HasFactory;
 
+    protected $table = 'webinar_sessions';
+
     protected $fillable = [
         'title',
         'description',
