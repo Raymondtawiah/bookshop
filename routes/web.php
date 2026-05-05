@@ -244,41 +244,41 @@ Route::post('webinar/webhook/paystack', [WebinarRegistrationController::class, '
 
 // Webinar routes (public - accessible to all)
 Route::get('webinars', [WebinarController::class, 'index'])->name('webinars.index');
-Route::get('webinar/{webinar}', [WebinarController::class, 'show'])->name('webinars.show');
+Route::get('webinar/{webinar}', [WebinarController::class, 'show'])->name('webinars.show')->where('webinar', '[0-9]+');
 
 // Public webinar registration (guests can register)
 Route::post('webinar/{webinar}/register', [WebinarRegistrationController::class, 'storeRegistration'])
-    ->name('webinars.register.store');
+    ->name('webinars.register.store')->where('webinar', '[0-9]+');
 
 // Webinar payment routes (guests allowed)
 Route::get('webinar/{webinar}/payment/{registration}', [WebinarRegistrationController::class, 'payment'])
-    ->name('webinars.payment');
+    ->name('webinars.payment')->where('webinar', '[0-9]+');
 Route::post('webinar/{webinar}/payment/initiate/{registration}', [WebinarRegistrationController::class, 'initializePayment'])
-    ->name('webinars.payment.initiate');
+    ->name('webinars.payment.initiate')->where('webinar', '[0-9]+');
 Route::get('webinar/payment/callback', [WebinarRegistrationController::class, 'paymentCallback'])
     ->name('webinars.payment.callback');
 
 // Webinar success page (guests allowed)
 Route::get('webinar/{webinar}/success/{registration}', [WebinarRegistrationController::class, 'paymentSuccess'])
-    ->name('webinars.success');
+    ->name('webinars.success')->where('webinar', '[0-9]+');
 
 // Webinar routes - requires auth
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('webinar/{webinar}/register', [WebinarRegistrationController::class, 'register'])
-        ->name('webinars.register');
+        ->name('webinars.register')->where('webinar', '[0-9]+');
     Route::get('webinar/{webinar}/join', [WebinarRegistrationController::class, 'join'])
-        ->name('webinars.join');
+        ->name('webinars.join')->where('webinar', '[0-9]+');
     Route::get('webinar/{webinar}/verify/{registration}', [WebinarRegistrationController::class, 'showVerification'])
-        ->name('webinars.verify.join');
+        ->name('webinars.verify.join')->where('webinar', '[0-9]+');
     Route::post('webinar/{webinar}/verify/{registration}', [WebinarRegistrationController::class, 'processVerification'])
-        ->name('webinars.verify.process');
+        ->name('webinars.verify.process')->where('webinar', '[0-9]+');
     Route::get('webinar/{webinar}/verified/{registration}', [WebinarRegistrationController::class, 'showVerifiedJoin'])
         ->middleware(['protect.webinar.link'])
-        ->name('webinars.join.verified');
+        ->name('webinars.join.verified')->where('webinar', '[0-9]+');
 });
 
 // Public webinar access via encrypted link
 Route::get('webinar/{webinar}/access/{token}', [WebinarRegistrationController::class, 'access'])
-    ->name('webinars.access');
+    ->name('webinars.access')->where('webinar', '[0-9]+');
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
