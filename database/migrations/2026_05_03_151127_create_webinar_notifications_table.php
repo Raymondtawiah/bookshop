@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('webinar_notifications', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('webinar_id')->constrained()->onDelete('cascade');
+            $table->foreignId('webinar_id')->constrained('webinar_sessions')->onDelete('cascade');
             $table->string('title');
             $table->text('message');
             $table->string('type')->default('info'); // info, urgent, schedule, zoom_update
