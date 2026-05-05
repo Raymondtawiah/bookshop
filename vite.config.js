@@ -20,7 +20,7 @@ export default defineConfig({
         },
     },
     build: {
-        outDir: 'public/build',
+        outDir: 'public_html/build',
         manifest: true,
     },
 });
