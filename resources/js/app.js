@@ -1,1 +1,1 @@
-<script src="https://cdn.tailwindcss.com"></script>
+import '../css/app.css';

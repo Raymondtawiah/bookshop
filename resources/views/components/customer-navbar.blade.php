@@ -32,6 +32,7 @@ window.addEventListener('pageshow', function(event) {
                 <!-- Always show Store link - it will scroll to store section -->
                 <a href="{{ route('home') }}#store" class="text-gray-700 hover:text-indigo-600">Store</a>
                 <a href="{{ route('visa-tip') }}" class="text-gray-700 hover:text-indigo-600">Visa Tips</a>
+                <a href="{{ route('webinars.index') }}" class="text-gray-700 hover:text-indigo-600">Webinars</a>
                 {{-- <a href="{{ route('visa-training') }}" class="text-gray-700 hover:text-indigo-600">Visa Training</a> --}}
                 <a href="{{ route('home') }}#about" class="text-gray-700 hover:text-indigo-600">About</a>
                 <a href="{{ route('home') }}#contact" class="text-gray-700 hover:text-indigo-600">Contact</a>
@@ -49,8 +50,8 @@ window.addEventListener('pageshow', function(event) {
                         <span class="absolute -top-2 -right-2 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ $navbarCartCount }}</span>
                     @endif
                 </a>
-                <div class="relative group">
-                    <button class="text-gray-700 hover:text-indigo-600 flex items-center">
+                <div class="relative" id="user-dropdown-container">
+                    <button id="user-menu-button" class="text-gray-700 hover:text-indigo-600 flex items-center">
                         <div class="w-8 h-8 rounded-full flex items-center justify-center animate-gradient">
                             <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
                                 <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
@@ -60,7 +61,7 @@ window.addEventListener('pageshow', function(event) {
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
                         </svg>
                     </button>
-                     <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden group-hover:block border z-[9999]" style="z-index: 9999 !important;">
+                    <div id="user-dropdown" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg hidden border z-[9999]" style="z-index: 9999 !important;">
                         <a href="{{ route('profile') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">My Profile</a>
                         <a href="{{ route('my-orders') }}" class="block px-4 py-2 text-gray-700 hover:bg-gray-100">My Orders</a>
                         <form method="POST" action="{{ route('logout') }}">
@@ -85,4 +86,28 @@ window.addEventListener('pageshow', function(event) {
             </div>
         </div>
     </div>
+
+    <!-- Dropdown click handling script -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const userMenuButton = document.getElementById('user-menu-button');
+            const userDropdown = document.getElementById('user-dropdown');
+            const userDropdownContainer = document.getElementById('user-dropdown-container');
+
+            if (userMenuButton && userDropdown) {
+                // Toggle dropdown on button click
+                userMenuButton.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    userDropdown.classList.toggle('hidden');
+                });
+
+                // Close dropdown when clicking outside
+                document.addEventListener('click', function(e) {
+                    if (!userDropdownContainer.contains(e.target)) {
+                        userDropdown.classList.add('hidden');
+                    }
+                });
+            }
+        });
+    </script>
 </nav>

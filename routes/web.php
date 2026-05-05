@@ -11,12 +11,13 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\VisaTrainingController;
+use App\Http\Controllers\WebinarController;
+use App\Http\Controllers\WebinarRegistrationController;
 use App\Models\User;
 use App\Services\VerificationService;
-use Illuminate\Auth\Access\Authorization;
-use Illuminate\Hashing\Hash;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
@@ -45,6 +46,13 @@ Route::get('visa-tip', function () {
     return view('visa-tip');
 })->name('visa-tip');
 
+// Privacy Policy - Public route (no authentication required)
+//Is for someone having mobile app needing a privacy policy url
+//so pardon the me Thank you.
+Route::get('realgalaxyfc_privacy', function () {
+    return view('privacy');
+})->name('privacy');
+
 // Visa Training routes
 Route::get('visa-training', [VisaTrainingController::class, 'index'])->name('visa-training');
 Route::post('visa-training/chat', [VisaTrainingController::class, 'chat'])->name('visa-training.chat');
@@ -70,7 +78,7 @@ Route::middleware(['web'])->group(function () {
 
         $user = User::where('email', $credentials['email'])->first();
 
-        if (! $user || ! Illuminate\Support\Facades\Hash::check($credentials['password'], $user->password)) {
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
             Log::info('Login failed - invalid credentials');
 
             return back()->withErrors([
@@ -113,7 +121,7 @@ Route::middleware(['web'])->group(function () {
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => Illuminate\Support\Facades\Hash::make($request->password),
+            'password' => Hash::make($request->password),
         ]);
 
         $request->session()->put('pending_login_user_id', $user->id);
@@ -193,7 +201,6 @@ Route::get('email/verify', function () {
 })->middleware('auth')->name('verification.notice');
 
 Route::get('email/verify/{id}/{hash}', function (Request $request) {
-    Authorization::authorizeResourceFor('App\Models\User', $request->route('id'));
     $request->user()->markEmailAsVerified();
 
     return redirect('/')->with('verified', true);
@@ -233,8 +240,45 @@ Route::middleware(['auth', 'verify.customer'])->group(function () {
 });
 
 // Paystack Webhook - NO middleware (must be publicly accessible)
-// Route::post('api/paystack/webhook', [PaystackWebhookController::class, 'handleWebhook'])->name('paystack.webhook');
-// Route::get('api/paystack/verify/{reference}', [PaystackWebhookController::class, 'verifyPayment'])->name('paystack.verify');
+Route::post('webinar/webhook/paystack', [WebinarRegistrationController::class, 'webhook'])->name('webinars.paystack.webhook');
 
+// Webinar routes (public - accessible to all)
+Route::get('webinars', [WebinarController::class, 'index'])->name('webinars.index');
+Route::get('webinar/{webinar}', [WebinarController::class, 'show'])->name('webinars.show');
+
+// Public webinar registration (guests can register)
+Route::post('webinar/{webinar}/register', [WebinarRegistrationController::class, 'storeRegistration'])
+    ->name('webinars.register.store');
+
+// Webinar payment routes (guests allowed)
+Route::get('webinar/{webinar}/payment/{registration}', [WebinarRegistrationController::class, 'payment'])
+    ->name('webinars.payment');
+Route::post('webinar/{webinar}/payment/initiate/{registration}', [WebinarRegistrationController::class, 'initializePayment'])
+    ->name('webinars.payment.initiate');
+Route::get('webinar/payment/callback', [WebinarRegistrationController::class, 'paymentCallback'])
+    ->name('webinars.payment.callback');
+
+// Webinar success page (guests allowed)
+Route::get('webinar/{webinar}/success/{registration}', [WebinarRegistrationController::class, 'paymentSuccess'])
+    ->name('webinars.success');
+
+// Webinar routes - requires auth
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('webinar/{webinar}/register', [WebinarRegistrationController::class, 'register'])
+        ->name('webinars.register');
+    Route::get('webinar/{webinar}/join', [WebinarRegistrationController::class, 'join'])
+        ->name('webinars.join');
+    Route::get('webinar/{webinar}/verify/{registration}', [WebinarRegistrationController::class, 'showVerification'])
+        ->name('webinars.verify.join');
+    Route::post('webinar/{webinar}/verify/{registration}', [WebinarRegistrationController::class, 'processVerification'])
+        ->name('webinars.verify.process');
+    Route::get('webinar/{webinar}/verified/{registration}', [WebinarRegistrationController::class, 'showVerifiedJoin'])
+        ->middleware(['protect.webinar.link'])
+        ->name('webinars.join.verified');
+});
+
+// Public webinar access via encrypted link
+Route::get('webinar/{webinar}/access/{token}', [WebinarRegistrationController::class, 'access'])
+    ->name('webinars.access');
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

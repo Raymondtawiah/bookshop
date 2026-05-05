@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\CoachingController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\WebinarController;
 use Illuminate\Support\Facades\Route;
 
 // Admin login routes - accessible without authentication
@@ -67,5 +68,19 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::get('notifications', [NotificationController::class, 'index'])->name('notifications');
     Route::post('notifications/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
     Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllRead');
+
     Route::get('notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unreadCount');
+
+    // Webinars
+    Route::get('webinars', [WebinarController::class, 'index'])->name('webinars.index');
+    Route::get('webinars/create', [WebinarController::class, 'create'])->name('webinars.create');
+    Route::post('webinars', [WebinarController::class, 'store'])->name('webinars.store');
+    Route::get('webinars/{webinar}/edit', [WebinarController::class, 'edit'])->name('webinars.edit');
+    Route::put('webinars/{webinar}', [WebinarController::class, 'update'])->name('webinars.update');
+    Route::delete('webinars/{webinar}', [WebinarController::class, 'destroy'])->name('webinars.destroy');
+    Route::get('webinars/{webinar}/show', [WebinarController::class, 'show'])->name('webinars.admin.show');
+    Route::get('webinars/{webinar}/attendees', [WebinarController::class, 'attendees'])->name('webinars.attendees');
+    Route::get('webinars/{webinar}/notifications/create', [WebinarController::class, 'createNotification'])->name('webinars.notifications.create');
+    Route::post('webinars/{webinar}/notifications', [WebinarController::class, 'storeNotification'])->name('webinars.notifications.store');
+    Route::post('webinars/{webinar}/notifications/{notification}/send-to-users', [WebinarController::class, 'sendNotificationToUsers'])->name('webinars.notifications.sendToUsers');
 });

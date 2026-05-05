@@ -190,7 +190,7 @@ class PaymentController extends Controller
                     'status' => 'paid',
                     'payment_status' => 'completed',
                     'paid_at' => now(),
-                    'order_items' => !empty($orderItems) ? $orderItems : $order->order_items,
+                    'order_items' => ! empty($orderItems) ? $orderItems : $order->order_items,
                 ]);
 
                 // Send admin notifications

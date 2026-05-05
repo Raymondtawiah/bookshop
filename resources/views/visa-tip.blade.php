@@ -23,26 +23,43 @@
         
         <div class="w-full overflow-x-hidden min-w-0">
         
-        <!-- Hero Section with S-Wave -->
-        <section class="relative pt-32 pb-20 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700">
-            <!-- Background Image -->
-            <div class="absolute inset-0">
-                <img src="{{ asset('visa.jpg') }}" alt="Visa Tips" class="w-full h-full object-cover object-[center_70%]">
-                <div class="absolute inset-0 bg-gradient-to-r from-indigo-900/80 to-purple-900/80"></div>
-            </div>
-            
-            <!-- Hero Content -->
-            <div class="max-w-7xl mx-auto px-6 relative z-10">
-                <div class="text-center">
-                    <h1 class="text-5xl md:text-6xl font-bold text-white mb-6">
-                        Visa Interview Tips
-                    </h1>
-                    <p class="text-xl md:text-2xl text-white/90 mb-10 max-w-2xl mx-auto">
-                        Essential advice to help you succeed in your visa interview.
-                    </p>
-                    <a href="#content" class="px-6 py-3 bg-white text-indigo-600 font-medium rounded-lg hover:bg-gray-100 transition-colors">
-                        Get Started
-                    </a>
+        <!-- Hero Section -->
+        <section class="py-20 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 text-white max-w-full">
+            <div class="px-4 sm:px-6 lg:px-8">
+                <div class="grid md:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
+                    <div>
+                        <div class="inline-block px-4 py-2 bg-white/20 rounded-full mb-4">
+                            <span class="text-sm">Expert Advice • Proven Strategies</span>
+                        </div>
+                        <h1 class="text-5xl font-bold mb-6">
+                            Visa Interview Tips
+                        </h1>
+                        <p class="text-xl mb-8 text-blue-100">
+                            Master your visa interview with expert guidance. Learn proven strategies, avoid common mistakes, and answer confidently to get your visa approved.
+                        </p>
+                        <div class="flex gap-4">
+                            <a href="#content" class="px-8 py-4 bg-white text-blue-600 rounded-lg font-semibold text-lg hover:bg-gray-100 transition-colors">
+                                Get Started
+                            </a>
+                        </div>
+                        <div class="flex gap-8 mt-8">
+                            <div>
+                                <div class="text-3xl font-bold">8+</div>
+                                <div class="text-blue-200">Essential Tips</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-bold">100%</div>
+                                <div class="text-blue-200">Free Guide</div>
+                            </div>
+                            <div>
+                                <div class="text-3xl font-bold">Pro</div>
+                                <div class="text-blue-200">Expert Advice</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="hidden md:block">
+                        <img src="{{ asset('visa.jpg') }}" alt="Visa Interview Tips" class="rounded-2xl shadow-2xl w-full h-auto object-cover">
+                    </div>
                 </div>
             </div>
         </section>
