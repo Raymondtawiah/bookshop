@@ -42,7 +42,7 @@ class WebinarRegistrationController extends Controller
     /**
      * Store webinar registration (guests allowed).
      */
-    public function storeRegistration(Request $request, Webinar $webinar)
+    public function storeRegistration(Request $request, WebinarSession $webinar)
     {
         $request->validate([
             'full_name' => 'required|string|max:255',
@@ -242,7 +242,7 @@ class WebinarRegistrationController extends Controller
     /**
      * Join webinar page - redirects to verification.
      */
-    public function join(Webinar $webinar)
+    public function join(WebinarSession $webinar)
     {
         $user = Auth::user();
 
@@ -351,7 +351,7 @@ class WebinarRegistrationController extends Controller
     /**
      * Handle webinar access via encrypted link
      */
-    public function access(Request $request, Webinar $webinar, string $token)
+    public function access(Request $request, WebinarSession $webinar, string $token)
     {
         $registration = $this->accessService->canAccessWebinar($token, $webinar->id);
 

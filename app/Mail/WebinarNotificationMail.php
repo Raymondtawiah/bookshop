@@ -2,7 +2,7 @@
 
 namespace App\Mail;
 
-use App\Models\Webinar;
+use App\Models\WebinarSession;
 use App\Models\WebinarNotification;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
@@ -16,7 +16,7 @@ class WebinarNotificationMail extends Mailable
     use Queueable, SerializesModels;
 
     public function __construct(
-        public Webinar $webinar,
+        public WebinarSession $webinar,
         public WebinarNotification $notification,
         public User $user
     ) {}

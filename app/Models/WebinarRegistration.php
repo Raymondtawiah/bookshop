@@ -35,7 +35,7 @@ class WebinarRegistration extends Model
 
     public function webinar(): BelongsTo
     {
-        return $this->belongsTo(Webinar::class);
+        return $this->belongsTo(WebinarSession::class);
     }
 
     public function user(): BelongsTo

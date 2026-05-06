@@ -13,6 +13,7 @@ use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\VisaTrainingController;
 use App\Http\Controllers\WebinarController;
 use App\Http\Controllers\WebinarRegistrationController;
+use App\Http\Controllers\WebinarWaitingListController;
 use App\Models\User;
 use App\Services\VerificationService;
 use Illuminate\Http\Request;
@@ -280,5 +281,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
 // Public webinar access via encrypted link
 Route::get('webinar/{webinar}/access/{token}', [WebinarRegistrationController::class, 'access'])
     ->name('webinars.access')->where('webinar', '[0-9]+');
+
+// Webinar waiting list routes
+Route::post('webinar/{webinar}/waiting-list/join', [WebinarWaitingListController::class, 'join'])
+    ->name('webinars.waiting-list.join')->where('webinar', '[0-9]+');
+
+Route::get('webinar/{webinar}/waiting-list', [WebinarWaitingListController::class, 'index'])
+    ->name('webinars.waiting-list.index')->where('webinar', '[0-9]+');
+
+Route::delete('webinar/{webinar}/waiting-list/leave', [WebinarWaitingListController::class, 'leave'])
+    ->name('webinars.waiting-list.leave')->where('webinar', '[0-9]+');
+
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

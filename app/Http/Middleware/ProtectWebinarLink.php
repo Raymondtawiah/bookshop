@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Webinar;
+use App\Models\WebinarSession;
 use App\Models\WebinarRegistration;
 use Closure;
 use Illuminate\Http\Request;
