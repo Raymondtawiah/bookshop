@@ -49,17 +49,20 @@ class WebinarAccessService
 
     /**
      * Generate secure webinar access link for paid user
-     * Note: Links expire after 24 hours for security
+     * Note: Links expire after Friday for weekly webinar cycle
      */
     public function generateAccessLink(WebinarRegistration $registration): string
     {
         // Generate access token
         $accessToken = $this->generateAccessToken($registration);
         
-        // Store token in registration record (24 hour expiration)
+        // Calculate Friday expiration (end of current week)
+        $fridayExpiration = $this->getFridayExpiration();
+        
+        // Store token in registration record (weekly expiration)
         $registration->update([
             'access_token' => $accessToken,
-            'access_token_expires_at' => now()->addHours(24) // 24 hour expiration
+            'access_token_expires_at' => $fridayExpiration
         ]);
 
         // Generate secure URL
@@ -93,6 +96,27 @@ class WebinarAccessService
             'access_token' => null,
             'access_token_expires_at' => null
         ]);
+    }
+
+    /**
+     * Calculate Friday expiration time (end of current week)
+     */
+    private function getFridayExpiration(): \Carbon\Carbon
+    {
+        $friday = now()->copy();
+        
+        // If it's already past Friday, go to next Friday
+        if ($friday->dayOfWeek > 5) { // 5 = Friday
+            $friday->addWeek();
+        }
+        
+        // Set to Friday 11:59 PM
+        while ($friday->dayOfWeek !== 5) {
+            $friday->addDay();
+        }
+        $friday->setTime(23, 59, 59);
+        
+        return $friday;
     }
 
     /**
