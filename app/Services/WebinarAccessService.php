@@ -5,12 +5,13 @@ namespace App\Services;
 use App\Models\WebinarRegistration;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class WebinarAccessService
 {
     /**
      * Generate encrypted access token for webinar registration
-     * Note: Tokens are permanent (no expiration) so users can access anytime
+     * Note: Tokens expire after 24 hours for security
      */
     public function generateAccessToken(WebinarRegistration $registration): string
     {
@@ -19,6 +20,7 @@ class WebinarAccessService
             'webinar_id' => $registration->webinar_id,
             'user_id' => $registration->user_id,
             'created_at' => now()->timestamp,
+            'expires_at' => now()->addDays(7)->timestamp, // Expire after 7 days (next Friday)
             'nonce' => Str::random(16)
         ];
 
@@ -27,14 +29,18 @@ class WebinarAccessService
 
     /**
      * Validate and decrypt access token
-     * Note: Tokens do not expire - they are permanent
+     * Note: Tokens expire after 7 days (next Friday) for weekly webinars
      */
     public function validateAccessToken(string $token): ?array
     {
         try {
             $payload = Crypt::decrypt($token);
             
-            // Tokens are permanent - no expiration check
+            // Check if token has expired
+            if (isset($payload['expires_at']) && now()->greaterThan(Carbon::parse($payload['expires_at']))) {
+                return null; // Token expired
+            }
+            
             return $payload;
         } catch (\Exception $e) {
             return null;
@@ -43,17 +49,17 @@ class WebinarAccessService
 
     /**
      * Generate secure webinar access link for paid user
-     * Note: Links are permanent - no expiration
+     * Note: Links expire after 24 hours for security
      */
     public function generateAccessLink(WebinarRegistration $registration): string
     {
         // Generate access token
         $accessToken = $this->generateAccessToken($registration);
         
-        // Store token in registration record (no expiration)
+        // Store token in registration record (24 hour expiration)
         $registration->update([
             'access_token' => $accessToken,
-            'access_token_expires_at' => null // Permanent access
+            'access_token_expires_at' => now()->addHours(24) // 24 hour expiration
         ]);
 
         // Generate secure URL

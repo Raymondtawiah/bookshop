@@ -150,7 +150,7 @@
                 </div>
                 
                 @if($paymentsOpen)
-                    <form id="registrationForm" class="space-y-6">
+                    <form id="registrationForm" method="POST" action="#" class="space-y-6" data-first-webinar-id="{{ $webinars->first()->id ?? '' }}">
                         <input type="hidden" name="webinar_id" id="webinarId">
                         
                         <div>
@@ -258,7 +258,15 @@
                 e.preventDefault();
                 
                 const formData = new FormData(this);
-                const webinarId = formData.get('webinar_id') || 1; // Default to first webinar
+                const form = document.getElementById('registrationForm');
+                const firstWebinarId = form.dataset.firstWebinarId;
+                const webinarId = formData.get('webinar_id') || firstWebinarId; // Use first available webinar
+                
+                // Validate webinar ID exists
+                if (!webinarId) {
+                    alert('No webinars are currently available for registration. Please check back later.');
+                    return;
+                }
                 
                 // Show loading state
                 const submitBtn = this.querySelector('button[type="submit"]');
