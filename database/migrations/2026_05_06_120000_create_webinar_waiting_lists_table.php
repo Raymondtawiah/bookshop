@@ -32,4 +32,4 @@ return new class extends Migration
     {
         Schema::dropIfExists('webinar_waiting_lists');
     }
-}
+};
