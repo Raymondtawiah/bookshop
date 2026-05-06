@@ -16,3 +16,6 @@ Schedule::command('chat:cleanup')->hourly();
 
 // Schedule notification cleanup every hour (delete notifications older than 12 hours)
 Schedule::command('notifications:cleanup')->hourly();
+
+// Schedule webinar reminder checks every 5 minutes
+Schedule::command('webinar:send-reminders')->everyFiveMinutes();

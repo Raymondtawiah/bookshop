@@ -25,18 +25,25 @@ class WebinarSeeder extends Seeder
 
             echo "Found admin user: {$admin->email}\n";
 
-            // Simple date calculation for next Friday
-            $scheduledAt = now()->addDays(5 - now()->dayOfWeek % 7)->setTime(16, 0, 0);
+            // Calculate next Friday 4 PM
+            $nextFriday = now()->copy();
+            while ($nextFriday->dayOfWeek !== 5) { // 5 = Friday
+                $nextFriday->addDay();
+            }
+            $nextFriday->setTime(16, 0, 0);
             
-            echo "Creating webinar for: {$scheduledAt->format('Y-m-d H:i:s')}\n";
+            echo "Creating webinar for: {$nextFriday->format('Y-m-d H:i:s')}\n";
 
-            // Check if webinar already exists
+            // Check if webinar already exists for this week
+            $weekStart = $nextFriday->copy()->startOfWeek();
+            $weekEnd = $nextFriday->copy()->endOfWeek();
+            
             $existingWebinar = WebinarSession::where('title', 'Weekly Visa Interview Webinar')
-                ->where('scheduled_at', $scheduledAt)
+                ->whereBetween('scheduled_at', [$weekStart, $weekEnd])
                 ->first();
                 
             if ($existingWebinar) {
-                echo "Webinar already exists for this week.\n";
+                echo "Webinar already exists for this week (ID: {$existingWebinar->id}).\n";
                 return;
             }
 
@@ -44,7 +51,7 @@ class WebinarSeeder extends Seeder
                 'title' => 'Weekly Visa Interview Webinar',
                 'description' => 'Weekly Visa Interview Webinar. Join us every Friday, 4–5 PM. Master your visa interview with expert guidance. Learn proven strategies, common questions, and how to answer confidently to get your visa approved.',
                 'webinar_link' => 'https://meet.google.com/fwk-hngm-jva',
-                'scheduled_at' => $scheduledAt,
+                'scheduled_at' => $nextFriday,
                 'duration_minutes' => 60,
                 'price' => 30.00,
                 'status' => 'active',
