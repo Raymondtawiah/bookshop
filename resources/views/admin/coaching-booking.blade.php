@@ -89,8 +89,8 @@
                 
                 <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
                     <div class="border-2 border-gray-200 rounded-2xl p-8 hover:border-indigo-300 transition-colors">
-<h3 class="text-xl font-semibold text-gray-900 mb-2">1 Week Interview Intensive</h3>
- <p class="text-3xl font-bold text-indigo-600 mb-4">₵1499</p>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">1 Week Interview Intensive</h3>
+                        <p class="text-3xl font-bold text-indigo-600 mb-4">₵1499</p>
                         <p class="text-gray-500 mb-4">Perfect if your interview is coming up soon and you need fast focused preparation.</p>
                         <p class="font-medium text-gray-900 mb-3">What you get:</p>
                         <ul class="space-y-2 text-gray-600 mb-6">
@@ -133,8 +133,8 @@
                     
                     <div class="border-2 border-indigo-500 rounded-2xl p-8 relative">
                         <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-4 py-1 rounded-full text-sm font-medium">Most Popular</div>
-<h3 class="text-xl font-semibold text-gray-900 mb-2">Full Coaching Program</h3>
- <p class="text-3xl font-bold text-indigo-600 mb-4">₵2499</p>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Full Coaching Program</h3>
+                        <p class="text-3xl font-bold text-indigo-600 mb-4">₵2499</p>
                         <p class="text-gray-500 mb-4">For deeper preparation and lasting skills.</p>
                         <p class="font-medium text-gray-900 mb-3">What you get:</p>
                         <ul class="space-y-2 text-gray-600 mb-6">
