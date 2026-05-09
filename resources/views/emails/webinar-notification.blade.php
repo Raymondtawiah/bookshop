@@ -143,7 +143,7 @@
         <div class="header">
             <div class="logo">📚 Bookshop</div>
             <div class="title">Webinar Notification</div>
-            <div class="subtitle">Hello {{ $user->name }}, important update about your registered webinar</div>
+            <div class="subtitle">Hello {{ $user ? $user->name : 'Guest User' }}, important update about your registered webinar</div>
         </div>
 
         <!-- Notification Content -->
@@ -201,9 +201,9 @@
 
         <!-- Footer -->
         <div class="footer">
-            <p>This notification was sent to {{ $user->email }} because you are registered for "{{ $webinar->title }}".</p>
+            <p>This notification was sent to {{ $user ? $user->email : 'Guest User' }} because you are registered for "{{ $webinar->title }}".</p>
             <p>Your registration status: 
-                @if($webinar->registrations()->where('user_id', $user->id)->where('payment_status', 'paid')->exists())
+                @if($user && $webinar->registrations()->where('user_id', $user->id)->where('payment_status', 'paid')->exists())
                     <span style="color: #059669; font-weight: 600;">✅ Paid & Confirmed</span>
                 @else
                     <span style="color: #d97706; font-weight: 600;">⏳ Payment Pending</span>

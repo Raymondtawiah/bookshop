@@ -18,7 +18,7 @@ class WebinarNotificationMail extends Mailable
     public function __construct(
         public WebinarSession $webinar,
         public WebinarNotification $notification,
-        public User $user
+        public ?User $user = null
     ) {}
 
     public function envelope(): Envelope

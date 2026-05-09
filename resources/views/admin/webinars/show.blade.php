@@ -366,11 +366,16 @@
                                     @foreach($missingUsers as $registration)
                                         <div class="flex items-center justify-between p-2 bg-gray-50 rounded">
                                             <label class="flex items-center cursor-pointer flex-1">
-                                                <input type="checkbox" name="user_ids[]" value="{{ $registration->user->id }}" 
-                                                       class="user-checkbox mr-3" data-user-id="{{ $registration->user->id }}">
+                                                <input type="checkbox" name="user_ids[]" value="{{ $registration->user_id ?? $registration->id }}" 
+                                                       class="user-checkbox mr-3" data-user-id="{{ $registration->user_id ?? $registration->id }}">
                                                 <div>
-                                                    <div class="font-medium text-gray-900">{{ $registration->user->name }}</div>
-                                                    <div class="text-sm text-gray-600">{{ $registration->user->email }}</div>
+                                                    @if($registration->user)
+                                                        <div class="font-medium text-gray-900">{{ $registration->user->name }}</div>
+                                                        <div class="text-sm text-gray-600">{{ $registration->user->email }}</div>
+                                                    @else
+                                                        <div class="font-medium text-gray-900">{{ $registration->full_name }}</div>
+                                                        <div class="text-sm text-gray-600">{{ $registration->email }}</div>
+                                                    @endif
                                                 </div>
                                             </label>
                                             <div class="text-xs text-gray-500">

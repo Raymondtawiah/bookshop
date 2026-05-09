@@ -157,7 +157,7 @@ class WebinarController extends Controller
     /**
      * Store and send notification.
      */
-    public function storeNotification(Request $request, Webinar $webinar)
+    public function storeNotification(Request $request, WebinarSession $webinar)
     {
         $validated = $request->validate([
             'title' => 'required|string|max:255',
@@ -246,36 +246,66 @@ class WebinarController extends Controller
     {
         $request->validate([
             'user_ids' => 'required|array',
-            'user_ids.*' => 'exists:users,id',
         ]);
 
         $sentCount = 0;
         $failedCount = 0;
 
         foreach ($request->user_ids as $userId) {
+            // Handle both registered users (user_id) and guest registrations (registration_id)
             $registration = $webinar->registrations()
-                ->where('user_id', $userId)
+                ->where(function($query) use ($userId) {
+                    $query->where('user_id', $userId)
+                          ->orWhere('id', $userId); // For guest registrations
+                })
                 ->where('payment_status', 'paid')
                 ->with('user')
                 ->first();
 
-            if (!$registration || !$registration->user) {
+            if (!$registration) {
                 $failedCount++;
+                continue;
+            }
+
+            // Check if notification already sent to this user for this specific notification
+            $existingRecipient = \App\Models\NotificationRecipient::where([
+                'webinar_notification_id' => $notification->id,
+                'user_id' => $registration->user_id ?? null,
+                'webinar_registration_id' => $registration->id,
+            ])->first();
+
+            if ($existingRecipient) {
+                // Skip if already sent
                 continue;
             }
 
             try {
                 // Send the email
-                \Mail::to($registration->user->email)->send(new \App\Mail\WebinarNotificationMail($webinar, $notification, $registration->user));
-                
-                // Track successful delivery
-                \App\Models\NotificationRecipient::create([
-                    'webinar_notification_id' => $notification->id,
-                    'user_id' => $registration->user->id,
-                    'webinar_registration_id' => $registration->id,
-                    'status' => 'sent',
-                    'sent_at' => now(),
-                ]);
+                if ($registration->user) {
+                    // Registered user
+                    \Mail::to($registration->user->email)->send(new \App\Mail\WebinarNotificationMail($webinar, $notification, $registration->user));
+                    
+                    // Track successful delivery
+                    \App\Models\NotificationRecipient::create([
+                        'webinar_notification_id' => $notification->id,
+                        'user_id' => $registration->user->id,
+                        'webinar_registration_id' => $registration->id,
+                        'status' => 'sent',
+                        'sent_at' => now(),
+                    ]);
+                } else {
+                    // Guest registration
+                    \Mail::to($registration->email)->send(new \App\Mail\WebinarNotificationMail($webinar, $notification, null));
+                    
+                    // Track successful delivery
+                    \App\Models\NotificationRecipient::create([
+                        'webinar_notification_id' => $notification->id,
+                        'user_id' => null, // Guest registration
+                        'webinar_registration_id' => $registration->id,
+                        'status' => 'sent',
+                        'sent_at' => now(),
+                    ]);
+                }
                 
                 $sentCount++;
                 
@@ -283,7 +313,7 @@ class WebinarController extends Controller
                 // Track failed delivery
                 \App\Models\NotificationRecipient::create([
                     'webinar_notification_id' => $notification->id,
-                    'user_id' => $registration->user->id,
+                    'user_id' => $registration->user_id ?? null,
                     'webinar_registration_id' => $registration->id,
                     'status' => 'failed',
                     'error_message' => $e->getMessage(),
