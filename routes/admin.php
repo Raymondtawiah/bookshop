@@ -17,6 +17,7 @@ Route::prefix('admin')->name('admin.')->middleware(['web'])->group(function () {
 
 // Public coaching booking page (no login required) - outside admin prefix
 Route::get('coaching-booking', [CoachingController::class, 'index'])->name('coaching.booking');
+Route::get('coaching-booking/{plan}', [CoachingController::class, 'bookingPage'])->name('coaching.booking.page');
 Route::post('coaching-booking', [CoachingController::class, 'store'])->name('coaching.store');
 Route::get('coaching/callback', [CoachingController::class, 'callback'])->name('coaching.callback');
 Route::get('coaching/status', [CoachingController::class, 'getBookingStatus'])->name('coaching.status');

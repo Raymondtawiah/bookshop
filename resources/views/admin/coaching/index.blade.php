@@ -23,7 +23,7 @@
                 </div>
             </div>
 
-            @if($bookings->isEmpty())
+            @if(empty($bookings))
                 <div class="bg-white rounded-2xl shadow-sm p-12 text-center">
                     <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
                         <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -34,89 +34,123 @@
                     <p class="text-gray-600">There are no confirmed coaching bookings at the moment.</p>
 </div>
             @else
-                <div class="overflow-x-auto">
-                    <table class="min-w-full divide-y divide-gray-200">
-                        <thead class="bg-gray-50">
-                            <tr>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Package</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Interview</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Request Date</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Meeting Sent</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
-                                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
-                                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
-                            </tr>
-                        </thead>
-                        <tbody class="divide-y divide-gray-200">
-                            @php
-                                $bookingService = app(\App\Services\CoachingBookingService::class);
-                            @endphp
-                            @foreach($bookings as $booking)
-                                @php
-                                    $statusLabel = $bookingService->getStatusLabel($booking);
-                                    $statusClass = $bookingService->getStatusClass($booking);
-                                    $hasMeetingLink = $bookingService->hasMeetingLinkBeenSent($booking);
-                                    $meetingDetails = $bookingService->getMeetingDetails($booking);
-                                @endphp
-                                <tr class="hover:bg-gray-50">
-                                    <td class="px-6 py-4">
-                                        <div>
-                                            <p class="text-sm font-medium text-gray-900">{{ $booking->name }}</p>
-                                            <p class="text-sm text-gray-500">{{ $booking->email }}</p>
-                                            @if($booking->phone)
-                                                <p class="text-xs text-gray-400">{{ $booking->phone }}</p>
-                                            @endif
-                                        </div>
-                                    </td>
-                                    <td class="px-6 py-4 whitespace-nowrap">
-                                        <span class="px-2 py-1 text-xs font-medium rounded-full bg-indigo-100 text-indigo-800">
-                                            {{ $booking->package === 'single' ? 'One Week' : 'Premium' }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-sm text-gray-900">{{ $booking->interview_type }}</td>
-                                    <td class="px-6 py-4">
-                                        <p class="text-sm text-gray-900">{{ $booking->interview_date->format('M j, Y') }}</p>
-                                        <p class="text-xs text-gray-500">{{ $booking->interview_time }}</p>
-                                    </td>
-                                    <td class="px-6 py-4">
-                                        @if($hasMeetingLink)
-                                            <p class="text-sm text-green-600 font-medium">Link Sent</p>
-                                            @if($meetingDetails['time'])
-                                                <p class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($meetingDetails['time'])->format('M j, g:i A') }}</p>
-                                            @endif
-                                        @else
-                                            <p class="text-sm text-gray-400">Not sent</p>
-                                        @endif
-                                    </td>
-                                    <td class="px-6 py-4 text-sm font-medium text-gray-900">₵{{ number_format($booking->amount ?? 0, 2) }}</td>
-                                    <td class="px-6 py-4">
-                                        <span class="px-2 py-1 text-xs font-medium rounded-full {{ $statusClass }}">
-                                            {{ ucfirst($statusLabel) }}
-                                        </span>
-                                    </td>
-                                    <td class="px-6 py-4 text-right">
-                                        <div class="flex items-center justify-end gap-3">
-                                            <button type="button" onclick="openBookingModal({{ $loop->index }})" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">
-                                                View Details
-                                            </button>
-                                            <button type="button" onclick="openDeleteModal({{ $booking->id }}, '{{ $booking->name }}')" class="text-red-600 hover:text-red-900 text-sm font-medium">
-                                                Delete
-                                            </button>
-                                        </div>
-                                    </td>
-                                </tr>
-                            @endforeach
-                        </tbody>
-                    </table>
-                </div>
+                @php
+                    $bookingService = app(\App\Services\CoachingBookingService::class);
+                    $globalCounter = 0;
+                @endphp
+                
+                @foreach($bookings as $package => $packageBookings)
+                    <div class="mb-8">
+                        <!-- Package Header -->
+                        <div class="bg-white rounded-t-2xl border border-gray-200 px-6 py-4 border-b-0">
+                            <div class="flex items-center gap-3">
+                                @if($package === 'team')
+                                    <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 4M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-gray-900">Team Coaching Plan</h3>
+                                    <span class="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">{{ $packageBookings->count() }} bookings</span>
+                                @elseif($package === 'single')
+                                    <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-gray-900">1 Week Interview Intensive</h3>
+                                    <span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">{{ $packageBookings->count() }} bookings</span>
+                                @elseif($package === 'premium')
+                                    <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                                        </svg>
+                                    </div>
+                                    <h3 class="text-lg font-bold text-gray-900">Full Coaching Program</h3>
+                                    <span class="px-3 py-1 bg-purple-100 text-purple-800 text-sm font-medium rounded-full">{{ $packageBookings->count() }} bookings</span>
+                                @endif
+                            </div>
+                        </div>
+                        
+                        <!-- Bookings Table -->
+                        <div class="bg-white rounded-b-2xl border border-gray-200 border-t-0 overflow-hidden">
+                            <div class="overflow-x-auto">
+                                <table class="min-w-full">
+                                    <thead class="bg-gray-50">
+                                        <tr>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Interview</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Request Date</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Meeting Sent</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Amount</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        @foreach($packageBookings as $booking)
+                                            @php
+                                                $statusLabel = $bookingService->getStatusLabel($booking);
+                                                $statusClass = $bookingService->getStatusClass($booking);
+                                                $hasMeetingLink = $bookingService->hasMeetingLinkBeenSent($booking);
+                                                $meetingDetails = $bookingService->getMeetingDetails($booking);
+                                            @endphp
+                                            <tr class="hover:bg-gray-50">
+                                                <td class="px-6 py-4">
+                                                    <div>
+                                                        <p class="text-sm font-medium text-gray-900">{{ $booking->name }}</p>
+                                                        <p class="text-sm text-gray-500">{{ $booking->email }}</p>
+                                                        @if($booking->phone)
+                                                            <p class="text-xs text-gray-400">{{ $booking->phone }}</p>
+                                                        @endif
+                                                    </div>
+                                                </td>
+                                                <td class="px-6 py-4 text-sm text-gray-900">{{ $booking->interview_type }}</td>
+                                                <td class="px-6 py-4">
+                                                    <p class="text-sm text-gray-900">{{ $booking->interview_date->format('M j, Y') }}</p>
+                                                    <p class="text-xs text-gray-500">{{ $booking->interview_time }}</p>
+                                                </td>
+                                                <td class="px-6 py-4">
+                                                    @if($hasMeetingLink)
+                                                        <p class="text-sm text-green-600 font-medium">Link Sent</p>
+                                                        @if($meetingDetails['time'])
+                                                            <p class="text-xs text-gray-500">{{ \Carbon\Carbon::parse($meetingDetails['time'])->format('M j, g:i A') }}</p>
+                                                        @endif
+                                                    @else
+                                                        <p class="text-sm text-gray-400">Not sent</p>
+                                                    @endif
+                                                </td>
+                                                <td class="px-6 py-4 text-sm font-medium text-gray-900">₵{{ number_format($booking->amount ?? 0, 2) }}</td>
+                                                <td class="px-6 py-4">
+                                                    <span class="px-2 py-1 text-xs font-medium rounded-full {{ $statusClass }}">
+                                                        {{ ucfirst($statusLabel) }}
+                                                    </span>
+                                                </td>
+                                                <td class="px-6 py-4 text-right">
+                                                    <div class="flex items-center justify-end gap-3">
+                                                        <button type="button" onclick="openBookingModal({{ $globalCounter++ }})" class="text-indigo-600 hover:text-indigo-900 text-sm font-medium">
+                                                            View Details
+                                                        </button>
+                                                        <button type="button" onclick="openDeleteModal({{ $booking->id }}, '{{ $booking->name }}')" class="text-red-600 hover:text-red-900 text-sm font-medium">
+                                                            Delete
+                                                        </button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        @endforeach
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                @endforeach
             @endif
         </main>
 
         <!-- Booking Modal -->
-        <div id="booking-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden" onclick="closeBookingModal()">
+        <div id="booking-modal" class="fixed inset-0 bg-white bg-opacity-80 z-50 hidden" onclick="closeBookingModal()">
             <div class="flex items-center justify-center min-h-screen p-4" onclick="event.stopPropagation()">
-                <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <div class="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto" style="background-color: white !important;">
                     <div class="p-6 border-b border-gray-200 flex items-center justify-between">
                         <h2 class="text-xl font-bold text-gray-900">Booking Details</h2>
                         <button onclick="closeBookingModal()" class="text-gray-400 hover:text-gray-600">
@@ -162,12 +196,40 @@
         </div>
 
         <script>
-            const bookings = @json($bookings->toArray());
+            const bookings = @json($bookings);
             let currentBookingIndex = null;
 
             function openBookingModal(index) {
                 currentBookingIndex = index;
-                const booking = bookings[index];
+                
+                // Find the booking in the grouped structure
+                let booking = null;
+                let bookingCount = 0;
+                
+                console.log('Bookings data:', bookings);
+                console.log('Looking for index:', index);
+                
+                for (const package in bookings) {
+                    console.log('Checking package:', package, 'items:', bookings[package]);
+                    for (const item of bookings[package]) {
+                        if (bookingCount === index) {
+                            booking = item;
+                            console.log('Found booking:', booking);
+                            console.log('Booking package:', booking.package);
+                            console.log('Booking amount:', booking.amount);
+                            break;
+                        }
+                        bookingCount++;
+                    }
+                    if (booking !== null) break; // Found the booking, exit outer loop
+                }
+                
+                if (!booking) {
+                    console.error(' NO BOOKING FOUND FOR INDEX:', index);
+                    return;
+                }
+                
+                console.log(' SETTING MODAL CONTENT');
                 
                 const statusClass = booking.status === 'confirmed' ? 'bg-green-100 text-green-800' : 
                                     booking.status === 'completed' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800';
@@ -182,7 +244,7 @@
                         </div>
                         <div>
                             <h4 class="text-sm font-medium text-gray-500 mb-2">Session Details</h4>
-                            <p class="text-gray-900"><span class="font-medium">Package:</span> ${booking.package === 'single' ? 'One Week' : 'Premium'}</p>
+                            <p class="text-gray-900"><span class="font-medium">Package:</span> ${booking.package === 'team' ? 'Team' : (booking.package === 'single' ? 'One Week' : 'Premium')}</p>
                             <p class="text-gray-900"><span class="font-medium">Interview:</span> ${booking.interview_type}</p>
                             <p class="text-gray-900"><span class="font-medium">Date:</span> ${new Date(booking.interview_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</p>
                             <p class="text-gray-900"><span class="font-medium">Time:</span> ${booking.interview_time}</p>
@@ -263,7 +325,7 @@
         </script>
 
         <!-- Delete Confirmation Modal -->
-        <div id="delete-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden" onclick="closeDeleteModal()">
+        <div id="delete-modal" class="fixed inset-0 bg-white bg-opacity-80 z-50 hidden" onclick="closeDeleteModal()">
             <div class="flex items-center justify-center min-h-screen p-4" onclick="event.stopPropagation()">
                 <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
                     <div class="text-center">

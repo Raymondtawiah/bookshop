@@ -526,22 +526,22 @@
                                                 <div class="font-medium text-gray-900 text-sm break-words">{{ $registration->user->name }}</div>
                                                 <div class="text-xs text-gray-500 break-words">{{ $registration->user->email }}</div>
                                             @else
-                                                <div class="font-medium text-gray-900 text-sm">User not found</div>
-                                                <div class="text-xs text-gray-500">-</div>
+                                                <div class="font-medium text-gray-900 text-sm break-words">{{ $registration->full_name }}</div>
+                                                <div class="text-xs text-gray-500 break-words">Guest Registration</div>
                                             @endif
                                         </td>
                                         <td class="px-4 py-3 text-gray-600 text-sm break-words">
                                             @if($registration->user)
                                                 {{ $registration->user->email }}
                                             @else
-                                                -
+                                                {{ $registration->email }}
                                             @endif
                                         </td>
                                         <td class="px-4 py-3 text-gray-600 text-sm break-words">
                                             @if($registration->user && $registration->user->phone)
                                                 {{ $registration->user->phone }}
                                             @else
-                                                -
+                                                {{ $registration->phone ?? '-' }}
                                             @endif
                                         </td>
                                         <td class="px-4 py-3">

@@ -64,20 +64,93 @@
         @if($isActive || $isAdmin)
 
         <!-- Hero Section -->
-        <section class="gradient-bg text-white py-20">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h1 class="text-4xl md:text-5xl font-bold mb-6">Visa Interview Coaching</h1>
-                <p class="text-xl text-indigo-100 mb-8 max-w-2xl mx-auto">I help people prepare for visa interviews so they can walk in feeling confident, clear, and ready. Many qualified applicants get rejected simply because they were not well prepared for the questions and pressure.</p>
-                <p class="text-lg text-indigo-200 mb-8">I coach applicants for student, work, and travel visas (F-1, J-1, H-1B, B-1/B-2, and more).</p>
-                <a href="#booking-form" class="inline-flex items-center gap-2 bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold hover:bg-indigo-50 transition-colors">
-                    Book Your Session Now
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                    </svg>
-                </a>
-                
-                <div class="mt-12 flex justify-center">
-                    <img src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=400&h=300&fit=crop" alt="Confidence and readiness" class="rounded-xl shadow-2xl max-w-md">
+        <section class="py-20 text-white max-w-full relative overflow-hidden min-h-screen flex items-center" 
+                 style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.85) 0%, rgba(99, 102, 241, 0.85) 50%, rgba(139, 92, 246, 0.85) 100%), url('/coaching.png'); background-size: cover; background-position: center; background-attachment: fixed;">
+            
+            <!-- Animated overlay pattern -->
+            <div class="absolute inset-0 opacity-20">
+                <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.3"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+            </div>
+            
+            <!-- Floating elements animation -->
+            <div class="absolute inset-0 overflow-hidden">
+                <div class="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full animate-pulse"></div>
+                <div class="absolute top-1/4 right-20 w-32 h-32 bg-blue-400/20 rounded-full animate-bounce" style="animation-delay: 0.5s;"></div>
+                <div class="absolute bottom-20 left-1/4 w-16 h-16 bg-purple-400/20 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
+                <div class="absolute top-1/2 right-1/3 w-24 h-24 bg-indigo-400/20 rounded-full animate-bounce" style="animation-delay: 1.5s;"></div>
+            </div>
+            
+            <div class="px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid md:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
+                    <div class="space-y-8">
+                        <!-- Badge with glow effect -->
+                        <div class="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 shadow-lg">
+                            <span class="relative flex h-3 w-3 mr-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                            </span>
+                            <span class="text-sm font-medium">Expert Coaching • Personalized Guidance</span>
+                        </div>
+                        
+                        <!-- Main heading with solid text for better visibility -->
+                        <h1 class="text-5xl md:text-6xl font-bold leading-tight text-white">
+                            Visa Interview
+                            <br>
+                            Coaching
+                        </h1>
+                        
+                        <!-- Description with better typography -->
+                        <p class="text-xl md:text-2xl text-blue-100 leading-relaxed max-w-lg">
+                            I help people prepare for visa interviews so they can walk in feeling confident, clear, and ready. Many qualified applicants get rejected simply because they were not well prepared for questions and pressure.
+                        </p>
+                        <p class="text-lg text-blue-200 mb-8">I coach applicants for student, work, and travel visas (F-1, J-1, H-1B, B-1/B-2, and more).</p>
+                        
+                        <!-- CTA button with enhanced styling -->
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <a href="#booking-form" class="px-8 py-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
+                                Book Your Session Now
+                            </a>
+                        </div>
+                        
+                        <!-- Stats with enhanced cards -->
+                        <div class="grid grid-cols-3 gap-6">
+                            <div class="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30 transform hover:scale-105 transition-transform duration-300">
+                                <div class="text-3xl font-bold text-white">
+                                    500+
+                                </div>
+                                <div class="text-white text-sm font-medium">Sessions</div>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30 transform hover:scale-105 transition-transform duration-300">
+                                <div class="text-3xl font-bold text-white">
+                                    95%
+                                </div>
+                                <div class="text-white text-sm font-medium">Success Rate</div>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30 transform hover:scale-105 transition-transform duration-300">
+                                <div class="text-3xl font-bold text-white">
+                                    5★
+                                </div>
+                                <div class="text-white text-sm font-medium">Expert Rating</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Enhanced image section with effects -->
+                    <div class="hidden md:block relative">
+                        <div class="relative group">
+                            <!-- Glow effect behind image -->
+                            <div class="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
+                            
+                            <!-- Main image with enhanced styling -->
+                            <img src="/coaching.png" alt="Visa Interview Coaching" 
+                                 class="relative rounded-3xl shadow-2xl w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500">
+                            
+                            <!-- Floating badge -->
+                            <div class="absolute -top-4 -right-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg animate-bounce">
+                                BOOK NOW
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -86,11 +159,48 @@
         <section class="py-16 bg-white">
             <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
                 <h2 class="text-3xl font-bold text-center text-gray-900 mb-12">Choose Your Plan</h2>
-                
+
                 <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
                     <div class="border-2 border-gray-200 rounded-2xl p-8 hover:border-indigo-300 transition-colors">
-<h3 class="text-xl font-semibold text-gray-900 mb-2">1 Week Interview Intensive</h3>
- <p class="text-3xl font-bold text-indigo-600 mb-4">₵1499</p>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Team Coaching Plan</h3>
+                        <p class="text-3xl font-bold text-indigo-600 mb-4">₵500</p>
+                        <p class="text-gray-500 mb-4">Perfect for collaborative learning with limited cohort size (max 5 people) for personalized attention.</p>
+                        <p class="font-medium text-gray-900 mb-3">What you get:</p>
+                        <ul class="space-y-2 text-gray-600 mb-6">
+                            <li class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                2 Live Sessions (45 minutes each) with group learning
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Learn together with peer support and shared experiences
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Practice together with realistic mock interviews
+                            </li>
+                            <li class="flex items-start gap-2">
+                                <svg class="w-5 h-5 text-green-500 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                </svg>
+                                Prepare together with document review and feedback
+                            </li>
+                        </ul>
+                        <p class="text-sm text-gray-500 mb-6">Limited to 5 people per cohort for maximum personalized attention.</p>
+                        <button onclick="window.location.href='{{ route('coaching.booking.page', 'team') }}'" class="w-full gradient-bg text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                            Book Team Plan
+                        </button>
+                    </div>
+
+                    <div class="border-2 border-gray-200 rounded-2xl p-8 hover:border-indigo-300 transition-colors">
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">1 Week Interview Intensive</h3>
+                        <p class="text-3xl font-bold text-indigo-600 mb-4">₵1499</p>
                         <p class="text-gray-500 mb-4">Perfect if your interview is coming up soon and you need fast focused preparation.</p>
                         <p class="font-medium text-gray-900 mb-3">What you get:</p>
                         <ul class="space-y-2 text-gray-600 mb-6">
@@ -126,15 +236,15 @@
                             </li>
                         </ul>
                         <p class="text-sm text-gray-500 mb-6">You will feel ready in one week.</p>
-                        <button onclick="document.getElementById('package').value='single'; document.getElementById('booking-form').scrollIntoView({behavior: 'smooth'})" class="w-full gradient-bg text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                        <button onclick="window.location.href='{{ route('coaching.booking.page', 'single') }}'" class="w-full gradient-bg text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
                             Book 1 Week Intensive
                         </button>
                     </div>
                     
                     <div class="border-2 border-indigo-500 rounded-2xl p-8 relative">
                         <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-indigo-600 text-white px-4 py-1 rounded-full text-sm font-medium">Most Popular</div>
-<h3 class="text-xl font-semibold text-gray-900 mb-2">Full Coaching Program</h3>
- <p class="text-3xl font-bold text-indigo-600 mb-4">₵2499</p>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">Full Coaching Program</h3>
+                        <p class="text-3xl font-bold text-indigo-600 mb-4">₵2499</p>
                         <p class="text-gray-500 mb-4">For deeper preparation and lasting skills.</p>
                         <p class="font-medium text-gray-900 mb-3">What you get:</p>
                         <ul class="space-y-2 text-gray-600 mb-6">
@@ -169,7 +279,7 @@
                                 Confidence and communication training
                             </li>
                         </ul>
-                        <button onclick="document.getElementById('package').value='premium'; document.getElementById('booking-form').scrollIntoView({behavior: 'smooth'})" class="w-full gradient-bg text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
+                        <button onclick="window.location.href='{{ route('coaching.booking.page', 'premium') }}'" class="w-full gradient-bg text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
                             Book Full Coaching
                         </button>
                     </div>
@@ -194,149 +304,8 @@
             </div>
         </section>
 
-        <!-- Ready to Start Section -->
-        <section class="py-16 bg-white">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                <h2 class="text-3xl font-bold text-gray-900 mb-4">Ready to Start?</h2>
-                <p class="text-lg text-gray-600 mb-8">Choose your plan and book today. After payment you will get immediate next steps, scheduling links, and preparation materials.</p>
-                <a href="#booking-form" class="inline-flex items-center gap-2 gradient-bg text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
-                    Book Now
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"/>
-                    </svg>
-                </a>
-            </div>
-        </section>
-
-        <!-- Booking Form Section -->
-        <section id="booking-form" class="py-16 bg-gray-50">
-            <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-bold text-center text-gray-900 mb-4">Book Your Session</h2>
-                <p class="text-center text-gray-600 mb-8">Book in minutes!</p>
-                
-                <div class="bg-white rounded-2xl shadow-sm p-8">
-                    <form method="POST" action="{{ route('coaching.store') }}" class="space-y-6">
-                        @csrf
-                        
-                        <div class="grid md:grid-cols-2 gap-6">
-                            <div>
-                                <label for="name" class="block text-sm font-medium text-gray-700 mb-1">Full Name *</label>
-                                <input type="text" name="name" id="name" value="{{ old('name') }}" required
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                @error('name')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            
-                            <div>
-                                <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address *</label>
-                                <input type="email" name="email" id="email" value="{{ old('email') }}" required
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                @error('email')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            
-                            <div>
-                                <label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                                <input type="tel" name="phone" id="phone" value="{{ old('phone') }}"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                            </div>
-                            
-                            <div>
-                                <label for="interview_type" class="block text-sm font-medium text-gray-700 mb-1">Interview Type *</label>
-                                <select name="interview_type" id="interview_type" required
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                    <option value="">Select type...</option>
-                                    <option value="Visa Interview" {{ old('interview_type') == 'Visa Interview' ? 'selected' : '' }}>Visa Interview</option>
-                                    <option value="Job Interview" {{ old('interview_type') == 'Job Interview' ? 'selected' : '' }}>Job Interview</option>
-                                    <option value="University Interview" {{ old('interview_type') == 'University Interview' ? 'selected' : '' }}>University Interview</option>
-                                    <option value="Immigration Interview" {{ old('interview_type') == 'Immigration Interview' ? 'selected' : '' }}>Immigration Interview</option>
-                                    <option value="Other" {{ old('interview_type') == 'Other' ? 'selected' : '' }}>Other</option>
-                                </select>
-                                @error('interview_type')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            
-                            <div>
-                                <label for="interview_date" class="block text-sm font-medium text-gray-700 mb-1">Interview Date *</label>
-                                <input type="date" name="interview_date" id="interview_date" value="{{ old('interview_date') }}" required
-                                    min="{{ date('Y-m-d') }}"
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                @error('interview_date')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                            
-                            <div>
-                                <label for="interview_time" class="block text-sm font-medium text-gray-700 mb-1">Preferred Time *</label>
-                                <select name="interview_time" id="interview_time" required
-                                    class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                    <option value="">Select time...</option>
-                                    <option value="09:00" {{ old('interview_time') == '09:00' ? 'selected' : '' }}>9:00 AM</option>
-                                    <option value="10:00" {{ old('interview_time') == '10:00' ? 'selected' : '' }}>10:00 AM</option>
-                                    <option value="11:00" {{ old('interview_time') == '11:00' ? 'selected' : '' }}>11:00 AM</option>
-                                    <option value="12:00" {{ old('interview_time') == '12:00' ? 'selected' : '' }}>12:00 PM</option>
-                                    <option value="13:00" {{ old('interview_time') == '13:00' ? 'selected' : '' }}>1:00 PM</option>
-                                    <option value="14:00" {{ old('interview_time') == '14:00' ? 'selected' : '' }}>2:00 PM</option>
-                                    <option value="15:00" {{ old('interview_time') == '15:00' ? 'selected' : '' }}>3:00 PM</option>
-                                    <option value="16:00" {{ old('interview_time') == '16:00' ? 'selected' : '' }}>4:00 PM</option>
-                                    <option value="17:00" {{ old('interview_time') == '17:00' ? 'selected' : '' }}>5:00 PM</option>
-                                </select>
-                                @error('interview_time')
-                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                @enderror
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Select Plan *</label>
-                            <div class="grid md:grid-cols-2 gap-4">
-                                <label class="relative border-2 border-gray-200 rounded-xl p-4 cursor-pointer hover:border-indigo-300 transition-colors has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50">
-                                    <input type="radio" name="package" value="single" class="sr-only" {{ old('package') == 'single' ? 'checked' : '' }}>
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                            <p class="font-semibold text-gray-900">One Week Intensive</p>
-                                            <p class="text-sm text-gray-500">₵1499</p>
-                                        </div>
-                                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500">
-                                            <div class="w-2 h-2 rounded-full bg-white hidden has-[:checked]:block"></div>
-                                        </div>
-                                    </div>
-                                </label>
-                                <label class="relative border-2 border-gray-200 rounded-xl p-4 cursor-pointer hover:border-indigo-300 transition-colors has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-50">
-                                    <input type="radio" name="package" value="premium" class="sr-only" {{ old('package', 'premium') == 'premium' ? 'checked' : '' }}>
-                                    <div class="flex items-center justify-between">
-                                        <div>
-                                        <p class="font-semibold text-gray-900">Full Coaching Program</p>
-                                        <p class="text-sm text-gray-500">₵2499</p>
-                                        </div>
-                                        <div class="w-6 h-6 rounded-full border-2 border-gray-300 flex items-center justify-center has-[:checked]:border-indigo-500 has-[:checked]:bg-indigo-500">
-                                            <div class="w-2 h-2 rounded-full bg-white hidden has-[:checked]:block"></div>
-                                        </div>
-                                    </div>
-                                </label>
-                            </div>
-                            @error('package')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
-                        
-                        <div>
-                            <label for="notes" class="block text-sm font-medium text-gray-700 mb-1">Additional Notes (Optional)</label>
-                            <textarea name="notes" id="notes" rows="3" placeholder="Tell us about your interview or any specific concerns..."
-                                class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">{{ old('notes') }}</textarea>
-                        </div>
-                        
-                        <button type="submit" class="w-full gradient-bg text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity">
-                            Confirm Booking
-                        </button>
-                    </form>
-                </div>
-            </div>
-        </section>
-
+        
+        
         <!-- FAQ Section -->
         <section class="py-16 bg-white">
             <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
