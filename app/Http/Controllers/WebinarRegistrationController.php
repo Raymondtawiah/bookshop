@@ -183,6 +183,7 @@ class WebinarRegistrationController extends Controller
                 'payment_status' => 'paid',
                 'paid_at' => now(),
                 'transaction_reference' => $reference,
+                'amount_paid' => $result['amount'] ?? $registration->amount_paid,
             ]);
 
             // Generate encrypted access link
@@ -231,6 +232,7 @@ class WebinarRegistrationController extends Controller
             $registration->update([
                 'payment_status' => 'paid',
                 'paid_at' => now(),
+                'amount_paid' => $result['amount'] ?? $registration->amount_paid,
             ]);
 
             return response()->json(['status' => 'success'], 200);
