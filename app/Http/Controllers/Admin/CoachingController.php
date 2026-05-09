@@ -28,6 +28,16 @@ class CoachingController extends Controller
         return view('admin.coaching-booking');
     }
 
+    public function bookingPage($plan)
+    {
+        // Validate the plan parameter
+        if (!in_array($plan, ['team', 'single', 'premium'])) {
+            return redirect()->route('coaching.booking')->with('error', 'Invalid plan selected.');
+        }
+
+        return view('admin.coaching-booking-form', compact('plan'));
+    }
+
     public function getBookingStatus()
     {
         $isActive = SiteSetting::get('coaching_booking_active', 'true');
@@ -49,12 +59,17 @@ class CoachingController extends Controller
             'interview_type' => 'required|string|max:255',
             'interview_date' => 'required|date|after_or_equal:today',
             'interview_time' => 'required',
-            'package' => 'required|in:single,premium',
+            'package' => 'required|in:team,single,premium',
             'notes' => 'nullable|string',
         ]);
 
         // Prices in GHS (direct amounts)
-        $packagePrice = $validated['package'] === 'premium' ? 2499 : 1499;
+        $packagePrice = match($validated['package']) {
+            'team' => 500,
+            'single' => 1499,
+            'premium' => 2499,
+            default => 1499,
+        };
 
         $reference = 'COACH-'.time().rand(1000, 9999);
 
@@ -140,11 +155,18 @@ class CoachingController extends Controller
 
     public function adminIndex()
     {
-        $bookings = CoachingBooking::where('payment_status', 'paid')
+        $allBookings = CoachingBooking::where('payment_status', 'paid')
             ->orderBy('created_at', 'desc')
-            ->get();
+            ->get()
+            ->groupBy('package');
 
-        return view('admin.coaching.index', compact('bookings'));
+        // Convert to proper structure for JavaScript
+        $groupedBookings = [];
+        foreach ($allBookings as $package => $packageBookings) {
+            $groupedBookings[$package] = $packageBookings->values();
+        }
+
+        return view('admin.coaching.index', ['bookings' => $groupedBookings]);
     }
 
     public function adminShow(CoachingBooking $booking)

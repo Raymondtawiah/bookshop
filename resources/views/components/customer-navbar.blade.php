@@ -36,7 +36,7 @@ window.addEventListener('pageshow', function(event) {
                 {{-- <a href="{{ route('visa-training') }}" class="text-gray-700 hover:text-indigo-600">Visa Training</a> --}}
                 <a href="{{ route('home') }}#about" class="text-gray-700 hover:text-indigo-600">About</a>
                 <a href="{{ route('home') }}#contact" class="text-gray-700 hover:text-indigo-600">Contact</a>
-                <a href="{{ route('coaching.booking') }}" class="text-gray-700 hover:text-indigo-600 font-medium">Visa Coaching</a>
+                <a href="{{ route('coaching.booking') }}" class="text-gray-700 hover:text-indigo-600 ">Visa Coaching</a>
                 
                 @auth
                 @php
