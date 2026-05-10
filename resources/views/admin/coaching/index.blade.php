@@ -41,33 +41,52 @@
                 
                 @foreach($bookings as $package => $packageBookings)
                     <div class="mb-8">
-                        <!-- Package Header -->
-                        <div class="bg-white rounded-t-2xl border border-gray-200 px-6 py-4 border-b-0">
-                            <div class="flex items-center gap-3">
-                                @if($package === 'team')
-                                    <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                                        <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 4M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                        </svg>
+                        <!-- All Coaching Plans in Single Row -->
+                        <div class="mb-8">
+                            <div class="flex flex-col lg:flex-row gap-6">
+                                @if(isset($bookings['team']))
+                                    <!-- Team Coaching Plan -->
+                                    <div class="flex items-center gap-3 lg:w-1/3">
+                                        <div class="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 4M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h3 class="text-lg font-bold text-gray-900">Team Coaching Plan</h3>
+                                            <span class="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">{{ $bookings['team']->count() }} bookings</span>
+                                        </div>
                                     </div>
-                                    <h3 class="text-lg font-bold text-gray-900">Team Coaching Plan</h3>
-                                    <span class="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">{{ $packageBookings->count() }} bookings</span>
-                                @elseif($package === 'single')
-                                    <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                                        <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                        </svg>
+                                @endif
+                                
+                                @if(isset($bookings['single']))
+                                    <!-- 1 Week Interview Intensive -->
+                                    <div class="flex items-center gap-3 lg:w-1/3">
+                                        <div class="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h3 class="text-lg font-bold text-gray-900">1 Week Interview Intensive</h3>
+                                            <span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">{{ $bookings['single']->count() }} bookings</span>
+                                        </div>
                                     </div>
-                                    <h3 class="text-lg font-bold text-gray-900">1 Week Interview Intensive</h3>
-                                    <span class="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">{{ $packageBookings->count() }} bookings</span>
-                                @elseif($package === 'premium')
-                                    <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                                        <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
-                                        </svg>
+                                @endif
+                                
+                                @if(isset($bookings['premium']))
+                                    <!-- Full Coaching Program -->
+                                    <div class="flex items-center gap-3 lg:w-1/3">
+                                        <div class="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
+                                            <svg class="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/>
+                                            </svg>
+                                        </div>
+                                        <div class="flex-1">
+                                            <h3 class="text-lg font-bold text-gray-900">Full Coaching Program</h3>
+                                            <span class="px-3 py-1 bg-purple-100 text-purple-800 text-sm font-medium rounded-full">{{ $bookings['premium']->count() }} bookings</span>
+                                        </div>
                                     </div>
-                                    <h3 class="text-lg font-bold text-gray-900">Full Coaching Program</h3>
-                                    <span class="px-3 py-1 bg-purple-100 text-purple-800 text-sm font-medium rounded-full">{{ $packageBookings->count() }} bookings</span>
                                 @endif
                             </div>
                         </div>
@@ -76,6 +95,17 @@
                         <div class="bg-white rounded-b-2xl border border-gray-200 border-t-0 overflow-hidden">
                             <div class="overflow-x-auto">
                                 <table class="min-w-full">
+                                    <thead class="bg-gray-50">
+                                        <tr class="flex flex-col lg:flex-row">
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase lg:w-1/4">Customer</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase lg:w-1/4">Interview</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase lg:w-1/4">Request Date</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase lg:w-1/4">Meeting Sent</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase lg:w-1/4">Amount</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase lg:w-1/4">Status</th>
+                                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase lg:w-1/4 lg:text-right">Actions</th>
+                                        </tr>
+                                    </thead>
                                     <thead class="bg-gray-50">
                                         <tr>
                                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Customer</th>
@@ -268,7 +298,7 @@
                             <h4 class="text-sm font-medium text-gray-500 mb-2">Notes</h4>
                             <p class="text-gray-600">${booking.notes}</p>
                         </div>
-                        ` : ''}
+                        ` : ''}`
                     </div>
                     
                     <!-- Status Update -->

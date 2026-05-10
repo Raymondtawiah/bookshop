@@ -121,6 +121,7 @@ class WebinarAccessService
 
     /**
      * Check if user can access webinar via token
+     * Note: Expired tokens require new registration/purchase
      */
     public function canAccessWebinar(string $token, $webinarId): ?WebinarRegistration
     {
@@ -136,6 +137,11 @@ class WebinarAccessService
             $registration->webinar_id != $webinarId || 
             !$registration->isPaid()) {
             return null;
+        }
+
+        // Check if access token has expired
+        if (isset($payload['expires_at']) && now()->greaterThan(Carbon::parse($payload['expires_at']))) {
+            return null; // Expired - requires new registration
         }
 
         return $registration;

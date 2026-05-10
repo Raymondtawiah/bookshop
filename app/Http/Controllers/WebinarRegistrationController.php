@@ -358,7 +358,7 @@ class WebinarRegistrationController extends Controller
         $registration = $this->accessService->canAccessWebinar($token, $webinar->id);
 
         if (!$registration) {
-            abort(403, 'Invalid or expired access link.');
+            abort(403, 'Your access link has expired. Please register again to access this webinar.');
         }
 
         // Mark as joined if not already
