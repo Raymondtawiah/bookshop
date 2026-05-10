@@ -101,20 +101,20 @@ class WebinarAccessService
     /**
      * Calculate Friday expiration time (end of current week)
      */
-    private function getFridayExpiration(): \Carbon\Carbon
+    private function getFridayExpiration(): \Carbon\CarbonInterface
     {
         $friday = now()->copy();
         
-        // If it's already past Friday, go to next Friday
-        if ($friday->dayOfWeek > 5) { // 5 = Friday
-            $friday->addWeek();
+        // Calculate days until Friday (5 = Friday)
+        $daysUntilFriday = (5 - $friday->dayOfWeek + 7) % 7;
+        
+        // If today is Friday, set to next Friday for next week
+        if ($daysUntilFriday === 0) {
+            $daysUntilFriday = 7;
         }
         
-        // Set to Friday 11:59 PM
-        while ($friday->dayOfWeek !== 5) {
-            $friday->addDay();
-        }
-        $friday->setTime(23, 59, 59);
+        // Add days and set time to 11:59 PM
+        $friday->addDays($daysUntilFriday)->setTime(23, 59, 59);
         
         return $friday;
     }
