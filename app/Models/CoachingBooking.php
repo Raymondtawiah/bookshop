@@ -17,6 +17,8 @@ class CoachingBooking extends Model
         'interview_date',
         'interview_time',
         'package',
+        'group_size',
+        'booking_type',
         'notes',
         'booking_token',
         'status',
