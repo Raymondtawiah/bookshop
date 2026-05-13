@@ -163,8 +163,13 @@
                 <div class="grid md:grid-cols-2 gap-8 max-w-3xl mx-auto">
                     <div class="border-2 border-gray-200 rounded-2xl p-8 hover:border-indigo-300 transition-colors">
                         <h3 class="text-xl font-semibold text-gray-900 mb-2">Team Coaching Plan</h3>
-                        <p class="text-3xl font-bold text-indigo-600 mb-4">₵500</p>
-                        <p class="text-gray-500 mb-4">Perfect for collaborative learning with limited cohort size (max 5 people) for personalized attention.</p>
+                        <div class="mb-4">
+                            <p class="text-3xl font-bold text-indigo-600 mb-2">
+                                ₵500 
+                                <span class="text-lg text-gray-400 line-through">₵800 </span>
+                            </p>
+                            <p class="text-gray-500 mb-2">Perfect for collaborative learning with limited cohort size (max 5 people) for personalized Attention.</p>
+                        </div>
                         <p class="font-medium text-gray-900 mb-3">What you get:</p>
                         <ul class="space-y-2 text-gray-600 mb-6">
                             <li class="flex items-start gap-2">
