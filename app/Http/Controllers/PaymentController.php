@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\Payments\PaymentRouterService;
+use App\Services\PaymentRouter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class PaymentController extends Controller
 {
-    protected PaymentRouterService $paymentRouter;
+    protected PaymentRouter $paymentRouter;
 
-    public function __construct(PaymentRouterService $paymentRouter)
+    public function __construct(PaymentRouter $paymentRouter)
     {
         $this->paymentRouter = $paymentRouter;
     }
@@ -170,27 +170,40 @@ class PaymentController extends Controller
             return redirect()->route('checkout')->with('error', 'Order not found.');
         }
 
-        try {
-            // For Paystack, the amount in $result is in GHS (as per PaystackService)
-            // For Stripe, the amount in $result is in USD (as per StripeService)
-            $this->paymentRouter->completeOrder(
-                $order,
-                $result['amount'],
-                $provider,
-                $provider === 'stripe' ? $result['session_id'] : $result['reference']
-            );
+         try {
+             // For Paystack, the amount in $result is in GHS (as per PaystackService)
+             // For Stripe, the amount in $result is in USD (as per StripeService)
+             $this->paymentRouter->completeOrder(
+                 $order,
+                 $result['amount'],
+                 $provider,
+                 $provider === 'stripe' ? $result['session_id'] : $result['reference']
+             );
 
-            return redirect()->route('home')
-                ->with('success', 'Payment successful! Order confirmed. Check your email for details.');
-        } catch (\Exception $e) {
-            Log::error('Payment callback: Order completion failed', [
-                'order_id' => $order->id,
-                'error' => $e->getMessage(),
-            ]);
+             return redirect()->route('home')
+                 ->with('success', 'Payment successful! Order confirmed. Check your email for details.');
+         } catch (\Exception $e) {
+             \Illuminate\Support\Facades\Log::error('Payment callback: Order completion failed', [
+                 'order_id' => $order->id,
+                 'error' => $e->getMessage(),
+                 'trace' => $e->getTraceAsString()
+             ]);
 
-            return redirect()->route('checkout')
-                ->with('error', 'Payment verified but order processing failed. Please contact support.');
-        }
+             // Provide more specific error message based on exception type
+             $errorMessage = 'Payment verified but order processing failed. Please contact support.';
+             if (strpos($e->getMessage(), 'Cart::where') !== false) {
+                 $errorMessage = 'Error clearing cart after payment. Please contact support.';
+             } elseif (strpos($e->getMessage(), 'sendOrderConfirmationEmail') !== false) {
+                 $errorMessage = 'Error sending confirmation email. Please contact support.';
+             } elseif (strpos($e->getMessage(), 'NotificationService') !== false) {
+                 $errorMessage = 'Error sending notifications. Please contact support.';
+             } elseif (strpos($e->getMessage(), 'SQLSTATE') !== false || strpos($e->getMessage(), 'query') !== false) {
+                 $errorMessage = 'Database error during order completion. Please contact support.';
+             }
+
+             return redirect()->route('checkout')
+                 ->with('error', $errorMessage);
+         }
     }
 
     /**

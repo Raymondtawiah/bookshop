@@ -60,61 +60,63 @@ class OrderCompletionService
         // Begin transaction to ensure data consistency
         \DB::beginTransaction();
 
-        try {
-            // Get cart items before clearing (for email)
-            $cartItems = Cart::where('user_id', $order->user_id)->get();
-
-            // Prepare order items from cart if not already set
-            if ($order->order_items->isEmpty()) {
-                $orderItems = $cartItems->map(function ($item) {
-                    return [
-                        'book_id' => $item->book_id,
-                        'product_name' => $item->product_name,
-                        'unit_price_ghs' => $item->unit_price,
-                        'quantity' => $item->quantity,
-                        'total_price_ghs' => $item->unit_price * $item->quantity,
-                    ];
-                })->toArray();
-            } else {
-                $orderItems = $order->order_items->toArray();
-            }
-
-            // Update order details
-            $order->update([
-                'status' => 'paid',
-                'payment_status' => $paymentStatus,
-                'paid_at' => now(),
-                'payment_provider' => $paymentProvider,
-                'transaction_reference' => $transactionReference,
-                'order_items' => $orderItems,
-            ]);
-
-            // Clear the cart
-            Cart::where('user_id', $order->user_id)->delete();
-
-            // Send confirmation email
-            $this->sendOrderConfirmationEmail($order, $cartItems);
-
-            // Send admin notifications
-            NotificationService::newOrder($order);
-            NotificationService::paymentReceived($order);
-
-            \DB::commit();
-
-            Log::info('OrderCompletion: Order completed successfully', [
-                'order_id' => $order->id,
-                'order_number' => $order->order_number,
-            ]);
-
-            return $order;
-        } catch (\Exception $e) {
-            \DB::rollBack();
-            Log::error('OrderCompletion: Failed to complete order', [
-                'order_id' => $order->id,
-                'error' => $e->getMessage(),
-            ]);
-            throw $e;
-        }
+         try {
+             // Get cart items before clearing (for email)
+             $cartItems = Cart::where('user_id', $order->user_id)->get();
+ 
+             // Prepare order items from cart if not already set
+             if ($order->order_items->isEmpty()) {
+                 $orderItems = $cartItems->map(function ($item) {
+                     return [
+                         'book_id' => $item->book_id,
+                         'product_name' => $item->product_name,
+                         'unit_price_ghs' => $item->unit_price,
+                         'quantity' => $item->quantity,
+                         'total_price_ghs' => $item->unit_price * $item->quantity,
+                     ];
+                 })->toArray();
+             } else {
+                 $orderItems = $order->order_items->toArray();
+             }
+ 
+             // Update order details
+             $order->update([
+                 'status' => 'paid',
+                 'payment_status' => $paymentStatus,
+                 'paid_at' => now(),
+                 'payment_provider' => $paymentProvider,
+                 'transaction_reference' => $transactionReference,
+                 'order_items' => $orderItems,
+             ]);
+ 
+             // Clear the cart only if it has items
+             if (!$cartItems->isEmpty()) {
+                 Cart::where('user_id', $order->user_id)->delete();
+             }
+ 
+             // Send confirmation email
+             $this->sendOrderConfirmationEmail($order, $cartItems);
+ 
+             // Send admin notifications
+             NotificationService::newOrder($order);
+             NotificationService::paymentReceived($order);
+ 
+             \DB::commit();
+ 
+             Log::info('OrderCompletion: Order completed successfully', [
+                 'order_id' => $order->id,
+                 'order_number' => $order->order_number,
+             ]);
+ 
+             return $order;
+         } catch (\Exception $e) {
+             \DB::rollBack();
+             Log::error('OrderCompletion: Failed to complete order', [
+                 'order_id' => $order->id,
+                 'error' => $e->getMessage(),
+             ]);
+             throw $e;
+         }
     }
 
     /**
