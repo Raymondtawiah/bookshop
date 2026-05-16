@@ -215,4 +215,46 @@ class PaymentRouterService
     {
         return $this->conversionRate;
     }
+
+    /**
+     * Complete order after successful payment verification
+     *
+     * @param \App\Models\Order $order The order to complete
+     * @param float $amount Payment amount
+     * @param string $provider Payment provider ('paystack' or 'stripe')
+     * @param string $transactionId Transaction reference or session ID
+     * @return void
+     */
+    public function completeOrder(\App\Models\Order $order, float $amount, string $provider, string $transactionId): void
+    {
+        Log::info('PaymentRouter: Completing order', [
+            'order_id' => $order->id,
+            'order_number' => $order->order_number,
+            'provider' => $provider,
+            'amount' => $amount,
+            'transaction_id' => $transactionId,
+        ]);
+
+        // Update order status
+        $order->update([
+            'status' => 'paid',
+            'payment_status' => 'completed',
+            'transaction_id' => $transactionId,
+        ]);
+
+        // Clear the user's cart
+        \App\Models\Cart::where('user_id', $order->user_id)->delete();
+
+        // Send order confirmation email
+        try {
+            \Illuminate\Support\Facades\Mail::to($order->email)->send(
+                new \App\Mail\OrderConfirmationMail($order)
+            );
+        } catch (\Exception $e) {
+            Log::error('PaymentRouter: Failed to send confirmation email', [
+                'order_id' => $order->id,
+                'error' => $e->getMessage(),
+            ]);
+        }
+    }
 }
