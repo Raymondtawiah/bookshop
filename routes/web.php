@@ -241,7 +241,7 @@ Route::middleware(['auth', 'verify.customer'])->group(function () {
             Route::get('payment/banks', [PaymentController::class, 'getBanks'])->name('payment.banks');
 
     // Stripe payment routes
-    Route::get('payment/stripe/success/{sessionId?}', [StripeController::class, 'success'])->name('payment.stripe.success');
+    Route::get('payment/stripe/success', [StripeController::class, 'success'])->name('payment.stripe.success');
     Route::get('payment/stripe/cancel', [StripeController::class, 'cancel'])->name('payment.stripe.cancel');
 });
 
