@@ -3,9 +3,28 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 return new class extends Migration
 {
+    /**
+     * Check if a foreign key exists by its conventional name.
+     *
+     * @param string $table
+     * @param string $foreignKeyName
+     * @return bool
+     */
+    protected function foreignKeyExists(string $table, string $foreignKeyName): bool
+    {
+        return (bool) DB::selectOne(
+            "SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE 
+             WHERE TABLE_SCHEMA = DATABASE() 
+               AND TABLE_NAME = ? 
+               AND CONSTRAINT_NAME = ?",
+            [$table, $foreignKeyName]
+        )->COUNT;
+    }
+
     /**
      * Run the migrations.
      *
@@ -13,9 +32,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table('webinar_notifications', function (Blueprint $table) {
-            $table->dropForeign(['webinar_id']);
-        });
+        $table = 'webinar_notifications';
+        $foreignKey = 'webinar_notifications_webinar_id_foreign';
+
+        if ($this->foreignKeyExists($table, $foreignKey)) {
+            Schema::table($table, function (Blueprint $table) use ($foreignKey) {
+                $table->dropForeign($foreignKey);
+            });
+        }
 
         Schema::table('webinar_notifications', function (Blueprint $table) {
             $table->foreign('webinar_id')
@@ -30,9 +54,14 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('webinar_notifications', function (Blueprint $table) {
-            $table->dropForeign(['webinar_id']);
-        });
+        $table = 'webinar_notifications';
+        $foreignKey = 'webinar_notifications_webinar_id_foreign';
+
+        if ($this->foreignKeyExists($table, $foreignKey)) {
+            Schema::table($table, function (Blueprint $table) use ($foreignKey) {
+                $table->dropForeign($foreignKey);
+            });
+        }
 
         Schema::table('webinar_notifications', function (Blueprint $table) {
             $table->foreign('webinar_id')
