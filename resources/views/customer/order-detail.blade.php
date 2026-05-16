@@ -131,7 +131,22 @@
                     @else
                     <p class="text-gray-500 text-sm">No order items found.</p>
                     @endif
-                </div>
-            </div>
-        </div>
+                 </div>
+
+                 @if($order->status === 'paid')
+                 <div class="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg text-center">
+                     <h4 class="text-lg font-semibold text-green-800 mb-2">Download Your Books</h4>
+                     <p class="text-green-700 mb-4">Your payment is confirmed. Click below to download your purchased eBooks.</p>
+                     <a href="{{ route('order.download', $order) }}" class="inline-flex items-center gap-2 px-6 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors font-medium">
+                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                         </svg>
+                         Download eBooks
+                     </a>
+                 </div>
+                 @endif
+
+             </div>
+         </div>
+     </div>
     @endsection

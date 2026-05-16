@@ -10,6 +10,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
+        "doctrine/dbal": "^4.4",
         "dompdf/dompdf": "*",
         "google/auth": "^1.50",
         "laravel/fortify": "^1.30",
@@ -21,6 +22,7 @@
         "livewire/livewire": "^4.0",
         "phpoffice/phpword": "*",
         "setasign/fpdi-tcpdf": "^2.3",
+        "stripe/stripe-php": "^20.1",
         "tecnickcom/tcpdf": "*"
     },
     "require-dev": {

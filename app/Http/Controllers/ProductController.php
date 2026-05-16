@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -34,18 +35,17 @@ class ProductController extends Controller
             abort(403, 'This book is not available for free download.');
         }
 
-        // Get file path from public/books (works for both local and production)
-        $filePath = public_path('public/books/'.$book->book_pdf);
-
-        // Check if file exists in public/books
+        // Try serving from storage (non-public)
+        $filePath = storage_path('app/books/'.$book->book_pdf);
         if (! file_exists($filePath)) {
-            // Try public/books as fallback
-            $filePath = public_path('books/'.$book->book_pdf);
-        }
-
-        // Check if file exists
-        if (! file_exists($filePath)) {
-            abort(404, 'PDF file not found.');
+            // Fallback to public/books for legacy files
+            $filePath = public_path('public/books/'.$book->book_pdf);
+            if (! file_exists($filePath)) {
+                $filePath = public_path('books/'.$book->book_pdf);
+                if (! file_exists($filePath)) {
+                    abort(404, 'PDF file not found.');
+                }
+            }
         }
 
         // Force download

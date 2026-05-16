@@ -18,7 +18,11 @@ class Order extends Model
         'nationality',
         'contact',
         'payment_method',
+        'payment_provider',
         'total_amount',
+        'currency',
+        'total_amount_usd',
+        'exchange_rate',
         'status',
         'order_number',
         'payment_status',
@@ -26,10 +30,13 @@ class Order extends Model
         'pdf_sent',
         'pdf_sent_at',
         'order_items',
+        'transaction_reference',
     ];
 
     protected $casts = [
         'total_amount' => 'decimal:2',
+        'total_amount_usd' => 'decimal:2',
+        'exchange_rate' => 'decimal:4',
         'paid_at' => 'datetime',
         'pdf_sent' => 'boolean',
         'pdf_sent_at' => 'datetime',

@@ -9,6 +9,7 @@ use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StripeController;
 use App\Http\Controllers\VerificationController;
 use App\Http\Controllers\VisaTrainingController;
 use App\Http\Controllers\WebinarController;
@@ -233,15 +234,22 @@ Route::middleware(['auth', 'verify.customer'])->group(function () {
     Route::get('my-order/{order}', [OrderController::class, 'myOrderDetail'])->name('my-order.show');
     Route::get('my-bookings', [CoachingController::class, 'myBookings'])->name('customer.my-bookings');
 
-    // Payment routes
-    Route::post('payment/initialize', [PaymentController::class, 'initializePayment'])->name('payment.initialize');
-    Route::get('payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
-    Route::get('payment/status', [PaymentController::class, 'checkPaymentStatus'])->name('payment.status');
-    Route::get('payment/banks', [PaymentController::class, 'getBanks'])->name('payment.banks');
+            // Payment routes
+            Route::post('payment/initialize', [PaymentController::class, 'initializePayment'])->name('payment.initialize');
+            Route::get('payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
+            Route::get('payment/status', [PaymentController::class, 'checkPaymentStatus'])->name('payment.status');
+            Route::get('payment/banks', [PaymentController::class, 'getBanks'])->name('payment.banks');
+
+    // Stripe payment routes
+    Route::get('payment/stripe/success/{sessionId?}', [StripeController::class, 'success'])->name('payment.stripe.success');
+    Route::get('payment/stripe/cancel', [StripeController::class, 'cancel'])->name('payment.stripe.cancel');
 });
 
 // Paystack Webhook - NO middleware (must be publicly accessible)
 Route::post('webinar/webhook/paystack', [WebinarRegistrationController::class, 'webhook'])->name('webinars.paystack.webhook');
+
+// Stripe Webhook - NO middleware (must be publicly accessible)
+Route::post('webhook/stripe', [StripeController::class, 'webhook'])->name('stripe.webhook');
 
 // Webinar routes (public - accessible to all)
 Route::get('webinars', [WebinarController::class, 'index'])->name('webinars.index');
