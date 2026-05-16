@@ -448,12 +448,17 @@
                                     submitBtn.disabled = false;
                                     submitBtn.innerText = originalText;
                                 }
-                            } catch (error) {
-                                console.error('Error:', error);
-                                alert('An error occurred. Please try again.');
-                                submitBtn.disabled = false;
-                                submitBtn.innerText = originalText;
+                        } catch (error) {
+                            console.error('Error:', error);
+                            // Extract error message from error object if possible
+                            let errorMessage = 'An error occurred. Please try again.';
+                            if (error.message) {
+                                errorMessage = error.message;
                             }
+                            alert(errorMessage);
+                            submitBtn.disabled = false;
+                            submitBtn.innerText = originalText;
+                        }
                         });
                     </script>
                 </div>

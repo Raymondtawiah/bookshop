@@ -46,6 +46,17 @@ class StripeService
         try {
             // Convert USD to cents for Stripe (smallest currency unit)
             $amountCents = (int) round($amountUsd * 100);
+            
+            // Ensure minimum amount for Stripe (50 cents / $0.50 USD)
+            if ($amountCents < 50) {
+                Log::warning('Stripe amount too low, adjusting to minimum', [
+                    'original_amount_usd' => $amountUsd,
+                    'original_amount_cents' => $amountCents,
+                    'adjusted_amount_cents' => 50
+                ]);
+                $amountCents = 50;
+                $amountUsd = 0.50;
+            }
 
             $sessionData = [
                 'payment_method_types' => ['card'],
