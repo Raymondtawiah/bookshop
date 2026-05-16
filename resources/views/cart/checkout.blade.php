@@ -408,18 +408,32 @@
                                    network: formData.get('contact') ? detectNetwork(formData.get('contact')) : ''
                                };
                             
-                            try {
-                                const response = await fetch('{{ route("payment.initialize") }}', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                    },
-                                    credentials: 'include',
-                                    body: JSON.stringify(data)
-                                });
-                                
-                                const result = await response.json();
+                             try {
+                                 const response = await fetch('{{ route("payment.initialize") }}', {
+                                     method: 'POST',
+                                     headers: {
+                                         'Content-Type': 'application/json',
+                                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                     },
+                                     credentials: 'include',
+                                     body: JSON.stringify(data)
+                                 });
+                                 
+                                 // Check if response is OK
+                                 if (!response.ok) {
+                                     // Try to get error message from response
+                                     let errorMessage = 'Payment initialization failed';
+                                     try {
+                                         const errorData = await response.json();
+                                         errorMessage = errorData.message || errorData.error || errorMessage;
+                                     } catch (e) {
+                                     // If response is not JSON, use status text
+                                         errorMessage = `${response.status} ${response.statusText}`;
+                                     }
+                                     throw new Error(errorMessage);
+                                 }
+                                 
+                                 const result = await response.json();
                                 
                                 if (result.success) {
                                     if (result.authorization_url) {
