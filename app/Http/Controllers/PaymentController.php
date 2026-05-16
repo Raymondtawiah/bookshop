@@ -2,39 +2,40 @@
 
 namespace App\Http\Controllers;
 
-use App\Mail\OrderConfirmation;
-use App\Models\Cart;
-use App\Models\Order;
-use App\Services\NotificationService;
-use App\Services\PaystackService;
+use App\Services\Payments\PaymentRouterService;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class PaymentController extends Controller
 {
-    protected $paystack;
+    protected PaymentRouterService $paymentRouter;
 
-    public function __construct(PaystackService $paystack)
+    public function __construct(PaymentRouterService $paymentRouter)
     {
-        $this->paystack = $paystack;
+        $this->paymentRouter = $paymentRouter;
     }
 
     /**
-     * Initialize payment for the order
+     * Initialize payment (AJAX endpoint)
+     *
+     * Expected POST fields:
+     * - payment_method: 'momo' | 'card' | 'bank'
+     * - email (optional, uses authenticated user if omitted)
+     * - customer_name, residence, contact, nationality
      */
     public function initializePayment(Request $request)
     {
         $request->validate([
-            'payment_method' => 'required|in:momo,bank,card',
+            'payment_method' => 'required|in:momo,card,bank',
             'email' => 'nullable|email',
             'contact' => 'required|string',
             'customer_name' => 'required|string',
             'residence' => 'required|string',
+            'nationality' => 'nullable|string',
         ]);
 
-        $cartItems = Cart::where('user_id', Auth::id())->get();
+        // Get cart
+        $cartItems = \App\Models\Cart::where('user_id', \Illuminate\Support\Facades\Auth::id())->get();
 
         if ($cartItems->isEmpty()) {
             return response()->json([
@@ -43,279 +44,241 @@ class PaymentController extends Controller
             ]);
         }
 
-        // Calculate total in GHS (prices stored in GHS)
-        $totalGhs = $cartItems->sum(function ($item) {
-            return $item->unit_price * $item->quantity;
-        });
+        $totalGhs = $cartItems->sum(fn($item) => $item->unit_price * $item->quantity);
+        $email = $request->input('email') ?? (\Illuminate\Support\Facades\Auth::check() ? \Illuminate\Support\Facades\Auth::user()->email : null);
 
-        $email = $request->input('email') ?? (Auth::check() ? Auth::user()->email : null);
-
-        if (! $email) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Email is required',
-            ], 400);
+        if (!$email) {
+            return response()->json(['success' => false, 'message' => 'Email is required'], 400);
         }
 
-        // Generate unique reference
         $reference = 'ORD-'.time().rand(1000, 9999);
+        $paymentMethod = $request->payment_method;
 
-        // For mobile money - redirect to Paystack checkout where user can select mobile money
-        if ($request->payment_method === 'momo') {
-            Log::info('Processing mobile money payment');
-        }
-
-        // For all payment methods, use Paystack checkout page with GHS
-        $result = $this->paystack->initializePayment($email, $totalGhs, $reference, 'GHS');
-
-        if ($result['success']) {
-            // Create pending order in GHS
-            $order = $this->createPendingOrder($request, $totalGhs, $reference);
+        // Bank Transfer: handle without redirect
+        if ($paymentMethod === 'bank') {
+            $this->createPendingOrder($request, $totalGhs, $reference, [
+                'provider' => 'bank',
+                'currency' => 'GHS',
+            ]);
 
             return response()->json([
                 'success' => true,
-                'authorization_url' => $result['authorization_url'],
+                'type' => 'bank_transfer',
+                'reference' => $reference,
+            ]);
+        }
+
+        // Bank Transfer: handle without redirect
+        if ($paymentMethod === 'bank') {
+            $this->createPendingOrder($request, $totalGhs, $reference, [
+                'provider' => 'bank',
+                'currency' => 'GHS',
+            ]);
+
+            return response()->json([
+                'success' => true,
+                'type' => 'bank_transfer',
+                'reference' => $reference,
+            ]);
+        }
+
+        // Determine provider based on selected payment method
+        $paymentMethod = $request->payment_method;
+        switch ($paymentMethod) {
+            case 'momo':
+                $provider = 'paystack';
+                break;
+            case 'card':
+                $provider = 'stripe';
+                break;
+            case 'bank':
+                // Bank transfer is handled separately above
+                break;
+            default:
+                $provider = 'paystack'; // default to paystack
+                break;
+        }
+
+        $paymentResult = $this->paymentRouter->createCheckout(
+            $email,
+            $totalGhs,
+            $provider,
+            $reference
+        );
+
+        if ($paymentResult['success']) {
+            $this->createPendingOrder($request, $totalGhs, $reference, $paymentResult);
+
+            return response()->json([
+                'success' => true,
+                'checkout_url' => $paymentResult['url'],
+                'provider' => $paymentResult['provider'],
+                'currency' => $paymentResult['currency'],
                 'reference' => $reference,
             ]);
         }
 
         return response()->json([
             'success' => false,
-            'message' => $result['message'] ?? 'Payment initialization failed',
-        ]);
+            'message' => $paymentResult['message'] ?? 'Payment initialization failed',
+        ], 400);
     }
 
     /**
-     * Detect mobile network from phone number
-     */
-    private function detectNetwork($phoneNumber)
-    {
-        // Remove any spaces or dashes
-        $phone = preg_replace('/[^0-9]/', '', $phoneNumber);
-
-        // Get the first 3 digits after country code (233) or 0
-        if (strlen($phone) === 12 && substr($phone, 0, 3) === '233') {
-            $prefix = substr($phone, 3, 3);
-        } elseif (strlen($phone) === 10 && substr($phone, 0, 1) === '0') {
-            $prefix = substr($phone, 1, 3);
-        } else {
-            $prefix = substr($phone, 0, 3);
-        }
-
-        // MTN Ghana
-        if (in_array($prefix, ['540', '550', '560', '570', '580', '240', '250'])) {
-            return 'MTN';
-        }
-        // Vodafone Ghana
-        if (in_array($prefix, ['520', '530', '540', '200', '210'])) {
-            return 'VODAFONE';
-        }
-        // AirtelTigo
-        if (in_array($prefix, ['270', '280', '290', '570', '571'])) {
-            return 'AIRTELTIGO';
-        }
-
-        return 'MTN'; // Default to MTN
-    }
-
-    /**
-     * Handle Paystack callback
+     * Handle payment callback redirect
      */
     public function callback(Request $request)
     {
-        $reference = $request->reference;
+        // Check if it's a Stripe redirect (has session_id)
+        if ($request->has('session_id')) {
+            $sessionId = $request->input('session_id');
+            $stripe = app(\App\Services\StripeService::class);
+            $session = $stripe->retrieveSession($sessionId);
 
-        if (! $reference) {
-            return redirect()->route('checkout')
-                ->with('error', 'Payment reference not found');
-        }
+            if (!$session) {
+                return redirect()->route('checkout')->with('error', 'Invalid session');
+            }
 
-        // Verify the payment
-        $result = $this->paystack->verifyPayment($reference);
+            $reference = $session->client_reference_id;
+            $provider = 'stripe';
 
-        if ($result['success']) {
-            // Find and update the order
-            $order = Order::where('order_number', $reference)->first();
+            // Verify the payment
+            $result = $stripe->verifyPayment($sessionId);
 
-            if ($order) {
-                // Verify GHS amount matches order total
-                $expectedGhs = $order->total_amount;
-                $paidGhs = $result['amount'];
-                $tolerance = 0.01;
+            if (!$result['success']) {
+                return redirect()->route('checkout')->with('error', 'Payment verification failed. Please contact support.');
+            }
 
-                if (abs($paidGhs - $expectedGhs) > $tolerance) {
-                    Log::error('Payment amount mismatch', [
-                        'order_id' => $order->id,
-                        'expected_ghs' => $expectedGhs,
-                        'paid_ghs' => $paidGhs,
-                    ]);
+        } else {
+            // Paystack redirect (has reference)
+            $reference = $request->input('reference');
+            if (!$reference) {
+                return redirect()->route('checkout')->with('error', 'Payment reference not found');
+            }
 
-                    return redirect()->route('checkout')
-                        ->with('error', 'Payment amount mismatch. Please contact support.');
-                }
+            $provider = 'paystack';
+            $paystack = app(\App\Services\PaystackService::class);
+            $result = $paystack->verifyPayment($reference);
 
-                // Get cart items before clearing
-                $cartItems = Cart::where('user_id', Auth::id())->get();
-
-                // Prepare order items data from cart with GHS prices only
-                $orderItems = $cartItems->map(function ($item) {
-                    return [
-                        'book_id' => $item->book_id,
-                        'product_name' => $item->product_name,
-                        'unit_price_ghs' => $item->unit_price,
-                        'quantity' => $item->quantity,
-                        'total_price_ghs' => $item->unit_price * $item->quantity,
-                    ];
-                })->toArray();
-
-                // Send confirmation email to customer
-                try {
-                    Log::info('Attempting to send order confirmation email', [
-                        'order_id' => $order->id,
-                        'email' => $order->email,
-                    ]);
-
-                    Mail::to($order->email)->send(new OrderConfirmation($order, $cartItems, $order->total_amount));
-
-                    Log::info('Order confirmation email sent successfully', ['order_id' => $order->id]);
-                } catch (\Exception $e) {
-                    Log::error('Failed to send order confirmation email: '.$e->getMessage());
-                }
-
-                // Clear cart
-                Cart::where('user_id', Auth::id())->delete();
-
-                // Update order with order items and mark as paid
-                $order->update([
-                    'status' => 'paid',
-                    'payment_status' => 'completed',
-                    'paid_at' => now(),
-                    'order_items' => ! empty($orderItems) ? $orderItems : $order->order_items,
-                ]);
-
-                // Send admin notifications
-                NotificationService::newOrder($order);
-                NotificationService::paymentReceived($order);
-
-                return redirect()->route('home')
-                    ->with('success', 'Payment successful! Order confirmed. Check your email for details.');
+            if (!$result['success']) {
+                return redirect()->route('checkout')->with('error', 'Payment verification failed. Please contact support.');
             }
         }
 
-        return redirect()->route('checkout')
-            ->with('error', 'Payment verification failed. Please contact support.');
+        // Now we have $reference, $provider, and $result (which is the verification result)
+        $order = \App\Models\Order::where('order_number', $reference)->first();
+
+        if (!$order) {
+            return redirect()->route('checkout')->with('error', 'Order not found.');
+        }
+
+        try {
+            // For Paystack, the amount in $result is in GHS (as per PaystackService)
+            // For Stripe, the amount in $result is in USD (as per StripeService)
+            $this->paymentRouter->completeOrder(
+                $order,
+                $result['amount'],
+                $provider,
+                $provider === 'stripe' ? $result['session_id'] : $result['reference']
+            );
+
+            return redirect()->route('home')
+                ->with('success', 'Payment successful! Order confirmed. Check your email for details.');
+        } catch (\Exception $e) {
+            Log::error('Payment callback: Order completion failed', [
+                'order_id' => $order->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return redirect()->route('checkout')
+                ->with('error', 'Payment verified but order processing failed. Please contact support.');
+        }
     }
 
     /**
-     * Check payment status (for mobile money polling)
+     * Check payment status (polling endpoint for MoMo)
      */
     public function checkPaymentStatus(Request $request)
     {
         $reference = $request->reference;
-
-        $result = $this->paystack->verifyPayment($reference);
+        $paystack = app(\App\Services\PaystackService::class);
+        $result = $paystack->verifyPayment($reference);
 
         if ($result['success']) {
-            $order = Order::where('order_number', $reference)->first();
-
+            $order = \App\Models\Order::where('order_number', $reference)->first();
             if ($order && $order->status === 'paid') {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Payment confirmed',
-                ]);
+                return response()->json(['success' => true, 'message' => 'Payment confirmed']);
             }
         }
 
-        return response()->json([
-            'success' => false,
-            'message' => 'Payment not yet confirmed',
-        ]);
+        return response()->json(['success' => false, 'message' => 'Payment not yet confirmed']);
     }
 
     /**
-     * Create pending order
+     * Get banks list
      */
-    protected function createPendingOrder(Request $request, $totalGhs, $reference)
+    public function getBanks()
     {
-        $user = Auth::user();
+        $paystack = app(\App\Services\PaystackService::class);
+        $result = $paystack->getBanks();
 
-        $cartItems = Cart::where('user_id', $user->id)->get();
+        return $result['status']
+            ? response()->json(['success' => true, 'banks' => $result['data']])
+            : response()->json(['success' => false, 'message' => 'Failed to fetch banks']);
+    }
 
-        // Prepare order items data with GHS prices
-        $orderItems = $cartItems->map(function ($item) {
-            return [
-                'book_id' => $item->book_id,
-                'product_name' => $item->product_name,
-                'unit_price_ghs' => $item->unit_price,
-                'quantity' => $item->quantity,
-                'total_price_ghs' => $item->unit_price * $item->quantity,
-            ];
-        })->toArray();
+    /**
+     * Create pending order (shared method)
+     *
+     * @param Request $request
+     * @param float $totalGhs
+     * @param string $reference
+     * @param array $paymentResult Router result or bank transfer info
+     * @return \App\Models\Order
+     */
+    protected function createPendingOrder(Request $request, float $totalGhs, string $reference, array $paymentResult): \App\Models\Order
+    {
+        $user = \Illuminate\Support\Facades\Auth::user();
+        $cartItems = \App\Models\Cart::where('user_id', $user->id)->get();
 
-        $order = Order::create([
+        $orderItems = $cartItems->map(fn($item) => [
+            'book_id' => $item->book_id,
+            'product_name' => $item->product_name,
+            'unit_price_ghs' => $item->unit_price,
+            'quantity' => $item->quantity,
+            'total_price_ghs' => $item->unit_price * $item->quantity,
+        ])->toArray();
+
+        return \App\Models\Order::create([
             'user_id' => $user->id,
             'order_number' => $reference,
-            'customer_name' => $user->name,
-            'email' => $user->email,
+            'customer_name' => $request->customer_name ?? $user->name,
+            'email' => $request->email ?? $user->email,
             'contact' => $request->contact ?? $user->phone ?? '',
             'residence' => $request->residence ?? '',
             'nationality' => $request->nationality ?? '',
-            'payment_method' => $request->payment_method,
+            'payment_method' => $this->mapProviderToMethod($paymentResult['provider']),
+            'payment_provider' => $paymentResult['provider'],
             'total_amount' => $totalGhs,
+            'currency' => $paymentResult['currency'],
+            'total_amount_usd' => $paymentResult['amount_usd'] ?? null,
+            'exchange_rate' => $paymentResult['exchange_rate'] ?? null,
             'status' => 'pending',
             'payment_status' => 'pending',
             'order_items' => $orderItems,
         ]);
-
-        return $order;
     }
 
     /**
-     * Send order confirmation email
+     * Map provider to payment_method value
      */
-    protected function sendOrderConfirmationEmail($order, $cartItems = null)
+    private function mapProviderToMethod(string $provider): string
     {
-        try {
-            $user = $order->user;
-
-            // If cartItems not provided, try to get from cart
-            if (! $cartItems) {
-                $cartItems = Cart::where('user_id', $order->user_id)->get();
-            }
-
-            // If still no cart items, create empty array
-            if (! $cartItems) {
-                $cartItems = collect([]);
-            }
-
-            Mail::to($order->email)->send(new OrderConfirmation($order, $cartItems, $order->total_amount));
-
-            Log::info('Order confirmation email sent', ['order_id' => $order->id]);
-        } catch (\Exception $e) {
-            Log::error('Failed to send order confirmation email', [
-                'error' => $e->getMessage(),
-                'order_id' => $order->id,
-            ]);
-        }
-    }
-
-    /**
-     * Get banks list for bank transfer
-     */
-    public function getBanks()
-    {
-        $result = $this->paystack->getBanks();
-
-        if ($result['status']) {
-            return response()->json([
-                'success' => true,
-                'banks' => $result['data'],
-            ]);
-        }
-
-        return response()->json([
-            'success' => false,
-            'message' => 'Failed to fetch banks',
-        ]);
+        return match ($provider) {
+            'paystack' => 'momo',
+            'stripe' => 'card',
+            'bank' => 'bank',
+            default => 'momo',
+        };
     }
 }

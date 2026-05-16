@@ -181,11 +181,21 @@
                         </div>
                         @endif
                         @if($order->payment_method)
-                        <div class="flex justify-between text-lg mb-2">
-                            <span class="font-semibold">Payment Method:</span>
-                            <span class="font-bold text-gray-900">{{ $order->payment_method === 'momo' ? 'Mobile Money' : 'Bank Transfer' }}</span>
-                        </div>
-                        @endif
+                         <div class="flex justify-between text-lg mb-2">
+                             <span class="font-semibold">Payment Method:</span>
+                             <span class="font-bold text-gray-900">
+                                 @if($order->payment_method === 'momo')
+                                     Mobile Money
+                                 @elseif($order->payment_method === 'bank')
+                                     Bank Transfer
+                                 @elseif($order->payment_method === 'card')
+                                     Credit/Debit Card
+                                 @else
+                                     {{ ucfirst($order->payment_method) }}
+                                 @endif
+                             </span>
+                         </div>
+                         @endif
                     </div>
 
                     <div class="mt-8 text-center">
@@ -278,8 +288,7 @@
                             @error('nationality')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
-                        </div>
-
+                         </div>
                         <div class="mb-6">
                             <label for="contact" class="block text-sm font-medium text-gray-700 mb-1">Contact Number *</label>
                             <input type="tel" name="contact" id="contact" required
@@ -290,57 +299,61 @@
                             @enderror
                         </div>
 
-                        <div class="mb-6">
-                            <label class="block text-sm font-medium text-gray-700 mb-2">Payment Method *</label>
-                            <div class="grid grid-cols-2 gap-4">
-                                <label class="relative flex items-center justify-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all">
-                                    <input type="radio" name="payment_method" value="momo" class="sr-only" required checked>
-                                    <div class="text-center payment-option" data-value="momo">
-                                        <svg class="w-8 h-8 mx-auto mb-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                        </svg>
-                                        <span class="font-medium text-gray-900">Mobile Money</span>
-                                        <p class="text-xs text-gray-500 mt-1">Pay via MoMo</p>
-                                    </div>
-                                </label>
-                                <label class="relative flex items-center justify-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all">
-                                    <input type="radio" name="payment_method" value="bank" class="sr-only peer">
-                                    <div class="text-center payment-option" data-value="bank">
-                                        <svg class="w-8 h-8 mx-auto mb-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                                        </svg>
-                                        <span class="font-medium text-gray-900">Bank Transfer</span>
-                                        <p class="text-xs text-gray-500 mt-1">Pay via Bank</p>
-                                    </div>
-                                </label>
-                            </div>
-                            @error('payment_method')
-                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                            @enderror
-                        </div>
+                          <div class="mb-6">
+                              <label class="block text-sm font-medium text-gray-700 mb-2">Payment Method *</label>
+                              <div class="grid grid-cols-2 gap-4">
+                                  <label class="relative flex items-center justify-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all">
+                                      <input type="radio" name="payment_method" value="momo" class="sr-only" required>
+                                      <div class="text-center payment-option" data-value="momo">
+                                          <svg class="w-8 h-8 mx-auto mb-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2-2v14a2 2 0 002 2z"/>
+                                          </svg>
+                                          <span class="font-medium text-gray-900">Mobile Money</span>
+                                          <p class="text-xs text-gray-500 mt-1">Pay via Paystack</p>
+                                      </div>
+                                  </label>
+                                  <label class="relative flex items-center justify-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all">
+                                      <input type="radio" name="payment_method" value="card" class="sr-only" required>
+                                      <div class="text-center payment-option" data-value="card">
+                                          <svg class="w-8 h-8 mx-auto mb-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3-3v8a3 3 0 003 3z"/>
+                                          </svg>
+                                          <span class="font-medium text-gray-900">Credit/Debit Card</span>
+                                          <p class="text-xs text-gray-500 mt-1">Pay via Stripe</p>
+                                      </div>
+                                  </label>
+                              </div>
+                              @error('payment_method')
+                                  <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                              @enderror
+                          </div>
 
-                        <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors" id="submit-btn">
-                            Confirm Order
-                        </button>
-                    </form>
+                         <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors" id="submit-btn">
+                             Confirm Order
+                         </button>
+                     </form>
                     
-                    <script>
-                        function detectNetwork(phoneNumber) {
-                            const phone = phoneNumber.replace(/[^0-9]/g, '');
-                            let prefix;
-                            if (phone.length === 12 && phone.substring(0, 3) === '233') {
-                                prefix = phone.substring(3, 6);
-                            } else if (phone.length === 10 && phone.substring(0, 1) === '0') {
-                                prefix = phone.substring(1, 4);
-                            } else {
-                                prefix = phone.substring(0, 3);
-                            }
-                            
-                            if (['540', '550', '560', '570', '580', '240', '250'].includes(prefix)) return 'MTN';
-                            if (['520', '530', '540', '200', '210'].includes(prefix)) return 'VODAFONE';
-                            if (['270', '280', '290', '571'].includes(prefix)) return 'AIRTELTIGO';
-                            return 'MTN';
-                        }
+                     <script>
+                         function detectNetwork(phoneNumber) {
+                             // Handle null or undefined input
+                             if (phoneNumber == null) {
+                                 return '';
+                             }
+                             const phone = phoneNumber.replace(/[^0-9]/g, '');
+                             let prefix;
+                             if (phone.length === 12 && phone.substring(0, 3) === '233') {
+                                 prefix = phone.substring(3, 6);
+                             } else if (phone.length === 10 && phone.substring(0, 1) === '0') {
+                                 prefix = phone.substring(1, 4);
+                             } else {
+                                 prefix = phone.substring(0, 3);
+                             }
+                             
+                             if (['540', '550', '560', '570', '580', '240', '250'].includes(prefix)) return 'MTN';
+                             if (['520', '530', '540', '200', '210'].includes(prefix)) return 'VODAFONE';
+                             if (['270', '280', '290', '571'].includes(prefix)) return 'AIRTELTIGO';
+                             return 'MTN';
+                         }
 
                         // Handle payment method selection highlighting
                         const paymentOptions = document.querySelectorAll('input[name="payment_method"]');
@@ -364,39 +377,47 @@
                             }
                         });
 
-                        document.getElementById('checkout-form').addEventListener('submit', async function(e) {
-                            e.preventDefault();
-                            
-                            const submitBtn = document.getElementById('submit-btn');
+                         document.getElementById('checkout-form').addEventListener('submit', async function(e) {
+                             const submitBtn = document.getElementById('submit-btn');
+                             const form = this;
+                             const formData = new FormData(form);
+                             
+                             // Get the selected payment method
+                             const paymentMethod = formData.get('payment_method');
+                             
+                             // For Bank Transfer, allow normal form submission (no AJAX)
+                             if (paymentMethod === 'bank') {
+                                 return true; // let form submit normally to /checkout/process
+                             }
+                             
+                             // For Momo and Card, handle via AJAX
+                             e.preventDefault();
+
                             const originalText = submitBtn.innerText;
                             submitBtn.disabled = true;
                             submitBtn.innerText = 'Processing...';
+
+                               const data = {
+                                   customer_name: formData.get('customer_name'),
+                                   email: formData.get('email'),
+                                   residence: formData.get('residence'),
+                                   nationality: formData.get('nationality'),
+                                   contact: formData.get('contact'),
+                                   payment_method: paymentMethod,
+                                   mobile_number: formData.get('contact'),
+                                   network: formData.get('contact') ? detectNetwork(formData.get('contact')) : ''
+                               };
                             
-                            const formData = new FormData(this);
-                            const paymentMethod = formData.get('payment_method');
-                            const contact = formData.get('contact');
-                            
-                             const data = {
-                                 customer_name: formData.get('customer_name'),
-                                 email: formData.get('email'),
-                                 residence: formData.get('residence'),
-                                 nationality: formData.get('nationality'),
-                                 contact: contact,
-                                 payment_method: paymentMethod,
-                                 mobile_number: contact,
-                                 network: detectNetwork(contact)
-                             };
-                            
-                             try {
-                                 const response = await fetch('{{ route("payment.initialize") }}', {
-                                     method: 'POST',
-                                     headers: {
-                                         'Content-Type': 'application/json',
-                                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                     },
-                                     credentials: 'include',
-                                     body: JSON.stringify(data)
-                                 });
+                            try {
+                                const response = await fetch('{{ route("payment.initialize") }}', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Content-Type': 'application/json',
+                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                    },
+                                    credentials: 'include',
+                                    body: JSON.stringify(data)
+                                });
                                 
                                 const result = await response.json();
                                 
@@ -404,11 +425,9 @@
                                     if (result.authorization_url) {
                                         // Redirect to Paystack
                                         window.location.href = result.authorization_url;
-                                    } else if (result.message) {
-                                        // Mobile money - show message
-                                        alert(result.message);
-                                        // Reload to show order success
-                                        window.location.reload();
+                                    } else if (result.checkout_url) {
+                                        // Redirect to Stripe
+                                        window.location.href = result.checkout_url;
                                     }
                                 } else {
                                     alert(result.message || 'Payment failed. Please try again.');

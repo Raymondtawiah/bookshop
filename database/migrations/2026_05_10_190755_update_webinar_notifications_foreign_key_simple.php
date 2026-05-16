@@ -8,16 +8,20 @@ return new class extends Migration
 {
     /**
      * Run the migrations.
+     *
+     * Update foreign key to reference webinar_sessions instead of webinars.
      */
     public function up(): void
     {
-        // Update foreign key to reference webinar_sessions instead of webinars
         Schema::table('webinar_notifications', function (Blueprint $table) {
             $table->dropForeign(['webinar_id']);
         });
-        
+
         Schema::table('webinar_notifications', function (Blueprint $table) {
-            $table->foreignId('webinar_id')->constrained('webinar_sessions')->onDelete('cascade');
+            $table->foreign('webinar_id')
+                  ->references('id')
+                  ->on('webinar_sessions')
+                  ->onDelete('cascade');
         });
     }
 
@@ -29,9 +33,12 @@ return new class extends Migration
         Schema::table('webinar_notifications', function (Blueprint $table) {
             $table->dropForeign(['webinar_id']);
         });
-        
+
         Schema::table('webinar_notifications', function (Blueprint $table) {
-            $table->foreignId('webinar_id')->constrained('webinars')->onDelete('cascade');
+            $table->foreign('webinar_id')
+                  ->references('id')
+                  ->on('webinars')
+                  ->onDelete('cascade');
         });
     }
 };

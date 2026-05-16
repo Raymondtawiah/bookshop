@@ -2,18 +2,28 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Book;
 use App\Models\Cart;
 use App\Models\Nationality;
 use App\Models\Order;
-use App\Services\PaystackService;
+use App\Services\PaymentRouter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use ZipArchive;
 
 class OrderController extends Controller
 {
+    protected PaymentRouter $paymentRouter;
+
+    public function __construct(PaymentRouter $paymentRouter)
+    {
+        $this->paymentRouter = $paymentRouter;
+    }
+
     /**
      * Process checkout with customer details.
+     * Accepts payment_method: 'momo' (Paystack), 'card' (Stripe), 'bank' (manual transfer)
      */
     public function processCheckout(Request $request)
     {
@@ -23,7 +33,7 @@ class OrderController extends Controller
             'residence' => 'required|string|max:500',
             'nationality' => 'required|string|max:100',
             'contact' => 'required|string|max:20',
-            'payment_method' => 'required|in:momo,bank',
+            'payment_method' => 'required|in:momo,bank,card',
         ]);
 
         $cartItems = Cart::where('user_id', Auth::id())->with('book')->get();
@@ -32,15 +42,13 @@ class OrderController extends Controller
             return redirect()->route('cart')->with('error', 'Your cart is empty!');
         }
 
-        // Calculate total in GHS directly (prices are stored in GHS)
         $totalGhs = $cartItems->sum(function ($item) {
             return $item->unit_price * $item->quantity;
         });
 
-        $paymentMethod = $request->payment_method;
         $reference = 'ORD-'.time().rand(1000, 9999);
+        $paymentMethod = $request->payment_method;
 
-        // Prepare order items data with GHS prices
         $orderItems = $cartItems->map(function ($item) {
             return [
                 'book_id' => $item->book_id,
@@ -51,7 +59,7 @@ class OrderController extends Controller
             ];
         })->toArray();
 
-        // Create order with pending payment status
+        // Create base order
         $order = Order::create([
             'user_id' => Auth::id(),
             'customer_name' => $request->customer_name,
@@ -59,40 +67,20 @@ class OrderController extends Controller
             'residence' => $request->residence,
             'nationality' => $request->nationality,
             'contact' => $request->contact,
-            'payment_method' => $paymentMethod,
             'total_amount' => $totalGhs,
+            'currency' => 'GHS',
             'status' => 'pending',
             'order_number' => $reference,
             'order_items' => $orderItems,
         ]);
 
-        $paystack = new PaystackService;
-
-        if ($paymentMethod === 'momo') {
-            $result = $paystack->initializePayment(
-                $request->email,
-                $totalGhs,
-                $reference,
-                'GHS'
-            );
-
-            Log::info('Paystack Payment Init Response for MoMo', ['result' => $result]);
-
-            if ($result['success']) {
-                return redirect($result['authorization_url']);
-            }
-
-            Log::error('Paystack payment initialization failed', [
-                'result' => $result,
-                'message' => $result['message'] ?? 'Unknown error',
-            ]);
-
-            return back()->with('error', 'Payment failed: '.($result['message'] ?? 'Please try again.'));
-        } elseif ($paymentMethod === 'bank') {
+        // Bank Transfer (manual, no redirect)
+        if ($paymentMethod === 'bank') {
             $order->update([
+                'payment_method' => 'bank',
+                'payment_provider' => 'bank',
                 'payment_status' => 'pending',
                 'status' => 'pending_payment',
-                'order_items' => $orderItems,
             ]);
 
             $cartItems->each->delete();
@@ -106,7 +94,30 @@ class OrderController extends Controller
             ]);
         }
 
-        return back()->with('error', 'Invalid payment method selected.');
+        // Determine provider for digital payments
+        $provider = $paymentMethod === 'momo' ? 'paystack' : 'stripe';
+
+        $paymentResult = $this->paymentRouter->createCheckout(
+            $request->email,
+            $totalGhs,
+            $provider,
+            $reference
+        );
+
+        if (!$paymentResult['success']) {
+            $order->delete();
+            return back()->with('error', $paymentResult['message'] ?? 'Payment initialization failed');
+        }
+
+        $order->update([
+            'payment_method' => $paymentMethod,
+            'payment_provider' => $paymentResult['provider'],
+            'currency' => $paymentResult['currency'],
+            'total_amount_usd' => $paymentResult['amount_usd'] ?? null,
+            'exchange_rate' => $paymentResult['exchange_rate'] ?? null,
+        ]);
+
+        return redirect($paymentResult['url']);
     }
 
     /**
@@ -164,5 +175,89 @@ class OrderController extends Controller
         }
 
         return view('customer.order-detail', compact('order'));
+    }
+
+    /**
+     * Download purchased books PDF(s) securely.
+     * Only accessible if order is paid and belongs to authenticated user.
+     */
+    public function downloadPdf(Order $order)
+    {
+        if ($order->user_id !== Auth::id()) {
+            abort(403, 'Unauthorized access to this download.');
+        }
+
+        if (!$order->isPaid()) {
+            abort(403, 'Payment not confirmed. Please complete your payment to access the download.');
+        }
+
+        $orderItems = $order->order_items;
+        if ($orderItems->isEmpty()) {
+            abort(404, 'No items found in this order.');
+        }
+
+        $bookIds = $orderItems->pluck('book_id')->filter()->unique()->toArray();
+        if (empty($bookIds)) {
+            abort(404, 'No valid books found for this order.');
+        }
+
+        $books = Book::whereIn('id', $bookIds)->get();
+
+        if ($books->isEmpty()) {
+            abort(404, 'Books not found.');
+        }
+
+        // Handle single book download directly
+        if ($books->count() === 1) {
+            $book = $books->first();
+
+            $filePath = storage_path('app/books/'.$book->book_pdf);
+            if (!file_exists($filePath)) {
+                // Fallback to public folder (for legacy)
+                $filePath = public_path('public/books/'.$book->book_pdf);
+                if (!file_exists($filePath)) {
+                    abort(404, 'PDF file not found.');
+                }
+            }
+
+            return response()->file($filePath, [
+                'Content-Type' => 'application/pdf',
+                'Content-Disposition' => 'attachment; filename="'.$book->book_pdf.'"',
+            ]);
+        }
+
+        // Multiple books: create a ZIP archive on the fly
+        $tempFile = tempnam(sys_get_temp_dir(), 'order_') . '.zip';
+        $zip = new ZipArchive();
+
+        if ($zip->open($tempFile, ZipArchive::CREATE | ZipArchive::OVERWRITE) !== true) {
+            abort(500, 'Could not create zip file');
+        }
+
+        foreach ($books as $book) {
+            $filePath = storage_path('app/books/'.$book->book_pdf);
+            if (!file_exists($filePath)) {
+                $filePath = public_path('public/books/'.$book->book_pdf);
+                if (!file_exists($filePath)) {
+                    Log::warning('Download: PDF not found for book', ['book_id' => $book->id, 'filename' => $book->book_pdf]);
+                    continue;
+                }
+            }
+            $zip->addFile($filePath, $book->book_pdf);
+        }
+        $zip->close();
+
+        // Ensure temp file is deleted after response
+        register_shutdown_function(function () use ($tempFile) {
+            if (file_exists($tempFile)) {
+                @unlink($tempFile);
+            }
+        });
+
+        $zipFileName = 'Order-'.$order->order_number.'.zip';
+
+        return response()->download($tempFile, $zipFileName, [
+            'Content-Type' => 'application/zip',
+        ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Order;
+use App\Services\OrderCompletionService;
 use App\Services\PaystackService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -11,10 +12,12 @@ use Illuminate\Support\Facades\Log;
 class PaystackWebhookController extends Controller
 {
     protected string $secretKey;
+    protected OrderCompletionService $orderCompletion;
 
-    public function __construct()
+    public function __construct(OrderCompletionService $orderCompletion)
     {
         $this->secretKey = config('paystack.secretKey');
+        $this->orderCompletion = $orderCompletion;
     }
 
     /**
@@ -119,19 +122,29 @@ class PaystackWebhookController extends Controller
             return response()->json(['error' => 'Payment not successful'], 400);
         }
 
-        $order->update([
-            'status' => 'paid',
-            'payment_status' => 'completed',
-            'paid_at' => now(),
-        ]);
+        try {
+            $this->orderCompletion->completeOrder(
+                $order,
+                $amountGhs,
+                'paystack',
+                $reference
+            );
 
-        Log::info('Paystack webhook: Payment confirmed', [
-            'order_id' => $order->id,
-            'amount_ghs' => $amountGhs,
-            'reference' => $reference,
-        ]);
+            Log::info('Paystack webhook: Payment confirmed', [
+                'order_id' => $order->id,
+                'amount_ghs' => $amountGhs,
+                'reference' => $reference,
+            ]);
 
-        return response()->json(['status' => 'success']);
+            return response()->json(['status' => 'success']);
+        } catch (\Exception $e) {
+            Log::error('Paystack webhook: Order completion failed', [
+                'order_id' => $order->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            return response()->json(['error' => 'Order completion failed'], 500);
+        }
     }
 
     /**
