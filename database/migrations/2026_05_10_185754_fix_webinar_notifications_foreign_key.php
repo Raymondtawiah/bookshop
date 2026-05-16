@@ -16,13 +16,15 @@ return new class extends Migration
      */
     protected function foreignKeyExists(string $table, string $foreignKeyName): bool
     {
-        return (bool) DB::selectOne(
-            "SELECT COUNT(*) FROM information_schema.KEY_COLUMN_USAGE 
-             WHERE TABLE_SCHEMA = DATABASE() 
-               AND TABLE_NAME = ? 
-               AND CONSTRAINT_NAME = ?",
-            [$table, $foreignKeyName]
-        )->COUNT;
+        $result = DB::select("
+            SELECT COUNT(*) as count
+            FROM information_schema.TABLE_CONSTRAINTS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = ?
+              AND CONSTRAINT_NAME = ?
+        ", [$table, $foreignKeyName]);
+
+        return isset($result[0]) && $result[0]->count > 0;
     }
 
     /**
