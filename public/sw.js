@@ -26,7 +26,12 @@ self.addEventListener('fetch', (event) => {
 
     // ❌ NEVER cache POST requests (especially file uploads)
     if (event.request.method !== 'GET') {
-        event.respondWith(fetch(event.request));
+        event.respondWith(
+            fetch(event.request).catch(() => {
+                // If offline or network error, return basic response
+                return new Response('Network error', { status: 503 });
+            })
+        );
         return;
     }
 
