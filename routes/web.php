@@ -235,7 +235,7 @@ Route::middleware(['auth', 'verify.customer'])->group(function () {
     Route::get('my-bookings', [CoachingController::class, 'myBookings'])->name('customer.my-bookings');
 
             // Payment routes
-            Route::post('payment/initialize', [PaymentController::class, 'initializePayment'])->name('payment.initialize');
+            Route::match(['get', 'post'], 'payment/initialize', [PaymentController::class, 'initializePayment'])->name('payment.initialize');
             Route::get('payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
             Route::get('payment/status', [PaymentController::class, 'checkPaymentStatus'])->name('payment.status');
             Route::get('payment/banks', [PaymentController::class, 'getBanks'])->name('payment.banks');
