@@ -25,89 +25,101 @@ class PaymentController extends Controller
      */
     public function initializePayment(Request $request)
     {
-        $request->validate([
-            'payment_method' => 'required|in:momo,card,bank',
-            'email' => 'nullable|email',
-            'contact' => 'required|string',
-            'customer_name' => 'required|string',
-            'residence' => 'required|string',
-            'nationality' => 'nullable|string',
-        ]);
+        try {
+            $request->validate([
+                'payment_method' => 'required|in:momo,card,bank',
+                'email' => 'nullable|email',
+                'contact' => 'required|string',
+                'customer_name' => 'required|string',
+                'residence' => 'required|string',
+                'nationality' => 'nullable|string',
+            ]);
 
-        // Get cart
-        $cartItems = \App\Models\Cart::where('user_id', \Illuminate\Support\Facades\Auth::id())->get();
+            // Get cart
+            $cartItems = \App\Models\Cart::where('user_id', \Illuminate\Support\Facades\Auth::id())->get();
 
-        if ($cartItems->isEmpty()) {
+            if ($cartItems->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Your cart is empty',
+                ]);
+            }
+
+            $totalGhs = $cartItems->sum(fn($item) => $item->unit_price * $item->quantity);
+            $email = $request->input('email') ?? (\Illuminate\Support\Facades\Auth::check() ? \Illuminate\Support\Facades\Auth::user()->email : null);
+
+            if (!$email) {
+                return response()->json(['success' => false, 'message' => 'Email is required'], 400);
+            }
+
+            $reference = 'ORD-'.time().rand(1000, 9999);
+            $paymentMethod = $request->payment_method;
+
+            // Bank Transfer: handle without redirect
+            if ($paymentMethod === 'bank') {
+                $this->createPendingOrder($request, $totalGhs, $reference, [
+                    'provider' => 'bank',
+                    'currency' => 'GHS',
+                ]);
+
+                return response()->json([
+                    'success' => true,
+                    'type' => 'bank_transfer',
+                    'reference' => $reference,
+                ]);
+            }
+
+            // Determine provider based on selected payment method
+            $paymentMethod = $request->payment_method;
+            switch ($paymentMethod) {
+                case 'momo':
+                    $provider = 'paystack';
+                    break;
+                case 'card':
+                    $provider = 'stripe';
+                    break;
+                case 'bank':
+                    // Bank transfer is handled separately above
+                    break;
+                default:
+                    $provider = 'paystack'; // default to paystack
+                    break;
+            }
+
+            $paymentResult = $this->paymentRouter->createCheckout(
+                $email,
+                $totalGhs,
+                $provider,
+                $reference
+            );
+
+            if ($paymentResult['success']) {
+                $this->createPendingOrder($request, $totalGhs, $reference, $paymentResult);
+
+                return response()->json([
+                    'success' => true,
+                    'checkout_url' => $paymentResult['url'],
+                    'provider' => $paymentResult['provider'],
+                    'currency' => $paymentResult['currency'],
+                    'reference' => $reference,
+                ]);
+            }
+
             return response()->json([
                 'success' => false,
-                'message' => 'Your cart is empty',
+                'message' => $paymentResult['message'] ?? 'Payment initialization failed',
+            ], 400);
+        } catch (\Exception $e) {
+            \Illuminate\Support\Facades\Log::error('Payment initialization exception', [
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
             ]);
-        }
-
-        $totalGhs = $cartItems->sum(fn($item) => $item->unit_price * $item->quantity);
-        $email = $request->input('email') ?? (\Illuminate\Support\Facades\Auth::check() ? \Illuminate\Support\Facades\Auth::user()->email : null);
-
-        if (!$email) {
-            return response()->json(['success' => false, 'message' => 'Email is required'], 400);
-        }
-
-        $reference = 'ORD-'.time().rand(1000, 9999);
-        $paymentMethod = $request->payment_method;
-
-         // Bank Transfer: handle without redirect
-         if ($paymentMethod === 'bank') {
-             $this->createPendingOrder($request, $totalGhs, $reference, [
-                 'provider' => 'bank',
-                 'currency' => 'GHS',
-             ]);
-
-             return response()->json([
-                 'success' => true,
-                 'type' => 'bank_transfer',
-                 'reference' => $reference,
-             ]);
-         }
-
-        // Determine provider based on selected payment method
-        $paymentMethod = $request->payment_method;
-        switch ($paymentMethod) {
-            case 'momo':
-                $provider = 'paystack';
-                break;
-            case 'card':
-                $provider = 'stripe';
-                break;
-            case 'bank':
-                // Bank transfer is handled separately above
-                break;
-            default:
-                $provider = 'paystack'; // default to paystack
-                break;
-        }
-
-        $paymentResult = $this->paymentRouter->createCheckout(
-            $email,
-            $totalGhs,
-            $provider,
-            $reference
-        );
-
-        if ($paymentResult['success']) {
-            $this->createPendingOrder($request, $totalGhs, $reference, $paymentResult);
 
             return response()->json([
-                'success' => true,
-                'checkout_url' => $paymentResult['url'],
-                'provider' => $paymentResult['provider'],
-                'currency' => $paymentResult['currency'],
-                'reference' => $reference,
-            ]);
+                'success' => false,
+                'message' => 'Payment initialization failed: ' . $e->getMessage()
+            ], 500);
         }
-
-        return response()->json([
-            'success' => false,
-            'message' => $paymentResult['message'] ?? 'Payment initialization failed',
-        ], 400);
     }
 
     /**
