@@ -54,33 +54,19 @@ class PaymentController extends Controller
         $reference = 'ORD-'.time().rand(1000, 9999);
         $paymentMethod = $request->payment_method;
 
-        // Bank Transfer: handle without redirect
-        if ($paymentMethod === 'bank') {
-            $this->createPendingOrder($request, $totalGhs, $reference, [
-                'provider' => 'bank',
-                'currency' => 'GHS',
-            ]);
+         // Bank Transfer: handle without redirect
+         if ($paymentMethod === 'bank') {
+             $this->createPendingOrder($request, $totalGhs, $reference, [
+                 'provider' => 'bank',
+                 'currency' => 'GHS',
+             ]);
 
-            return response()->json([
-                'success' => true,
-                'type' => 'bank_transfer',
-                'reference' => $reference,
-            ]);
-        }
-
-        // Bank Transfer: handle without redirect
-        if ($paymentMethod === 'bank') {
-            $this->createPendingOrder($request, $totalGhs, $reference, [
-                'provider' => 'bank',
-                'currency' => 'GHS',
-            ]);
-
-            return response()->json([
-                'success' => true,
-                'type' => 'bank_transfer',
-                'reference' => $reference,
-            ]);
-        }
+             return response()->json([
+                 'success' => true,
+                 'type' => 'bank_transfer',
+                 'reference' => $reference,
+             ]);
+         }
 
         // Determine provider based on selected payment method
         $paymentMethod = $request->payment_method;
