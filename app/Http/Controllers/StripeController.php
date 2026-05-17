@@ -94,8 +94,21 @@ class StripeController extends Controller
                     'order_id' => $order->id,
                     'error' => $e->getMessage(),
                 ]);
+                
+                // Provide more specific error message based on exception type
+                $errorMessage = 'Payment verified but order processing failed. Please contact support.';
+                if (strpos($e->getMessage(), 'sendOrderConfirmationEmail') !== false) {
+                    $errorMessage = 'Error sending confirmation email. Please contact support.';
+                } elseif (strpos($e->getMessage(), 'NotificationService') !== false) {
+                    $errorMessage = 'Error sending notifications. Please contact support.';
+                } elseif (strpos($e->getMessage(), 'Cart::where') !== false) {
+                    $errorMessage = 'Error clearing cart after payment. Please contact support.';
+                } elseif (strpos($e->getMessage(), 'SQLSTATE') !== false || strpos($e->getMessage(), 'query') !== false) {
+                    $errorMessage = 'Database error during order completion. Please contact support.';
+                }
+
                 return redirect()->route('checkout')
-                    ->with('error', 'Payment verified but order processing failed. Please contact support.');
+                    ->with('error', $errorMessage);
             }
         }
 
@@ -216,6 +229,18 @@ class StripeController extends Controller
                 'reference' => $reference,
                 'error' => $e->getMessage(),
             ]);
+            
+            // Provide more specific error message based on exception type
+            $errorMessage = 'Payment verified but order processing failed. Please contact support.';
+            if (strpos($e->getMessage(), 'sendOrderConfirmationEmail') !== false) {
+                $errorMessage = 'Error sending confirmation email. Please contact support.';
+            } elseif (strpos($e->getMessage(), 'NotificationService') !== false) {
+                $errorMessage = 'Error sending notifications. Please contact support.';
+            } elseif (strpos($e->getMessage(), 'Cart::where') !== false) {
+                $errorMessage = 'Error clearing cart after payment. Please contact support.';
+            } elseif (strpos($e->getMessage(), 'SQLSTATE') !== false || strpos($e->getMessage(), 'query') !== false) {
+                $errorMessage = 'Database error during order completion. Please contact support.';
+            }
         }
     }
 
@@ -249,8 +274,7 @@ class StripeController extends Controller
                 $order,
                 $paidAmountGhs,
                 'stripe',
-                $transactionId,
-                ['payment_intent_id' => $paymentIntent->id]
+                $transactionId
             );
         } catch (\Exception $e) {
             Log::error('Stripe webhook: Payment intent completion failed', [
