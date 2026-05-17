@@ -16,6 +16,20 @@ return new class extends Migration
      */
     protected function foreignKeyExists(string $table, string $foreignKeyName): bool
     {
+        $connection = DB::connection();
+        $driver = $connection->getDriverName();
+
+        if ($driver === 'sqlite') {
+            // SQLite doesn't have information_schema, use PRAGMA
+            try {
+                $result = DB::select("PRAGMA foreign_key_list($table)");
+                return collect($result)->contains('id', $foreignKeyName);
+            } catch (\Exception $e) {
+                return false;
+            }
+        }
+
+        // MySQL/MariaDB
         $result = DB::select("
             SELECT COUNT(*) as count
             FROM information_schema.TABLE_CONSTRAINTS
