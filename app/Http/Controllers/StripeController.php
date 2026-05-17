@@ -105,6 +105,9 @@ class StripeController extends Controller
                     $errorMessage = 'Error clearing cart after payment. Please contact support.';
                 } elseif (strpos($e->getMessage(), 'SQLSTATE') !== false || strpos($e->getMessage(), 'query') !== false) {
                     $errorMessage = 'Database error during order completion. Please contact support.';
+                } else {
+                    // Show actual error message for debugging (remove in production)
+                    $errorMessage = 'Payment failed: ' . $e->getMessage();
                 }
 
                 return redirect()->route('checkout')
