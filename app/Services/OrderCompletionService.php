@@ -2,9 +2,11 @@
 
 namespace App\Services;
 
+use App\Mail\OrderConfirmation;
 use App\Models\Cart;
 use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -57,8 +59,9 @@ class OrderCompletionService
             throw new \Exception('Payment amount mismatch: expected ' . $expectedAmount . ', got ' . $paidAmount);
         }
 
+        
         // Begin transaction to ensure data consistency
-        \DB::beginTransaction();
+        DB::beginTransaction();
 
          try {
              // Get cart items before clearing (for email)
@@ -101,7 +104,7 @@ class OrderCompletionService
              NotificationService::newOrder($order);
              NotificationService::paymentReceived($order);
  
-             \DB::commit();
+             DB::commit();
  
              Log::info('OrderCompletion: Order completed successfully', [
                  'order_id' => $order->id,
@@ -110,7 +113,7 @@ class OrderCompletionService
  
              return $order;
          } catch (\Exception $e) {
-             \DB::rollBack();
+             DB::rollBack();
              Log::error('OrderCompletion: Failed to complete order', [
                  'order_id' => $order->id,
                  'error' => $e->getMessage(),
