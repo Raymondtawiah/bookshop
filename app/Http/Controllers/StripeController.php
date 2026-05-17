@@ -87,7 +87,7 @@ class StripeController extends Controller
                     $transactionId
                 );
 
-                return redirect()->route('home')
+                return redirect()->route('dashboard')
                     ->with('success', 'Payment successful! Order confirmed.');
             } catch (\Exception $e) {
                 Log::error('Stripe order completion failed', [
@@ -112,7 +112,7 @@ class StripeController extends Controller
             }
         }
 
-        return redirect()->route('home')
+        return redirect()->route('dashboard')
             ->with('success', 'Payment successful!');
     }
 

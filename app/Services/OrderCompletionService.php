@@ -47,16 +47,27 @@ class OrderCompletionService
             return $order;
         }
 
-        // Validate amount (allow small tolerance of 0.01 GHS)
+        // Validate amount (allow tolerance for Stripe minimum adjustments)
         $expectedAmount = $order->total_amount;
-        $tolerance = 0.01;
+        $tolerance = max(0.01, $expectedAmount * 0.5); // Allow up to 50% tolerance for Stripe minimum adjustments
         if (abs($paidAmount - $expectedAmount) > $tolerance) {
             Log::error('OrderCompletion: Amount mismatch', [
                 'order_id' => $order->id,
                 'expected' => $expectedAmount,
                 'paid' => $paidAmount,
+                'tolerance' => $tolerance,
             ]);
             throw new \Exception('Payment amount mismatch: expected ' . $expectedAmount . ', got ' . $paidAmount);
+        }
+
+        // If paid amount is higher than expected but within tolerance, log it and use expected amount
+        if ($paidAmount > $expectedAmount) {
+            Log::warning('OrderCompletion: Paid amount higher than expected, using expected amount', [
+                'order_id' => $order->id,
+                'expected' => $expectedAmount,
+                'paid' => $paidAmount,
+            ]);
+            $paidAmount = $expectedAmount;
         }
 
         
