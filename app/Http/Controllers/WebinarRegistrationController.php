@@ -55,7 +55,7 @@ class WebinarRegistrationController extends Controller
         if (! $webinar->arePaymentsOpen()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Registration is closed for this week. Registration opens every Sunday and closes every Thursday. Please check back on Sunday for next week\'s webinar.'
+                'message' => 'Registration is currently closed. Registration is open every Sunday to Thursday and closes every Thursday early. Registration reopens next Sunday.'
             ]);
         }
 

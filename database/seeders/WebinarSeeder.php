@@ -26,7 +26,7 @@ class WebinarSeeder extends Seeder
                 'webinar_link' => 'https://meet.google.com/fwk-hngm-jva',
                 'scheduled_at' => $webinarDate,
                 'duration_minutes' => 60,
-                'price' => 30.00,
+                'price' => 100.00,
                 'status' => 'active',
             ]);
 
