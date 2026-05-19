@@ -183,10 +183,10 @@
                         <div class="bg-blue-50 p-4 rounded-lg mb-6">
                             <div class="flex items-center justify-center gap-2">
                                 <span class="text-sm text-slate-600">Price:</span>
-                                <span class="text-3xl font-bold text-blue-600" id="registrationPrice">₵30.00</span>
-                                <span class="text-sm text-blue-600 font-medium" id="priceTier">Early Registration</span>
+                             <span class="text-3xl font-bold text-blue-600">₵100.00</span>
+                             <span class="text-sm text-blue-600 font-medium">Fixed Registration</span>
                             </div>
-                            <p class="text-xs text-slate-500 mt-2">Price automatically updates based on registration timing</p>
+                            <p class="text-xs text-slate-500 mt-2">Registration opens every Sunday and closes every Thursday</p>
                         </div>
                     @else
                         <div class="bg-red-50 border-2 border-red-200 p-4 rounded-lg mb-6">
@@ -278,35 +278,7 @@
     </div>
 
     <script>
-        // Dynamic pricing update
-        function updatePricing() {
-            const now = new Date();
-            const dayOfWeek = now.getDay(); // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-            const priceElement = document.getElementById('registrationPrice');
-            const tierElement = document.getElementById('priceTier');
-            
-            let price, tier;
-            
-            // Sunday (0) to Tuesday (2) = Early Registration
-            if (dayOfWeek >= 0 && dayOfWeek <= 2) {
-                price = 30.00;
-                tier = 'Early Registration';
-            } else {
-                // Wednesday (3) onwards = Late Registration
-                price = 50.00;
-                tier = 'Late Registration';
-            }
-            
-            priceElement.textContent = '₵' + price.toFixed(2);
-            tierElement.textContent = tier;
-        }
-        
-        // Update pricing every minute
-        setInterval(updatePricing, 60000);
-        
         document.addEventListener('DOMContentLoaded', function() {
-            updatePricing();
-            
             document.getElementById('registrationForm').addEventListener('submit', function(e) {
                 e.preventDefault();
                 

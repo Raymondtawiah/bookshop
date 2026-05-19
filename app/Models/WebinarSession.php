@@ -63,69 +63,73 @@ class WebinarSession extends Model
     }
 
     /**
-     * Get the current price based on day of the week
-     * Sunday to Tuesday: ₵30 (Early Registration)
-     * Wednesday onwards: ₵50 (Late Registration)
+     * Fixed price for all webinars: ₵100.
      */
     public function getCurrentPriceAttribute(): float
     {
-        $now = now();
-        $dayOfWeek = $now->dayOfWeek; // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-        
-        // Sunday (0) to Tuesday (2)
-        if ($dayOfWeek >= 0 && $dayOfWeek <= 2) {
-            return 30.00;
-        }
-        
-        // Wednesday (3) onwards
-        return 50.00;
+        return 100.00;
     }
 
     /**
-     * Get the price tier description
+     * Price tier — fixed label for the new flat price.
      */
     public function getPriceTierAttribute(): string
     {
-        $currentPrice = $this->current_price;
-        
-        if ($currentPrice == 30.00) {
-            return 'Early Registration';
-        }
-        
-        return 'Late Registration';
+        return '₵100 Webinar';
     }
 
     /**
-     * Check if current price is early bird pricing
+     * No early-bird pricing anymore — always false.
      */
     public function isEarlyBirdPricing(): bool
     {
-        return $this->current_price == 30.00;
+        return false;
     }
 
     /**
-     * Check if payments are currently accepted
-     * Payments only accepted Sunday (0) to Thursday (4)
-     * Friday (5) and Saturday (6) - payments closed
+     * Check if payments are currently accepted.
+     * Open: Sunday through Wednesday (any hour), Thursday before noon.
+     * Closed: Thursday from 12:00 (noon), Friday all day, Saturday all day.
      */
     public function arePaymentsOpen(): bool
     {
         $dayOfWeek = now()->dayOfWeek; // 0 = Sunday, 1 = Monday, ..., 6 = Saturday
-        
-        // Payments accepted Sunday (0) through Thursday (4)
-        // Payments closed Friday (5) and Saturday (6)
-        return $dayOfWeek >= 0 && $dayOfWeek <= 4;
+
+        // Friday (5) and Saturday (6) — always closed
+        if ($dayOfWeek >= 5) {
+            return false;
+        }
+
+        // Thursday (4) — closed from 12:00 (noon) onwards
+        if ($dayOfWeek === 4 && now()->hour >= 12) {
+            return false;
+        }
+
+        // Sunday (0) to Wednesday (3) and Thursday morning — open
+        return true;
     }
 
     /**
-     * Get payment status message
+     * Get payment status message.
      */
     public function getPaymentStatusMessage(): string
     {
         if ($this->arePaymentsOpen()) {
             return 'Registration is currently open. Secure your spot now!';
         }
-        
-        return 'Registration is closed for this week. Please check back on Sunday for next week\'s webinar.';
+
+        $dayOfWeek = now()->dayOfWeek;
+
+        // Thursday afternoon or later in the week
+        if ($dayOfWeek === 4) {
+            return 'Registration is closed. The webinar takes place every Friday. Registration will reopen on Sunday.';
+        }
+
+        // Friday or Saturday
+        if ($dayOfWeek >= 5) {
+            return 'Registration is closed for this weekend. Registration reopens on Sunday.';
+        }
+
+        return 'Registration is currently closed. Please check back on Sunday for next week\'s webinar.';
     }
 }
