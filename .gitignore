@@ -1,0 +1,44 @@
+# =========================
+# Dependencies
+# =========================
+/node_modules
+/vendor
+
+# =========================
+# Environment
+# =========================
+.env
+.env.backup
+.env.production
+
+# =========================
+# Laravel storage (ignore runtime files only)
+# =========================
+/storage/*.key
+/storage/logs/*
+/storage/framework/cache/*
+/storage/framework/sessions/*
+/storage/framework/views/*
+
+# =========================
+# Bootstrap cache
+# =========================
+/bootstrap/cache/*
+
+# =========================
+# Build output (Vite) - COMMENTED TO Deploy
+# =========================
+# /public/build
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# =========================
+# Large media files
+# =========================
+*.mp4
+*.mov
