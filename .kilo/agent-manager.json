@@ -1,0 +1,73 @@
+{
+  "worktrees": {
+    "wt-1775974336950-1": {
+      "branch": "cheerful-clarinet",
+      "path": "c:\\Users\\enter\\Herd\\bookshop\\.kilo\\worktrees\\cheerful-clarinet",
+      "parentBranch": "dev",
+      "createdAt": "2026-04-12T06:12:16.950Z",
+      "remote": "origin"
+    },
+    "wt-1776005931752-2": {
+      "branch": "atlantic-watercress",
+      "path": "c:\\Users\\enter\\Herd\\bookshop\\.kilo\\worktrees\\atlantic-watercress",
+      "parentBranch": "dev",
+      "createdAt": "2026-04-12T14:58:51.752Z",
+      "remote": "origin"
+    },
+    "wt-1776094409517-1": {
+      "branch": "pepper-grouse",
+      "path": "c:\\Users\\enter\\Herd\\bookshop\\.kilo\\worktrees\\pepper-grouse",
+      "parentBranch": "dev",
+      "createdAt": "2026-04-13T15:33:29.517Z",
+      "remote": "origin"
+    },
+    "wt-1776409096100-1": {
+      "branch": "chipped-rhodium",
+      "path": "c:\\Users\\enter\\Herd\\bookshop\\.kilo\\worktrees\\chipped-rhodium",
+      "parentBranch": "dev",
+      "createdAt": "2026-04-17T06:58:16.100Z",
+      "remote": "origin"
+    },
+    "wt-1781415505581-1": {
+      "branch": "hot-art",
+      "path": "c:\\Users\\enter\\Herd\\bookshop\\.kilo\\worktrees\\hot-art",
+      "parentBranch": "main",
+      "createdAt": "2026-06-14T05:38:25.581Z",
+      "remote": "origin"
+    }
+  },
+  "sessions": {
+    "ses_27fae3331ffe26f7kP4pKdFUSx": {
+      "worktreeId": "wt-1775974336950-1",
+      "createdAt": "2026-04-12T06:12:26.181Z"
+    },
+    "ses_27dcc160dffeLrVTB7vsHjQ7mR": {
+      "worktreeId": "wt-1776005931752-2",
+      "createdAt": "2026-04-12T14:59:03.163Z"
+    },
+    "ses_278860a72ffeUhqzDc3v1DDoAj": {
+      "worktreeId": "wt-1776094409517-1",
+      "createdAt": "2026-04-13T15:33:30.123Z"
+    },
+    "ses_265c44e4effeobINbWy5xducBR": {
+      "worktreeId": "wt-1776409096100-1",
+      "createdAt": "2026-04-17T06:58:16.740Z"
+    },
+    "ses_13b5c8c42ffeDXIfPZOfzinb6O": {
+      "worktreeId": "wt-1781415505581-1",
+      "createdAt": "2026-06-14T05:38:26.890Z"
+    }
+  },
+  "tabOrder": {
+    "local": [
+      "pending:1"
+    ]
+  },
+  "worktreeOrder": [
+    "wt-1775974336950-1",
+    "wt-1776005931752-2",
+    "wt-1776094409517-1",
+    "wt-1776409096100-1",
+    "wt-1781415505581-1"
+  ]
+}
