@@ -41,6 +41,16 @@
         .search-input:hover {
             box-shadow: 0 4px 20px rgba(79, 70, 229, 0.35);
         }
+        .hero-gradient {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 50%, #9333ea 100%);
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+        }
+        .animate-float {
+            animation: float 6s ease-in-out infinite;
+        }
     </style>
     </head>
     <body class="antialiased overflow-x-hidden m-0 p-0 box-border w-full min-w-0">
@@ -70,41 +80,90 @@
              </div>
          </div>
 
-         <!-- Hero Section with S-Wave -->
-         <section id="home" class="relative pt-32 pb-20 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700 max-w-full">
-            <!-- Background Image -->
-            <div class="absolute inset-0">
-                <img src="{{ asset('welcome.jpg') }}" alt="Bookshop" class="w-full h-full object-cover" style="object-position: center 70%;">
-                <div class="absolute inset-0 bg-gradient-to-r from-indigo-900/80 to-purple-900/80"></div>
-            </div>
-            <div class="max-w-7xl mx-auto px-6 relative z-10">
-                 <div class="text-center">
-                     <h1 class="text-5xl md:text-6xl font-bold text-white mb-6">
-                         Visa Interview Preparation
-                         <span class="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent">Resources</span>
-                     </h1>
-                     <p class="text-xl md:text-2xl text-white/90 mb-6 max-w-2xl mx-auto">
-                         Practical guides to help students and travelers understand visa interviews, avoid common mistakes, and answer visa officer questions with confidence.
-                     </p>
-                      <div class="flex flex-col sm:flex-row items-center justify-center gap-4 top-1.5">
-                        @if(\App\Models\Book::count() > 0)
-                        <a href="#store" class="px-6 py-3 bg-white text-indigo-600 font-medium rounded-lg hover:bg-gray-100 transition-colors">
-                            Explore Books
-                        </a>
-                        @else
-                        <a href="{{ route('register') }}" class="px-8 py-4 bg-white text-indigo-600 font-semibold rounded-xl hover:bg-gray-100 transition-colors">
-                            Get Started
-                        </a>
-                        @endif
-                        @guest
-                        <a href="{{ route('register') }}" class="px-6 py-3 bg-white/20 text-white font-medium rounded-lg border border-white/30 hover:bg-white/30 transition-colors">
-                            Create Account
-                        </a>
-                        @endguest
-                    </div>
-                </div>
-            </div>
-        </section>
+         <!-- Hero Section -->
+         <section id="home" class="relative overflow-hidden hero-gradient">
+             <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                 <div class="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                 <div class="absolute bottom-20 right-10 w-40 h-40 bg-purple-300/20 rounded-full blur-2xl"></div>
+                 <div class="absolute top-1/2 left-1/3 w-24 h-24 bg-blue-300/20 rounded-full blur-xl"></div>
+             </div>
+             
+             <div class="relative max-w-7xl mx-auto px-6 py-20 sm:py-28">
+                 <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+                     <!-- Text Content -->
+                     <div class="space-y-8">
+                         <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-md rounded-full border border-white/20">
+                             <svg class="w-5 h-5 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                             </svg>
+                             <span class="text-sm font-bold text-white">Visa Interview Preparation Resources</span>
+                         </div>
+                         
+                         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
+                             Master Your
+                             <span class="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">Visa Interview</span>
+                         </h1>
+                         
+                         <p class="text-lg sm:text-xl text-white/90 leading-relaxed max-w-lg">
+                             Practical guides to help students and travelers understand visa interviews, avoid common mistakes, and answer visa officer questions with confidence.
+                         </p>
+                         
+                         <div class="flex flex-col sm:flex-row gap-4">
+                             @if(\App\Models\Book::count() > 0)
+                             <a href="#store" class="px-8 py-4 bg-white text-indigo-700 rounded-2xl font-bold text-lg hover:bg-indigo-50 transition-all duration-200 shadow-xl text-center">
+                                 Explore Books
+                             </a>
+                             @else
+                             <a href="{{ route('register') }}" class="px-8 py-4 bg-white text-indigo-700 rounded-2xl font-bold text-lg hover:bg-indigo-50 transition-all duration-200 shadow-xl text-center">
+                                 Get Started
+                             </a>
+                             @endif
+                             @guest
+                             <a href="{{ route('register') }}" class="px-8 py-4 bg-white/15 backdrop-blur-sm text-white font-bold rounded-2xl border border-white/30 hover:bg-white/25 transition-all duration-200 text-center">
+                                 Create Account
+                             </a>
+                             @endguest
+                         </div>
+                         
+                         <div class="grid grid-cols-3 gap-4 sm:gap-6 pt-4">
+                             <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white/20">
+                                 <div class="text-2xl sm:text-3xl font-extrabold text-white">{{ \App\Models\Book::count() }}</div>
+                                 <div class="text-indigo-200 text-xs sm:text-sm font-medium">Resources</div>
+                             </div>
+                             <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white/20">
+                                 <div class="text-2xl sm:text-3xl font-extrabold text-white">10K+</div>
+                                 <div class="text-indigo-200 text-xs sm:text-sm font-medium">Readers</div>
+                             </div>
+                             <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white/20">
+                                 <div class="text-2xl sm:text-3xl font-extrabold text-white">4.9?</div>
+                                 <div class="text-indigo-200 text-xs sm:text-sm font-medium">Rating</div>
+                             </div>
+                         </div>
+                     </div>
+
+                     <!-- Image / Visual -->
+                     <div class="hidden lg:block relative">
+                         <div class="relative group">
+                             <div class="absolute -inset-4 bg-gradient-to-tr from-blue-400 to-purple-400 rounded-3xl blur-2xl opacity-40 group-hover:opacity-60 transition-opacity duration-300"></div>
+                             <div class="relative rounded-3xl shadow-2xl overflow-hidden border border-white/20 bg-white/10 backdrop-blur-sm p-2">
+                             <img src="{{ asset('officer-charles.png') }}" alt="Visa Interview Coaching" 
+                                  class="relative rounded-2xl w-full h-auto object-cover shadow-xl">
+                             </div>
+                             <div class="absolute -top-4 -right-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-5 py-2 rounded-full text-sm font-black shadow-xl whitespace-nowrap inline-block z-10">
+                                 START NOW
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
+             
+             <!-- Wave separator -->
+             <div class="absolute bottom-0 left-0 right-0">
+                 <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                     <path d="M0 120L48 105C96 90 192 60 288 45C384 30 480 30 576 37.5C672 45 768 60 864 67.5C960 75 1056 75 1152 67.5C1248 60 1344 45 1392 37.5L1440 30V120H1392C1344 120 1248 120 1152 120C1056 120 960 120 864 120C768 120 672 120 576 120C480 120 384 120 288 120C192 120 96 120 48 120H0Z" fill="white"/>
+                 </svg>
+             </div>
+         </section>
 
         <!-- Search Section -->
         <section class="py-8 bg-gray-50 max-w-full">
@@ -355,7 +414,7 @@
                                 </svg>
                             </div>
                             <p class="text-white italic">"I followed the strategy in this book and got approved. The story formula really helped me present my case confidently."</p>
-                            <p class="text-white/70 text-sm mt-2">â€” F-1 Student</p>
+                            <p class="text-white/70 text-sm mt-2">— F-1 Student</p>
                         </div>
                         <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                             <div class="flex items-center gap-1 mb-3">
@@ -376,7 +435,7 @@
                                 </svg>
                             </div>
                             <p class="text-white italic">"After a previous denial, this guide helped me fix my answers. I knew exactly what mistakes to avoid."</p>
-                            <p class="text-white/70 text-sm mt-2">â€” B1/B2 Applicant</p>
+                            <p class="text-white/70 text-sm mt-2">— B1/B2 Applicant</p>
                         </div>
                         <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                             <div class="flex items-center gap-1 mb-3">
@@ -397,7 +456,7 @@
                                 </svg>
                             </div>
                             <p class="text-white italic">"The interview practice questions were exactly what I needed. I felt prepared and got my visa approved first try!"</p>
-                            <p class="text-white/70 text-sm mt-2">â€” Graduate Student</p>
+                            <p class="text-white/70 text-sm mt-2">— Graduate Student</p>
                         </div>
                     </div>
                 </div>
