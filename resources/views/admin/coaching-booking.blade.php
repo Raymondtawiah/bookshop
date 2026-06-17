@@ -284,22 +284,10 @@
                     <p class="text-gray-500 mt-2">Every session is highly focused and practical. We do not waste time. We drill what actually matters so you can handle the real interview with clarity and confidence.</p>
                 </div>
                 
-                <p class="text-center text-gray-500 mt-8">Secure payment via Stripe</p>
+<p class="text-center text-gray-500 mt-8">Secure payment via Stripe</p>
             </div>
         </section>
 
-        <!-- Who This Is For Section -->
-        <section class="py-16 bg-gray-50">
-            <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-                <h2 class="text-3xl font-bold text-center text-gray-900 mb-8">Who This Is For</h2>
-                <div class="bg-white rounded-2xl shadow-sm p-8 text-center">
-                    <p class="text-lg text-gray-700">Anyone preparing for a U.S. or international visa interview. First-timers or those who want to improve after a previous challenge.</p>
-                </div>
-            </div>
-        </section>
-
-        
-        
         <!-- FAQ Section -->
         <section class="py-16 bg-white">
             <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
