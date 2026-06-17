@@ -97,7 +97,7 @@
             </flux:dropdown>
         </flux:header>
 
-        <flux:main class="p-6">
+        <flux:main class="p-6" style="padding-top: 5rem !important;">
             {{ $slot }}
         </flux:main>
 
