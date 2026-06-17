@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Checkout - Bookshop</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="icon" href="/favicon.ico" sizes="any">
-    </head>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Checkout - Bookshop</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="icon" href="/favicon.ico" sizes="any">
+</head>
     <body class="bg-gray-50 antialiased">
         <x-flash-message />
         <x-customer-navbar />
@@ -108,28 +108,28 @@
                             
                             <div class="bg-gray-50 rounded-lg p-6 max-w-md mx-auto">
                                 <div class="space-y-3 text-left">
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Bank Name:</span>
-                                        <span class="font-bold text-gray-900">{{ $bankDetails['bank_name'] ?? 'N/A' }}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Account Name:</span>
-                                        <span class="font-bold text-gray-900">{{ $bankDetails['account_name'] ?? 'N/A' }}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Account Number:</span>
-                                        <span class="font-bold text-gray-900">{{ $bankDetails['account_number'] ?? 'N/A' }}</span>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <span class="text-gray-600">Branch:</span>
-                                        <span class="font-bold text-gray-900">{{ $bankDetails['branch'] ?? 'N/A' }}</span>
-                                    </div>
-                                    <div class="border-t pt-3 mt-3">
-                                        <div class="flex justify-between">
-                                            <span class="text-gray-600 font-semibold">Amount:</span>
-                                            <span class="font-bold text-indigo-600 text-lg">₵{{ number_format($total, 2) }}</span>
-                                        </div>
-                                    </div>
+                                 <div class="flex justify-between">
+                                     <span class="text-gray-600">Bank Name:</span>
+                                     <span class="font-bold text-gray-900">{{ $bankDetails['bank_name'] ?? 'N/A' }}</span>
+                                 </div>
+                                 <div class="flex justify-between">
+                                     <span class="text-gray-600">Account Name:</span>
+                                     <span class="font-bold text-gray-900">{{ $bankDetails['account_name'] ?? 'N/A' }}</span>
+                                 </div>
+                                 <div class="flex justify-between">
+                                     <span class="text-gray-600">Account Number:</span>
+                                     <span class="font-bold text-gray-900">{{ $bankDetails['account_number'] ?? 'N/A' }}</span>
+                                 </div>
+                                 <div class="flex justify-between">
+                                     <span class="text-gray-600">Branch:</span>
+                                     <span class="font-bold text-gray-900">{{ $bankDetails['branch'] ?? 'N/A' }}</span>
+                                 </div>
+                                 <div class="border-t pt-3 mt-3">
+                                     <div class="flex justify-between">
+                                         <span class="text-gray-600 font-semibold">Amount:</span>
+                                         <span class="font-bold text-indigo-600 text-lg">${{ number_format($total, 2) }}</span>
+                                     </div>
+                                 </div>
                                 </div>
                             </div>
                             
@@ -153,8 +153,8 @@
 
                     <div class="border-t pt-6">
                         <div class="flex justify-between text-lg mb-2">
-                            <span class="font-semibold">Total Amount Paid:</span>
-                            <span class="font-bold text-indigo-600">₵{{ number_format($total, 2) }}</span>
+                             <span class="font-semibold">Total Amount Paid:</span>
+                             <span class="font-bold text-indigo-600">${{ number_format($order->total_amount_usd ?? $total, 2) }}</span>
                         </div>
                         @if($order->customer_name)
                         <div class="flex justify-between text-lg mb-2">
@@ -180,12 +180,24 @@
                             <span class="font-bold text-gray-900">{{ $order->residence }}</span>
                         </div>
                         @endif
-                        @if($order->payment_method)
-                        <div class="flex justify-between text-lg mb-2">
-                            <span class="font-semibold">Payment Method:</span>
-                            <span class="font-bold text-gray-900">{{ $order->payment_method === 'momo' ? 'Mobile Money' : 'Bank Transfer' }}</span>
-                        </div>
-                        @endif
+@if($order->payment_method)
+                          <div class="flex justify-between text-lg mb-2">
+                              <span class="font-semibold">Payment Method:</span>
+                              <span class="font-bold text-gray-900">
+                                  @if($order->payment_method === 'momo')
+                                      Mobile Money
+                                  @elseif($order->payment_method === 'bank')
+                                      Bank Transfer
+                                  @elseif($order->payment_method === 'card')
+                                      Credit/Debit Card
+                                  @elseif($order->payment_method === 'paystack')
+                                      Paystack
+                                  @else
+                                      {{ ucfirst($order->payment_method) }}
+                                  @endif
+                              </span>
+                          </div>
+                          @endif
                     </div>
 
                     <div class="mt-8 text-center">
@@ -197,31 +209,61 @@
             @else
                 <!-- Checkout Form -->
                 <div class="bg-white rounded-lg shadow-md p-8">
+                    @if(session('discount_applied'))
+                    <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <div class="flex items-center">
+                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            <span class="text-green-700 font-medium">Discount applied successfully!</span>
+                        </div>
+                    </div>
+                    @endif
                     <h1 class="text-2xl font-bold text-gray-900 mb-6">Checkout</h1>
                     
-                    <!-- Order Summary -->
+<!-- Order Summary -->
                     <div class="mb-8">
                         <h2 class="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
                         <div class="space-y-3">
                             @foreach($cartItems as $item)
                             <div class="flex justify-between items-center py-2 border-b">
-                                <div>
-                                    <p class="font-medium text-gray-900">{{ $item->product_name }}</p>
-                                    <p class="text-sm text-gray-500">Qty: {{ $item->quantity }}</p>
-                                </div>
-                                <p class="font-medium">₵{{ number_format($item->product_price * $item->quantity, 2) }}</p>
+                                    <div>
+                                        <p class="font-medium text-gray-900">{{ $item->product_name }}</p>
+                                        <p class="text-sm text-gray-500">Qty: {{ $item->quantity }}</p>
+                                    </div>
+                                 <p class="font-medium">${{ number_format($item->unit_price * $item->quantity, 2) }}</p>
                             </div>
                             @endforeach
                         </div>
+                        
                         <div class="flex justify-between items-center mt-4 pt-4 border-t">
                             <span class="text-lg font-bold">Total</span>
-                            <span class="text-lg font-bold text-indigo-600">₵{{ number_format($total, 2) }}</span>
+                            <span class="text-lg font-bold text-indigo-600" id="total-display">${{ number_format($total, 2) }}</span>
                         </div>
+                        @if($discount)
+                        <div class="flex justify-between items-center mt-2">
+                            <span class="text-md font-medium text-green-600">Discount Applied (-{{ $discount->percentage }}%)</span>
+                            <span class="text-md font-bold text-green-600" id="discount-amount">-${{ number_format($total - $discountedAmount, 2) }}</span>
+                        </div>
+                        @endif
+                        <div class="flex justify-between items-center mt-2 pt-2 border-t" id="final-total-row">
+                            <span class="text-xl font-bold">Final Amount</span>
+                            <span class="text-xl font-bold text-indigo-600" id="final-total">${{ number_format($discountedAmount, 2) }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Discount Code Link -->
+                    <div class="mt-4 text-center">
+                        <a href="{{ route('discount.apply.form') }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+                            Have a discount code? Click here to apply it
+                        </a>
                     </div>
 
                     <!-- Customer Name Form -->
                     <form action="{{ route('checkout.process') }}" method="POST" id="checkout-form">
                         @csrf
+                        <input type="hidden" name="email" value="{{ auth()->user()->email ?? '' }}">
+                        <input type="hidden" name="discount_code" id="discount-code-input" value="{{ session('discount_code') }}">
                         
                         <div class="mb-6">
                             <label for="customer_name" class="block text-sm font-medium text-gray-700 mb-1">Customer Name *</label>
@@ -277,8 +319,7 @@
                             @error('nationality')
                                 <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                             @enderror
-                        </div>
-
+                         </div>
                         <div class="mb-6">
                             <label for="contact" class="block text-sm font-medium text-gray-700 mb-1">Contact Number *</label>
                             <input type="tel" name="contact" id="contact" required
@@ -289,27 +330,23 @@
                             @enderror
                         </div>
 
-                        <div class="mb-6">
+<div class="mb-6">
                             <label class="block text-sm font-medium text-gray-700 mb-2">Payment Method *</label>
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <label class="relative flex items-center justify-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all">
-                                    <input type="radio" name="payment_method" value="momo" class="sr-only" required checked>
-                                    <div class="text-center payment-option" data-value="momo">
-                                        <svg class="w-8 h-8 mx-auto mb-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                        </svg>
-                                        <span class="font-medium text-gray-900">Mobile Money</span>
-                                        <p class="text-xs text-gray-500 mt-1">Pay via MoMo</p>
+                                    <input type="radio" name="payment_method" value="card" class="sr-only" checked required>
+                                    <div class="text-center payment-option" data-value="card">
+                                        <img src="{{ asset('Stripe.jpg') }}" alt="Stripe" class="w-12 h-8 mx-auto mb-2 object-contain">
+                                        <span class="font-medium text-gray-900">Credit/Debit Card</span>
+                                        <p class="text-xs text-gray-500 mt-1">Pay via Stripe</p>
                                     </div>
                                 </label>
-                                <label class="relative flex items-center justify-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-indigo-500 hover:bg-indigo-50 transition-all">
-                                    <input type="radio" name="payment_method" value="bank" class="sr-only peer">
-                                    <div class="text-center payment-option" data-value="bank">
-                                        <svg class="w-8 h-8 mx-auto mb-2 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
-                                        </svg>
-                                        <span class="font-medium text-gray-900">Bank Transfer</span>
-                                        <p class="text-xs text-gray-500 mt-1">Pay via Bank</p>
+                                <label class="relative flex items-center justify-center p-4 border-2 border-gray-200 rounded-lg cursor-pointer hover:border-green-500 hover:bg-green-50 transition-all">
+                                    <input type="radio" name="payment_method" value="paystack" class="sr-only" required>
+                                    <div class="text-center payment-option" data-value="paystack">
+                                        <img src="{{ asset('paystack.png') }}" alt="Paystack" class="w-12 h-8 mx-auto mb-2 object-contain">
+                                        <span class="font-medium text-gray-900">Mobile Money</span>
+                                        <p class="text-xs text-gray-500 mt-1">Secure payments</p>
                                     </div>
                                 </label>
                             </div>
@@ -318,110 +355,105 @@
                             @enderror
                         </div>
 
-                        <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors" id="submit-btn">
-                            Confirm Order
-                        </button>
-                    </form>
+                         <button type="submit" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors" id="submit-btn">
+                             Confirm Order
+                         </button>
+                     </form>
                     
-                    <script>
-                        function detectNetwork(phoneNumber) {
-                            const phone = phoneNumber.replace(/[^0-9]/g, '');
-                            let prefix;
-                            if (phone.length === 12 && phone.substring(0, 3) === '233') {
-                                prefix = phone.substring(3, 6);
-                            } else if (phone.length === 10 && phone.substring(0, 1) === '0') {
-                                prefix = phone.substring(1, 4);
-                            } else {
-                                prefix = phone.substring(0, 3);
-                            }
-                            
-                            if (['540', '550', '560', '570', '580', '240', '250'].includes(prefix)) return 'MTN';
-                            if (['520', '530', '540', '200', '210'].includes(prefix)) return 'VODAFONE';
-                            if (['270', '280', '290', '571'].includes(prefix)) return 'AIRTELTIGO';
-                            return 'MTN';
-                        }
+<script>
+                          const paymentOptions = document.querySelectorAll('.payment-option');
+                          const paymentRadios = document.querySelectorAll('input[name="payment_method"]');
 
-                        // Handle payment method selection highlighting
-                        const paymentOptions = document.querySelectorAll('input[name="payment_method"]');
-                        paymentOptions.forEach(option => {
-                            option.addEventListener('change', function() {
-                                // Remove highlight from all labels
-                                document.querySelectorAll('.grid-cols-2 > label').forEach(label => {
-                                    label.classList.remove('border-indigo-500', 'bg-indigo-50');
-                                    label.classList.add('border-gray-200');
-                                });
-                                // Add highlight to selected label
-                                if (this.checked) {
-                                    this.closest('label').classList.add('border-indigo-500', 'bg-indigo-50');
-                                    this.closest('label').classList.remove('border-gray-200');
-                                }
-                            });
-                            // Trigger initial state
-                            if (option.checked) {
-                                option.closest('label').classList.add('border-indigo-500', 'bg-indigo-50');
-                                option.closest('label').classList.remove('border-gray-200');
-                            }
-                        });
+                          function updatePaymentSelection() {
+                              paymentOptions.forEach(option => {
+                                  const label = option.closest('label');
+                                  if (option.dataset.value === document.querySelector('input[name="payment_method"]:checked')?.value) {
+                                      if (option.dataset.value === 'paystack') {
+                                          label.classList.add('border-green-500', 'bg-green-50');
+                                          label.classList.remove('border-indigo-500', 'bg-indigo-50');
+                                      } else {
+                                          label.classList.add('border-indigo-500', 'bg-indigo-50');
+                                          label.classList.remove('border-green-500', 'bg-green-50');
+                                      }
+                                      label.classList.remove('border-gray-200');
+                                  } else {
+                                      label.classList.remove('border-indigo-500', 'bg-indigo-50', 'border-green-500', 'bg-green-50');
+                                      label.classList.add('border-gray-200');
+                                  }
+                              });
+                          }
 
-                        document.getElementById('checkout-form').addEventListener('submit', async function(e) {
-                            e.preventDefault();
+                          paymentRadios.forEach(radio => {
+                              radio.addEventListener('change', updatePaymentSelection);
+                          });
+                          updatePaymentSelection();
+
+                          document.getElementById('checkout-form').addEventListener('submit', async function(e) {
+                              const submitBtn = document.getElementById('submit-btn');
+                              const form = this;
+                              const formData = new FormData(form);
+                              
+                              e.preventDefault();
+
+                             const originalText = submitBtn.innerText;
+                             submitBtn.disabled = true;
+                             submitBtn.innerText = 'Processing...';
+
+         const data = {
+                                 customer_name: formData.get('customer_name'),
+                                 email: formData.get('email'),
+                                 residence: formData.get('residence'),
+                                 nationality: formData.get('nationality'),
+                                 contact: formData.get('contact'),
+                                 payment_method: formData.get('payment_method'),
+                                 discount_code: document.getElementById('discount-code-input')?.value || ''
+                             };
                             
-                            const submitBtn = document.getElementById('submit-btn');
-                            const originalText = submitBtn.innerText;
-                            submitBtn.disabled = true;
-                            submitBtn.innerText = 'Processing...';
-                            
-                            const formData = new FormData(this);
-                            const paymentMethod = formData.get('payment_method');
-                            const contact = formData.get('contact');
-                            
-                            const data = {
-                                customer_name: formData.get('customer_name'),
-                                email: formData.get('email'),
-                                residence: formData.get('residence'),
-                                nationality: formData.get('nationality'),
-                                contact: contact,
-                                payment_method: paymentMethod,
-                                mobile_number: contact,
-                                network: detectNetwork(contact),
-                                _token: '{{ csrf_token() }}'
-                            };
-                            
-                            try {
-                                const response = await fetch('{{ route("payment.initialize") }}', {
-                                    method: 'POST',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
-                                    },
-                                    body: JSON.stringify(data)
-                                });
-                                
-                                const result = await response.json();
-                                
-                                if (result.success) {
-                                    if (result.authorization_url) {
-                                        // Redirect to Paystack
-                                        window.location.href = result.authorization_url;
-                                    } else if (result.message) {
-                                        // Mobile money - show message
-                                        alert(result.message);
-                                        // Reload to show order success
-                                        window.location.reload();
-                                    }
-                                } else {
-                                    alert(result.message || 'Payment failed. Please try again.');
-                                    submitBtn.disabled = false;
-                                    submitBtn.innerText = originalText;
-                                }
-                            } catch (error) {
-                                console.error('Error:', error);
-                                alert('An error occurred. Please try again.');
-                                submitBtn.disabled = false;
-                                submitBtn.innerText = originalText;
-                            }
-                        });
-                    </script>
+                             try {
+                                 const response = await fetch('{{ route("payment.initialize") }}', {
+                                     method: 'POST',
+                                     headers: {
+                                         'Content-Type': 'application/json',
+                                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                                     },
+                                     credentials: 'include',
+                                     body: JSON.stringify(data)
+                                 });
+                                 
+                                 if (!response.ok) {
+                                     let errorMessage = 'Payment initialization failed';
+                                     try {
+                                         const errorData = await response.json();
+                                         errorMessage = errorData.message || errorData.error || errorMessage;
+                                     } catch (ex) {
+                                         errorMessage = `${response.status} ${response.statusText}`;
+                                     }
+                                     throw new Error(errorMessage);
+                                 }
+                                 
+                                 const result = await response.json();
+                                 
+                                 if (result.success) {
+                                     if (result.checkout_url) {
+                                         window.location.href = result.checkout_url;
+                                     }
+                                 } else {
+                                     alert(result.message || 'Payment failed. Please try again.');
+                                     submitBtn.disabled = false;
+                                     submitBtn.innerText = originalText;
+                                 }
+                         } catch (error) {
+                             console.error('Error:', error);
+                             let errorMessage = 'An error occurred. Please try again.';
+                             if (error.message) {
+                                 errorMessage = error.message;
+                             }
+                             alert(errorMessage);
+                             submitBtn.disabled = false;
+                             submitBtn.innerText = originalText;
+                         }
+                         });
+                      </script>
                 </div>
             @endif
         </div>

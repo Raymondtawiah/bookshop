@@ -4,7 +4,6 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Storage;
 
 class Book extends Model
 {
@@ -15,59 +14,68 @@ class Book extends Model
         'author',
         'description',
         'price',
-        'category',
-        'isbn',
-        'pages',
-        'published_year',
         'cover_image',
         'book_pdf',
         'is_free',
-        'stock',
         'is_featured',
+        'isbn',
+        'pages',
+        'published_year',
+        'category',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'is_featured' => 'boolean',
         'is_free' => 'boolean',
-        'stock' => 'integer',
     ];
 
-    /**
-     * Get the full URL for the cover image from storage
-     */
-    public function getCoverImageUrlAttribute()
+    public function getFormattedPriceAttribute(): string
     {
-        if (!$this->cover_image) return null;
-        
-        // Check if it's already a full URL (external storage)
-        if (filter_var($this->cover_image, FILTER_VALIDATE_URL)) {
-            return $this->cover_image;
-        }
-        
-        // Use Laravel's Storage facade to generate URL with cache-busting
-        $url = Storage::disk('public')->url('books/' . $this->cover_image);
-        
-        // Add timestamp to prevent browser caching
-        return $url . '?v=' . $this->updated_at->timestamp;
+        return '$'.number_format($this->price, 2);
     }
 
     /**
-     * Get the full URL for the PDF from storage
+     * Check if book is available for free download
      */
-    public function getBookPdfUrlAttribute()
+    public function isFreePdf(): bool
     {
-        if (!$this->book_pdf) return null;
-        
-        // Check if it's already a full URL (external storage)
-        if (filter_var($this->book_pdf, FILTER_VALIDATE_URL)) {
-            return $this->book_pdf;
-        }
-        
-        // Use Laravel's Storage facade to generate URL with cache-busting
-        $url = Storage::disk('public')->url('books/' . $this->book_pdf);
-        
-        // Add timestamp to prevent browser caching
-        return $url . '?v=' . $this->updated_at->timestamp;
+        return $this->is_free && $this->hasBookPdf();
+    }
+
+    /**
+     * Check if book has a cover image
+     */
+    public function hasCoverImage(): bool
+    {
+        return ! empty($this->cover_image);
+    }
+
+    /**
+     * Check if book has a PDF file
+     */
+    public function hasBookPdf(): bool
+    {
+        return ! empty($this->book_pdf);
+    }
+
+    /**
+     * Get cover image URL
+     */
+    public function getCoverImageUrlAttribute(): ?string
+    {
+        return $this->hasCoverImage()
+            ? asset('public/books/'.$this->cover_image)
+            : asset('welcome.jpg');
+    }
+
+    /**
+     * Get PDF URL
+     */
+    public function getBookPdfUrlAttribute(): ?string
+    {
+        return $this->hasBookPdf()
+            ? route('product.download', $this->id)
+            : null;
     }
 }

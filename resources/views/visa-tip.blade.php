@@ -4,33 +4,112 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>Visa Tips - {{ config('app.name', 'Bookshop') }}</title>
-        <script src="https://cdn.tailwindcss.com"></script>
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
         <link rel="icon" href="/favicon.ico" sizes="any">
+        <style>
+            html, body {
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+            }
+            #app, body > div:first-child {
+                max-width: 100% !important;
+                overflow-x: hidden !important;
+            }
+        </style>
     </head>
-    <body class="antialiased">
+    <body class="antialiased m-0 p-0 box-border w-full min-w-0">
         <x-flash-message />
         <x-customer-navbar />
-
-        <!-- Hero Section with S-Wave -->
-        <section class="relative pt-32 pb-20 bg-gradient-to-br from-blue-600 via-indigo-600 to-purple-700">
-            <!-- Background Image -->
-            <div class="absolute inset-0">
-                <img src="{{ asset('visa.jpg') }}" alt="Visa Tips" class="w-full h-full object-cover object-[center_70%]">
-                <div class="absolute inset-0 bg-gradient-to-r from-indigo-900/80 to-purple-900/80"></div>
+        
+        <div class="w-full overflow-x-hidden min-w-0">
+        
+        <!-- Hero Section -->
+        <section class="py-20 text-white max-w-full relative overflow-hidden min-h-screen flex items-center" 
+                 style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.85) 0%, rgba(99, 102, 241, 0.85) 50%, rgba(139, 92, 246, 0.85) 100%), url('{{ asset('visa.jpg') }}'); background-size: cover; background-position: center; background-attachment: fixed;">
+            
+            <!-- Animated overlay pattern -->
+            <div class="absolute inset-0 opacity-20">
+                <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23ffffff" fill-opacity="0.3"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
             </div>
             
-            <!-- Hero Content -->
-            <div class="max-w-7xl mx-auto px-6 relative z-10">
-                <div class="text-center">
-                    <h1 class="text-5xl md:text-6xl font-bold text-white mb-6">
-                        Visa Interview Tips
-                    </h1>
-                    <p class="text-xl md:text-2xl text-white/90 mb-10 max-w-2xl mx-auto">
-                        Essential advice to help you succeed in your visa interview.
-                    </p>
-                    <a href="#content" class="px-6 py-3 bg-white text-indigo-600 font-medium rounded-lg hover:bg-gray-100 transition-colors">
-                        Get Started
-                    </a>
+            <!-- Floating elements animation -->
+            <div class="absolute inset-0 overflow-hidden">
+                <div class="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full animate-pulse"></div>
+                <div class="absolute top-1/4 right-20 w-32 h-32 bg-blue-400/20 rounded-full animate-bounce" style="animation-delay: 0.5s;"></div>
+                <div class="absolute bottom-20 left-1/4 w-16 h-16 bg-purple-400/20 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
+                <div class="absolute top-1/2 right-1/3 w-24 h-24 bg-indigo-400/20 rounded-full animate-bounce" style="animation-delay: 1.5s;"></div>
+            </div>
+            
+            <div class="px-4 sm:px-6 lg:px-8 relative z-10">
+                <div class="grid md:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
+                    <div class="space-y-8">
+                        <!-- Badge with glow effect -->
+                        <div class="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 shadow-lg">
+                            <span class="relative flex h-3 w-3 mr-3">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                            </span>
+                            <span class="text-sm font-medium">Expert Advice • Proven Strategies</span>
+                        </div>
+                        
+                        <!-- Main heading with solid text for better visibility -->
+                        <h1 class="text-5xl md:text-6xl font-bold leading-tight text-white">
+                            Visa Interview
+                            <br>
+                            Tips
+                        </h1>
+                        
+                        <!-- Description with better typography -->
+                        <p class="text-xl md:text-2xl text-blue-100 leading-relaxed max-w-lg">
+                            Master your visa interview with expert guidance. Learn proven strategies, avoid common mistakes, and answer confidently to get your visa approved.
+                        </p>
+                        
+                        <!-- CTA button with enhanced styling -->
+                        <div class="flex flex-col sm:flex-row gap-4">
+                            <a href="#content" class="px-8 py-4 bg-white text-blue-600 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
+                                Get Started
+                            </a>
+                        </div>
+                        
+                        <!-- Stats with enhanced cards -->
+                        <div class="grid grid-cols-3 gap-6">
+                            <div class="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30 transform hover:scale-105 transition-transform duration-300">
+                                <div class="text-3xl font-bold text-white">
+                                    8+
+                                </div>
+                                <div class="text-white text-sm font-medium">Essential Tips</div>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30 transform hover:scale-105 transition-transform duration-300">
+                                <div class="text-3xl font-bold text-white">
+                                    100%
+                                </div>
+                                <div class="text-white text-sm font-medium">Free Guide</div>
+                            </div>
+                            <div class="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30 transform hover:scale-105 transition-transform duration-300">
+                                <div class="text-3xl font-bold text-white">
+                                    Pro
+                                </div>
+                                <div class="text-white text-sm font-medium">Expert Advice</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Enhanced image section with effects -->
+                    <div class="hidden md:block relative">
+                        <div class="relative group">
+                            <!-- Glow effect behind image -->
+                            <div class="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
+                            
+                            <!-- Main image with enhanced styling -->
+                            <img src="{{ asset('visa.jpg') }}" alt="Visa Interview Tips" 
+                                 class="relative rounded-3xl shadow-2xl w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500">
+                            
+                            <!-- Floating badge -->
+                            <div class="absolute -top-4 -right-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg animate-bounce">
+                                FREE GUIDE
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
@@ -184,6 +263,7 @@
                 </div>
             </div>
         </section>
+        </div>
 
       <x-customer-footer />
     </body>

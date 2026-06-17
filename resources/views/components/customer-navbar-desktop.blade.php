@@ -16,6 +16,8 @@
         <a href="{{ route('home') }}#home" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Home</a>
         <a href="{{ route('home') }}#store" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Store</a>
         <a href="{{ route('visa-tip') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Tips</a>
+        <a href="{{ route('webinars.index') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Webinars</a>
+        <a href="{{ route('visa-training') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors font-typewriter">Visa Training</a>
         <a href="{{ route('home') }}#about" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">About</a>
         <a href="{{ route('home') }}#contact" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Contact</a>
     </div>
@@ -57,6 +59,7 @@
             </div>
             <a href="{{ route('profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">Profile</a>
             <a href="{{ route('my-orders') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Orders</a>
+            <a href="{{ route('customer.my-bookings') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">My Bookings</a>
             <form method="POST" action="{{ route('logout') }}">
                 @csrf
                 <button type="submit" class="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-gray-100">

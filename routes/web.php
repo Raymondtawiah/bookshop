@@ -1,23 +1,170 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Password;
-use Illuminate\Support\Facades\Auth;
-use App\Http\Controllers\HomeController;
+use App\Http\Controllers\Admin\CoachingController;
+use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\CartController;
-use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Customer\ProfileController;
+use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
-use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\PaystackWebhookController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\StripeController;
 use App\Http\Controllers\VerificationController;
+use App\Http\Controllers\VisaTrainingController;
+use App\Http\Controllers\WebinarController;
+use App\Http\Controllers\WebinarRegistrationController;
+use App\Http\Controllers\WebinarWaitingListController;
+use App\Models\Discount;
+use App\Models\User;
+use App\Services\VerificationService;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Password;
+use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Validator;
+
+// Chat routes (public - accessible to all)
+Route::middleware(['web'])->group(function () {
+    Route::post('chat', [ChatController::class, 'store'])->name('chat.store');
+    Route::get('chat/messages', [ChatController::class, 'customerChats'])->name('chat.messages');
+    Route::get('chat/unread', [ChatController::class, 'getUnreadCount'])->name('chat.unread');
+    Route::post('chat/read', [ChatController::class, 'markAsRead'])->name('chat.read');
+    Route::delete('chat/clear', [ChatController::class, 'clearAllChats'])->name('chat.clear');
+    Route::delete('chat/{id}', [ChatController::class, 'clearChatMessage'])->name('chat.delete');
+    Route::get('/test', function () {
+        return 'Laravel is working';
+    });
+});
 
 // Home and public routes - NO middleware needed
 Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('search', [HomeController::class, 'search'])->name('search');
 
-Route::get('visa-tip', function() {
+// Customer dashboard (protected by auth middleware)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
+});
+
+Route::get('visa-tip', function () {
     return view('visa-tip');
 })->name('visa-tip');
+
+// Privacy Policy - Public route (no authentication required)
+// Is for someone having mobile app needing a privacy policy url
+// so pardon the me Thank you.
+Route::get('realgalaxyfc_privacy', function () {
+    return view('privacy');
+})->name('privacy');
+
+// Discount announcement page
+Route::get('discounts', function () {
+    return view('discounts');
+})->name('discounts');
+
+// Announcement page
+Route::get('announcement', function () {
+    return view('announcement');
+})->name('announcement');
+
+// Discount application
+Route::get('discount/apply', function () {
+    return view('discount.apply');
+})->name('discount.apply.form');
+
+Route::post('discount/apply', function (Request $request) {
+    $request->validate([
+        'discount_code' => 'required|string|max:50',
+    ]);
+
+    $discount = Discount::findByCode($request->discount_code);
+
+    if (! $discount) {
+        return back()->with('discount_error', 'Invalid or expired discount code');
+    }
+
+    if ($discount->type !== 'ebook') {
+        return back()->with('discount_error', 'Discount code is not valid for e-books');
+    }
+
+    if (auth()->check()) {
+        auth()->user()->update(['discount_code' => $request->discount_code]);
+    }
+
+    $request->session()->put('discount_code', $request->discount_code);
+
+    return redirect()->route('checkout')->with('discount_applied', true);
+})->name('discount.apply');
+
+// Visa Training routes
+Route::get('visa-training', [VisaTrainingController::class, 'index'])->name('visa-training');
+Route::post('visa-training/chat', [VisaTrainingController::class, 'chat'])->name('visa-training.chat');
+Route::get('visa-training/reset', [VisaTrainingController::class, 'reset'])->name('visa-training.reset');
+
+Route::get('search', [HomeController::class, 'search'])->name('search');
+
+// Customer dashboard (protected by auth middleware)
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
+});
+
+Route::get('visa-tip', function () {
+    return view('visa-tip');
+})->name('visa-tip');
+
+// Privacy Policy - Public route (no authentication required)
+// Is for someone having mobile app needing a privacy policy url
+// so pardon the me Thank you.
+Route::get('realgalaxyfc_privacy', function () {
+    return view('privacy');
+})->name('privacy');
+
+// Discount announcement page
+Route::get('discounts', function () {
+    return view('discounts');
+})->name('discounts');
+
+// Announcement page
+Route::get('announcement', function () {
+    return view('announcement');
+})->name('announcement');
+
+// Discount application
+Route::get('discount/apply', function () {
+    return view('discount.apply');
+})->name('discount.apply.form');
+
+Route::post('discount/apply', function (Request $request) {
+    $request->validate([
+        'discount_code' => 'required|string|max:50',
+    ]);
+
+    $discount = Discount::findByCode($request->discount_code);
+
+    if (! $discount) {
+        return back()->with('discount_error', 'Invalid or expired discount code');
+    }
+
+    if ($discount->type !== 'ebook') {
+        return back()->with('discount_error', 'Discount code is not valid for e-books');
+    }
+
+    if (auth()->check()) {
+        auth()->user()->update(['discount_code' => $request->discount_code]);
+    }
+
+    $request->session()->put('discount_code', $request->discount_code);
+
+    return redirect()->route('checkout')->with('discount_applied', true);
+})->name('discount.apply');
+
+// Visa Training routes
+Route::get('visa-training', [VisaTrainingController::class, 'index'])->name('visa-training');
+Route::post('visa-training/chat', [VisaTrainingController::class, 'chat'])->name('visa-training.chat');
+Route::get('visa-training/reset', [VisaTrainingController::class, 'reset'])->name('visa-training.reset');
 
 // Google OAuth - needs web middleware for session
 Route::middleware(['web'])->group(function () {
@@ -27,87 +174,88 @@ Route::middleware(['web'])->group(function () {
 
 // Login Routes - GET needs web middleware for session/CSRF, POST needs web
 Route::middleware(['web'])->group(function () {
-    Route::get('login', function() {
+    Route::get('login', function () {
         return view('auth.login');
     })->middleware(['guest'])->name('login');
 
-    Route::post('login', function(\Illuminate\Http\Request $request) {
+    Route::post('login', function (Request $request) {
+        Log::info('Login attempt started', ['email' => $request->email]);
+
         $credentials = $request->only('email', 'password');
         $remember = $request->boolean('remember');
-        
-        $user = \App\Models\User::where('email', $credentials['email'])->first();
-        
-        if (!$user || !\Illuminate\Support\Facades\Hash::check($credentials['password'], $user->password)) {
+
+        $user = User::where('email', $credentials['email'])->first();
+
+        if (! $user || ! Hash::check($credentials['password'], $user->password)) {
+            Log::info('Login failed - invalid credentials');
+
             return back()->withErrors([
                 'email' => 'The provided credentials do not match our records.',
             ])->onlyInput('email');
         }
-        
+
         if ($user->is_admin) {
-            \Illuminate\Support\Facades\Auth::login($user, $remember);
+            Log::info('Admin login - redirecting to admin dashboard');
+            Auth::login($user, $remember);
             $request->session()->regenerate();
+
             return redirect()->route('admin.dashboard');
         }
-        
-        // For customers, check if email is verified (admin doesn't need verification)
-        if (!$user->hasVerifiedEmail()) {
-            // Only verify customers, not admins
-            if (!$user->is_admin) {
-                $request->session()->put('pending_login_user_id', $user->id);
-                app(\App\Services\VerificationService::class)->sendCode($user, 'login');
-                return redirect()->route('verification.login');
-            }
-        }
-        
-        \Illuminate\Support\Facades\Auth::login($user, $remember);
-        $request->session()->regenerate();
-        // Customers go to welcome page, not dashboard
-        return redirect()->intended(route('home'));
+
+        // Always verify customers on login (admin doesn't need verification)
+        Log::info('Customer login - sending verification code', ['user_id' => $user->id]);
+        $request->session()->put('pending_login_user_id', $user->id);
+        app(VerificationService::class)->sendCode($user, 'login');
+
+        Log::info('Redirecting to verification.login');
+
+        return redirect()->route('verification.login');
     })->name('login.store');
 });
 
 // Register Routes - GET needs web middleware for session/CSRF, POST needs web
 Route::middleware(['web'])->group(function () {
-    Route::get('register', function() {
+    Route::get('register', function () {
         return view('auth.register');
     })->middleware(['guest'])->name('register');
 
-    Route::post('register', function(\Illuminate\Http\Request $request) {
-        \Illuminate\Support\Facades\Validator::make($request->all(), [
+    Route::post('register', function (Request $request) {
+        Validator::make($request->all(), [
             'name' => ['required', 'string', 'max:255'],
             'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
             'password' => ['required', 'string', 'min:8', 'confirmed'],
         ])->validate();
-        
-        $user = \App\Models\User::create([
+
+        $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
-            'password' => \Illuminate\Support\Facades\Hash::make($request->password),
+            'password' => Hash::make($request->password),
         ]);
-        
+
         $request->session()->put('pending_login_user_id', $user->id);
-        app(\App\Services\VerificationService::class)->sendCode($user, 'login');
-        
+        app(VerificationService::class)->sendCode($user, 'login');
+
         return redirect()->route('verification.login');
     })->name('register.store');
 
     // Logout Route - needs web for session
-    Route::post('logout', function(\Illuminate\Http\Request $request) {
-        \Illuminate\Support\Facades\Auth::logout();
+    Route::post('logout', function (Request $request) {
+        Auth::logout();
         $request->session()->invalidate();
         $request->session()->regenerateToken();
-        return redirect()->route('login');
+
+        return redirect()->route('home');
     })->name('logout');
 
     // Verification Routes - POST needs web
-    Route::post('verification/login/resend', [\App\Http\Controllers\VerificationController::class, 'resendLoginCode'])->name('verification.login.resend');
-    Route::post('verification/login/verify', [\App\Http\Controllers\VerificationController::class, 'verifyLoginCode'])->name('verification.login.verify');
-    
+    Route::post('verification/login/resend', [VerificationController::class, 'resendLoginCode'])->name('verification.login.resend');
+    Route::post('verification/login/verify', [VerificationController::class, 'verifyLoginCode'])->name('verification.login.verify');
+
     // Password Reset with Verification Code - POST needs web
-    Route::post('verification/password-reset/send', [\App\Http\Controllers\VerificationController::class, 'sendPasswordResetCode'])->name('verification.password-reset.send');
-    Route::post('verification/password-reset/resend', [\App\Http\Controllers\VerificationController::class, 'resendPasswordResetCode'])->name('verification.password-reset.resend');
-    Route::post('verification/password-reset/verify', [\App\Http\Controllers\VerificationController::class, 'verifyPasswordResetCode'])->name('verification.password-reset.verify');
-    Route::post('password/reset', [\App\Http\Controllers\VerificationController::class, 'resetPassword'])->name('password.reset.update');
+    Route::post('verification/password-reset/send', [VerificationController::class, 'sendPasswordResetCode'])->name('verification.password-reset.send');
+    Route::post('verification/password-reset/resend', [VerificationController::class, 'resendPasswordResetCode'])->name('verification.password-reset.resend');
+    Route::post('verification/password-reset/verify', [VerificationController::class, 'verifyPasswordResetCode'])->name('verification.password-reset.verify');
+    Route::post('password/reset', [VerificationController::class, 'resetPassword'])->name('password.reset.update');
 });
 
 // Password reset routes - GET needs web middleware for session/CSRF, POST needs web
@@ -117,9 +265,10 @@ Route::middleware(['web'])->group(function () {
         return view('auth.forgot-password');
     })->middleware(['guest'])->name('password.request');
 
-    Route::post('forgot-password', function (\Illuminate\Http\Request $request) {
+    Route::post('forgot-password', function (Request $request) {
         $request->validate(['email' => 'required|email']);
         $status = Password::sendResetLink($request->only('email'));
+
         return $status === Password::RESET_LINK_SENT
             ? back()->with('status', __($status))
             : back()->withInput($request->only('email'))->withErrors(['email' => __($status)]);
@@ -129,55 +278,64 @@ Route::middleware(['web'])->group(function () {
         return view('auth.reset-password', ['token' => $token]);
     })->middleware(['guest'])->name('password.reset');
 
-    Route::post('reset-password', function (\Illuminate\Http\Request $request) {
-    $request->validate([
-        'token' => 'required',
-        'email' => 'required|email',
-        'password' => 'required|min:8|confirmed',
-    ]);
-    $status = Password::reset(
-        $request->only('email', 'password', 'password_confirmation', 'token'),
-        function ($user) use ($request) {
-            $user->password = \Illuminate\Hashing\Hash::make($request->password);
-            $user->save();
-        }
-    );
-    return $status === Password::PASSWORD_RESET
-        ? redirect()->route('login')->with('status', __($status))
-        : back()->withInput($request->only('email'))->withErrors(['email' => __($status)]);
-})->middleware(['guest'])->name('password.update');
+    Route::post('reset-password', function (Request $request) {
+        $request->validate([
+            'token' => 'required',
+            'email' => 'required|email',
+            'password' => 'required|min:8|confirmed',
+        ]);
+        $status = Password::reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user) use ($request) {
+                $user->password = Hash::make($request->password);
+                $user->save();
+            }
+        );
+
+        return $status === Password::PASSWORD_RESET
+            ? redirect()->route('login')->with('status', __($status))
+            : back()->withInput($request->only('email'))->withErrors(['email' => __($status)]);
+    })->middleware(['guest'])->name('password.update');
 });
 
 // Verification GET routes (these are public, render views)
-Route::get('verification/login', [\App\Http\Controllers\VerificationController::class, 'showLoginVerification'])->name('verification.login');
-Route::get('verification/password-reset', [\App\Http\Controllers\VerificationController::class, 'showPasswordResetVerification'])->name('verification.password-reset');
-Route::get('password/reset-form', [\App\Http\Controllers\VerificationController::class, 'showPasswordResetForm'])->name('password.reset.form');
+Route::get('verification/login', [VerificationController::class, 'showLoginVerification'])->name('verification.login');
+Route::get('verification/password-reset', [VerificationController::class, 'showPasswordResetVerification'])->name('verification.password-reset');
+Route::get('password/reset-form', [VerificationController::class, 'showPasswordResetForm'])->name('password.reset.form');
 
 // Email Verification Routes (Laravel Fortify)
 Route::get('email/verify', function () {
     return view('auth.verify-email');
 })->middleware('auth')->name('verification.notice');
 
-Route::get('email/verify/{id}/{hash}', function (\Illuminate\Http\Request $request) {
-    \Illuminate\Auth\Access\Authorization::authorizeResourceFor('App\Models\User', $request->route('id'));
+Route::get('email/verify/{id}/{hash}', function (Request $request) {
     $request->user()->markEmailAsVerified();
+
     return redirect('/')->with('verified', true);
 })->middleware(['auth', 'signed'])->name('verification.verify');
 
-Route::post('email/verification-notification', function (\Illuminate\Http\Request $request) {
+Route::post('email/verification-notification', function (Request $request) {
     $request->user()->sendEmailVerificationNotification();
+
     return back()->with('status', 'verification-link-sent');
 })->middleware('auth')->name('verification.send');
 
 Route::get('product/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('product/{id}/download', [ProductController::class, 'downloadPdf'])->name('product.download');
 
+// Free book lead capture (public - guests allowed)
+Route::post('free-book/lead', [ProductController::class, 'createLead'])->name('free-book.lead');
+
+// Free book download by token (public - token grants access)
+Route::get('free-book/download/{token}', [ProductController::class, 'downloadByToken'])->name('free-book.download');
+
+// Authenticated customer routes
 Route::middleware(['auth', 'verify.customer'])->group(function () {
     // Profile routes
     Route::get('profile', [ProfileController::class, 'edit'])->name('profile');
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('password', [ProfileController::class, 'updatePassword'])->name('user.password.update');
-    
+
     Route::get('cart', [CartController::class, 'viewCart'])->name('cart');
     Route::post('cart/add', [CartController::class, 'addToCart'])->name('cart.add');
     Route::put('cart/{id}', [CartController::class, 'updateQuantity'])->name('cart.update');
@@ -186,13 +344,76 @@ Route::middleware(['auth', 'verify.customer'])->group(function () {
     Route::post('checkout/process', [OrderController::class, 'processCheckout'])->name('checkout.process');
     Route::get('order/download/{order}', [OrderController::class, 'downloadPdf'])->name('order.download');
     Route::get('my-orders', [OrderController::class, 'myOrders'])->name('my-orders');
-    
+    Route::get('my-order/{order}', [OrderController::class, 'myOrderDetail'])->name('my-order.show');
+    Route::match(['get', 'post'], 'my-order/{order}/resume-payment', [OrderController::class, 'resumePayment'])->name('my-order.resume-payment');
+    Route::get('my-bookings', [CoachingController::class, 'myBookings'])->name('customer.my-bookings');
+
     // Payment routes
-    Route::post('payment/initialize', [PaymentController::class, 'initializePayment'])->name('payment.initialize');
+    Route::match(['get', 'post'], 'payment/initialize', [PaymentController::class, 'initializePayment'])->name('payment.initialize');
     Route::get('payment/callback', [PaymentController::class, 'callback'])->name('payment.callback');
     Route::get('payment/status', [PaymentController::class, 'checkPaymentStatus'])->name('payment.status');
     Route::get('payment/banks', [PaymentController::class, 'getBanks'])->name('payment.banks');
 });
+
+// Stripe payment routes (no verify.customer so unverified users can complete payment)
+Route::get('payment/stripe/success', [StripeController::class, 'success'])->name('payment.stripe.success');
+Route::get('payment/stripe/cancel', [StripeController::class, 'cancel'])->name('payment.stripe.cancel');
+
+// Unified payment success route (for both Stripe and Paystack)
+Route::get('payment/success', [PaymentController::class, 'callback'])->name('payment.success');
+
+// Stripe Webhook - NO middleware (must be publicly accessible)
+// This handles both book/coaching payments and webinar payments
+Route::post('webhook/stripe', [StripeController::class, 'webhook'])->name('stripe.webhook');
+
+// Paystack Webhook - NO middleware (must be publicly accessible)
+Route::post('webhook/paystack', [PaystackWebhookController::class, 'handleWebhook'])->name('paystack.webhook');
+
+// Webinar routes (public - accessible to all)
+Route::get('webinars', [WebinarController::class, 'index'])->name('webinars.index');
+Route::get('webinar/{webinar}', [WebinarController::class, 'show'])->name('webinars.show')->where('webinar', '[0-9]+');
+Route::get('webinar/{webinar}/register-page', [WebinarController::class, 'registerPage'])->name('webinars.register.page')->where('webinar', '[0-9]+');
+
+// Webinar registration (public - guests allowed)
+Route::post('webinar/{webinar}/register', [WebinarRegistrationController::class, 'storeRegistration'])
+    ->name('webinars.register.store')->where('webinar', '[0-9]+');
+
+// Webinar payment routes (guests allowed)
+Route::get('webinar/{webinar}/payment/{registration}', [WebinarRegistrationController::class, 'payment'])
+    ->name('webinars.payment')->where('webinar', '[0-9]+');
+Route::post('webinar/{webinar}/payment/initiate/{registration}', [WebinarRegistrationController::class, 'initializePayment'])
+    ->name('webinars.payment.initiate')->where('webinar', '[0-9]+');
+Route::get('webinar/payment/callback', [WebinarRegistrationController::class, 'paymentCallback'])
+    ->name('webinars.payment.callback');
+
+// Webinar routes - requires auth
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::get('webinar/{webinar}/register', [WebinarRegistrationController::class, 'register'])
+        ->name('webinars.register')->where('webinar', '[0-9]+');
+    Route::get('webinar/{webinar}/join', [WebinarRegistrationController::class, 'join'])
+        ->name('webinars.join')->where('webinar', '[0-9]+');
+    Route::get('webinar/{webinar}/verify/{registration}', [WebinarRegistrationController::class, 'showVerification'])
+        ->name('webinars.verify.join')->where('webinar', '[0-9]+');
+    Route::post('webinar/{webinar}/verify/{registration}', [WebinarRegistrationController::class, 'processVerification'])
+        ->name('webinars.verify.process')->where('webinar', '[0-9]+');
+    Route::get('webinar/{webinar}/verified/{registration}', [WebinarRegistrationController::class, 'showVerifiedJoin'])
+        ->middleware(['protect.webinar.link'])
+        ->name('webinars.join.verified')->where('webinar', '[0-9]+');
+});
+
+// Public webinar access via encrypted link
+Route::get('webinar/{webinar}/access/{token}', [WebinarRegistrationController::class, 'access'])
+    ->name('webinars.access')->where('webinar', '[0-9]+');
+
+// Webinar waiting list routes
+Route::post('webinar/{webinar}/waiting-list/join', [WebinarWaitingListController::class, 'join'])
+    ->name('webinars.waiting-list.join')->where('webinar', '[0-9]+');
+
+Route::get('webinar/{webinar}/waiting-list', [WebinarWaitingListController::class, 'index'])
+    ->name('webinars.waiting-list.index')->where('webinar', '[0-9]+');
+
+Route::delete('webinar/{webinar}/waiting-list/leave', [WebinarWaitingListController::class, 'leave'])
+    ->name('webinars.waiting-list.leave')->where('webinar', '[0-9]+');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

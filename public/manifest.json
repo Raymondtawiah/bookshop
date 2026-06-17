@@ -1,7 +1,7 @@
 {
     "name": "Nathaniel Gyarteng Visa Interview Mentor",
     "short_name": "Visa Resources",
-    "description": "Practical guidelines to help individuals understand visa  interview",
+    "description": "Practical guidelines to help individuals understand visa interview",
     "start_url": "/",
     "display": "standalone",
     "background_color": "#ffffff",
@@ -10,8 +10,20 @@
     "scope": "/",
     "icons": [
         {
+            "src": "/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
             "src": "/favicon.ico",
-            "sizes": "48x48 64x64 128x128 256x256",
+            "sizes": "any",
             "type": "image/x-icon"
         }
     ],

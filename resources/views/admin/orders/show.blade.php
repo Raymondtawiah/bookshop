@@ -1,352 +1,232 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Order Details - Bookshop Admin</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link rel="icon" href="/favicon.ico" sizes="any">
-</head>
-<body class="bg-gray-50 font-sans">
-    <x-flash-message />
-    
-    <x-admin-navbar />
+@extends('layouts.admin')
 
-    <!-- Main Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+@section('title', 'Order Details')
 
-            <div class="mb-6">
-                <a href="{{ route('admin.orders') }}" class="text-indigo-600 hover:text-indigo-800 flex items-center gap-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
-                    </svg>
-                    Back to Orders
-                </a>
+@section('content')
+<div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+    <!-- Header -->
+    <div class="mb-6">
+        <a href="{{ route('admin.orders') }}" class="text-indigo-600 hover:text-indigo-800 flex items-center gap-2">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            Back to Orders
+        </a>
+    </div>
+
+    <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden">
+        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-4 sm:px-6 py-3 sm:py-4">
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+                <h2 class="text-lg sm:text-xl font-semibold text-white">Order #{{ $order->order_number ?? $order->id }}</h2>
+                <span class="mt-2 sm:mt-0 px-2 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap
+                    @if($order->payment_status === 'paid') bg-green-100 text-green-800
+                    @elseif($order->payment_status === 'pending') bg-yellow-100 text-yellow-800
+                    @else bg-red-100 text-red-800 @endif">
+                    {{ ucfirst($order->payment_status ?? 'pending') }}
+                </span>
             </div>
+        </div>
 
-            <div class="bg-white rounded-lg shadow overflow-hidden">
-                <!-- Order Header -->
-                <div class="px-4 py-3 sm:px-6 border-b border-gray-200 bg-gray-50">
-                    <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
-                        <h2 class="text-lg sm:text-xl font-semibold text-gray-900">Order #{{ $order->order_number ?? $order->id }}</h2>
-                        <span class="mt-2 sm:mt-0 px-2 py-1 rounded-full text-xs sm:text-sm font-medium whitespace-nowrap
-                            @if($order->status === 'delivered') bg-green-100 text-green-800
-                            @elseif($order->status === 'confirmed') bg-blue-100 text-blue-800
-                            @elseif($order->status === 'processing') bg-blue-100 text-blue-800
-                            @elseif($order->status === 'shipped') bg-purple-100 text-purple-800
-                            @elseif($order->status === 'cancelled') bg-red-100 text-red-800
-                            @else bg-yellow-100 text-yellow-800 @endif">
-                            {{ ucfirst($order->status) }}
-                        </span>
-                    </div>
+        <div class="px-4 py-4 sm:px-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">Customer Information</h3>
+                    <dl class="space-y-2 sm:space-y-3">
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Name</dt>
+                            <dd class="text-gray-900">{{ $order->customer_name ?? '-' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Contact</dt>
+                            <dd class="text-gray-900">{{ $order->contact ?? '-' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Nationality</dt>
+                            <dd class="text-gray-900">{{ $order->nationality ?? 'N/A' }}</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Location</dt>
+                            <dd class="text-gray-900">{{ $order->residence ?? 'N/A' }}</dd>
+                        </div>
+                    </dl>
                 </div>
 
-                <div class="px-4 py-4 sm:px-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Customer Information -->
+                <div>
+                    <h3 class="text-lg font-medium text-gray-900 mb-4">Payment Information</h3>
+                    <dl class="space-y-3">
+<div>
+                             <dt class="text-sm font-medium text-gray-500">Payment Method</dt>
+                             <dd class="text-gray-900">
+                                 @if($order->payment_method === 'paystack')
+                                     Paystack
+                                 @elseif($order->payment_method === 'momo')
+                                     Mobile Money
+                                 @elseif($order->payment_method === 'bank')
+                                     Bank Transfer
+                                 @else
+                                     Card Payment
+                                 @endif
+                             </dd>
+                         </div>
                         <div>
-                            <h3 class="text-base sm:text-lg font-medium text-gray-900 mb-3 sm:mb-4">Customer Information</h3>
-                            <dl class="space-y-2 sm:space-y-3">
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Name</dt>
-                                    <dd class="text-gray-900">{{ $order->customer_name }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Email</dt>
-                                    <dd class="text-gray-900">{{ $order->email }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Contact</dt>
-                                    <dd class="text-gray-900">{{ $order->contact }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Nationality</dt>
-                                    <dd class="text-gray-900">{{ $order->nationality ?? 'N/A' }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Delivery Address</dt>
-                                    <dd class="text-gray-900">{{ $order->residence ?? 'N/A' }}</dd>
-                                </div>
-                            </dl>
+                            <dt class="text-sm font-medium text-gray-500">Order Date</dt>
+                            <dd class="text-gray-900">{{ $order->created_at->format('M j, Y g:i A') }}</dd>
                         </div>
+<div>
+                             <dt class="text-sm font-medium text-gray-500">Total Amount</dt>
+                             <dd class="text-xl font-bold text-indigo-600">${{ number_format($order->total_amount_usd ?? $order->total_amount, 2) }}</dd>
+                         </div>
+                        @if($order->discount_code)
+                        <div class="pt-3 border-t border-gray-200">
+                            <dt class="text-sm font-medium text-gray-500">Discount Applied</dt>
+                            <dd class="text-sm text-green-600 font-medium">{{ $order->discount_code }}</dd>
+                            <dd class="text-xs text-gray-500">-${{ number_format($order->discount_amount ?? 0, 2) }}</dd>
+                        </div>
+                        @endif
+                    </dl>
+                </div>
+            </div>
 
-                        <!-- Payment Information -->
+            <div class="mt-6 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Book Offer Status</h3>
+                <dl class="space-y-3">
+                    @if($order->book_offered)
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Book Offered</dt>
+                        <dd class="text-green-600 font-medium">Yes</dd>
+                    </div>
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Offered At</dt>
+                        <dd class="text-gray-900">{{ $order->book_offered_at?->format('M j, Y g:i A') ?? 'N/A' }}</dd>
+                    </div>
+                    @else
+                    <div>
+                        <dt class="text-sm font-medium text-gray-500">Book Offered</dt>
+                        <dd class="text-gray-500">No</dd>
+                    </div>
+                    @endif
+                </dl>
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Send Book Offer to Customer</h3>
+                <div class="bg-gray-50 rounded-lg p-4 sm:p-6">
+                    <form action="{{ route('admin.orders.sendBookOffer', $order->id) }}" method="POST" class="space-y-4" enctype="multipart/form-data">
+                        @csrf
                         <div>
-                            <h3 class="text-lg font-medium text-gray-900 mb-4">Payment Information</h3>
-                            <dl class="space-y-3">
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Payment Method</dt>
-                                    <dd class="text-gray-900">
-                                        @if($order->payment_method === 'momo')
-                                            Mobile Money
-                                        @elseif($order->payment_method === 'bank')
-                                            Bank Transfer
-                                        @else
-                                            Card Payment
-                                        @endif
-                                    </dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Payment Status</dt>
-                                    <dd class="text-gray-900">
-                                        @if($order->payment_status === 'paid')
-                                            <span class="text-green-600 font-medium">Paid</span>
-                                        @elseif($order->payment_status === 'pending')
-                                            <span class="text-yellow-600 font-medium">Pending</span>
-                                        @else
-                                            <span class="text-red-600 font-medium">{{ ucfirst($order->payment_status) }}</span>
-                                        @endif
-                                    </dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Order Date</dt>
-                                    <dd class="text-gray-900">{{ $order->created_at->format('M j, Y g:i A') }}</dd>
-                                </div>
-                                <div>
-                                    <dt class="text-sm font-medium text-gray-500">Total Amount</dt>
-                                    <dd class="text-xl font-bold text-indigo-600">₵{{ number_format($order->total_amount, 2) }}</dd>
-                                </div>
-                            </dl>
+                            <label for="pdf_file" class="block text-sm font-medium text-gray-700 mb-1">PDF File (optional)</label>
+                            <input type="file" name="pdf_file" id="pdf_file" accept="application/pdf"
+                                class="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
-                    </div>
-
-                    <!-- Order Items -->
-                    <div class="mt-8 pt-6 border-t border-gray-200">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Ordered Books</h3>
-                        @php
-                            // Use order_items which now properly handles JSON via accessor
-                            $items = $order->order_items;
-                        @endphp
-                        @if(!empty($items) && $items->count() > 0)
-                        <div class="bg-gray-50 rounded-lg overflow-hidden">
-                            <div class="overflow-x-auto">
-                            <table class="min-w-full divide-y divide-gray-200">
-                                <thead class="bg-gray-100">
-                                    <tr>
-                                        <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Book</th>
-                                        <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Price</th>
-                                        <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Qty</th>
-                                        <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Total</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="bg-white divide-y divide-gray-200">
-                                    @foreach($items as $item)
-                                    <tr>
-                                        <td class="px-2 py-3">
-                                            <div class="text-sm font-medium text-gray-900">{{ is_array($item) ? ($item['product_name'] ?? 'Unknown') : 'Unknown' }}</div>
-                                            @if(is_array($item) ? ($item['book_id'] ?? null) : (isset($item->book_id) ? $item->book_id : null))
-                                                <div class="text-xs text-gray-500">Book ID: {{ is_array($item) ? ($item['book_id'] ?? '') : ($item->book_id ?? '') }}</div>
-                                            @endif
-                                        </td>
-                                        <td class="px-2 py-3 text-sm text-gray-900 whitespace-nowrap">₵{{ number_format(is_array($item) ? ($item['product_price'] ?? 0) : ($item->product_price ?? 0), 2) }}</td>
-                                        <td class="px-2 py-3 text-sm text-gray-900 whitespace-nowrap">{{ is_array($item) ? ($item['quantity'] ?? 1) : ($item->quantity ?? 1) }}</td>
-                                        <td class="px-2 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">₵{{ number_format((is_array($item) ? ($item['product_price'] ?? 0) : ($item->product_price ?? 0)) * (is_array($item) ? ($item['quantity'] ?? 1) : ($item->quantity ?? 1)), 2) }}</td>
-                                    </tr>
-                                    @endforeach
-                                </tbody>
-                            </table>
-                            </div>
+                        <div>
+                            <label for="override_email" class="block text-sm font-medium text-gray-700 mb-1">Email (optional - override order email)</label>
+                            <input type="email" name="override_email" id="override_email"
+                                placeholder="Leave empty to use {{ $order->user?->email ?? $order->email ?? 'no email' }}"
+                                class="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
                         </div>
-                        @else
-                        <p class="text-gray-500 text-sm">No order items found.</p>
-                        @endif
-                    </div>
-
-                    <!-- Update Status Form -->
-                    <div class="mt-8 pt-6 border-t border-gray-200">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Update Order Status</h3>
-                        <form action="{{ route('admin.orders.status', $order->id) }}" method="POST" class="flex flex-wrap gap-4 items-end">
-                            @csrf
-                            @method('PUT')
-                            <div>
-                                <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Order Status</label>
-                                <select name="status" id="status" class="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                    <option value="pending" {{ $order->status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="confirmed" {{ $order->status === 'confirmed' ? 'selected' : '' }}>Confirmed</option>
-                                    <option value="processing" {{ $order->status === 'processing' ? 'selected' : '' }}>Processing</option>
-                                    <option value="shipped" {{ $order->status === 'shipped' ? 'selected' : '' }}>Shipped</option>
-                                    <option value="delivered" {{ $order->status === 'delivered' ? 'selected' : '' }}>Delivered</option>
-                                    <option value="cancelled" {{ $order->status === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label for="payment_status" class="block text-sm font-medium text-gray-700 mb-1">Payment Status</label>
-                                <select name="payment_status" id="payment_status" class="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
-                                    <option value="pending" {{ $order->payment_status === 'pending' ? 'selected' : '' }}>Pending</option>
-                                    <option value="paid" {{ $order->payment_status === 'paid' ? 'selected' : '' }}>Paid</option>
-                                    <option value="failed" {{ $order->payment_status === 'failed' ? 'selected' : '' }}>Failed</option>
-                                    <option value="refunded" {{ $order->payment_status === 'refunded' ? 'selected' : '' }}>Refunded</option>
-                                </select>
-                            </div>
-                            <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
-                                Update Status
-                            </button>
-                        </form>
-                    </div>
-
-                    <!-- Generate and Send PDF from Passage -->
-                    <div class="mt-6">
-                        <h3 class="text-lg font-medium text-gray-900 mb-4">Generate & Send PDF to Customer</h3>
-                        <p class="text-sm text-gray-600 mb-4">Select a book from the order or paste content to generate a personalized PDF with the customer's name at the bottom of each page.</p>
-                        
-                        <form action="{{ route('admin.orders.generateTextPdf', $order->id) }}" method="POST" class="space-y-4">
-                            @csrf
-                            
-                            <!-- Select Passage -->
-                            <div>
-                                <label for="passage" class="block text-sm font-medium text-gray-700 mb-1">Select Passage to Send as PDF</label>
-                                <select name="passage" id="passage" onchange="loadPassagePreview()"
-                                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                    <option value="">-- Select a Passage --</option>
-                                    @if(!empty($passageNames))
-                                        @foreach($passageNames as $key => $name)
-                                            <option value="{{ $key }}">{{ $name }}</option>
-                                        @endforeach
-                                    @else
-                                        <option value="" disabled>No passages available</option>
-                                    @endif
-                                </select>
-                                <p class="text-xs text-gray-500 mt-1">Select a passage from resources/passages/ folder to convert to PDF and send to customer</p>
-                            </div>
-                            
-                            <!-- Passage Preview Section -->
-                            <div id="passage-preview-section" class="hidden mt-4">
-                                <div class="flex items-center justify-between mb-2">
-                                    <label class="block text-sm font-medium text-gray-700">Passage Preview</label>
-                                    <button type="button" onclick="loadPassagePreview()" class="text-sm text-indigo-600 hover:text-indigo-800">
-                                        ↻ Refresh Preview
-                                    </button>
-                                </div>
-                                <div id="passage-preview" class="p-4 bg-gray-50 border border-gray-200 rounded-lg text-sm prose max-w-none overflow-y-auto max-h-64">
-                                    <p class="text-gray-400 italic">Select a passage to preview...</p>
-                                </div>
-                            </div>
-                            
-                            <div class="flex items-center justify-center text-gray-400">
-                                <span class="text-sm">- OR -</span>
-                            </div>
-                            
-                            <!-- Passage feature disabled for now - use content field instead -->
-                            <!-- <div>
-                                <label for="passage" class="block text-sm font-medium text-gray-700 mb-1">Select Passage (optional)</label>
-                                <select name="passage" id="passage"
-                                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                                    <option value="">-- Select a Passage --</option>
-                                    @if(!empty($passageNames))
-                                        @foreach($passageNames as $key => $name)
-                                            <option value="{{ strval($key) }}">{{ $name }}</option>
-                                        @endforeach
-                                    @else
-                                        <option value="" disabled>No passages available</option>
-                                    @endif
-                                </select>
-                                <p class="text-xs text-gray-500 mt-1">Passages are stored in resources/passages/ folder</p>
-                            </div>
-
-                            <div class="flex items-center justify-center text-gray-400">
-                                <span class="text-sm">- OR -</span>
-                            </div> -->
-
-                            <!-- Option 2: Paste Content -->
-                            <div>
-                                <label for="content" class="block text-sm font-medium text-gray-700 mb-1">Paste Content (optional)</label>
-                                <textarea name="content" id="content" rows="6"
-                                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                    placeholder="Paste your content here... This will be converted to PDF with customer's name at the bottom."></textarea>
-                            </div>
-
-                            <div>
-                                <label for="title" class="block text-sm font-medium text-gray-700 mb-1">Document Title (optional)</label>
-                                <input type="text" name="title" id="title" 
-                                    class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                    placeholder="e.g., Visa Application Guide">
-                            </div>
-
-                            <button type="submit" class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 inline-flex items-center gap-2">
-                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
-                                </svg>
-                                Generate & Send PDF
-                            </button>
-                        </form>
-                        
-                        @if($order->pdf_sent && $order->pdf_sent_at)
-                        <p class="mt-3 text-sm text-green-600 flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            PDF sent on {{ $order->pdf_sent_at->format('M j, Y g:i A') }}
-                        </p>
-                        @endif
-                    </div>
-
-                    <div class="mt-6 pt-6 border-t border-gray-200">
-                        <button type="button" onclick="openDeleteModal{{ $order->id }}()" class="bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 inline-flex items-center gap-2">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                            </svg>
-                            Delete Order
+                        <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 text-sm font-semibold" @if($order->book_offered) disabled @endif>
+                            {{ $order->book_offered ? 'Entered' : 'Enter' }}
                         </button>
-                    </div>
+                    </form>
                 </div>
             </div>
-    </main>
 
-    <!-- Delete Modal -->
-    <x-modal-delete 
-        :id="$order->id" 
-        :title="'Delete Order'" 
-        :message="'Are you sure you want to delete this order? This action cannot be undone.'" 
-        :action="route('admin.orders.destroy', $order->id)"
-        confirmText="Delete"
-    />
-
-    <!-- JavaScript for Passage Preview -->
-    <script>
-        function loadPassagePreview() {
-            const passageSelect = document.getElementById('passage');
-            const previewSection = document.getElementById('passage-preview-section');
-            const previewContent = document.getElementById('passage-preview');
-            const selectedValue = passageSelect.value;
-            
-            if (!selectedValue) {
-                previewSection.classList.add('hidden');
-                return;
-            }
-            
-            // Show preview section
-            previewSection.classList.remove('hidden');
-            previewContent.innerHTML = '<p class="text-gray-400 italic">Loading...</p>';
-            
-            // Fetch passage content
-            fetch('{{ route("admin.passages.preview") }}?passage=' + encodeURIComponent(selectedValue))
-                .then(response => response.json())
-                .then(data => {
-                    if (data.success) {
-                        // Convert markdown-like content to HTML
-                        let html = data.content
-                            .replace(/^# (.*$)/gm, '<h1 class="text-2xl font-bold mb-4 text-gray-800">$1</h1>')
-                            .replace(/^## (.*$)/gm, '<h2 class="text-xl font-semibold mt-6 mb-3 text-gray-700">$1</h2>')
-                            .replace(/^### (.*$)/gm, '<h3 class="text-lg font-medium mt-4 mb-2 text-gray-600">$1</h3>')
-                            .replace(/^\*\*\*(.*)$/gm, '<hr class="my-6 border-gray-300">')
-                            .replace(/^\*\* (.*)$/gm, '<strong class="text-gray-800">$1</strong>')
-                            .replace(/^\* (.*)$/gm, '<li class="ml-4 text-gray-600">$1</li>')
-                            .replace(/^- \[ \] (.*)$/gm, '<div class="flex items-center ml-4 text-gray-600"><input type="checkbox" class="mr-2">$1</div>')
-                            .replace(/^- \[x\] (.*)$/gm, '<div class="flex items-center ml-4 text-green-600"><input type="checkbox" checked class="mr-2">$1</div>')
-                            .replace(/^---$/gm, '<hr class="my-4 border-gray-200">')
-                            .replace(/\n\n/g, '</p><p class="mb-3 text-gray-600 leading-relaxed">')
-                            .replace(/\n/g, '<br>');
-                        
-                        previewContent.innerHTML = '<div class="prose max-w-none">' + html + '</div>';
-                    } else {
-                        previewContent.innerHTML = '<p class="text-red-500">Error loading passage: ' + data.message + '</p>';
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Ordered Books</h3>
+                @php
+                    $items = $order->order_items;
+                    $itemsTotal = 0;
+                    foreach($items as $item) {
+                        $price = is_array($item) ? ($item['unit_price_usd'] ?? ($item['unit_price'] ?? 0)) : ($item->unit_price_usd ?? ($item->unit_price ?? 0));
+                        $qty = is_array($item) ? ($item['quantity'] ?? 1) : ($item->quantity ?? 1);
+                        $itemsTotal += $price * $qty;
                     }
-                })
-                .catch(error => {
-                    previewContent.innerHTML = '<p class="text-red-500">Error loading passage</p>';
-                });
-        }
-    </script>
-</body>
-</html>
+                @endphp
+                @if(!empty($items) && $items->count() > 0)
+                <div class="bg-gray-50 rounded-lg overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="min-w-full divide-y divide-gray-200">
+                            <thead class="bg-gray-100">
+                                <tr>
+                                    <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Book</th>
+                                    <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Price</th>
+                                    <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Qty</th>
+                                    <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Total</th>
+                                </tr>
+                            </thead>
+                            <tbody class="bg-white divide-y divide-gray-200">
+                                @foreach($items as $item)
+                                <tr>
+                                    <td class="px-2 py-3">
+                                        @php
+                                            $name = is_array($item) ? ($item['product_name'] ?? 'Unknown') : ($item->product_name ?? 'Unknown');
+                                            $bookId = is_array($item) ? ($item['book_id'] ?? null) : ($item->book_id ?? null);
+                                            $price = is_array($item) ? ($item['unit_price_usd'] ?? ($item['unit_price'] ?? 0)) : ($item->unit_price_usd ?? ($item->unit_price ?? 0));
+                                            $qty = is_array($item) ? ($item['quantity'] ?? 1) : ($item->quantity ?? 1);
+                                            $total = is_array($item) ? ($item['total_price_usd'] ?? ($price * $qty)) : ($item->total_price_usd ?? ($price * $qty));
+                                        @endphp
+                                        <div class="text-sm font-medium text-gray-900">{{ \Illuminate\Support\Str::limit($name, 40) }}</div>
+                                        @if($bookId)
+                                            <div class="text-xs text-gray-500">Book ID: {{ $bookId }}</div>
+                                        @endif
+                                    </td>
+                                    <td class="px-2 py-3 text-sm text-gray-900 whitespace-nowrap">${{ number_format($price, 2) }}</td>
+                                    <td class="px-2 py-3 text-sm text-gray-900 whitespace-nowrap">{{ $qty }}</td>
+                                    <td class="px-2 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">${{ number_format($total, 2) }}</td>
+                                </tr>
+                                @endforeach
+                            </tbody>
+                            <tfoot class="bg-gray-100">
+                                @if($order->discount_code)
+                                <tr>
+                                    <td colspan="3" class="px-2 py-2 text-sm font-medium text-green-600 text-right">Discount ({{ $order->discount_code }}):</td>
+                                    <td class="px-2 py-2 text-sm font-medium text-green-600">-${{ number_format($order->discount_amount ?? 0, 2) }}</td>
+                                </tr>
+                                @endif
+                                <tr>
+                                    <td colspan="3" class="px-2 py-3 text-sm font-bold text-gray-700 text-right">Final Total:</td>
+                                    <td class="px-2 py-3 text-sm font-bold text-indigo-600">${{ number_format($order->total_amount_usd ?? $itemsTotal, 2) }}</td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                @else
+                <p class="text-gray-500 text-sm">No order items found.</p>
+                @endif
+            </div>
+
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Update Order Status</h3>
+                <form action="{{ route('admin.orders.status', $order->id) }}" method="POST" class="flex flex-wrap gap-4 items-end">
+                    @csrf
+                    @method('PUT')
+                    <div>
+                        <label for="status" class="block text-sm font-medium text-gray-700 mb-1">Order Status</label>
+                        <select name="status" id="status" class="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="pending" {{ $order->status === 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="confirmed" {{ $order->status === 'confirmed' ? 'selected' : '' }}>Confirmed</option>
+                            <option value="processing" {{ $order->status === 'processing' ? 'selected' : '' }}>Processing</option>
+                            <option value="shipped" {{ $order->status === 'shipped' ? 'selected' : '' }}>Shipped</option>
+                            <option value="delivered" {{ $order->status === 'delivered' ? 'selected' : '' }}>Delivered</option>
+                            <option value="cancelled" {{ $order->status === 'cancelled' ? 'selected' : '' }}>Cancelled</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="payment_status" class="block text-sm font-medium text-gray-700 mb-1">Payment Status</label>
+                        <select name="payment_status" id="payment_status" class="border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="pending" {{ $order->payment_status === 'pending' ? 'selected' : '' }}>Pending</option>
+                            <option value="paid" {{ $order->payment_status === 'paid' ? 'selected' : '' }}>Paid</option>
+                            <option value="failed" {{ $order->payment_status === 'failed' ? 'selected' : '' }}>Failed</option>
+                            <option value="refunded" {{ $order->payment_status === 'refunded' ? 'selected' : '' }}>Refunded</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700">
+                        Update Status
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+@endsection

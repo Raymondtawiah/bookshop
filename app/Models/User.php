@@ -2,9 +2,10 @@
 
 namespace App\Models;
 
+use App\Mail\VerificationCodeMail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 
@@ -25,6 +26,7 @@ class User extends Authenticatable implements MustVerifyEmail
         'is_admin',
         'google_id',
         'avatar',
+        'discount_code',
     ];
 
     /**
@@ -79,6 +81,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->is_admin !== true;
     }
 
+    public function deviceTokens()
+    {
+        return $this->hasMany(DeviceToken::class);
+    }
+
     /**
      * Determine if the user should verify their email
      * Only customers need to verify, admins don't
@@ -94,7 +101,7 @@ class User extends Authenticatable implements MustVerifyEmail
     public function sendEmailVerificationNotification(): void
     {
         if ($this->shouldVerifyEmail()) {
-            $this->notify(new \App\Mail\VerificationCodeMail());
+            $this->notify(new VerificationCodeMail);
         }
     }
 }

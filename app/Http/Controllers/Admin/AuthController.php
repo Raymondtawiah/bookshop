@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\Order;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,13 +32,13 @@ class AuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-        if (!$user || !Hash::check($request->password, $user->password)) {
+        if (! $user || ! Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages([
                 'email' => ['The provided credentials are incorrect.'],
             ]);
         }
 
-        if (!$user->is_admin) {
+        if (! $user->is_admin) {
             throw ValidationException::withMessages([
                 'email' => ['You are not authorized to access the admin area.'],
             ]);
@@ -60,7 +61,7 @@ class AuthController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect('/');
+        return redirect()->route('home');
     }
 
     /**
@@ -68,6 +69,8 @@ class AuthController extends Controller
      */
     public function dashboard()
     {
-        return view('admin.dashboard');
+        $recentOrders = Order::with('user')->orderBy('created_at', 'desc')->take(10)->get();
+
+        return view('admin.dashboard', compact('recentOrders'));
     }
 }

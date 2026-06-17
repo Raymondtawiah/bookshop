@@ -1,19 +1,8 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Books Management - {{ config('app.name', 'Bookshop') }}</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
-        <link rel="icon" href="/favicon.ico" sizes="any">
-    </head>
-    <body class="bg-gray-50 font-sans">
-        <x-flash-message />
-        <x-admin-navbar />
+@extends('layouts.admin')
 
-        <!-- Main Content -->
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+@section('title', 'Books Management')
+
+@section('content')
             <!-- Header Section -->
             <div class="flex items-center justify-between mb-8">
                 <div>
@@ -28,6 +17,32 @@
                 </a>
             </div>
 
+            <!-- Search Bar -->
+            <div class="mb-8">
+                <form action="{{ route('admin.books') }}" method="GET" class="flex gap-2 max-w-xl">
+                    <div class="relative flex-1">
+                        <input 
+                            type="text" 
+                            name="q" 
+                            value="{{ request('q') }}"
+                            placeholder="Search by title, author, or year..." 
+                            class="w-full px-5 py-3 pl-12 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
+                        >
+                        <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <button type="submit" class="px-6 py-3 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">
+                        Search
+                    </button>
+                    @if(request('q'))
+                    <a href="{{ route('admin.books') }}" class="px-4 py-3 text-gray-600 hover:text-gray-900 font-medium">
+                        Clear
+                    </a>
+                    @endif
+                </form>
+            </div>
+
             <!-- Books Table -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 @if($books->count() > 0)
@@ -38,9 +53,7 @@
                                     <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Cover</th>
                                     <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Title</th>
                                     <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Author</th>
-                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Category</th>
                                     <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Price</th>
-                                    <th class="px-6 py-4 text-left text-sm font-semibold text-gray-900">Stock</th>
                                     <th class="px-6 py-4 text-right text-sm font-semibold text-gray-900">Actions</th>
                                 </tr>
                             </thead>
@@ -49,7 +62,7 @@
                                     <tr class="hover:bg-gray-50 transition-colors">
                                         <td class="px-6 py-4">
                                             @if($book->cover_image)
-                                                <img src="{{ $book->cover_image_url }}" alt="{{ $book->title }}" class="h-16 w-12 object-cover rounded">
+                                                <img src="{{ $book->cover_image_url ?? asset('public/books/' . $book->cover_image) }}" alt="{{ $book->title }}" class="h-16 w-12 object-cover rounded">
                                             @else
                                                 <div class="h-16 w-12 bg-gray-200 rounded flex items-center justify-center">
                                                     <svg class="w-6 h-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -67,15 +80,7 @@
                                             </div>
                                         </td>
                                         <td class="px-6 py-4 text-gray-600">{{ $book->author }}</td>
-                                        <td class="px-6 py-4 text-gray-600">{{ $book->category ?? '-' }}</td>
-                                        <td class="px-6 py-4 font-medium text-gray-900">₵{{ number_format($book->price, 2) }}</td>
-                                        <td class="px-6 py-4">
-                                            @if($book->stock > 0)
-                                                <span class="text-green-600">{{ $book->stock }}</span>
-                                            @else
-                                                <span class="text-red-600">Out of stock</span>
-                                            @endif
-                                        </td>
+                                         <td class="px-6 py-4 font-medium text-gray-900">${{ number_format($book->price, 2) }}</td>
                                         <td class="px-6 py-4 text-right">
                                             <div class="flex items-center justify-end gap-2">
                                                 <a href="{{ route('admin.books.edit', $book->id) }}" class="p-2 text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="Edit">
@@ -125,11 +130,4 @@
             </div>
         </main>
 
-        <!-- Footer -->
-        <footer class="bg-white border-t border-gray-200 mt-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <p class="text-center text-sm text-gray-500">&copy; {{ date('Y') }} Bookshop Admin. All rights reserved.</p>
-            </div>
-        </footer>
-    </body>
-</html>
+@endsection

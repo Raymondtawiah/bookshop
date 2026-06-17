@@ -1,19 +1,9 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>My Orders - {{ config('app.name', 'Visa Resources') }}</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="icon" href="/favicon.ico" sizes="any">
-    </head>
-    <body class="bg-gray-50 font-sans">
-        <x-customer-navbar />
-        </header>
+@extends('layouts.customer')
 
-        <!-- Main Content -->
-        <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 pb-8">
-            <!-- Header Section -->
+@section('title', 'My Orders')
+
+@section('content')
+        <!-- Header Section -->
             <div class="flex items-center justify-between mb-8">
                 <div>
                     <h1 class="text-2xl font-bold text-gray-900">My Orders</h1>
@@ -39,14 +29,14 @@
                 @if($orders->count() > 0)
                     <div class="divide-y divide-gray-100">
                         @foreach($orders as $order)
-                            <div class="p-6">
+                            <a href="{{ route('my-order.show', $order->id) }}" class="block p-6 hover:bg-gray-50 transition-colors">
                                 <div class="flex items-center justify-between mb-4">
                                     <div>
                                         <h3 class="text-lg font-semibold text-gray-900">Order #{{ $order->id }}</h3>
                                         <p class="text-sm text-gray-500">{{ $order->created_at->format('M d, Y h:i A') }}</p>
                                     </div>
                                     <div class="text-right">
-                                        <p class="text-lg font-bold text-gray-900">₵{{ number_format($order->total_amount, 2) }}</p>
+                                        <p class="text-lg font-bold text-gray-900">${{ number_format($order->total_amount_usd ?? $order->total_amount, 2) }}</p>
                                         <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
                                             @if($order->status === 'delivered') bg-green-100 text-green-800
                                             @elseif($order->status === 'confirmed') bg-blue-100 text-blue-800
@@ -73,14 +63,14 @@
                                         <div class="flex items-center justify-between text-sm">
                                             <span class="text-gray-900">{{ is_array($item) ? ($item['product_name'] ?? 'Unknown') : 'Unknown' }}</span>
                                             <span class="text-gray-500">x{{ is_array($item) ? ($item['quantity'] ?? 1) : 1 }}</span>
-                                            <span class="font-medium text-gray-900">₵{{ number_format((is_array($item) ? ($item['product_price'] ?? 0) : 0) * (is_array($item) ? ($item['quantity'] ?? 1) : 1), 2) }}</span>
+                                            <span class="font-medium text-gray-900">${{ number_format((is_array($item) ? ($item['unit_price_usd'] ?? $item['product_price'] ?? $item['unit_price'] ?? 0) : 0) * (is_array($item) ? ($item['quantity'] ?? 1) : 1), 2) }}</span>
                                         </div>
                                         @endforeach
                                     </div>
                                 </div>
                                 @endif
 
-                            </div>
+                            </a>
                         @endforeach
                     </div>
                     
@@ -102,13 +92,4 @@
                     </div>
                 @endif
             </div>
-        </main>
-
-        <!-- Footer -->
-        <footer class="bg-white border-t border-gray-200 mt-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <p class="text-center text-sm text-gray-500">&copy; {{ date('Y') }} Bookshop. All rights reserved.</p>
-            </div>
-        </footer>
-    </body>
-</html>
+        @endsection

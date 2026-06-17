@@ -1,16 +1,12 @@
- i<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <title>{{ $book->title }} - {{ config('app.name', 'Bookshop') }}</title>
-
-        <link rel="icon" href="/favicon.ico" sizes="any">
-<link rel="apple-touch-icon" href="/apple-touch-icon.png">
-
-        <!-- Using Tailwind CDN -->
-        <script src="https://cdn.tailwindcss.com"></script>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{{ $book->title }} - {{ config('app.name', 'Bookshop') }}</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="icon" href="/favicon.ico" sizes="any">
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     </head>
     <body class="antialiased bg-gray-50">
         <x-flash-message />
@@ -42,9 +38,7 @@
                             @endif
 
                             @if($book->category)
-                            <div class="absolute top-4 right-4 bg-indigo-600 text-white text-sm font-bold px-3 py-1 rounded">
-                                {{ $book->category }}
-                            </div>
+</div>
                             @endif
                         </div>
 
@@ -58,13 +52,37 @@
                                 @if($book->is_free)
                                     <span class="text-4xl font-bold text-green-600">FREE</span>
                                 @else
-                                    <span class="text-4xl font-bold text-indigo-600">₵{{ number_format($book->price, 2) }}</span>
+                                     <span class="text-4xl font-bold text-indigo-600">${{ number_format($book->price, 2) }}</span>
                                 @endif
                             </div>
 
                             <!-- Description -->
                             @if($book->description)
-                            <p class="text-gray-600 mb-8 leading-relaxed">{{ $book->description }}</p>
+                            <div class="mb-8">
+                                <p id="bookDescription" class="text-gray-600 mb-2 leading-relaxed">{{ Str::limit($book->description, 100) }}</p>
+                                @if(strlen($book->description) > 100)
+                                <button id="toggleDescription" onclick="toggleDescription()" class="text-indigo-600 font-medium text-sm hover:text-indigo-700">Show more</button>
+                                <script>
+                                    let expanded = false;
+                                    const fullDescription = {!! json_encode($book->description) !!};
+                                    const truncated = {!! json_encode(Str::limit($book->description, 100)) !!};
+                                    
+                                    function toggleDescription() {
+                                        const descEl = document.getElementById('bookDescription');
+                                        const btnEl = document.getElementById('toggleDescription');
+                                        
+                                        if (expanded) {
+                                            descEl.textContent = truncated;
+                                            btnEl.textContent = 'Show more';
+                                        } else {
+                                            descEl.textContent = fullDescription;
+                                            btnEl.textContent = 'Show less';
+                                        }
+                                        expanded = !expanded;
+                                    }
+                                </script>
+                                @endif
+                            </div>
                             @endif
 
                             <!-- Product Details -->
@@ -87,28 +105,23 @@
                                     <p class="font-medium text-gray-900">{{ $book->published_year }}</p>
                                 </div>
                                 @endif
-                                @if($book->category)
-                                <div class="bg-gray-50 rounded-lg p-3">
-                                    <span class="text-gray-500">Category</span>
-                                    <p class="font-medium text-gray-900">{{ $book->category }}</p>
-                                </div>
-                                @endif
+
                             </div>
 
                             <!-- Add to Cart -->
-                            @if($book->is_free && $book->book_pdf_url)
-                                <a href="{{ $book->book_pdf_url }}" target="_blank" class="flex-1 px-6 py-4 bg-gradient-to-r from-green-600 to-teal-600 text-white font-semibold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                            @if($book->isFreePdf())
+                                <button onclick="openFreeBookModal({{ $book->id }}, '{{ $book->title }}')" class="flex-1 px-6 py-4 bg-gradient-to-r from-green-600 to-teal-600 text-white font-semibold rounded-xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
                                     </svg>
                                     Download Free PDF
-                                </a>
+                                </button>
                             @else
                                 @auth
                                     <form action="{{ route('cart.add') }}" method="POST" class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
                                         @csrf
                                         <input type="hidden" name="product_name" value="{{ $book->title }}">
-                                        <input type="hidden" name="product_price" value="{{ $book->price }}">
+                                        <input type="hidden" name="unit_price" value="{{ $book->price }}">
                                         <input type="hidden" name="book_id" value="{{ $book->id }}">
                                         <input type="hidden" name="quantity" value="1">
                                         
@@ -152,8 +165,12 @@
                             </div>
                             <div class="p-5">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ $related->title }}</h3>
-                                <p class="text-sm text-gray-500 mb-2">{{ $related->category ?? 'Uncategorized' }}</p>
-                                <span class="text-xl font-bold text-indigo-600">₵{{ number_format($related->price, 2) }}</span>
+                                
+                                @if($related->is_free)
+                                    <span class="text-xl font-bold text-green-600">FREE</span>
+                                @else
+                                    <span class="text-xl font-bold text-indigo-600">${{ number_format($related->price, 2) }}</span>
+                                @endif
                             </div>
                         </a>
                         @endforeach
@@ -164,5 +181,7 @@
         </div>
 
        <x-customer-footer />
+
+        @include('components.free-book-modal')
     </body>
 </html>

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
-use App\Models\Book;
+use App\Models\Discount;
 use App\Models\Nationality;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -17,7 +17,7 @@ class CartController extends Controller
     {
         $request->validate([
             'product_name' => 'required|string|max:255',
-            'product_price' => 'required|numeric|min:0',
+            'unit_price' => 'required|numeric|min:0',
             'quantity' => 'required|integer|min:1',
             'book_id' => 'nullable|exists:books,id',
         ]);
@@ -27,20 +27,21 @@ class CartController extends Controller
             $existingItem = Cart::where('user_id', Auth::id())
                 ->where('book_id', $request->book_id)
                 ->first();
-            
+
             if ($existingItem) {
                 // Update quantity instead of creating new item
                 $existingItem->quantity += $request->quantity;
                 $existingItem->save();
+
                 return redirect()->back()->with('success', 'Item quantity updated in cart!');
             }
         }
-        
+
         $cartItem = Cart::create([
             'user_id' => Auth::id(),
             'book_id' => $request->book_id,
             'product_name' => $request->product_name,
-            'product_price' => $request->product_price,
+            'unit_price' => $request->unit_price,
             'quantity' => $request->quantity,
         ]);
 
@@ -53,8 +54,8 @@ class CartController extends Controller
     public function viewCart()
     {
         $cartItems = Cart::where('user_id', Auth::id())->with('book')->get();
-        $total = $cartItems->sum(function($item) {
-            return $item->product_price * $item->quantity;
+        $total = $cartItems->sum(function ($item) {
+            return $item->unit_price * $item->quantity;
         });
 
         return view('cart.index', compact('cartItems', 'total'));
@@ -66,7 +67,7 @@ class CartController extends Controller
     public function updateQuantity(Request $request, $id)
     {
         $cartItem = Cart::where('id', $id)->where('user_id', Auth::id())->first();
-        
+
         if ($cartItem) {
             $cartItem->quantity = $request->quantity;
             $cartItem->save();
@@ -81,7 +82,7 @@ class CartController extends Controller
     public function removeFromCart($id)
     {
         $cartItem = Cart::where('id', $id)->where('user_id', Auth::id())->first();
-        
+
         if ($cartItem) {
             $cartItem->delete();
         }
@@ -97,14 +98,26 @@ class CartController extends Controller
         $cartItems = Cart::where('user_id', Auth::id())
             ->with('book')
             ->get();
-            
-        $total = $cartItems->sum(function($item) {
-            return $item->product_price * $item->quantity;
+
+        $total = $cartItems->sum(function ($item) {
+            return $item->unit_price * $item->quantity;
         });
 
-        $nationalities = Nationality::orderBy('name')->get();
+        // Apply discount if code exists in session or user's profile
+        $discountCode = session('discount_code') ?? auth()->user()?->discount_code;
+        $discountedAmount = $total;
+        $discount = null;
 
-        return view('cart.checkout', compact('cartItems', 'total', 'nationalities'));
+        if ($discountCode) {
+            $discount = Discount::findByCode($discountCode);
+            if ($discount && $discount->type === 'ebook') {
+                $discountedAmount = max(0, $total - $discount->calculateDiscount($total));
+            }
+        }
+
+        $nationalities = Nationality::select('name')->distinct()->orderBy('name')->get();
+
+        return view('cart.checkout', compact('cartItems', 'total', 'discountedAmount', 'discount', 'nationalities'));
     }
 
     /**
@@ -115,6 +128,7 @@ class CartController extends Controller
         if (Auth::check()) {
             return Cart::where('user_id', Auth::id())->sum('quantity');
         }
+
         return 0;
     }
 }
