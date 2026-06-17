@@ -1,14 +1,8 @@
 <!-- Free Book Download Modal -->
-<div id="free-book-modal" class="fixed inset-0 z-50 hidden">
-    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" onclick="closeFreeBookModal()"></div>
+<div id="free-book-modal" class="fixed inset-0 hidden" style="z-index: 99999 !important;" onclick="closeFreeBookModal()">
+    <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"></div>
     <div class="relative flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 relative">
-            <button onclick="closeFreeBookModal()" class="absolute top-4 right-4 text-gray-400 hover:text-gray-600">
-                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-            </button>
-
+        <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md p-8 relative" onclick="event.stopPropagation()">
             <div class="text-center mb-6">
                 <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
