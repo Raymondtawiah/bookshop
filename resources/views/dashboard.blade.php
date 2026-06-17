@@ -1,35 +1,9 @@
-<!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Dashboard - {{ config('app.name', 'Bookshop') }}</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="icon" href="/favicon.ico" sizes="any">
-        <link rel="manifest" href="/manifest.json">
-        <meta name="theme-color" content="#4f46e5" />
-        <meta name="apple-mobile-web-app-capable" content="yes" />
-        <meta name="apple-mobile-web-app-status-bar-style" content="default" />
-        <meta name="apple-mobile-web-app-title" content="BookShop" />
-        <style>
-            /* Hide scrollbar for Chrome, Safari and Opera */
-            .scrollbar-hide::-webkit-scrollbar {
-                display: none;
-            }
-            /* Hide scrollbar for IE, Edge and Firefox */
-            .scrollbar-hide {
-                -ms-overflow-style: none;  /* IE and Edge */
-                scrollbar-width: none;  /* Firefox */
-            }
-        </style>
-    </head>
-    <body class="bg-gray-50 font-sans">
-        <x-customer-navbar />
+@extends('layouts.app')
 
-      
-        <!-- Main Content -->
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex justify-between items-center h-16">
+@section('title', 'Dashboard')
+
+@section('content')
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                     <!-- Logo -->
                     <div class="flex items-center">
                         <a href="{{ route('home') }}" class="flex items-center gap-2">
@@ -116,17 +90,106 @@
                             }
                         });
                     </script>
+                    <script>
+                        function toggleDesc(button) {
+                            var bookId = button.dataset.bookId;
+                            var full = button.dataset.fullDesc;
+                            var truncated = button.dataset.truncDesc;
+                            var el = document.getElementById('desc-' + bookId);
+                            if (el.dataset.expanded === 'true') {
+                                el.textContent = truncated;
+                                el.dataset.expanded = 'false';
+                                button.textContent = 'Show more';
+                            } else {
+                                el.textContent = full;
+                                el.dataset.expanded = 'true';
+                                button.textContent = 'Show less';
+                            }
+                        }
+                        function toggleAvailDesc(button) {
+                            var bookId = button.dataset.bookId;
+                            var full = button.dataset.fullDesc;
+                            var truncated = button.dataset.truncDesc;
+                            var el = document.getElementById('avail-' + bookId);
+                            if (el.dataset.expanded === 'true') {
+                                el.textContent = truncated;
+                                el.dataset.expanded = 'false';
+                                button.textContent = 'Show more';
+                            } else {
+                                el.textContent = full;
+                                el.dataset.expanded = 'true';
+                                button.textContent = 'Show less';
+                            }
+                        }
+                    </script>
                 </div>
             </div>
-        </header>
+         </header>
 
-        <!-- Main Content -->
+<!-- Main Content -->
         <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 py-8">
+            <!-- Announcement Banner -->
+            <div class="mb-8 bg-gradient-to-r from-green-50 to-emerald-50 border border-green-200 rounded-2xl p-6 shadow-sm">
+                <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                            <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-gray-900 text-lg">Limited Time Discounts!</h3>
+                            <p class="text-gray-600 text-sm">Get 25% off all e-books and 30% off webinar registrations. Don't miss out!</p>
+                        </div>
+                    </div>
+                    <a href="{{ route('discounts') }}" class="px-6 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all shadow-md">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+
             <!-- Welcome Section -->
             <div class="bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 mb-8 text-white">
                 <h1 class="text-3xl font-bold mb-2">Welcome back, {{ auth()->user()->name }}! 📚</h1>
                 <p class="text-indigo-100">Ready to discover your next great read?</p>
             </div>
+
+            <!-- Search Bar -->
+            <div class="mb-8">
+                <form action="{{ route('search') }}" method="GET" class="flex gap-2">
+
+            <!-- Search Bar -->
+            <div class="mb-8">
+                <form action="{{ route('search') }}" method="GET" class="flex gap-2">
+                    <div class="relative flex-1">
+                        <input 
+                            type="text" 
+                            name="q" 
+                            value="{{ $query ?? '' }}"
+                            placeholder="Search books by title, author..." 
+                            class="w-full px-5 py-3 pl-12 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
+                        >
+                        <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                    </div>
+                    <button type="submit" class="px-6 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-medium rounded-xl hover:opacity-90 transition-opacity">
+                        Search
+                    </button>
+                    @if(isset($query))
+                    <a href="{{ route('dashboard') }}" class="px-4 py-3 text-gray-600 hover:text-gray-900 font-medium">
+                        Clear
+                    </a>
+                    @endif
+                </form>
+            </div>
+
+            <!-- Search Results Info -->
+            @if(isset($query))
+            <div class="mb-6">
+                <p class="text-gray-600">Showing results for "<span class="font-semibold text-indigo-600">{{ $query }}</span>" ({{ $books->count() }} books found)</p>
+            </div>
+            @endif
 
             <!-- Stats Section -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -160,7 +223,8 @@
                     <div class="flex items-center justify-between">
                         <div>
                             <p class="text-sm text-gray-500">Total Spent</p>
-                            <p class="text-2xl font-bold text-gray-900">₵{{ number_format(\App\Models\Order::where('user_id', auth()->id())->sum('total_amount'), 2) }}</p>
+                            @php($totalUsd = \App\Models\Order::where('user_id', auth()->id())->where('payment_status', 'paid')->sum('total_amount'))
+                             <p class="text-2xl font-bold text-gray-900">${{ number_format($totalUsd, 2) }}</p>
                         </div>
                         <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
                             <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -240,36 +304,7 @@
                 </div>
             </div>
 
-            <!-- Categories Section -->
-            <div class="mb-8">
-                <h2 class="text-xl font-bold text-gray-900 mb-4">Browse by Category</h2>
-                <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-                    @php
-                        $categories = \App\Models\Book::select('category')->distinct()->whereNotNull('category')->pluck('category');
-                    @endphp
-                    @foreach($categories as $category)
-                    <a href="{{ route('home') }}?category={{ $category }}" class="bg-white rounded-xl p-4 shadow-sm border border-gray-100 hover:shadow-md hover:border-indigo-200 transition-all text-center">
-                        <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center mx-auto mb-2">
-                            <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                            </svg>
-                        </div>
-                        <p class="font-medium text-gray-900 text-sm">{{ $category }}</p>
-                        <p class="text-xs text-gray-500">{{ \App\Models\Book::where('category', $category)->count() }} books</p>
-                    </a>
-                    @endforeach
-                    @if($categories->isEmpty())
-                    <div class="col-span-6 text-center py-8">
-                        <p class="text-gray-500">No categories available yet.</p>
-                    </div>
-                    @endif
-                </div>
-            </div>
-
             <!-- Featured Books Section -->
-            @php
-                $featuredBooks = \App\Models\Book::latest()->take(8)->get();
-            @endphp
             @if($featuredBooks->count() > 0)
             <div class="mb-12">
                 <div class="flex items-center justify-between mb-6">
@@ -290,9 +325,9 @@
                 </div>
                 
                 <!-- Horizontal scroll container -->
-                <div class="flex overflow-x-auto gap-6 pb-4 scrollbar-hide -mx-4 px-4">
-                    @foreach($featuredBooks as $book)
-                    <a href="{{ route('products.show', $book->id) }}" class="flex-shrink-0 w-44 group">
+                 <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+                     @foreach($featuredBooks as $book)
+                     <a href="{{ route('product.show', $book->id) }}" class="group">
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:border-indigo-200 transition-all duration-300">
                             <div class="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative overflow-hidden">
                                 @if($book->cover_image)
@@ -311,11 +346,17 @@
                             <div class="p-4">
                                 <h3 class="font-semibold text-gray-900 text-sm truncate group-hover:text-indigo-600 transition-colors">{{ $book->title }}</h3>
                                 <p class="text-xs text-gray-500 truncate mt-1">{{ $book->author }}</p>
-                                <div class="mt-3 flex items-center justify-between">
-                                    <p class="font-bold text-lg text-indigo-600">₵{{ number_format($book->price, 2) }}</p>
-                                    @if($book->category)
-                                        <span class="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-full">{{ $book->category }}</span>
+                                @if($book->description)
+                                <div class="mt-2">
+                                    <p id="desc-{{ $book->id }}" class="text-xs text-gray-500 line-clamp-2">{{ Str::limit($book->description, 60) }}</p>
+                                    @if(strlen($book->description) > 60)
+                                    <button data-book-id="{{ $book->id }}" data-full-desc="{!! json_encode($book->description) !!}" data-trunc-desc="{!! json_encode(Str::limit($book->description, 60)) !!}" onclick="toggleDesc(this)" class="text-xs text-indigo-600 font-medium mt-1 hover:text-indigo-700">Show more</button>
                                     @endif
+                                </div>
+                                @endif
+                                <div class="mt-3 flex items-center justify-between">
+                                     <p class="font-bold text-lg text-indigo-600">${{ number_format($book->price, 2) }}</p>
+                                    
                                 </div>
                             </div>
                         </div>
@@ -372,9 +413,6 @@
             </div>
 
             <!-- Available Books Section -->
-            @php
-                $availableBooks = \App\Models\Book::latest()->take(4)->get();
-            @endphp
             @if($availableBooks && $availableBooks->count() > 0)
             <div class="mb-12">
                 <div class="flex items-center justify-between mb-6">
@@ -407,7 +445,7 @@
                                 </div>
                             @endif
                             <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-end justify-center pb-4">
-                                <a href="{{ route('products.show', $book->id) }}" class="bg-white text-gray-900 px-4 py-2 rounded-full text-sm font-medium shadow-lg hover:bg-indigo-600 hover:text-white transition-colors">
+                                    <a href="{{ route('product.show', $book->id) }}" class="bg-white text-gray-900 px-4 py-2 rounded-full text-sm font-medium shadow-lg hover:bg-indigo-600 hover:text-white transition-colors">
                                     View Details
                                 </a>
                             </div>
@@ -415,17 +453,22 @@
                         <div class="p-4">
                             <h3 class="font-semibold text-gray-900 text-sm truncate group-hover:text-indigo-600 transition-colors">{{ $book->title }}</h3>
                             <p class="text-xs text-gray-500 mt-1">{{ $book->author }}</p>
-                            <div class="mt-3 flex items-center justify-between">
-                                <p class="font-bold text-xl text-indigo-600">₵{{ number_format($book->price, 2) }}</p>
-                                @if($book->category)
-                                    <span class="text-xs text-gray-400 bg-gray-50 px-2 py-1 rounded-full">{{ $book->category }}</span>
+                            @if($book->description)
+                            <div class="mt-2">
+                                <p id="avail-{{ $book->id }}" class="text-xs text-gray-500 line-clamp-2">{{ Str::limit($book->description, 60) }}</p>
+                                @if(strlen($book->description) > 60)
+                                <button data-book-id="{{ $book->id }}" data-full-desc="{!! json_encode($book->description) !!}" data-trunc-desc="{!! json_encode(Str::limit($book->description, 60)) !!}" onclick="toggleAvailDesc(this)" class="text-xs text-indigo-600 font-medium mt-1 hover:text-indigo-700">Show more</button>
                                 @endif
+                            </div>
+                            @endif
+                            <div class="mt-3 flex items-center justify-between">
+                                 <p class="font-bold text-xl text-indigo-600">${{ number_format($book->price, 2) }}</p>
                             </div>
                             @auth
                             <form action="{{ route('cart.add') }}" method="POST" class="mt-3">
                                 @csrf
                                 <input type="hidden" name="product_name" value="{{ $book->title }}">
-                                <input type="hidden" name="product_price" value="{{ $book->price }}">
+                                <input type="hidden" name="unit_price" value="{{ $book->price }}">
                                 <input type="hidden" name="book_id" value="{{ $book->id }}">
                                 <input type="hidden" name="quantity" value="1">
                                 <button type="submit" class="w-full px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-medium rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
@@ -447,15 +490,75 @@
             </div>
             @endif
 
+            <!-- Webinar Registrations -->
+            <div class="mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-xl font-bold text-gray-900">My Webinar Registrations</h2>
+                    <a href="{{ route('webinars.index') }}" class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">View All Webinars →</a>
+                </div>
+                @php
+                    $webinarRegistrations = \App\Models\WebinarRegistration::where('user_id', auth()->id())
+                        ->with('webinar')
+                        ->latest()
+                        ->take(5)
+                        ->get();
+                @endphp
+                @if($webinarRegistrations->count() > 0)
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                        <div class="divide-y divide-gray-100">
+                            @foreach($webinarRegistrations as $registration)
+                                <div class="p-4 hover:bg-gray-50 transition-colors">
+                                    <div class="flex items-start justify-between">
+                                        <div class="flex-1">
+                                            <h3 class="font-semibold text-gray-900">{{ $registration->webinar->title }}</h3>
+                                            @if($registration->webinar->scheduled_at)
+                                                <p class="text-sm text-gray-600 mt-1">
+                                                    {{ $registration->webinar->scheduled_at->timezone('Africa/Accra')->format('F j, Y - g:i A') }}
+                                                </p>
+                                            @endif
+                                            <div class="flex items-center gap-2 mt-2">
+                                                <span class="inline-flex px-2 py-1 text-xs font-medium rounded-full
+                                                    @if($registration->payment_status === 'paid') bg-green-100 text-green-700
+                                                    @elseif($registration->payment_status === 'pending') bg-yellow-100 text-yellow-700
+                                                    @else bg-red-100 text-red-700 @endif">
+                                                    {{ ucfirst($registration->payment_status) }}
+                                                </span>
+                                                <span class="text-sm text-gray-500">${{ number_format($registration->amount_paid, 2) }}</span>
+                                            </div>
+                                        </div>
+                                        @if($registration->payment_status === 'paid')
+                                            <a href="{{ route('webinars.join', $registration->webinar) }}" class="ml-4 px-3 py-1.5 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors">
+                                                Join
+                                            </a>
+                                        @elseif($registration->payment_status === 'pending')
+                                            <a href="{{ route('webinars.payment', [$registration->webinar, $registration]) }}" class="ml-4 px-3 py-1.5 bg-yellow-500 text-white text-sm font-medium rounded-lg hover:bg-yellow-600 transition-colors">
+                                                Pay Now
+                                            </a>
+                                        @endif
+                                    </div>
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                @else
+                    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-8 text-center">
+                        <svg class="w-12 h-12 text-gray-300 mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                        </svg>
+                        <p class="text-gray-500">No webinar registrations yet</p>
+                        <a href="{{ route('webinars.index') }}" class="inline-block mt-3 text-indigo-600 hover:text-indigo-700 text-sm font-medium">
+                            Browse Webinars →
+                        </a>
+                    </div>
+                @endif
+            </div>
+
             <!-- Recent Orders -->
-            @php
-                $recentOrders = \App\Models\Order::where('user_id', auth()->id())->orderBy('created_at', 'desc')->take(5)->get();
-            @endphp
             @if($recentOrders->count() > 0)
             <div class="mb-8">
                 <div class="flex items-center justify-between mb-4">
                     <h2 class="text-xl font-bold text-gray-900">Recent Orders</h2>
-                    <a href="{{ route('customer.orders') }}" class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">View All →</a>
+                    <a href="{{ route('my-orders') }}" class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">View All →</a>
                 </div>
                 <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                     <table class="w-full">
@@ -488,11 +591,11 @@
                                         <span class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">{{ ucfirst($order->status) }}</span>
                                     @endif
                                 </td>
-                                <td class="px-6 py-4 font-medium text-gray-900">
-                                    ₵{{ number_format($order->total_amount, 2) }}
-                                </td>
+     <td class="px-6 py-4 font-medium text-gray-900">
+     ${{ number_format($order->total_amount, 2) }}
+     </td>
                                 <td class="px-6 py-4 text-right">
-                                    <a href="{{ route('customer.orders') }}" class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">View</a>
+                                    <a href="{{ route('my-orders') }}" class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">View</a>
                                 </td>
                             </tr>
                             @endforeach
@@ -544,22 +647,13 @@
                 </div>
                 <div class="p-6">
                     <!-- Profile Completeness -->
-                    @php
-                        $profileComplete = 0;
-                        $totalFields = 4;
-                        if(auth()->user()->name) $profileComplete++;
-                        if(auth()->user()->email) $profileComplete++;
-                        if(auth()->user()->phone) $profileComplete++;
-                        if(auth()->user()->address) $profileComplete++;
-                        $percentage = round(($profileComplete / $totalFields) * 100);
-                    @endphp
                     <div class="mb-6 bg-gradient-to-r from-indigo-50 to-purple-50 rounded-lg p-4">
                         <div class="flex items-center justify-between mb-2">
                             <span class="text-sm font-medium text-gray-700">Profile Completeness</span>
                             <span class="text-sm font-bold text-indigo-600">{{ $percentage }}%</span>
                         </div>
                         <div class="w-full bg-gray-200 rounded-full h-2">
-                            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 h-2 rounded-full" style="width: {{ $percentage }}%"></div>
+                            <div class="bg-gradient-to-r from-indigo-600 to-purple-600 h-2 rounded-full" style="--progress-width: {{ $percentage }}%; width: var(--progress-width)"></div>
                         </div>
                         @if($percentage < 100)
                         <p class="text-xs text-gray-500 mt-2">Complete your profile to get the most out of your account!</p>
@@ -650,70 +744,4 @@
             </div>
         </main>
 
-        <!-- Footer -->
-        <footer class="bg-white border-t border-gray-200 mt-12">
-            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <p class="text-center text-sm text-gray-500">&copy; {{ date('Y') }} Bookshop. All rights reserved.</p>
-            </div>
-        </footer>
-
-        <x-install-pwa />
-
-        <!-- Direct Install Button -->
-        <div id="pwa-install-container" style="position:fixed;bottom:20px;right:20px;z-index:9999;">
-            <button 
-                id="pwa-install-btn"
-                onclick="installApp()"
-                style="background-color:#4f46e5;color:white;padding:12px 24px;border-radius:9999px;display:flex;align-items:center;gap:8px;font-weight:600;border:none;cursor:pointer;box-shadow:0 4px 6px rgba(0,0,0,0.3);"
-            >
-                <svg style="width:24px;height:24px;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                </svg>
-                <span>Install App</span>
-            </button>
-        </div>
-
-        <script>
-        let deferredPrompt;
-        
-        // Listen for the install prompt
-        window.addEventListener('beforeinstallprompt', function(e) {
-            e.preventDefault();
-            deferredPrompt = e;
-            console.log('Install prompt available');
-            document.getElementById('pwa-install-container').style.display = 'flex';
-        });
-        
-        // Check if app is already installed
-        if (window.matchMedia('(display-mode: standalone)').matches) {
-            document.getElementById('pwa-install-container').style.display = 'none';
-        }
-        
-        function installApp() {
-            if (deferredPrompt) {
-                deferredPrompt.prompt();
-                deferredPrompt.userChoice.then(function(choiceResult) {
-                    deferredPrompt = null;
-                });
-            } else {
-                alert('INSTALL INSTRUCTIONS:\n\nOn Android Chrome:\n1. Tap the menu (3 dots)\n2. Tap "Add to Home Screen"\n\nOn iPhone Safari:\n1. Tap the Share button\n2. Tap "Add to Home Screen"\n\nOn Desktop Chrome:\nLook for install icon in address bar');
-            }
-        }
-        </script>
-
-        <script>
-            // Register service worker for PWA
-            if ('serviceWorker' in navigator) {
-                window.addEventListener('load', () => {
-                    navigator.serviceWorker.register('/sw.js')
-                        .then((registration) => {
-                            console.log('SW registered: ', registration);
-                        })
-                        .catch((registrationError) => {
-                            console.log('SW registration failed: ', registrationError);
-                        });
-                });
-            }
-        </script>
-    </body>
-</html>
+        @endsection

@@ -5,7 +5,7 @@
     <head>
         @include('partials.head')
         @if ($title)
-            <title>{{ $title }} - Bookshop Admin</title>
+            <title>{{ $title }} - Nathaniel Gyarteng</title>
         @endif
     </head>
     <body class="min-h-screen bg-white dark:bg-zinc-800">

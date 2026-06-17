@@ -15,7 +15,7 @@ class CustomerController extends Controller
     {
         // Fetch all users that are not admins (customers)
         $customers = User::orderBy('created_at', 'desc')->paginate(10);
-        
+
         return view('admin.customers.index', compact('customers'));
     }
 }

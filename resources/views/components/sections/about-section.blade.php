@@ -14,7 +14,7 @@
                 </p>
             </div>
             <div class="relative opacity-0 translate-x-50 transition-all duration-700 delay-200" data-animate-target>
-                <img src="{{ asset('welcome.jpg') }}" alt="About Bookshop" class="rounded-2xl shadow-2xl w-full max-w-md mx-auto">
+                <img src="{{ asset('about-us.jpg') }}" alt="About Bookshop" class="rounded-2xl shadow-2xl w-full max-w-md mx-auto">
             </div>
         </div>
     </div>

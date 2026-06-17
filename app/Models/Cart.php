@@ -13,7 +13,7 @@ class Cart extends Model
         'user_id',
         'book_id',
         'product_name',
-        'product_price',
+        'unit_price',
         'quantity',
     ];
 
@@ -39,5 +39,25 @@ class Cart extends Model
     public function hasPdfTemplate(): bool
     {
         return $this->book && $this->book->pdf_file;
+    }
+
+    public function getUnitPriceAttribute(): float
+    {
+        return (float) $this->attributes['unit_price'];
+    }
+
+    public function getTotalPriceAttribute(): float
+    {
+        return $this->unit_price * $this->quantity;
+    }
+
+    public function getFormattedUnitPriceAttribute(): string
+    {
+        return '$'.number_format($this->unit_price, 2);
+    }
+
+    public function getFormattedTotalPriceAttribute(): string
+    {
+        return '$'.number_format($this->total_price, 2);
     }
 }

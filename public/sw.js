@@ -1,10 +1,12 @@
-const CACHE_NAME = 'bookshop-v4';
+const CACHE_NAME = 'bookshop-v7';
 
 // Only cache static assets - NEVER cache HTML pages
 const urlsToCache = [
     '/manifest.json',
     '/favicon.ico',
     '/apple-touch-icon.png',
+    '/icon-192.png',
+    '/icon-512.png',
 ];
 
 // Install event
@@ -21,6 +23,17 @@ self.addEventListener('fetch', (event) => {
     
     // Get the pathname
     const pathname = url.pathname;
+
+    // ❌ NEVER cache POST requests (especially file uploads)
+    if (event.request.method !== 'GET') {
+        event.respondWith(
+            fetch(event.request).catch(() => {
+                // If offline or network error, return basic response
+                return new Response('Network error', { status: 503 });
+            })
+        );
+        return;
+    }
 
     // ❌ NEVER cache these routes - always get fresh content
     if (

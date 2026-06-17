@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('type'); // 'login' or 'password_reset'
             $table->timestamp('expires_at');
             $table->timestamps();
-            
+
             $table->index(['user_id', 'type']);
             $table->index('code');
         });

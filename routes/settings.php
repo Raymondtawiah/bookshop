@@ -11,4 +11,3 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth'])->group(function () {
     Route::livewire('settings/password', 'pages::settings.password')->name('user-password.edit');
 });
-                                                                                                                                                                                       

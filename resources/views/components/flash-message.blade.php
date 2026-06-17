@@ -20,6 +20,9 @@ if ($errors->any()) {
 } elseif (session()->has('info')) {
     $flashType = 'info';
     $flashMessage = session('info');
+} elseif (session()->has('discount_applied')) {
+    $flashType = 'success';
+    $flashMessage = 'Discount applied successfully!';
 }
 
 // Set background color based on type
@@ -52,8 +55,8 @@ switch ($flashType) {
     box-shadow: 0 4px 20px rgba(0,0,0,0.3);
     font-size: 16px;
     font-weight: bold;
-    background-color: {{ $bgColor }};
-    color: {{ $textColor }};
+    background-color: {{ $bgColor ?: '#3B82F6' }};
+    color: white;
 ">
     {{ $flashMessage }}
     <button onclick="this.parentElement.remove()" style="

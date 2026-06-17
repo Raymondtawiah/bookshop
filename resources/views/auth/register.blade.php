@@ -1,9 +1,9 @@
 <x-layouts::auth.clean :title="__('Register')">
     <!-- Logo/Brand -->
     <div class="text-center mb-6">
-        <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-2xl mb-4">
-            <img src="{{ asset('favicon.jpg') }}" alt="Logo" class="w-10 h-10 object-contain">
-        </div>
+                <div class="inline-flex items-center justify-center w-32 h-32 mb-4">
+                    <img src="{{ asset('favicon.jpg') }}" alt="Logo" class="w-24 h-24 object-contain">
+                </div>
         <h1 class="text-2xl font-bold text-gray-800">Visa Resources</h1>
         <p class="text-gray-500 mt-1">Practical guilds to help students</p>
     </div>
@@ -109,12 +109,14 @@
         </button>
     </form>
 
-    <p class="mt-5 text-center text-gray-500">
-        Already have an account? 
-        <a href="{{ route('login') }}" class="text-indigo-600 hover:text-indigo-800 font-medium">
-            Sign in
-        </a>
-    </p>
+    @if (Route::has('login'))
+        <p class="mt-5 text-center text-gray-500">
+            Already have an account? 
+            <a href="{{ route('login') }}" class="text-indigo-600 hover:text-indigo-800 font-medium">
+                Sign in
+            </a>
+        </p>
+    @endif
 
     <script>
         function togglePassword(fieldId) {

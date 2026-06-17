@@ -69,13 +69,13 @@ class VerificationCode extends Model
     {
         // Ensure code is exactly 6 digits with leading zeros
         $code = str_pad(preg_replace('/[^0-9]/', '', $code), 6, '0', STR_PAD_LEFT);
-        
+
         $verificationCode = self::where('user_id', $user->id)
             ->where('type', $type)
             ->where('code', $code)
             ->first();
 
-        if (!$verificationCode || !$verificationCode->isValid()) {
+        if (! $verificationCode || ! $verificationCode->isValid()) {
             return false;
         }
 

@@ -2,284 +2,267 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Order;
 use App\Models\Cart;
+use App\Models\Discount;
+use App\Models\Order;
+use App\Services\Payments\PaymentRouterService;
+use App\Services\Payments\PaystackPaymentGateway;
+use App\Services\Payments\StripePaymentGateway;
 use App\Services\PaystackService;
+use App\Services\StripeService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Mail;
 
 class PaymentController extends Controller
 {
-    protected $paystack;
+    protected PaymentRouterService $paymentRouter;
 
-    public function __construct(PaystackService $paystack)
-    {
-        $this->paystack = $paystack;
+    protected StripePaymentGateway $stripeGateway;
+
+    protected PaystackPaymentGateway $paystackGateway;
+
+    public function __construct(
+        PaymentRouterService $paymentRouter,
+        StripePaymentGateway $stripeGateway,
+        PaystackPaymentGateway $paystackGateway
+    ) {
+        $this->paymentRouter = $paymentRouter;
+        $this->stripeGateway = $stripeGateway;
+        $this->paystackGateway = $paystackGateway;
     }
 
-    /**
-     * Initialize payment for the order
-     */
     public function initializePayment(Request $request)
     {
-        $request->validate([
-            'payment_method' => 'required|in:momo,bank,card',
-            'contact' => 'required|string',
-            'customer_name' => 'required|string',
-            'residence' => 'required|string',
-        ]);
-
-        $cartItems = Cart::where('user_id', Auth::id())->get();
-        
-        if ($cartItems->isEmpty()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Your cart is empty'
+        try {
+            $request->validate([
+                'payment_method' => 'required|in:card,paystack,bank',
+                'email' => 'nullable|email',
+                'contact' => 'required|string',
+                'customer_name' => 'required|string',
+                'residence' => 'required|string',
+                'nationality' => 'nullable|string',
+                'discount_code' => 'nullable|string|max:50',
             ]);
-        }
 
-        $total = $cartItems->sum(function($item) {
-            return $item->product_price * $item->quantity;
-        });
+            $cartItems = Cart::where('user_id', Auth::id())->get();
 
-        $email = $request->email ?? Auth::user()->email;
-        
-        // Generate unique reference
-        $reference = 'ORD-' . time() . rand(1000, 9999);
+            if ($cartItems->isEmpty()) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Your cart is empty',
+                ]);
+            }
 
-        // For mobile money - redirect to Paystack checkout where user can select mobile money
-        if ($request->payment_method === 'momo') {
-            Log::info('Processing mobile money payment');
-        }
+            $totalUsd = $cartItems->sum(fn ($item) => $item->unit_price * $item->quantity);
+            $email = $request->input('email') ?? (Auth::check() ? Auth::user()->email : null);
+            $discountCode = $request->input('discount_code');
+            $discountAmount = 0;
 
-        // For all payment methods, use Paystack checkout page
-        // This allows user to select their preferred payment method (card, mobile money, bank)
-        $result = $this->paystack->initializePayment($email, $total, $reference, 'GHS');
-
-        if ($result['success']) {
-            // Create pending order
-            $order = $this->createPendingOrder($request, $total, $reference);
-
-            return response()->json([
-                'success' => true,
-                'authorization_url' => $result['authorization_url'],
-                'reference' => $reference
-            ]);
-        }
-
-        return response()->json([
-            'success' => false,
-            'message' => $result['message'] ?? 'Payment initialization failed'
-        ]);
-    }
-
-    /**
-     * Detect mobile network from phone number
-     */
-    private function detectNetwork($phoneNumber)
-    {
-        // Remove any spaces or dashes
-        $phone = preg_replace('/[^0-9]/', '', $phoneNumber);
-        
-        // Get the first 3 digits after country code (233) or 0
-        if (strlen($phone) === 12 && substr($phone, 0, 3) === '233') {
-            $prefix = substr($phone, 3, 3);
-        } elseif (strlen($phone) === 10 && substr($phone, 0, 1) === '0') {
-            $prefix = substr($phone, 1, 3);
-        } else {
-            $prefix = substr($phone, 0, 3);
-        }
-
-        // MTN Ghana
-        if (in_array($prefix, ['540', '550', '560', '570', '580', '240', '250'])) {
-            return 'MTN';
-        }
-        // Vodafone Ghana
-        if (in_array($prefix, ['520', '530', '540', '200', '210'])) {
-            return 'VODAFONE';
-        }
-        // AirtelTigo
-        if (in_array($prefix, ['270', '280', '290', '570', '571'])) {
-            return 'AIRTELTIGO';
-        }
-
-        return 'MTN'; // Default to MTN
-    }
-
-    /**
-     * Handle Paystack callback
-     */
-    public function callback(Request $request)
-    {
-        $reference = $request->reference;
-        
-        if (!$reference) {
-            return redirect()->route('checkout')
-                ->with('error', 'Payment reference not found');
-        }
-
-        // Verify the payment
-        $result = $this->paystack->verifyPayment($reference);
-
-        if ($result['success']) {
-            // Find and update the order
-            $order = Order::where('order_number', $reference)->first();
-            
-            if ($order) {
-                // Get cart items before clearing
-                $cartItems = Cart::where('user_id', Auth::id())->get();
-
-                // Prepare order items data
-                $orderItems = $cartItems->map(function($item) {
-                    return [
-                        'book_id' => $item->book_id,
-                        'product_name' => $item->product_name,
-                        'product_price' => $item->product_price,
-                        'quantity' => $item->quantity,
-                    ];
-                })->toArray();
-
-                // Send confirmation email to customer
-                try {
-                    \Log::info('Attempting to send order confirmation email', [
-                        'order_id' => $order->id,
-                        'email' => $order->email
-                    ]);
-                    
-                    \Mail::to($order->email)->send(new \App\Mail\OrderConfirmation($order, $cartItems, $order->total_amount));
-                    
-                    \Log::info('Order confirmation email sent successfully', ['order_id' => $order->id]);
-                } catch (\Exception $e) {
-                    // Log email error but don't fail the order
-                    \Log::error('Failed to send order confirmation email: ' . $e->getMessage());
+            if ($discountCode) {
+                $discount = Discount::findByCode($discountCode);
+                if ($discount && $discount->type === 'ebook') {
+                    $discountAmount = $discount->calculateDiscount($totalUsd);
                 }
+            }
 
-                // Clear cart
-                Cart::where('user_id', Auth::id())->delete();
+            $finalAmount = max(0, $totalUsd - $discountAmount);
 
-                $order->update([
-                    'status' => 'paid',
-                    'payment_status' => 'completed',
-                    'paid_at' => now(),
-                    'order_items' => $orderItems,
+            if (! $email) {
+                return response()->json(['success' => false, 'message' => 'Email is required'], 400);
+            }
+
+            $reference = 'ORD-'.time().rand(1000, 9999);
+            $paymentMethod = $request->payment_method;
+
+            if ($paymentMethod === 'bank') {
+                $this->createPendingOrder($request, $finalAmount, $reference, [
+                    'provider' => 'bank',
+                    'currency' => 'USD',
+                    'discount_code' => $discountCode,
+                    'discount_amount' => $discountAmount,
                 ]);
 
-                return redirect()->route('home')
-                    ->with('success', 'Payment successful! Order confirmed. Check your email for details.');
+                return response()->json([
+                    'success' => true,
+                    'type' => 'bank_transfer',
+                    'reference' => $reference,
+                ]);
             }
-        }
 
-        return redirect()->route('checkout')
-            ->with('error', 'Payment verification failed. Please contact support.');
+            $provider = $paymentMethod === 'paystack' ? 'paystack' : 'stripe';
+
+            $paymentResult = $this->paymentRouter->createCheckout(
+                $email,
+                $finalAmount,
+                $provider,
+                $reference
+            );
+
+            if ($paymentResult['success']) {
+                $this->createPendingOrder($request, $finalAmount, $reference, $paymentResult);
+
+                return response()->json([
+                    'success' => true,
+                    'checkout_url' => $paymentResult['url'],
+                    'provider' => $paymentResult['provider'],
+                    'currency' => $paymentResult['currency'],
+                    'reference' => $reference,
+                ]);
+            }
+
+            return response()->json([
+                'success' => false,
+                'message' => $paymentResult['message'] ?? 'Payment initialization failed',
+            ], 400);
+        } catch (\Exception $e) {
+            Log::error('Payment initialization exception', [
+                'exception' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+            ]);
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Payment initialization failed: '.$e->getMessage(),
+            ], 500);
+        }
     }
 
-    /**
-     * Check payment status (for mobile money polling)
-     */
+    public function callback(Request $request)
+    {
+        if ($request->has('session_id')) {
+            $sessionId = $request->input('session_id');
+            $stripe = app(StripeService::class);
+            $session = $stripe->retrieveSession($sessionId);
+
+            if (! $session) {
+                return redirect()->route('home')->with('error', 'Invalid session');
+            }
+
+            $reference = $session->client_reference_id;
+            $provider = 'stripe';
+            $result = $stripe->verifyPayment($sessionId);
+
+            if (! $result['success']) {
+                return redirect()->route('home')->with('error', 'Payment verification failed. Please contact support.');
+            }
+
+            $paidAmount = $result['amount'];
+        } else {
+            $reference = $request->input('reference') ?? $request->input('trxref');
+            if (! $reference) {
+                return redirect()->route('home')->with('error', 'Payment reference not found');
+            }
+
+            $provider = 'paystack';
+            $result = $this->paystackGateway->verifyPayment($reference);
+
+            if (! $result['success']) {
+                return redirect()->route('home')->with('error', 'Payment verification failed. Please contact support.');
+            }
+
+            $paidAmount = $result['amount_ghs'] ?? $result['amount'];
+        }
+
+        $order = Order::where('order_number', $reference)->first();
+
+        if (! $order) {
+            return redirect()->route('home')->with('error', 'Order not found.');
+        }
+
+        try {
+            $this->paymentRouter->completeOrder(
+                $order,
+                $paidAmount,
+                $provider,
+                $result['reference'] ?? $result['session_id'] ?? $reference
+            );
+
+            return redirect()->route('home')
+                ->with('success', 'Payment successful! Order confirmed. Check your email for details.');
+        } catch (\Exception $e) {
+            Log::error('Payment callback: Order completion failed', [
+                'order_id' => $order->id,
+                'error' => $e->getMessage(),
+            ]);
+
+            $errorMessage = 'Payment verified but order processing failed. Please contact support.';
+
+            return redirect()->route('home')
+                ->with('error', $errorMessage);
+        }
+    }
+
     public function checkPaymentStatus(Request $request)
     {
         $reference = $request->reference;
-        
-        $result = $this->paystack->verifyPayment($reference);
-        
+        $result = $this->paystackGateway->verifyPayment($reference);
+
         if ($result['success']) {
             $order = Order::where('order_number', $reference)->first();
-            
             if ($order && $order->status === 'paid') {
-                return response()->json([
-                    'success' => true,
-                    'message' => 'Payment confirmed'
-                ]);
+                return response()->json(['success' => true, 'message' => 'Payment confirmed']);
             }
         }
-        
-        return response()->json([
-            'success' => false,
-            'message' => 'Payment not yet confirmed'
-        ]);
+
+        return response()->json(['success' => false, 'message' => 'Payment not yet confirmed']);
     }
 
-    /**
-     * Create pending order
-     */
-    protected function createPendingOrder(Request $request, $total, $reference)
+    public function getBanks()
+    {
+        $paystack = app(PaystackService::class);
+        $result = $paystack->getBanks();
+
+        return $result['status']
+            ? response()->json(['success' => true, 'banks' => $result['data']])
+            : response()->json(['success' => false, 'message' => 'Failed to fetch banks']);
+    }
+
+    protected function createPendingOrder(Request $request, float $totalUsd, string $reference, array $paymentResult): Order
     {
         $user = Auth::user();
-        
         $cartItems = Cart::where('user_id', $user->id)->get();
-        
-        $order = Order::create([
+
+        $orderItems = $cartItems->map(fn ($item) => [
+            'book_id' => $item->book_id,
+            'product_name' => $item->product_name,
+            'unit_price_usd' => $item->unit_price,
+            'quantity' => $item->quantity,
+            'total_price_usd' => $item->unit_price * $item->quantity,
+        ])->toArray();
+
+        $isPaystack = $paymentResult['provider'] === 'paystack';
+        $totalAmount = $isPaystack ? $paymentResult['amount_ghs'] : $totalUsd;
+
+        return Order::create([
             'user_id' => $user->id,
             'order_number' => $reference,
-            'customer_name' => $user->name,
-            'email' => $user->email,
+            'customer_name' => $request->customer_name ?? $user->name,
+            'email' => $request->email ?? $user->email,
             'contact' => $request->contact ?? $user->phone ?? '',
             'residence' => $request->residence ?? '',
             'nationality' => $request->nationality ?? '',
-            'payment_method' => $request->payment_method,
-            'total_amount' => $total,
+            'payment_method' => $this->mapProviderToMethod($paymentResult['provider']),
+            'payment_provider' => $paymentResult['provider'],
+            'total_amount' => $totalAmount,
+            'total_amount_usd' => $totalUsd,
+            'currency' => $isPaystack ? 'GHS' : 'USD',
+            'exchange_rate' => $isPaystack ? 11.79 : null,
             'status' => 'pending',
-            'payment_status' => 'pending'
+            'payment_status' => 'pending',
+            'order_items' => $orderItems,
+            'discount_code' => $paymentResult['discount_code'] ?? null,
+            'discount_amount' => $paymentResult['discount_amount'] ?? 0,
         ]);
-
-        // Store order items in order_items table if it exists
-        // Or keep them in cart (which we'll clear after payment)
-        
-        return $order;
     }
 
-    /**
-     * Send order confirmation email
-     */
-    protected function sendOrderConfirmationEmail($order, $cartItems = null)
+    private function mapProviderToMethod(string $provider): string
     {
-        try {
-            $user = $order->user;
-            
-            // If cartItems not provided, try to get from cart
-            if (!$cartItems) {
-                $cartItems = Cart::where('user_id', $order->user_id)->get();
-            }
-            
-            // If still no cart items, create empty array
-            if (!$cartItems) {
-                $cartItems = collect([]);
-            }
-            
-            // Get admin name from settings or use default
-            $adminName = 'The Bookshop Team';
-            
-            Mail::to($order->email)->send(new \App\Mail\OrderConfirmation($order, $cartItems, $order->total_amount));
-            
-            Log::info('Order confirmation email sent', ['order_id' => $order->id]);
-            
-        } catch (\Exception $e) {
-            Log::error('Failed to send order confirmation email', [
-                'error' => $e->getMessage(),
-                'order_id' => $order->id
-            ]);
-        }
-    }
-
-    /**
-     * Get banks list for bank transfer
-     */
-    public function getBanks()
-    {
-        $result = $this->paystack->getBanks();
-        
-        if ($result['status']) {
-            return response()->json([
-                'success' => true,
-                'banks' => $result['data']
-            ]);
-        }
-        
-        return response()->json([
-            'success' => false,
-            'message' => 'Failed to fetch banks'
-        ]);
+        return match ($provider) {
+            'stripe' => 'card',
+            'paystack' => 'paystack',
+            'bank' => 'bank',
+            default => 'card',
+        };
     }
 }

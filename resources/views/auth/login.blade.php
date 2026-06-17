@@ -1,8 +1,8 @@
 <x-layouts::auth.clean :title="__('Log in')">
     <!-- Logo/Brand -->
     <div class="text-center mb-6">
-        <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-600 rounded-2xl mb-4">
-            <img src="{{ asset('favicon.jpg') }}" alt="Logo" class="w-10 h-10 object-contain">
+        <div class="inline-flex items-center justify-center w-32 h-32 mb-4">
+            <img src="{{ asset('favicon.jpg') }}" alt="Logo" class="w-24 h-24 object-contain">
         </div>
         <h1 class="text-2xl font-bold text-gray-800">Visa Resources</h1>
         <p class="text-gray-500 mt-1">Practical guilds to help students</p>
@@ -18,6 +18,12 @@
         </div>
     @endif
 
+    @if (session('error'))
+        <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
+            {{ session('error') }}
+        </div>
+    @endif
+
     @if ($errors->any())
         <div class="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg text-sm">
             @foreach ($errors->all() as $error)
@@ -30,7 +36,7 @@
         @csrf
 
         <!-- Google Login Button -->
-        <a href="{{ route('login.google') }}" 
+        <a href="{{ route('login.google') }}"
            class="w-full flex items-center justify-center gap-3 py-3 px-4 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors shadow-sm">
             <svg class="w-5 h-5" viewBox="0 0 24 24">
                 <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -53,12 +59,12 @@
         <!-- Email -->
         <div>
             <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
-            <input 
-                type="email" 
-                name="email" 
+            <input
+                type="email"
+                name="email"
                 id="email"
                 value="{{ old('email') }}"
-                required 
+                required
                 autofocus
                 autocomplete="email"
                 placeholder="you@example.com"
@@ -69,11 +75,11 @@
         <!-- Password -->
         <div class="relative">
             <label for="password" class="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input 
-                type="password" 
-                name="password" 
+            <input
+                type="password"
+                name="password"
                 id="password"
-                required 
+                required
                 autocomplete="current-password"
                 placeholder="Enter your password"
                 class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 transition-colors bg-white text-gray-900 pr-12"
@@ -95,9 +101,9 @@
 
         <!-- Remember Me -->
         <div class="flex items-center">
-            <input 
-                type="checkbox" 
-                name="remember" 
+            <input
+                type="checkbox"
+                name="remember"
                 id="remember"
                 {{ old('remember') ? 'checked' : '' }}
                 class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500"
@@ -108,8 +114,8 @@
         </div>
 
         <!-- Submit -->
-        <button 
-            type="submit" 
+        <button
+            type="submit"
             class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg"
         >
             Log In
@@ -118,7 +124,7 @@
 
     @if (Route::has('register'))
         <p class="mt-5 text-center text-gray-500">
-            Don't have an account? 
+            Don't have an account?
             <a href="{{ route('register') }}" class="text-indigo-600 hover:text-indigo-800 font-medium">
                 Sign up
             </a>
@@ -129,13 +135,13 @@
         function togglePassword(fieldId) {
             const field = document.getElementById(fieldId);
             const eyeIcon = document.getElementById(fieldId + '-eye');
-            
+
             if (field.type === 'password') {
                 field.type = 'text';
-                eyeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"></path>';
+                eyeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l3.29 3.29m7.532 7.532l-3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21"/>';
             } else {
                 field.type = 'password';
-                eyeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>';
+                eyeIcon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>';
             }
         }
     </script>

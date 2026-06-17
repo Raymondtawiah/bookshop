@@ -6,85 +6,77 @@
     <title>Verify Login - Bookshop</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="icon" href="/favicon.ico" sizes="any">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        @keyframes gradient-shift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-        }
-        .animate-gradient {
-            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
-            background-size: 300% 300%;
-            animation: gradient-shift 3s ease infinite;
-        }
+        body { font-family: 'Inter', sans-serif; }
         .code-input:focus {
             outline: none;
             border-color: #4f46e5;
-            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
         }
     </style>
 </head>
-<body class="bg-gray-50 min-h-screen flex items-center justify-center">
+<body class="bg-gray-50 min-h-screen flex items-center justify-center px-4">
     <x-flash-message />
-    <div class="max-w-md w-full mx-4">
-        <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
-            <!-- Header -->
-            <div class="animate-gradient p-8 text-center">
-                <svg class="w-16 h-16 mx-auto text-white mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
-                </svg>
-                <h2 class="text-2xl font-bold text-white">Verify Your Login</h2>
-                <p class="text-white/80 mt-2">Enter the 6-digit code sent to your email</p>
+    <div class="w-full max-w-sm">
+        <div class="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+            <div class="text-center mb-6">
+                <div class="inline-flex items-center justify-center w-20 h-20 mb-4">
+                    <img src="{{ asset('favicon.jpg') }}" alt="Logo" class="w-12 h-12 object-contain">
+                </div>
+                <h1 class="text-2xl font-bold text-gray-800">OTP Verification</h1>
+                <p class="text-sm text-gray-500 mt-1">Enter the 6-digit code sent to your email</p>
             </div>
 
-            <!-- Form -->
-            <div class="p-8">
-                <div class="text-center mb-6">
-                    <p class="text-gray-600">
-                        We've sent a verification code to<br>
-                        <span class="font-semibold text-indigo-600">{{ $user->email }}</span>
-                    </p>
+            <div class="text-center mb-5">
+                <p class="text-sm text-gray-600">
+                    Code sent to <span class="font-medium text-gray-900">{{ $user->email }}</span>
+                </p>
+            </div>
+
+            <form method="POST" action="{{ route('verification.login.verify') }}" class="space-y-4">
+                @csrf
+                <div>
+                    <label for="code" class="block text-sm font-medium text-gray-700 mb-1.5">Verification Code</label>
+                    <input
+                        type="text"
+                        name="code"
+                        id="code"
+                        maxlength="6"
+                        inputmode="numeric"
+                        autocomplete="one-time-code"
+                        class="code-input w-full px-4 py-2.5 text-center text-xl tracking-widest border border-gray-300 rounded-lg bg-white text-gray-900"
+                        placeholder="000000"
+                        required
+                        autofocus
+                    >
+                    @error('code')
+                        <p class="mt-1.5 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
                 </div>
 
-                <form method="POST" action="{{ route('verification.login.verify') }}">
-                    @csrf
-                    
-                    <div class="mb-6">
-                        <label for="code" class="block text-sm font-medium text-gray-700 mb-2">Verification Code</label>
-                        <input type="text" 
-                               name="code" 
-                               id="code" 
-                               maxlength="6" 
-                               class="code-input w-full px-4 py-3 text-center text-2xl tracking-[0.5em] border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                               placeholder="000000"
-                               required
-                               autofocus>
-                        @error('code')
-                            <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
-                        @enderror
-                    </div>
+                <button
+                    type="submit"
+                    class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-lg transition-colors"
+                >
+                    Verify & Login
+                </button>
+            </form>
 
-                    <button type="submit" 
-                            class="w-full bg-indigo-600 text-white py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
-                        Verify & Login
+            <div class="mt-5 text-center">
+                <p class="text-sm text-gray-500">Didn't get the code?</p>
+                <form method="POST" action="{{ route('verification.login.resend') }}" class="inline">
+                    @csrf
+                    <button type="submit" class="text-sm text-gray-900 font-medium hover:underline mt-1">
+                        Resend Code
                     </button>
                 </form>
+            </div>
 
-                <div class="mt-6 text-center">
-                    <p class="text-gray-600 text-sm">Didn't receive the code?</p>
-                    <form method="POST" action="{{ route('verification.login.resend') }}" class="inline">
-                        @csrf
-                        <button type="submit" 
-                                class="mt-2 text-indigo-600 font-medium hover:text-indigo-800">
-                            Resend Code
-                        </button>
-                    </form>
-                </div>
-
-                <div class="mt-6 pt-6 border-t border-gray-200 text-center">
-                    <a href="{{ route('login') }}" class="text-gray-600 hover:text-indigo-600 text-sm">
-                        ← Back to Login
-                    </a>
-                </div>
+            <div class="mt-5 pt-4 border-t border-gray-100 text-center">
+                <a href="{{ route('login') }}" class="text-sm text-gray-500 hover:text-gray-900">
+                    Back to Login
+                </a>
             </div>
         </div>
     </div>

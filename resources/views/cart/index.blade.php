@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Shopping Cart - Bookshop</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link rel="icon" href="/favicon.ico" sizes="any">
-    </head>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Shopping Cart - Bookshop</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="icon" href="/favicon.ico" sizes="any">
+</head>
     <body class="bg-gray-50 antialiased">
         <x-flash-message />
         <x-customer-navbar />
@@ -30,7 +30,7 @@
                                 </div>
                                 <div class="flex-1 w-full">
                                     <h3 class="text-lg font-semibold text-gray-900">{{ $item->product_name }}</h3>
-                                    <p class="text-gray-600 text-sm md:text-base">₵{{ number_format($item->product_price, 2) }}</p>
+                                    <p class="text-gray-600 text-sm md:text-base">${{ number_format($item->unit_price, 2) }}</p>
                                 </div>
                                 <div class="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-start">
                                     <form action="{{ route('cart.update', $item->id) }}" method="POST" class="flex items-center quantity-form">
@@ -38,10 +38,10 @@
                                         @method('PUT')
                                         <input type="number" name="quantity" value="{{ $item->quantity }}" min="1" class="w-16 px-2 py-1 border rounded text-center quantity-input" onchange="this.form.submit()">
                                     </form>
-                                    <button type="button" onclick="openDeleteModal{{ $item->id }}()" class="text-sm text-red-600 hover:underline whitespace-nowrap">Remove</button>
+                                    <button type="button" class="text-sm text-red-600 hover:underline whitespace-nowrap" data-modal="deleteModal{{ $item->id }}">Remove</button>
                                 </div>
                                 <div class="text-left sm:text-right w-full sm:w-auto">
-                                    <p class="text-lg font-bold text-gray-900">₵{{ number_format($item->product_price * $item->quantity, 2) }}</p>
+                                     <p class="text-lg font-bold text-gray-900">${{ number_format($item->unit_price * $item->quantity, 2) }}</p>
                                 </div>
                             </div>
 
@@ -60,18 +60,18 @@
                     <div class="bg-white rounded-lg shadow-md p-4 md:p-6 h-fit">
                         <h2 class="text-xl font-semibold text-gray-900 mb-4">Order Summary</h2>
                         <div class="space-y-2 mb-4">
-                            <div class="flex justify-between text-gray-600">
-                                <span>Subtotal</span>
-                                <span>₵{{ number_format($total, 2) }}</span>
-                            </div>
-                            <div class="flex justify-between text-gray-600">
-                                <span>Tax</span>
-                                <span>₵0.00</span>
-                            </div>
-                            <div class="border-t pt-2 flex justify-between text-lg font-bold">
-                                <span>Total</span>
-                                <span>₵{{ number_format($total, 2) }}</span>
-                            </div>
+<div class="flex justify-between text-gray-600">
+                                  <span>Subtotal</span>
+                                  <span>${{ number_format($total, 2) }}</span>
+                              </div>
+                             <div class="flex justify-between text-gray-600">
+                                 <span>Tax</span>
+                                 <span>$0.00</span>
+                             </div>
+<div class="border-t pt-2 flex justify-between text-lg font-bold">
+                                  <span>Total</span>
+                                  <span>${{ number_format($total, 2) }}</span>
+                              </div>
                         </div>
                         <a href="{{ route('checkout') }}" class="block w-full bg-indigo-600 text-white text-center py-3 rounded-lg font-semibold hover:bg-indigo-700 transition-colors">
                             Proceed to Checkout
@@ -86,5 +86,14 @@
             @endif
         </div>
         <x-customer-footer />
+    
+    <script>
+        document.querySelectorAll('[data-modal]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var modalId = this.getAttribute('data-modal');
+                document.getElementById(modalId).classList.remove('hidden');
+            });
+        });
+    </script>
     </body>
 </html>

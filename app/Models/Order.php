@@ -18,58 +18,89 @@ class Order extends Model
         'nationality',
         'contact',
         'payment_method',
+        'payment_provider',
         'total_amount',
+        'total_amount_usd',
+        'currency',
+        'exchange_rate',
         'status',
         'order_number',
         'payment_status',
         'paid_at',
         'pdf_sent',
         'pdf_sent_at',
+        'book_offered',
+        'book_offered_at',
+        'offer_note',
         'order_items',
+        'transaction_reference',
+        'discount_code',
+        'discount_amount',
     ];
 
     protected $casts = [
         'total_amount' => 'decimal:2',
+        'total_amount_usd' => 'decimal:2',
+        'exchange_rate' => 'decimal:4',
         'paid_at' => 'datetime',
         'pdf_sent' => 'boolean',
         'pdf_sent_at' => 'datetime',
+        'book_offered' => 'boolean',
+        'book_offered_at' => 'datetime',
         'order_items' => 'array',
+        'discount_amount' => 'decimal:2',
     ];
 
-    /**
-     * Get the order items as a collection
-     */
     public function getOrderItemsAttribute($value)
     {
-        // If already a proper array (from attribute casting)
-        if (is_array($value) && !empty($value) && !is_string(reset($value))) {
+        if (is_array($value) && ! empty($value) && ! is_string(reset($value))) {
             return collect($value);
         }
-        
-        // If it's a JSON string
-        if (is_string($value) && !empty($value)) {
+
+        if (is_string($value) && ! empty($value)) {
             $decoded = json_decode($value, true);
             if (is_array($decoded)) {
                 return collect($decoded);
             }
         }
-        
-        // If it's an array with a single JSON string element (double-encoded)
+
         if (is_array($value) && count($value) === 1 && is_string(reset($value))) {
             $decoded = json_decode(reset($value), true);
             if (is_array($decoded)) {
                 return collect($decoded);
             }
         }
-        
+
         return collect([]);
     }
 
-    /**
-     * Get the user that owns the order.
-     */
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function getTotalAmountAttribute(): float
+    {
+        return (float) $this->attributes['total_amount'];
+    }
+
+    public function getFormattedTotalAmountAttribute(): string
+    {
+        return '$'.number_format($this->total_amount, 2);
+    }
+
+    public function getFormattedTotalAmountUsdAttribute(): string
+    {
+        return '$'.number_format($this->total_amount_usd ?? $this->total_amount, 2);
+    }
+
+    public function isPaid(): bool
+    {
+        return $this->payment_status === 'paid' && $this->paid_at !== null;
+    }
+
+    public function isBookOffered(): bool
+    {
+        return (bool) $this->book_offered;
     }
 }

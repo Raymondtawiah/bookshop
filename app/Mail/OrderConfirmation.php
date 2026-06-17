@@ -4,7 +4,6 @@ namespace App\Mail;
 
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Attachment;
 use Illuminate\Mail\Mailables\Content;
@@ -16,9 +15,13 @@ class OrderConfirmation extends Mailable
     use Queueable, SerializesModels;
 
     public $order;
+
     public $cartItems;
+
     public $total;
+
     public $user;
+
     public $adminName;
 
     /**
@@ -29,7 +32,7 @@ class OrderConfirmation extends Mailable
         $this->order = $order;
         $this->cartItems = $cartItems;
         $this->total = $total;
-        $this->user = auth()->user();
+        $this->user = auth()->user() ?? (object) ['name' => $order->customer_name];
         $this->adminName = config('app.name', 'Visa Resources');
     }
 
@@ -39,7 +42,7 @@ class OrderConfirmation extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Order Confirmed! - Visa Resources #' . $this->order->order_number,
+            subject: 'Order Confirmed! - Visa Resources #'.$this->order->order_number,
         );
     }
 
