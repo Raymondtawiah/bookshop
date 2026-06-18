@@ -7,165 +7,165 @@
             return;
         }
 
-        const STORAGE_KEY = 'pwa_install_dismissed';
-        const THIRTY_MINUTES = 30 * 60 * 1000;
+        const INSTALLED_KEY = 'pwa_installed';
 
-        if (localStorage.getItem(STORAGE_KEY)) return;
+        if (localStorage.getItem(INSTALLED_KEY)) return;
 
         let deferredPrompt = null;
-        let promptShown = false;
 
         window.addEventListener('beforeinstallprompt', function(e) {
             e.preventDefault();
             deferredPrompt = e;
             console.log('[PWA] Install prompt captured');
 
-            if (!promptShown) {
-                const elapsed = Date.now() - (parseInt(localStorage.getItem('pwa_first_visit') || '0') || Date.now());
-                const timeSinceFirstVisit = parseInt(localStorage.getItem('pwa_first_visit'));
-
-                if (!timeSinceFirstVisit) {
-                    localStorage.setItem('pwa_first_visit', Date.now());
-                }
-
-                const remaining = THIRTY_MINUTES - (Date.now() - timeSinceFirstVisit);
-                if (remaining > 0 && timeSinceFirstVisit) {
-                    setTimeout(showInstallPrompt, remaining);
-                } else {
-                    setTimeout(showInstallPrompt, 1000);
-                }
-                promptShown = true;
-            }
+            setTimeout(showInstallModal, 800);
         });
 
-        if (!localStorage.getItem('pwa_first_visit')) {
-            localStorage.setItem('pwa_first_visit', Date.now());
-        }
-
-        const firstVisit = parseInt(localStorage.getItem('pwa_first_visit'));
-        if (firstVisit && !promptShown) {
-            const elapsed = Date.now() - firstVisit;
-            const remaining = THIRTY_MINUTES - elapsed;
-            if (remaining <= 0) {
-                setTimeout(showInstallPrompt, 1000);
-                promptShown = true;
-            } else {
-                setTimeout(showInstallPrompt, remaining);
-                promptShown = true;
-            }
-        }
-
-        window.addEventListener('appinstalled', function() {
-            deferredPrompt = null;
-            console.log('[PWA] App installed successfully');
-        });
-
-        function showInstallPrompt() {
-            if (deferredPrompt || /iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-                showInstallUI();
-            }
-        }
-
-        function showInstallUI() {
-            if (document.getElementById('pwa-install-banner')) return;
+        function showInstallModal() {
+            if (document.getElementById('pwa-install-modal')) return;
 
             const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-            const banner = document.createElement('div');
-            banner.id = 'pwa-install-banner';
-            Object.assign(banner.style, {
+
+            const overlay = document.createElement('div');
+            overlay.id = 'pwa-install-overlay';
+            Object.assign(overlay.style, {
                 position: 'fixed',
-                bottom: '20px',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                background: '#1f2937',
-                color: '#fff',
-                padding: '16px 24px',
-                borderRadius: '12px',
-                boxShadow: '0 10px 25px rgba(0,0,0,0.3)',
-                zIndex: '9999',
+                top: '0',
+                left: '0',
+                width: '100%',
+                height: '100%',
+                background: 'rgba(0,0,0,0.6)',
+                zIndex: '99999',
                 display: 'flex',
                 alignItems: 'center',
-                gap: '12px',
-                maxWidth: '90vw',
-                flexWrap: 'wrap',
                 justifyContent: 'center',
-                fontFamily: 'system-ui, -apple-system, sans-serif'
+                fontFamily: 'system-ui, -apple-system, sans-serif',
+                padding: '20px',
+                backdropFilter: 'blur(4px)'
             });
+
+            const modal = document.createElement('div');
+            Object.assign(modal.style, {
+                background: '#fff',
+                borderRadius: '24px',
+                padding: '36px 28px',
+                maxWidth: '400px',
+                width: '100%',
+                textAlign: 'center',
+                boxShadow: '0 25px 60px rgba(0,0,0,0.4)',
+                animation: 'modalPop 0.3s ease-out'
+            });
+
+            const style = document.createElement('style');
+            style.textContent = '@keyframes modalPop{from{transform:scale(0.9);opacity:0}to{transform:scale(1);opacity:1}}';
+            modal.appendChild(style);
 
             const icon = document.createElement('div');
             Object.assign(icon.style, {
-                width: '40px',
-                height: '40px',
+                width: '72px',
+                height: '72px',
                 background: 'linear-gradient(135deg, #4f46e5, #7c3aed)',
-                borderRadius: '10px',
+                borderRadius: '18px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                fontSize: '20px',
-                flexShrink: '0'
+                fontSize: '36px',
+                margin: '0 auto 20px'
             });
             icon.textContent = '📚';
 
-            const text = document.createElement('div');
-            Object.assign(text.style, { textAlign: 'left' });
-            text.innerHTML = '<div style="font-weight:600;font-size:14px;">Install BookShop App</div>' +
-                '<div style="font-size:12px;opacity:0.8;">Get instant access & offline reading</div>';
+            const title = document.createElement('h2');
+            title.textContent = 'Install Our App';
+            Object.assign(title.style, {
+                fontSize: '22px',
+                fontWeight: '700',
+                color: '#1f2937',
+                marginBottom: '8px'
+            });
 
-            const buttons = document.createElement('div');
-            buttons.style.display = 'flex';
-            buttons.style.gap = '8px';
+            const desc = document.createElement('p');
+            desc.textContent = 'Get the best experience with our app — quick access, offline reading, and instant notifications.';
+            Object.assign(desc.style, {
+                fontSize: '14px',
+                color: '#6b7280',
+                lineHeight: '1.6',
+                marginBottom: '28px'
+            });
 
             const installBtn = document.createElement('button');
             installBtn.textContent = isIOS ? 'How to Install' : 'Install Now';
             Object.assign(installBtn.style, {
-                background: '#fff',
-                color: '#1f2937',
+                background: 'linear-gradient(135deg, #4f46e5, #7c3aed)',
+                color: '#fff',
                 border: 'none',
-                padding: '8px 16px',
-                borderRadius: '8px',
+                padding: '14px 28px',
+                borderRadius: '14px',
                 fontWeight: '600',
                 cursor: 'pointer',
-                fontSize: '13px'
+                fontSize: '15px',
+                width: '100%',
+                marginBottom: '10px',
+                boxShadow: '0 4px 14px rgba(79, 70, 229, 0.4)'
             });
+
+            const iosBtn = document.createElement('button');
+            iosBtn.textContent = 'iOS: Share → Add to Home Screen';
+            Object.assign(iosBtn.style, {
+                background: '#f3f4f6',
+                color: '#374151',
+                border: 'none',
+                padding: '12px 18px',
+                borderRadius: '12px',
+                fontWeight: '500',
+                cursor: 'pointer',
+                fontSize: '13px',
+                width: '100%',
+                display: isIOS ? 'block' : 'none'
+            });
+
             installBtn.addEventListener('click', function() {
                 if (isIOS) {
-                    alert('To install:\n\n1. Tap the Share button in Safari\n2. Tap "Add to Home Screen"\n3. Tap "Add"');
+                    installBtn.style.display = 'none';
+                    iosBtn.style.display = 'block';
                 } else if (deferredPrompt) {
                     deferredPrompt.prompt();
                     deferredPrompt.userChoice.then(function(choiceResult) {
                         if (choiceResult.outcome === 'accepted') {
                             console.log('[PWA] User accepted install');
+                            localStorage.setItem(INSTALLED_KEY, '1');
+                            overlay.remove();
                         } else {
                             console.log('[PWA] User dismissed install');
                         }
                         deferredPrompt = null;
-                        banner.remove();
                     });
                 }
             });
 
-            const closeBtn = document.createElement('button');
-            closeBtn.innerHTML = '✕';
-            Object.assign(closeBtn.style, {
-                background: 'transparent',
-                border: 'none',
-                color: '#fff',
-                cursor: 'pointer',
-                fontSize: '18px',
-                opacity: '0.7',
-                padding: '4px 8px'
-            });
-            closeBtn.addEventListener('click', function() {
-                banner.remove();
-                localStorage.setItem(STORAGE_KEY, '1');
+            iosBtn.addEventListener('click', function() {
+                alert('To install:\n\n1. Tap the Share button (box with arrow) at the bottom\n2. Tap "Add to Home Screen"\n3. Tap "Add" in the top right');
             });
 
-            buttons.appendChild(installBtn);
-            buttons.appendChild(closeBtn);
-            banner.appendChild(icon);
-            banner.appendChild(text);
-            banner.appendChild(buttons);
-            document.body.appendChild(banner);
+            modal.appendChild(icon);
+            modal.appendChild(title);
+            modal.appendChild(desc);
+            modal.appendChild(installBtn);
+            modal.appendChild(iosBtn);
+            overlay.appendChild(modal);
+            overlay.addEventListener('click', function(e) {
+                if (e.target === overlay) {
+                    overlay.remove();
+                }
+            });
+            document.body.appendChild(overlay);
         }
+
+        window.addEventListener('appinstalled', function() {
+            deferredPrompt = null;
+            localStorage.setItem(INSTALLED_KEY, '1');
+            const overlay = document.getElementById('pwa-install-overlay');
+            if (overlay) overlay.remove();
+            console.log('[PWA] App installed successfully');
+        });
     })();
 </script>
