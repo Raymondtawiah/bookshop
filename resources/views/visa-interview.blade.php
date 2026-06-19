@@ -136,9 +136,11 @@
     }
 
     function scrollToBottom() {
-        requestAnimationFrame(function() {
-            messages.scrollTop = messages.scrollHeight;
-        });
+        if (messages) {
+            requestAnimationFrame(function() {
+                messages.scrollTop = messages.scrollHeight;
+            });
+        }
     }
 
     function updateProgress(step) {

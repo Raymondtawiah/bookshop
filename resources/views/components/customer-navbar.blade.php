@@ -137,7 +137,7 @@
         document.addEventListener('click', function(e) {
             const bell = document.getElementById('announcement-bell');
             const dropdown = document.getElementById('announcement-dropdown');
-            if (!bell.contains(e.target) && !dropdown.contains(e.target)) {
+            if (bell && dropdown && !bell.contains(e.target) && !dropdown.contains(e.target)) {
                 dropdown.classList.add('hidden');
             }
         });

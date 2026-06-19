@@ -11,13 +11,13 @@ use Illuminate\Support\Facades\Log;
 
 class PaystackWebhookController extends Controller
 {
-    protected string $secretKey;
+protected ?string $secretKey;
 
     protected OrderCompletionService $orderCompletion;
 
     public function __construct(OrderCompletionService $orderCompletion)
     {
-        $this->secretKey = config('paystack.secretKey');
+        $this->secretKey = config('paystack.secretKey') ?? '';
         $this->orderCompletion = $orderCompletion;
     }
 

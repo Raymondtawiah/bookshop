@@ -8,37 +8,31 @@ use Stripe\Stripe;
 
 class StripeService
 {
-    protected string $secretKey;
-
+    protected ?string $secretKey;
     protected string $publishableKey;
-
-    protected string $currency; // Will be set to 'usd'
-
-    protected string $webhookSecret;
+    protected string $currency;
+    protected ?string $webhookSecret;
 
     public function __construct()
     {
-        $this->secretKey = config('stripe.secretKey');
-        $this->publishableKey = config('stripe.publishableKey');
-        // Stripe MUST use a supported currency. Force USD.
-        $this->currency = 'usd';
-        $this->webhookSecret = config('stripe.webhookSecret');
+        // Safe fallback values to prevent Laravel crash
+        $this->secretKey = config('stripe.secretKey') ?? '';
+        $this->publishableKey = config('stripe.publishableKey') ?? '';
+        $this->webhookSecret = config('stripe.webhookSecret') ?? '';
 
-        Stripe::setApiKey($this->secretKey);
+        // Stripe MUST use a supported currency
+        $this->currency = 'usd';
+
+        // Only set API key if it exists (prevents crash)
+        if (!empty($this->secretKey)) {
+            Stripe::setApiKey($this->secretKey);
+        } else {
+            Log::warning('Stripe secret key is missing in config.');
+        }
     }
 
     /**
      * Create a Stripe Checkout Session
-     *
-     * @param  string  $email  Customer email
-     * @param  float  $amountUsd  Amount in USD (will be converted to cents)
-     * @param  string  $reference  Unique order reference
-     * @param  string  $successUrl  URL to redirect after successful payment
-     * @param  string  $cancelUrl  URL to redirect if payment is cancelled
-     * @param  array  $metadata  Additional metadata to store with the session
-     * @param  string|null  $productName  Product name (defaults to 'Book Purchase')
-     * @param  string|null  $productDescription  Product description (defaults to book description)
-     * @return array Returns session ID and checkout URL
      */
     public function createCheckoutSession(
         string $email,
@@ -51,16 +45,16 @@ class StripeService
         ?string $productDescription = null
     ): array {
         try {
-            // Convert USD to cents for Stripe (smallest currency unit)
+            if (empty($this->secretKey)) {
+                return [
+                    'success' => false,
+                    'message' => 'Stripe secret key is missing',
+                ];
+            }
+
             $amountCents = (int) round($amountUsd * 100);
 
-            // Ensure minimum amount for Stripe (50 cents / $0.50 USD)
             if ($amountCents < 50) {
-                Log::warning('Stripe amount too low, adjusting to minimum', [
-                    'original_amount_usd' => $amountUsd,
-                    'original_amount_cents' => $amountCents,
-                    'adjusted_amount_cents' => 50,
-                ]);
                 $amountCents = 50;
                 $amountUsd = 0.50;
             }
@@ -69,10 +63,10 @@ class StripeService
                 'payment_method_types' => ['card'],
                 'line_items' => [[
                     'price_data' => [
-                        'currency' => $this->currency, // 'usd'
+                        'currency' => $this->currency,
                         'product_data' => [
                             'name' => $productName ?? 'Book Purchase',
-                            'description' => $productDescription ?? 'Purchase of digital books from Bookshop',
+                            'description' => $productDescription ?? 'Purchase from Bookshop',
                         ],
                         'unit_amount' => $amountCents,
                     ],
@@ -81,7 +75,7 @@ class StripeService
                 'mode' => 'payment',
                 'customer_email' => $email,
                 'client_reference_id' => $reference,
-                'success_url' => $successUrl.'?session_id={CHECKOUT_SESSION_ID}',
+                'success_url' => $successUrl . '?session_id={CHECKOUT_SESSION_ID}',
                 'cancel_url' => $cancelUrl,
                 'metadata' => array_merge([
                     'currency' => $this->currency,
@@ -90,14 +84,6 @@ class StripeService
 
             $session = CheckoutSession::create($sessionData);
 
-            Log::info('Stripe Checkout Session created', [
-                'session_id' => $session->id,
-                'reference' => $reference,
-                'amount_usd' => $amountUsd,
-                'amount_cents' => $amountCents,
-                'currency' => $this->currency,
-            ]);
-
             return [
                 'success' => true,
                 'session_id' => $session->id,
@@ -105,10 +91,8 @@ class StripeService
                 'reference' => $reference,
             ];
         } catch (\Exception $e) {
-            Log::error('Stripe Checkout Session creation failed', [
+            Log::error('Stripe session creation failed', [
                 'error' => $e->getMessage(),
-                'amount_usd' => $amountUsd,
-                'reference' => $reference,
             ]);
 
             return [
@@ -119,7 +103,7 @@ class StripeService
     }
 
     /**
-     * Retrieve a Checkout Session by ID
+     * Retrieve session
      */
     public function retrieveSession(string $sessionId): ?CheckoutSession
     {
@@ -127,7 +111,6 @@ class StripeService
             return CheckoutSession::retrieve($sessionId);
         } catch (\Exception $e) {
             Log::error('Stripe session retrieval failed', [
-                'session_id' => $sessionId,
                 'error' => $e->getMessage(),
             ]);
 
@@ -136,11 +119,7 @@ class StripeService
     }
 
     /**
-     * Verify a payment by session ID
-     * Checks if the payment was successful
-     *
-     * @param  string  $sessionId  Stripe Checkout Session ID
-     * @return array Verification result with amount, currency, status
+     * Verify payment
      */
     public function verifyPayment(string $sessionId): array
     {
@@ -150,7 +129,7 @@ class StripeService
             if ($session->payment_status === 'paid') {
                 return [
                     'success' => true,
-                    'amount' => $session->amount_total / 100, // Convert cents to USD (Stripe's currency)
+                    'amount' => $session->amount_total / 100,
                     'currency' => $session->currency,
                     'status' => $session->payment_status,
                     'session_id' => $session->id,
@@ -165,8 +144,7 @@ class StripeService
                 'status' => $session->payment_status,
             ];
         } catch (\Exception $e) {
-            Log::error('Stripe payment verification failed', [
-                'session_id' => $sessionId,
+            Log::error('Stripe verification failed', [
                 'error' => $e->getMessage(),
             ]);
 
@@ -178,10 +156,10 @@ class StripeService
     }
 
     /**
-     * Get the publishable key for frontend use
+     * Get publishable key
      */
     public function getPublishableKey(): string
     {
-        return $this->publishableKey;
+        return $this->publishableKey ?? '';
     }
 }
