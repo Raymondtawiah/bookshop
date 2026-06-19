@@ -103,6 +103,13 @@ Route::post('discount/apply', function (Request $request) {
 Route::get('visa-training', [VisaTrainingController::class, 'index'])->name('visa-training');
 Route::post('visa-training/chat', [VisaTrainingController::class, 'chat'])->name('visa-training.chat');
 Route::get('visa-training/reset', [VisaTrainingController::class, 'reset'])->name('visa-training.reset');
+Route::get('visa-interview/plans', function () {
+    return view('visa-interview-plans', ['title' => 'Visa Interview Plans']);
+})->name('visa-interview.plans');
+
+Route::middleware(['auth', 'verified'])->group(function () {
+    Route::post('visa-training/video-plan', [VisaTrainingController::class, 'choosePlan'])->name('visa-training.choose-plan');
+});
 
 Route::get('search', [HomeController::class, 'search'])->name('search');
 
@@ -166,7 +173,42 @@ Route::get('visa-training', [VisaTrainingController::class, 'index'])->name('vis
 Route::post('visa-training/chat', [VisaTrainingController::class, 'chat'])->name('visa-training.chat');
 Route::get('visa-training/reset', [VisaTrainingController::class, 'reset'])->name('visa-training.reset');
 
-// Google OAuth - needs web middleware for session
+Route::post('/visa/start', function () {
+    $country = request('country');
+    $type = request('type');
+
+    $prompt = "You are a U.S. visa interview officer. Ask ONE realistic visa interview question based on the applicant's {$type} visa to {$country}.
+
+For Student visa, use these topics in order:
+1. Study purpose: Why do you want to study in the United States? Why did you choose this university? Why this major? How does this relate to your career? Why not study in your home country?
+2. University choice: How many universities did you apply to? Why this specific university? Did you get admission elsewhere?
+3. Financial: Who is sponsoring? What does your sponsor do? How will you pay? Can you show proof of funds? Do you have a scholarship?
+4. Family: What do your parents do? Do you have siblings? Who do you live with?
+5. Academic: What did you study previously? What are your grades? Have you studied abroad before?
+6. Future plans: What are your plans after graduation? Will you return home? Do you plan to work in the U.S.?
+7. Immigration intent: Have you been refused a visa before? Do you have relatives in the U.S.? Why should we believe you will return?
+
+For Tourist/Business visa, ask about: purpose of visit, travel details, family/friends in the U.S., employment, finances, home country ties, travel history, and return plans.
+
+Pick the next logical topic based on the conversation flow. Return ONLY the question.";
+
+    $response = Http::withToken(env('GROQ_API_KEY'))
+        ->post('https://api.groq.com/openai/v1/chat/completions', [
+            'model' => 'llama-3.3-70b-versatile',
+            'messages' => [
+                ['role' => 'user', 'content' => $prompt]
+            ]
+        ]);
+
+    return $response->json();
+})->middleware(['web'])->name('visa.start');
+
+Route::post('/visa/chat', [VisaTrainingController::class, 'chat'])->name('visa.chat');
+
+Route::get('/visa', [VisaTrainingController::class, 'index'])->name('visa-interview');
+Route::get('/visa/reset', [VisaTrainingController::class, 'reset'])->name('visa-interview.reset');
+
+// Google OAuth
 Route::middleware(['web'])->group(function () {
     Route::get('login/google', [GoogleController::class, 'redirectToGoogle'])->name('login.google');
     Route::get('login/google/callback', [GoogleController::class, 'handleGoogleCallback'])->name('login.google.callback');
