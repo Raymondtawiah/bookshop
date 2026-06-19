@@ -27,6 +27,9 @@ class User extends Authenticatable implements MustVerifyEmail
         'google_id',
         'avatar',
         'discount_code',
+        'phone_number',
+        'role',
+        'is_staff',
     ];
 
     /**
@@ -50,6 +53,7 @@ class User extends Authenticatable implements MustVerifyEmail
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'is_admin' => 'boolean',
+            'is_staff' => 'boolean',
         ];
     }
 
@@ -84,6 +88,11 @@ class User extends Authenticatable implements MustVerifyEmail
     public function deviceTokens()
     {
         return $this->hasMany(DeviceToken::class);
+    }
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class);
     }
 
     /**
