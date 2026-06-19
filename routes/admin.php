@@ -1,12 +1,14 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
+use App\Http\Controllers\Admin\AttendanceController;
 use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Admin\CoachingController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\FreeBookLeadsController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\OrderController;
+use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\WebinarController;
 use Illuminate\Support\Facades\Route;
 
@@ -97,4 +99,17 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::post('webinars/{webinar}/toggle-visibility', [WebinarController::class, 'toggleVisibility'])->name('webinars.toggleVisibility')->where('webinar', '[0-9]+');
     Route::post('webinars/toggle-registration-visibility', [WebinarController::class, 'toggleRegistrationVisibility'])->name('webinars.toggleRegistrationVisibility');
     Route::post('webinars/toggle-registration-form', [WebinarController::class, 'toggleRegistrationForm'])->name('webinars.toggleRegistrationForm');
+
+    // Staff Management
+    Route::get('staff', [StaffController::class, 'index'])->name('staff.index');
+    Route::get('staff/create', [StaffController::class, 'create'])->name('staff.create');
+    Route::post('staff', [StaffController::class, 'store'])->name('staff.store');
+
+    // Attendance (for staff and admin)
+    Route::middleware(['auth:web', 'admin'])->group(function () {
+        Route::get('attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+        Route::post('attendance/request', [AttendanceController::class, 'requestAttendance'])->name('attendance.request');
+        Route::post('attendance/{attendance}/approve', [AttendanceController::class, 'approve'])->name('attendance.approve');
+        Route::post('attendance/{attendance}/reject', [AttendanceController::class, 'reject'])->name('attendance.reject');
+    });
 });

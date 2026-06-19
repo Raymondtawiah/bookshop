@@ -24,8 +24,8 @@ class AdminMiddleware
             'is_admin_type' => gettype($user?->is_admin),
         ]);
 
-        // Check if user is authenticated via web guard and has is_admin flag
-        if (! $user || ! $user->is_admin) {
+        // Check if user is authenticated via web guard and has is_admin flag OR is staff
+        if (! $user || (! $user->is_admin && ! $user->is_staff)) {
             abort(403, 'Access denied. Admin privileges required.');
         }
 
