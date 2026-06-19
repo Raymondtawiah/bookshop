@@ -485,6 +485,7 @@
                                 playsinline
                                 class="w-full h-72 md:h-96 object-cover rounded-2xl"
                                 poster="{{ asset('about-us.jpg') }}"
+                                onerror="this.closest('div').innerHTML='<div class=\'flex items-center justify-center h-72 md:h-96 bg-gray-100 rounded-2xl\'><p class=\'text-gray-500\'>Video coming soon</p></div>'"
                             >
                                 <source src="{{ asset('For_website.mp4') }}" type="video/mp4">
                                 Your browser does not support the video tag.

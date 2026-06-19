@@ -188,7 +188,9 @@
     }
 
     function scrollToBottom() {
-        requestAnimationFrame(function() { messages.scrollTop = messages.scrollHeight; });
+        if (messages) {
+            requestAnimationFrame(function() { messages.scrollTop = messages.scrollHeight; });
+        }
     }
 
     function appendMessage(role, content, time) {
@@ -372,8 +374,10 @@
         var slot = document.getElementById('visa-options-slot');
         if (!slot) return;
         var hasUserMsg = false;
-        for (var i = 0; i < messages.children.length; i++) {
-            if (messages.children[i].classList.contains('user')) { hasUserMsg = true; break; }
+        if (messages) {
+            for (var i = 0; i < messages.children.length; i++) {
+                if (messages.children[i].classList.contains('user')) { hasUserMsg = true; break; }
+            }
         }
         if (hasUserMsg) return;
         visaOptionsShown = true;
