@@ -96,5 +96,31 @@
             menuIcon.classList.toggle('hidden');
             closeIcon.classList.toggle('hidden');
         }
+
+        (function() {
+            const logoutUrl = '{{ route('admin.logout') }}';
+            const inactivityTimeout = 60;
+
+            let timer = setTimeout(autoLogout, inactivityTimeout * 1000);
+
+            function autoLogout() {
+                const form = document.createElement('form');
+                form.method = 'POST';
+                form.action = logoutUrl;
+                form.innerHTML = '<input type="hidden" name="_token" value="{{ csrf_token() }}">';
+                document.body.appendChild(form);
+                form.submit();
+            }
+
+            function resetTimer() {
+                clearTimeout(timer);
+                timer = setTimeout(autoLogout, inactivityTimeout * 1000);
+            }
+
+            const events = ['mousemove', 'mousedown', 'keydown', 'scroll', 'click', 'touchstart'];
+            events.forEach(function(event) {
+                document.addEventListener(event, resetTimer, { passive: true });
+            });
+        })();
     </script>
 </header>
