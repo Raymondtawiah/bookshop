@@ -34,6 +34,34 @@
       "parentBranch": "main",
       "createdAt": "2026-06-14T05:38:25.581Z",
       "remote": "origin"
+    },
+    "wt-1781903429525-1": {
+      "branch": "polar-turtle",
+      "path": "c:\\Users\\Admin\\Herd\\bookshop\\.kilo\\worktrees\\polar-turtle",
+      "parentBranch": "main",
+      "createdAt": "2026-06-19T11:36:45.387Z",
+      "remote": "origin"
+    },
+    "wt-1781903461992-2": {
+      "branch": "pushy-philodendron",
+      "path": "c:\\Users\\Admin\\Herd\\bookshop\\.kilo\\worktrees\\pushy-philodendron",
+      "parentBranch": "main",
+      "createdAt": "2026-06-19T21:11:01.992Z",
+      "remote": "origin"
+    },
+    "wt-1781904208949-3": {
+      "branch": "clever-layer",
+      "path": "c:\\Users\\Admin\\Herd\\bookshop\\.kilo\\worktrees\\clever-layer",
+      "parentBranch": "main",
+      "createdAt": "2026-06-19T21:23:28.949Z",
+      "remote": "origin"
+    },
+    "wt-1781904285437-4": {
+      "branch": "cotton-platypus",
+      "path": "c:\\Users\\Admin\\Herd\\bookshop\\.kilo\\worktrees\\cotton-platypus",
+      "parentBranch": "main",
+      "createdAt": "2026-06-19T21:24:45.437Z",
+      "remote": "origin"
     }
   },
   "sessions": {
@@ -56,6 +84,22 @@
     "ses_13b5c8c42ffeDXIfPZOfzinb6O": {
       "worktreeId": "wt-1781415505581-1",
       "createdAt": "2026-06-14T05:38:26.890Z"
+    },
+    "ses_120544a59ffeSyZS5UnwOBfJBZ": {
+      "worktreeId": "wt-1781903429525-1",
+      "createdAt": "2026-06-19T21:10:29.527Z"
+    },
+    "ses_11e46be0effeqHvmh0inSMJyAI": {
+      "worktreeId": "wt-1781903461992-2",
+      "createdAt": "2026-06-19T21:11:15.293Z"
+    },
+    "ses_11e3b2e4effetYz77IUbMmcEAG": {
+      "worktreeId": "wt-1781904208949-3",
+      "createdAt": "2026-06-19T21:24:02.907Z"
+    },
+    "ses_11e39b82bffeS6JXXaEEGYIB4A": {
+      "worktreeId": "wt-1781904285437-4",
+      "createdAt": "2026-06-19T21:25:33.219Z"
     }
   },
   "tabOrder": {
@@ -68,6 +112,10 @@
     "wt-1776005931752-2",
     "wt-1776094409517-1",
     "wt-1776409096100-1",
-    "wt-1781415505581-1"
+    "wt-1781415505581-1",
+    "wt-1781903429525-1",
+    "wt-1781903461992-2",
+    "wt-1781904208949-3",
+    "wt-1781904285437-4"
   ]
 }
