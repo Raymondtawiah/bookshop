@@ -92,36 +92,39 @@ class VisaTrainingController extends Controller
         $visaType = Session::get("{$sessionKey}_visa_type");
         $stage = Session::get("{$sessionKey}_stage", 'select_type');
 
+        // Stage handling: selection, greeting, passport, questions
         if (! $visaType) {
-            $visaType = $this->detectVisaType($userMessage);
+            // user is expected to choose a visa type
+            $detected = $this->detectVisaType($userMessage);
+            $history[] = ['role' => 'user', 'content' => $userMessage];
 
-            if (! $visaType) {
-                $reply = 'I can only train F1 Student or B1/B2 Business/Tourist interviews. Please enter the correct visa type you want to practice.';
+            if (! $detected) {
+                $reply = 'Please choose either "F1 Student" or "B1/B2 Business/Tourist" to begin the correct interview.';
                 $history[] = ['role' => 'officer', 'content' => $reply];
                 Session::put("{$sessionKey}_history", $history);
-                Session::put("{$sessionKey}_step", 2);
                 Session::put("{$sessionKey}_stage", 'select_type');
 
                 return response()->json([
                     'success' => true,
                     'reply' => $reply,
-                    'step' => 2,
+                    'step' => Session::get("{$sessionKey}_step", 1),
                     'totalSteps' => $this->maxSteps,
                     'completed' => false,
                 ]);
             }
 
+            $visaType = $detected;
             $reply = 'Great. I will train you for the '.($visaType === 'f1' ? 'F1 Student Visa' : 'B1/B2 Business/Tourist Visa').' interview. TIP: Greeting shows politeness and it calms your nerves. Please greet the officer to begin.';
             $history[] = ['role' => 'officer', 'content' => $reply];
             Session::put("{$sessionKey}_history", $history);
             Session::put("{$sessionKey}_visa_type", $visaType);
             Session::put("{$sessionKey}_stage", 'awaiting_greeting');
-            Session::put("{$sessionKey}_step", 2);
+            Session::put("{$sessionKey}_step", Session::get("{$sessionKey}_step", 1) + 1);
 
             return response()->json([
                 'success' => true,
                 'reply' => $reply,
-                'step' => 2,
+                'step' => Session::get("{$sessionKey}_step"),
                 'totalSteps' => $this->maxSteps,
                 'completed' => false,
             ]);
@@ -130,10 +133,11 @@ class VisaTrainingController extends Controller
         $step = Session::get("{$sessionKey}_step", 0);
         $history = Session::get("{$sessionKey}_history", []);
 
+        // Greeting stage
         if ($stage === 'awaiting_greeting') {
+            $history[] = ['role' => 'user', 'content' => $userMessage];
             if (! $this->isGreetingMessage($userMessage)) {
                 $reply = 'Please greet the officer first. TIP: Greeting shows politeness and it calms your nerves.';
-                $history[] = ['role' => 'user', 'content' => $userMessage];
                 $history[] = ['role' => 'officer', 'content' => $reply];
                 Session::put("{$sessionKey}_history", $history);
                 Session::put("{$sessionKey}_step", $step + 1);
@@ -147,7 +151,6 @@ class VisaTrainingController extends Controller
                 ]);
             }
 
-            $history[] = ['role' => 'user', 'content' => $userMessage];
             $reply = 'Hello, nice to meet you. Please pass me your passport'.($visaType === 'f1' ? ' and your I-20.' : '.').' TIP: Say "Here you go" or "This is it" to show confidence.';
             $history[] = ['role' => 'officer', 'content' => $reply];
             Session::put("{$sessionKey}_history", $history);
@@ -163,9 +166,19 @@ class VisaTrainingController extends Controller
             ]);
         }
 
+        // Passport stage
         if ($stage === 'awaiting_passport') {
             $history[] = ['role' => 'user', 'content' => $userMessage];
-            $reply = $this->visaInterviewService->getNextQuestion($history, $visaType);
+
+            // enforce a confidence phrase
+            $confidenceReply = '';
+            if (! $this->hasConfidencePhrase($userMessage)) {
+                $confidenceReply = 'A confident handover helps. Say "Here you go" or "This is it" to show certainty. ';
+            }
+
+            // move to questions and fetch next question
+            $next = $this->visaInterviewService->getNextTopicAndKeywords($history, $visaType);
+            $reply = $confidenceReply . $this->visaInterviewService->getNextQuestion($history, $visaType);
             $history[] = ['role' => 'officer', 'content' => $reply];
             Session::put("{$sessionKey}_history", $history);
             Session::put("{$sessionKey}_stage", 'questions');
@@ -180,6 +193,47 @@ class VisaTrainingController extends Controller
             ]);
         }
 
+        // questions stage: perform profanity and relevance checks before advancing
+        $next = $this->visaInterviewService->getNextTopicAndKeywords($history, $visaType);
+        $expectedKeywords = $next['keywords'] ?? '';
+
+        // check profanity
+        foreach ($this->abusiveWords as $bad) {
+            if (stripos($userMessage, $bad) !== false) {
+                $reply = 'Please avoid abusive language. Let us continue the interview professionally.';
+                $history[] = ['role' => 'user', 'content' => $userMessage];
+                $history[] = ['role' => 'officer', 'content' => $reply];
+                Session::put("{$sessionKey}_history", $history);
+                return response()->json(['success' => true, 'reply' => $reply, 'step' => $step, 'totalSteps' => $this->maxSteps, 'completed' => false]);
+            }
+        }
+
+        // simple relevance check: must contain at least one expected keyword or be reasonably long
+        $keywordsFound = false;
+        if (! empty($expectedKeywords)) {
+            $parts = array_map('trim', explode(',', $expectedKeywords));
+            foreach ($parts as $k) {
+                if ($k === '' || strlen($k) < 2) continue;
+                $pattern = '/\b' . preg_quote($k, '/') . '\b/i';
+                if (preg_match($pattern, $userMessage) === 1) { $keywordsFound = true; break; }
+            }
+        }
+
+        $wordCount = str_word_count($userMessage);
+        if (! $keywordsFound && $wordCount < 3) {
+            $prevQuestion = '';
+            // find last officer question
+            for ($i = count($history) - 1; $i >= 0; $i--) {
+                if (($history[$i]['role'] ?? '') === 'officer') { $prevQuestion = $history[$i]['content']; break; }
+            }
+            $reply = 'Your answer is not related or too short. Please answer the previous question:' . ($prevQuestion ? ' "' . $prevQuestion . '"' : '');
+            $history[] = ['role' => 'user', 'content' => $userMessage];
+            $history[] = ['role' => 'officer', 'content' => $reply];
+            Session::put("{$sessionKey}_history", $history);
+            return response()->json(['success' => true, 'reply' => $reply, 'step' => $step, 'totalSteps' => $this->maxSteps, 'completed' => false]);
+        }
+
+        // otherwise proceed normally
         $history[] = ['role' => 'user', 'content' => $userMessage];
 
         $stepNow = max(0, (int) Session::get("{$sessionKey}_step", 0));
@@ -298,7 +352,21 @@ class VisaTrainingController extends Controller
     private function isGreetingMessage(string $text): bool
     {
         $lower = strtolower($text);
+        $trim = trim($lower);
+        if (strlen($trim) < 2) return false;
 
-        return preg_match('/\b(hi|hello|hey|good morning|good afternoon|good evening|greetings)\b/', $lower) === 1;
+        return preg_match('/\b(hi|hello|hey|good morning|good afternoon|good evening|greetings)\b/i', $lower) === 1;
+    }
+
+    private function hasConfidencePhrase(string $text): bool
+    {
+        $lower = strtolower($text);
+        $phrases = ['here you go', 'this is it', 'here it is', 'here you are'];
+
+        foreach ($phrases as $p) {
+            if (strlen(trim($p)) >= 2 && stripos($lower, $p) !== false) return true;
+        }
+
+        return false;
     }
 }
