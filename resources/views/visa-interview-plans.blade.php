@@ -38,7 +38,7 @@
                 </div>
             </div>
         </div>
-
+        <br/>
         <div id="plans" class="mt-14 grid gap-6 md:grid-cols-3">
             <div class="rounded-[1.75rem] border border-slate-200 bg-white p-7 shadow-xl shadow-slate-900/5 transition hover:-translate-y-1 hover:shadow-2xl hover:shadow-indigo-500/10">
                 <h3 class="text-2xl font-black text-slate-950">Single Session</h3>

@@ -34,6 +34,7 @@ class VisaInterviewService
     public function __construct()
     {
         $this->apiKey = config('services.gemini.api_key') ?? env('GEMINI_API_KEY', '');
+        $this->groqKey = config('services.groq.api_key') ?? env('GROQ_API_KEY', '');
     }
 
     public function getNextQuestion(array $conversationHistory, ?string $visaType = null): string
@@ -59,7 +60,13 @@ Format examples:
 TIP: Your sponsor's income is unclear. A stronger answer would state the exact amount and source. What is your sponsor's annual income?
 Good. What is your passport number and expiry date?";
 
-        return $this->callGemini($systemPrompt, $conversationHistory, __FUNCTION__);
+        $reply = $this->callGemini($systemPrompt, $conversationHistory, __FUNCTION__);
+
+        if (! is_string($reply) || '' === trim($reply)) {
+            $reply = $this->offlineReply($topicList, $conversationHistory);
+        }
+
+        return $reply;
     }
 
     public function getEvaluation(array $conversationHistory, ?string $visaType = null): string
@@ -104,13 +111,69 @@ Score guidelines:
 
 Do not include any additional text before or after the evaluation block.";
 
-        $response = $this->callGemini($systemPrompt, $conversationHistory);
+        $reply = $this->callGemini($systemPrompt, $conversationHistory);
 
-        if (stripos($response, 'EVALUATION BLOCK:') === false) {
-            $response = "EVALUATION BLOCK:\n" . $response;
+        if (! is_string($reply) || '' === trim($reply)) {
+            $reply = $this->offlineEvaluation($visaType, $conversationHistory);
         }
 
-        return $response;
+        if (! is_string($reply) || stripos($reply, 'EVALUATION BLOCK:') === false) {
+            $reply = "EVALUATION BLOCK:\n" . ($reply ?: '');
+        }
+
+        return $reply;
+    }
+
+    private function offlineReply(string $topicList, array $conversationHistory): string
+    {
+        $count = count(array_filter($conversationHistory, fn($m) => ($m['role'] ?? '') === 'user'));
+
+        if ($count >= 10) {
+            return $this->offlineEvaluation($this->detectVisaType($conversationHistory), $conversationHistory);
+        }
+
+        $topics = explode(', ', $topicList);
+        $idx = min($count, max(0, count($topics) - 1));
+
+        $prompts = [
+            'purpose_of_visit' => 'What is the main purpose of your trip to the United States?',
+            'travel_details' => 'What are your specific travel dates and itinerary?',
+            'family_friends_us' => 'Do you have family or friends in the United States? If so, how are they related and where do they live?',
+            'employment' => 'What is your current employment situation? Describe your role and income stability.',
+            'finances' => 'How will you fund this trip? Who is paying and show proof of sufficient funds?',
+            'home_country_ties' => 'What ties do you have to your home country that will ensure your return?',
+            'travel_history' => 'Have you travelled internationally before? Mention previous visas if any.',
+            'stress_questions' => 'What would you do if your visa is refused?',
+            'school_selection' => 'Why did you choose this specific university and program?',
+            'academic_program' => 'What will you study and how does it relate to your career goals?',
+            'academic_background' => 'Tell me about your previous academic qualifications and grades.',
+            'career_plans' => 'What are your career plans after completing your studies?',
+            'university_knowledge' => 'Describe the university facilities, rankings, or key faculty that attracted you.',
+        ];
+
+        $question = $prompts[$topics[$idx]] ?? 'Tell me more about your background.';
+
+        $line = ($count % 2 === 0) ? 'TIP: Keep answers specific and concise.' : 'Good.';
+
+        return trim($line . ' ' . $question);
+    }
+
+    private function offlineEvaluation(string $visaType, array $conversationHistory): string
+    {
+        $answered = count(array_filter($conversationHistory, fn($m) => ($m['role'] ?? '') === 'user'));
+
+        $decision = $answered >= 7 ? 'Approved' : 'Refused';
+        $score = max(55, min(92, 72 + ($answered * 3) + random_int(-4, 4)));
+
+        $decisionLabel = $decision === 'Approved' ? 'Approved' : 'Refused';
+
+        return "EVALUATION BLOCK:
+Decision: {$decisionLabel}
+Score: {$score}
+Risk Level: " . ($score >= 80 ? 'Low' : 'Medium') . "
+Strengths: " . ($decision === 'Approved' ? 'Clear answers, strong home ties, consistent story' : 'Genuine travel purpose demonstrated') . "
+Weaknesses: Limited detail in financial planning, accommodation plan could be stronger
+Remarks: Offline assessment based on {$answered} user responses for {$visaType}. This is not a live AI evaluation. Request live evaluation after restoring internet or Gemini API access.";
     }
 
     private function callGemini(string $systemPrompt, array $conversationHistory, string $functionName = 'unknown'): string
@@ -118,7 +181,7 @@ Do not include any additional text before or after the evaluation block.";
         if (empty($this->apiKey)) {
             Log::warning('Gemini API key missing', ['function' => $functionName]);
 
-            return $this->getFallbackResponse();
+            return '';
         }
 
         $contents = [];
@@ -131,8 +194,8 @@ Do not include any additional text before or after the evaluation block.";
             ];
         }
 
-        $baseUrl = config('services.gemini.base_url', 'https://generativelanguage.googleapis.com/v1beta');
-        $model = config('services.gemini.model', 'gemini-2.0-flash');
+        $baseUrl = config('services.gemini.base_url', 'https://generativelanguage.googleapis.com/v1');
+        $model = config('services.gemini.model', 'gemini-1.5-flash');
 
         try {
             $response = Http::timeout(15)->post("{$baseUrl}/models/{$model}:generateContent?key={$this->apiKey}", [
@@ -172,7 +235,7 @@ Do not include any additional text before or after the evaluation block.";
             ]);
         }
 
-        return $this->getFallbackResponse();
+        return '';
     }
 
     protected function getFallbackResponse(): string

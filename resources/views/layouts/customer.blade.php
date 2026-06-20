@@ -7,10 +7,7 @@
         <x-flash-message />
         <x-customer-navbar />
 
-        <!-- Main Content -->
-        <div class="max-w-7xl mx-auto px-4 md:px-6 pt-24 pb-12">
             @yield('content')
-        </div>
 
         <x-customer-footer />
 
