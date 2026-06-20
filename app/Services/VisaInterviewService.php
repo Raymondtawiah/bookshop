@@ -47,6 +47,27 @@ class VisaInterviewService
         'university_knowledge' => 'facilities, ranking, program, professors, campus, support',
     ];
 
+    /**
+     * Return the next topic and expected keywords based on conversation history and visa type.
+     *
+     * @param array $conversationHistory
+     * @param string|null $visaType
+     * @return array ['topic' => string, 'keywords' => string]
+     */
+    public function getNextTopicAndKeywords(array $conversationHistory, ?string $visaType = null): array
+    {
+        $visaType = $visaType ?? $this->detectVisaType($conversationHistory);
+        $topics = $visaType === 'f1' ? $this->f1Topics : $this->b1b2Topics;
+
+        $userCount = count(array_filter($conversationHistory, fn($m) => ($m['role'] ?? '') === 'user'));
+        $idx = min($userCount, max(0, count($topics) - 1));
+        $topic = $topics[$idx] ?? $topics[0];
+
+        $keywords = $this->topicKeywords[$topic] ?? '';
+
+        return ['topic' => $topic, 'keywords' => $keywords];
+    }
+
     public function __construct()
     {
         $this->apiKey = config('services.gemini.api_key') ?? env('GEMINI_API_KEY', '');
