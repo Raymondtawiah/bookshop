@@ -44,7 +44,7 @@ return [
     'gemini' => [
         'api_key' => env('GEMINI_API_KEY'),
         'base_url' => 'https://generativelanguage.googleapis.com/v1beta',
-        'model' => 'gemini-1.5-flash',
+        'model' => 'gemini-2.5-flash',
     ],
 
     'groq' => [
