@@ -15,6 +15,13 @@ class VisaTrainingController extends Controller
 
     protected $maxSteps = 12;
 
+    private array $abusiveWords = [
+        'fuck', 'fucking', 'shit', 'damn', 'bitch', 'asshole', 'bastard',
+        'crap', 'dick', 'piss', 'slut', 'whore', 'idiot', 'stupid', 'moron',
+        'dumb', 'hate', 'kill', 'die', 'nigger', 'nigga', 'fag', ' retard',
+        'sap', 'yoo', 'sia', 'apuu', 'kwasia',
+    ];
+
     public function __construct(VisaInterviewService $visaInterviewService)
     {
         $this->visaInterviewService = $visaInterviewService;

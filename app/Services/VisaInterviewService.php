@@ -128,7 +128,7 @@ Do not include any additional text before or after the evaluation block.";
     {
         $count = count(array_filter($conversationHistory, fn($m) => ($m['role'] ?? '') === 'user'));
 
-        if ($count >= 10) {
+        if ($count >= 12) {
             return $this->offlineEvaluation($this->detectVisaType($conversationHistory), $conversationHistory);
         }
 
@@ -173,7 +173,7 @@ Score: {$score}
 Risk Level: " . ($score >= 80 ? 'Low' : 'Medium') . "
 Strengths: " . ($decision === 'Approved' ? 'Clear answers, strong home ties, consistent story' : 'Genuine travel purpose demonstrated') . "
 Weaknesses: Limited detail in financial planning, accommodation plan could be stronger
-Remarks: Offline assessment based on {$answered} user responses for {$visaType}. This is not a live AI evaluation. Request live evaluation after restoring internet or Gemini API access.";
+Remarks: Offline assessment based on {$answered} user responses for {$visaType}. This is a simulated evaluation. Connect a live AI model for a real-time assessment.";
     }
 
     private function callGemini(string $systemPrompt, array $conversationHistory, string $functionName = 'unknown'): string
