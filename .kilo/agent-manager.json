@@ -62,6 +62,13 @@
       "parentBranch": "main",
       "createdAt": "2026-06-19T21:24:45.437Z",
       "remote": "origin"
+    },
+    "wt-1781965365866-1": {
+      "branch": "bead-potato",
+      "path": "c:\\Users\\enter\\Herd\\bookshop\\.kilo\\worktrees\\bead-potato",
+      "parentBranch": "dev",
+      "createdAt": "2026-06-20T14:22:45.866Z",
+      "remote": "origin"
     }
   },
   "sessions": {
@@ -100,6 +107,10 @@
     "ses_11e39b82bffeS6JXXaEEGYIB4A": {
       "worktreeId": "wt-1781904285437-4",
       "createdAt": "2026-06-19T21:25:33.219Z"
+    },
+    "ses_11a9653ebffew2QdAwJD0W5Twx": {
+      "worktreeId": "wt-1781965365866-1",
+      "createdAt": "2026-06-20T14:22:48.643Z"
     }
   },
   "tabOrder": {
@@ -116,6 +127,7 @@
     "wt-1781903429525-1",
     "wt-1781903461992-2",
     "wt-1781904208949-3",
-    "wt-1781904285437-4"
+    "wt-1781904285437-4",
+    "wt-1781965365866-1"
   ]
 }

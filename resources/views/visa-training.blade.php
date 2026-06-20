@@ -33,6 +33,11 @@
     .video-card { text-align: center; padding: 32px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; backdrop-filter: blur(8px); max-width: 380px; width: 100%; }
     .chat-input-bar { padding: 14px 24px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; gap: 10px; background: rgba(15,23,42,0.6); backdrop-filter: blur(12px); flex-shrink: 0; }
     .chat-input-bar input { flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 999px; padding: 10px 16px; color: white; outline: none; font-size: 0.88rem; font-family: inherit; }
+    .visa-options { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 18px; margin-bottom: 16px; display: grid; gap: 12px; }
+    .visa-instructions { color: #cbd5e1; font-size: 0.9rem; line-height: 1.5; }
+    .visa-option-row { display: flex; gap: 12px; flex-wrap: wrap; }
+    .visa-option-btn { flex: 1 1 160px; background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; border-radius: 14px; padding: 14px 18px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; }
+    .visa-option-btn:hover { transform: translateY(-1px); box-shadow: 0 14px 30px rgba(99,102,241,0.18); }
     .typing-indicator { display: flex; align-items: center; gap: 6px; padding: 6px 24px; color: #475569; font-size: 0.72rem; flex-shrink: 0; }
     .typing-dots { display: flex; gap: 3px; }
     .typing-dot { width: 5px; height: 5px; background: #475569; border-radius: 50%; }
@@ -136,6 +141,19 @@
 
         <div class="chat-scroll-area" id="chat-messages">
             <div id="visa-options-slot"></div>
+            @foreach ($conversationHistory as $entry)
+                <div class="msg {{ $entry['role'] === 'officer' ? 'officer' : 'user' }}">
+                    @if ($entry['role'] === 'officer')
+                        <div class="msg-avatar"><img src="{{ asset('officer-charles.png') }}" alt="Officer Charles" onerror="this.style.display='none'; this.parentNode.innerHTML='<span class=initials>VC</span>'"></div>
+                    @else
+                        <div class="msg-avatar"><span class="initials">You</span></div>
+                    @endif
+                    <div class="msg-content">
+                        <div class="msg-bubble">{{ e($entry['content']) }}</div>
+                        <div class="msg-meta">{{ $entry['role'] === 'officer' ? '' : 'You' }}</div>
+                    </div>
+                </div>
+            @endforeach
         </div>
 
         <div id="typing-row" class="typing-indicator" style="display: none;">
@@ -364,35 +382,16 @@
         visaOptionsShown = true;
 
         slot.innerHTML = '<div class="visa-options">' +
-            '<div class="visa-select-wrapper">' +
-                '<button class="visa-selected" id="visa-dropdown-toggle">' +
-                    'F1 (Student Visa)' +
-                    '<svg class="visa-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>' +
-                '</button>' +
-                '<div class="visa-options-list" id="visa-dropdown-list">' +
-                    '<button class="visa-option-btn visa-btn-b1b2" data-type="I want to apply for B1/B2 Business/Tourist Visa">B1/B2 (Business/Tourist Visa)</button>' +
-                '</div>' +
+            '<div class="visa-instructions">Please choose the visa interview type you want to practice:</div>' +
+            '<div class="visa-option-row">' +
+                '<button class="visa-option-btn" data-type="F1 Student Visa">F1 Student Visa</button>' +
+                '<button class="visa-option-btn" data-type="B1/B2 Business/Tourist Visa">B1/B2 Business/Tourist Visa</button>' +
             '</div>' +
         '</div>';
 
-        var toggle = document.getElementById('visa-dropdown-toggle');
-        var list = document.getElementById('visa-dropdown-list');
-        var arrow = toggle ? toggle.querySelector('.visa-arrow') : null;
-
-        if (toggle && list) {
-            toggle.addEventListener('click', function() {
-                var isOpen = list.classList.contains('open');
-                list.classList.toggle('open');
-                if (arrow) {
-                    arrow.style.transform = isOpen ? 'rotate(0deg)' : 'rotate(180deg)';
-                }
-            });
-        }
-
-        list.querySelectorAll('.visa-option-btn').forEach(function(btn) {
+        slot.querySelectorAll('.visa-option-btn').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 visaTypeSelected = true;
-                slot.innerHTML = '';
                 sendChatMessageWithText(this.getAttribute('data-type'));
             });
         });
@@ -441,6 +440,9 @@
 
     chatInput.addEventListener('keydown', function(e) { if (e.key === 'Enter') { e.preventDefault(); sendChatMessage(); } });
     scrollToBottom();
+    if (!completed) {
+        switchToChat();
+    }
 })();
 </script>
 @endsection

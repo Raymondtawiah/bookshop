@@ -48,6 +48,7 @@ class VisaTrainingController extends Controller
             ];
             Session::put("{$sessionKey}_history", $history);
             Session::put("{$sessionKey}_step", 1);
+            Session::put("{$sessionKey}_stage", 'select_type');
             $step = 1;
         } elseif (empty($history) && ! $isComplete) {
             $greeting = $this->getGreetingMessage();
@@ -56,6 +57,7 @@ class VisaTrainingController extends Controller
             ];
             Session::put("{$sessionKey}_history", $history);
             Session::put("{$sessionKey}_step", 1);
+            Session::put("{$sessionKey}_stage", 'select_type');
             $step = 1;
         }
 
@@ -88,15 +90,95 @@ class VisaTrainingController extends Controller
         $history = Session::get("{$sessionKey}_history", []);
         $isComplete = Session::get("{$sessionKey}_completed", false);
         $visaType = Session::get("{$sessionKey}_visa_type");
+        $stage = Session::get("{$sessionKey}_stage", 'select_type');
 
-        // Detect visa type from first message if not set
         if (! $visaType) {
             $visaType = $this->detectVisaType($userMessage);
+
+            if (! $visaType) {
+                $reply = 'I can only train F1 Student or B1/B2 Business/Tourist interviews. Please enter the correct visa type you want to practice.';
+                $history[] = ['role' => 'officer', 'content' => $reply];
+                Session::put("{$sessionKey}_history", $history);
+                Session::put("{$sessionKey}_step", 2);
+                Session::put("{$sessionKey}_stage", 'select_type');
+
+                return response()->json([
+                    'success' => true,
+                    'reply' => $reply,
+                    'step' => 2,
+                    'totalSteps' => $this->maxSteps,
+                    'completed' => false,
+                ]);
+            }
+
+            $reply = 'Great. I will train you for the '.($visaType === 'f1' ? 'F1 Student Visa' : 'B1/B2 Business/Tourist Visa').' interview. TIP: Greeting shows politeness and it calms your nerves. Please greet the officer to begin.';
+            $history[] = ['role' => 'officer', 'content' => $reply];
+            Session::put("{$sessionKey}_history", $history);
             Session::put("{$sessionKey}_visa_type", $visaType);
+            Session::put("{$sessionKey}_stage", 'awaiting_greeting');
+            Session::put("{$sessionKey}_step", 2);
+
+            return response()->json([
+                'success' => true,
+                'reply' => $reply,
+                'step' => 2,
+                'totalSteps' => $this->maxSteps,
+                'completed' => false,
+            ]);
         }
 
         $step = Session::get("{$sessionKey}_step", 0);
         $history = Session::get("{$sessionKey}_history", []);
+
+        if ($stage === 'awaiting_greeting') {
+            if (! $this->isGreetingMessage($userMessage)) {
+                $reply = 'Please greet the officer first. TIP: Greeting shows politeness and it calms your nerves.';
+                $history[] = ['role' => 'user', 'content' => $userMessage];
+                $history[] = ['role' => 'officer', 'content' => $reply];
+                Session::put("{$sessionKey}_history", $history);
+                Session::put("{$sessionKey}_step", $step + 1);
+
+                return response()->json([
+                    'success' => true,
+                    'reply' => $reply,
+                    'step' => $step + 1,
+                    'totalSteps' => $this->maxSteps,
+                    'completed' => false,
+                ]);
+            }
+
+            $history[] = ['role' => 'user', 'content' => $userMessage];
+            $reply = 'Hello, nice to meet you. Please pass me your passport'.($visaType === 'f1' ? ' and your I-20.' : '.').' TIP: Say "Here you go" or "This is it" to show confidence.';
+            $history[] = ['role' => 'officer', 'content' => $reply];
+            Session::put("{$sessionKey}_history", $history);
+            Session::put("{$sessionKey}_stage", 'awaiting_passport');
+            Session::put("{$sessionKey}_step", $step + 1);
+
+            return response()->json([
+                'success' => true,
+                'reply' => $reply,
+                'step' => $step + 1,
+                'totalSteps' => $this->maxSteps,
+                'completed' => false,
+            ]);
+        }
+
+        if ($stage === 'awaiting_passport') {
+            $history[] = ['role' => 'user', 'content' => $userMessage];
+            $reply = $this->visaInterviewService->getNextQuestion($history, $visaType);
+            $history[] = ['role' => 'officer', 'content' => $reply];
+            Session::put("{$sessionKey}_history", $history);
+            Session::put("{$sessionKey}_stage", 'questions');
+            Session::put("{$sessionKey}_step", $step + 1);
+
+            return response()->json([
+                'success' => true,
+                'reply' => $reply,
+                'step' => $step + 1,
+                'totalSteps' => $this->maxSteps,
+                'completed' => false,
+            ]);
+        }
 
         $history[] = ['role' => 'user', 'content' => $userMessage];
 
@@ -180,15 +262,15 @@ class VisaTrainingController extends Controller
 
     protected function getGreetingMessage(): string
     {
-        return 'Welcome to Visa Interview Training. Please select your visa type to begin:';
+        return 'Hi. Welcome to Visa Interview Training. Choose the visa type you want to practice: F1 Student or B1/B2 Business/Tourist.';
     }
 
     protected function getSimpleGreeting(): string
     {
-        return 'Select your country and visa type to begin the AI interview:';
+        return 'Hi. Choose the visa type you want to practice: F1 Student or B1/B2 Business/Tourist.';
     }
 
-    private function detectVisaType(string $text): string
+    private function detectVisaType(string $text): ?string
     {
         $lower = strtolower($text);
 
@@ -210,6 +292,13 @@ class VisaTrainingController extends Controller
             return 'b1b2';
         }
 
-        return 'b1b2';
+        return null;
+    }
+
+    private function isGreetingMessage(string $text): bool
+    {
+        $lower = strtolower($text);
+
+        return preg_match('/\b(hi|hello|hey|good morning|good afternoon|good evening|greetings)\b/', $lower) === 1;
     }
 }

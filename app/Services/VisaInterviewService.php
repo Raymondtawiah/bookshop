@@ -31,6 +31,22 @@ class VisaInterviewService
         'stress_questions',
     ];
 
+    private array $topicKeywords = [
+        'purpose_of_visit' => 'travel, business, tourism, family, study',
+        'travel_details' => 'dates, itinerary, duration, accommodation, flight, hotel',
+        'family_friends_us' => 'family, friend, relationship, address, support',
+        'employment' => 'job, employer, position, salary, income, stability',
+        'finances' => 'funds, savings, sponsor, bank, support, proof',
+        'home_country_ties' => 'family, job, property, return, obligations, roots',
+        'travel_history' => 'previous visas, travel, countries, visits, compliance',
+        'stress_questions' => 'plan, refused, alternative, return, preparation',
+        'school_selection' => 'university, program, ranking, campus, reason, faculty',
+        'academic_program' => 'degree, major, courses, skills, career, research',
+        'academic_background' => 'grades, qualifications, degree, school, performance',
+        'career_plans' => 'job, career, goals, industry, return, advancement',
+        'university_knowledge' => 'facilities, ranking, program, professors, campus, support',
+    ];
+
     public function __construct()
     {
         $this->apiKey = config('services.gemini.api_key') ?? env('GEMINI_API_KEY', '');
@@ -44,6 +60,10 @@ class VisaInterviewService
         $topicList = implode(', ', $topics);
         $visaName = $visaType === 'f1' ? 'F1 Student' : 'B1/B2 Visitor';
 
+        $keywordList = collect($this->topicKeywords)
+            ->map(fn($keywords, $topic) => "{$topic}: {$keywords}")
+            ->implode("\n");
+
         $systemPrompt = "You are Visa Officer Charles, a strict but helpful visa officer conducting a {$visaName} visa interview simulation.
 
 CRITICAL RULES:
@@ -53,8 +73,16 @@ CRITICAL RULES:
    - TIP: [brief coaching 1-2 sentences], then ask exactly one follow-up question on the same topic.
    - Good. [then ask one new question from the next topic in order].
 4. Never skip coaching. Every turn MUST begin with either 'TIP:' or 'Good.'.
-5. Follow this exact topic order: {$topicList}.
-6. Never greet, never acknowledge, never add commentary beyond coaching and one question.
+5. If the applicant's answer is not related to the previous question, do not proceed to the next topic.
+   Instead respond with: 'Your answer is not related to the question. Please answer the previous question before I ask the next one.'
+   Then repeat the same question.
+6. Follow this exact topic order: {$topicList}.
+7. For each question, expect the answer to include relevant keywords from the expected keyword list below.
+   If the answer is missing those keywords or feels off-topic, treat it as unrelated or incomplete.
+8. Never greet, never acknowledge, never add commentary beyond coaching and one question.
+
+Expected keywords by topic:
+{$keywordList}
 
 Format examples:
 TIP: Your sponsor's income is unclear. A stronger answer would state the exact amount and source. What is your sponsor's annual income?
