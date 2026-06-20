@@ -13,7 +13,7 @@ class VisaTrainingController extends Controller
 {
     protected $visaInterviewService;
 
-    protected $maxSteps = 8;
+    protected $maxSteps = 12;
 
     public function __construct(VisaInterviewService $visaInterviewService)
     {
@@ -93,16 +93,19 @@ class VisaTrainingController extends Controller
 
         $history[] = ['role' => 'user', 'content' => $userMessage];
 
-        if ($step >= $this->maxSteps - 1) {
+        $stepNow = max(0, (int) Session::get("{$sessionKey}_step", 0));
+
+        if ($stepNow >= $this->maxSteps - 1) {
             $reply = $this->visaInterviewService->getEvaluation($history, $visaType);
             $completed = true;
         } else {
             $reply = $this->visaInterviewService->getNextQuestion($history, $visaType);
+            $completed = false;
+        }
 
-            $completed = (
-                stripos($reply, 'EVALUATION') !== false ||
-                stripos($reply, 'Decision:') !== false
-            );
+        if (! is_string($reply) || trim($reply) === '') {
+            $reply = $this->visaInterviewService->getFallbackResponse();
+            $completed = $stepNow >= $this->maxSteps - 1;
         }
 
         $history[] = ['role' => 'officer', 'content' => $reply];

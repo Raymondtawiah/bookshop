@@ -28,46 +28,28 @@
     .chat-header-bar h2 { margin: 0; font-size: 1.05rem; font-weight: 600; color: #f8fafc; }
     .chat-header-bar .sub { font-size: 0.72rem; color: #64748b; margin-top: 2px; }
     .badge { font-size: 0.68rem; padding: 4px 10px; border-radius: 999px; background: rgba(99,102,241,0.15); color: #a5b4fc; font-weight: 500; }
-    .view-container { flex: 1; position: relative; overflow: hidden; min-height: 0; }
-    .view-panel { position: absolute; inset: 0; transition: transform 0.45s cubic-bezier(0.4, 0, 0.2, 1); display: flex; }
-    .view-panel.panel-left { transform: translateX(-100%); pointer-events: none; }
-    .view-panel.panel-right { transform: translateX(100%); pointer-events: none; }
-    .view-panel.panel-center { transform: translateX(0); pointer-events: auto; }
-    #video-template { align-items: center; justify-content: center; z-index: 1; }
-    #chat-messages { z-index: 2; overflow-y: auto; padding: 20px 24px; flex-direction: column; gap: 12px; background: #0f172a; }
-    .video-card { max-width: 380px; margin: 0 auto; text-align: center; padding: 32px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; backdrop-filter: blur(8px); width: 100%; }
-    .visa-options { display: flex; flex-direction: column; gap: 8px; padding: 8px 0; align-items: center; }
-    .visa-select-wrapper { position: relative; width: 100%; max-width: 280px; }
-    .visa-selected { width: 100%; padding: 12px 16px; background: #1e1b4b; border: 1px solid rgba(255,255,255,0.1); border-radius: 12px; color: #f8fafc; font-size: 0.85rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: space-between; transition: all 0.2s; font-family: inherit; }
-    .visa-selected:hover { border-color: rgba(99,102,241,0.5); background: rgba(99,102,241,0.08); }
-    .visa-arrow { width: 16px; height: 16px; transition: transform 0.25s ease; }
-    .visa-options-list { display: none; flex-direction: column; gap: 6px; margin-top: 6px; }
-    .visa-options-list.open { display: flex; }
-    .visa-option-btn { width: 100%; padding: 11px 16px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; color: #cbd5e1; font-size: 0.82rem; font-weight: 500; cursor: pointer; text-align: left; transition: all 0.15s; font-family: inherit; }
-    .visa-option-btn:hover { background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.4); color: #f8fafc; }
-    .visa-option-btn:hover { background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.4); color: #f8fafc; }
-    .visa-btn-b1b2 { background: #4f46e5 !important; color: white !important; border: none !important; font-weight: 600 !important; }
-    .visa-btn-b1b2:hover { background: #4338ca !important; }
+    .video-wrapper { flex-shrink: 0; display: flex; align-items: center; justify-content: center; padding: 24px; background: #0f172a; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .chat-scroll-area { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 12px; background: #0f172a; min-height: 0; }
+    .video-card { text-align: center; padding: 32px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; backdrop-filter: blur(8px); max-width: 380px; width: 100%; }
     .chat-input-bar { padding: 14px 24px; border-top: 1px solid rgba(255,255,255,0.06); display: flex; gap: 10px; background: rgba(15,23,42,0.6); backdrop-filter: blur(12px); flex-shrink: 0; }
-    .session-status-bar { padding: 16px 24px; background: rgba(15,23,42,0.4); border-bottom: 1px solid rgba(255,255,255,0.04); flex-shrink: 0; }
-    .session-card { max-width: 380px; margin: 0 auto; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; cursor: pointer; transition: all 0.2s; user-select: none; }
-    .session-card:hover { border-color: rgba(99,102,241,0.5); background: rgba(99,102,241,0.06); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(99,102,241,0.15); }
-    .session-card-left { display: flex; align-items: center; gap: 12px; }
-    .session-card-icon { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #4f46e5, #7c3aed); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-    .session-card-text { font-size: 0.85rem; font-weight: 600; color: #f8fafc; }
-    .session-card-sub { font-size: 0.72rem; color: #64748b; margin-top: 2px; }
-    .session-timer { font-size: 0.78rem; font-weight: 600; color: #a5b4fc; font-variant-numeric: tabular-nums; }
-    .session-timer.running { color: #fbbf24; }
-    .session-timer.ended { color: #ef4444; }
     .chat-input-bar input { flex: 1; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); border-radius: 999px; padding: 10px 16px; color: white; outline: none; font-size: 0.88rem; font-family: inherit; }
-    .chat-input-bar input:focus { border-color: #6366f1; background: rgba(255,255,255,0.08); }
-    .send-btn { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none; color: white; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: all 0.2s; box-shadow: 0 4px 12px rgba(99,102,241,0.3); }
-    .send-btn:hover:not(:disabled) { transform: scale(1.05); }
-    .send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
     .typing-indicator { display: flex; align-items: center; gap: 6px; padding: 6px 24px; color: #475569; font-size: 0.72rem; flex-shrink: 0; }
     .typing-dots { display: flex; gap: 3px; }
     .typing-dot { width: 5px; height: 5px; background: #475569; border-radius: 50%; }
     .completion-banner { background: rgba(16,185,129,0.12); border: 1px solid rgba(16,185,129,0.25); border-radius: 10px; padding: 10px 14px; margin: 4px 0; color: #6ee7b7; font-size: 0.82rem; text-align: center; }
+    .msg { display: flex; gap: 10px; align-items: flex-start; max-width: 85%; }
+    .msg .msg-avatar { width: 32px; height: 32px; border-radius: 50%; overflow: hidden; flex-shrink: 0; background: #1e293b; display: flex; align-items: center; justify-content: center; }
+    .msg .msg-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .msg .initials { font-size: 0.7rem; font-weight: 700; color: #e2e8f0; }
+    .msg .msg-content { flex: 1; min-width: 0; }
+    .msg .msg-bubble { padding: 10px 14px; border-radius: 14px; font-size: 0.88rem; line-height: 1.45; word-wrap: break-word; }
+    .msg .msg-meta { font-size: 0.7rem; color: #64748b; margin-top: 4px; }
+    .msg.user { margin-left: auto; flex-direction: row-reverse; }
+    .msg.user .msg-avatar { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
+    .msg.user .msg-bubble { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border-bottom-right-radius: 4px; }
+    .msg.user .msg-meta { text-align: right; }
+    .msg.officer { margin-right: auto; }
+    .msg.officer .msg-bubble { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); color: #e2e8f0; border-bottom-left-radius: 4px; }
     @media (max-width: 860px) { .page-wrap { flex-direction: column; } .app-sidebar { width: 100%; min-width: 0; max-height: 45vh; } }
 </style>
 
@@ -95,7 +77,7 @@
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
                 Chat Interview
             </a>
-            <a class="nav-item" href="{{ route('visa-interview.plans') }}">
+            <a class="nav-item" style="pointer-events: none; opacity: 0.6;">
                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
                 Video Interview
                 <span style="margin-left:auto; background:#fbbf24; color:#78350f; font-size:0.65rem; padding:2px 8px; border-radius:999px; font-weight:600;">Premium</span>
@@ -133,29 +115,27 @@
             </button>
         </div>
 
-        <div class="view-container">
-            <div id="video-template" class="view-panel panel-center">
-                <div class="video-card">
-                    <div style="width: 120px; height: 120px; margin: 0 auto 18px; border-radius: 50%; background: linear-gradient(135deg, #4f46e5, #7c3aed); padding: 3px; box-shadow: 0 8px 30px rgba(99,102,241,0.35);">
-                        <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: #1e1b4b;">
-                            <img src="{{ asset('officer-charles.png') }}" alt="Officer Charles" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;font-size:36px;font-weight:700;color:white\\'>VC</div>'">
-                        </div>
+        <div class="video-wrapper" id="video-wrapper">
+            <div class="video-card">
+                <div style="width: 120px; height: 120px; margin: 0 auto 18px; border-radius: 50%; background: linear-gradient(135deg, #4f46e5, #7c3aed); padding: 3px; box-shadow: 0 8px 30px rgba(99,102,241,0.35);">
+                    <div style="width: 100%; height: 100%; border-radius: 50%; overflow: hidden; background: #1e1b4b;">
+                        <img src="{{ asset('officer-charles.png') }}" alt="Officer Charles" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.style.display='none'; this.parentNode.innerHTML='<div style=\\'display:flex;align-items:center;justify-content:center;height:100%;font-size:36px;font-weight:700;color:white\\'>VC</div>'">
                     </div>
-                    <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); padding: 6px 14px; border-radius: 999px; margin-bottom: 14px;">
-                        <span style="width: 7px; height: 7px; background: #ef4444; border-radius: 50%; box-shadow: 0 0 8px rgba(239,68,68,0.6);"></span>
-                        <span style="font-size: 0.72rem; font-weight: 600; color: #fca5a5;">Ready to Connect</span>
-                    </div>
-                    <h3 style="margin: 0 0 4px; font-size: 1.05rem; font-weight: 600; color: #f8fafc;">Officer Charles</h3>
-                    <p style="margin: 0 0 20px; font-size: 0.78rem; color: #64748b;">Visa Interview Specialist</p>
-                    <a href="{{ route('visa-interview.plans') }}" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; padding: 11px 26px; border-radius: 12px; font-size: 0.85rem; font-weight: 600; cursor: pointer; box-shadow: 0 4px 18px rgba(99,102,241,0.35); transition: transform 0.2s; display: inline-block; text-decoration: none;">
-                        Start Video Interview
-                    </a>
                 </div>
+                <div style="display: inline-flex; align-items: center; gap: 6px; background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.3); padding: 6px 14px; border-radius: 999px; margin-bottom: 14px;">
+                    <span style="width: 7px; height: 7px; background: #ef4444; border-radius: 50%; box-shadow: 0 0 8px rgba(239,68,68,0.6);"></span>
+                    <span style="font-size: 0.72rem; font-weight: 600; color: #fca5a5;">Ready to Connect</span>
+                </div>
+                <h3 style="margin: 0 0 4px; font-size: 1.05rem; font-weight: 600; color: #f8fafc;">Officer Charles</h3>
+                <p style="margin: 0 0 20px; font-size: 0.78rem; color: #64748b;">Visa Interview Specialist</p>
+                <span style="background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; border: none; padding: 11px 26px; border-radius: 12px; font-size: 0.85rem; font-weight: 600; cursor: not-allowed; box-shadow: 0 4px 18px rgba(99,102,241,0.35); transition: transform 0.2s; display: inline-block; text-decoration: none; opacity: 0.7;">
+                    Start Video Interview
+                </span>
             </div>
+        </div>
 
-            <div id="chat-messages" class="view-panel panel-right" style="flex-direction: column; gap: 12px;">
-                <div id="visa-options-slot"></div>
-            </div>
+        <div class="chat-scroll-area" id="chat-messages">
+            <div id="visa-options-slot"></div>
         </div>
 
         <div id="typing-row" class="typing-indicator" style="display: none;">
@@ -185,6 +165,9 @@
         chatInput.disabled = true;
         sendBtn.disabled = true;
         chatInput.placeholder = 'Interview ended. Click + New Interview to retry.';
+    } else {
+        chatInput.disabled = false;
+        sendBtn.disabled = false;
     }
 
     function scrollToBottom() {
@@ -214,7 +197,7 @@
     function escapeHtml(text) { var d = document.createElement('div'); d.textContent = text; return d.innerHTML; }
     function getCsrf() { var m = document.querySelector('meta[name=csrf-token]'); return m ? m.getAttribute('content') : ''; }
 
-    function sendChatMessage() {
+    window.sendChatMessage = function() {
         if (completed) return;
         var msg = chatInput.value.trim();
         if (!msg) return;
@@ -253,7 +236,7 @@
         .finally(function() {
             if (!completed) { chatInput.disabled = false; sendBtn.disabled = false; chatInput.focus(); }
         });
-    }
+    };
 
     window.resetInterview = function() {
         if (sessionInterval) clearInterval(sessionInterval);
@@ -273,7 +256,6 @@
         var toggleBtn = document.getElementById('session-toggle-btn');
         var timerEl = document.getElementById('session-timer');
         if (!sessionRunning) {
-            switchToChat();
             startTimer();
             sessionRunning = true;
             if (toggleBtn) { toggleBtn.textContent = 'Stop'; toggleBtn.style.background = 'linear-gradient(135deg, #ef4444, #dc2626)'; }
@@ -319,25 +301,17 @@
     }
 
     window.startSession = function() {
-        switchToChat();
         startTimer();
     };
 
     window.switchToChat = function() {
-        var videoEl = document.getElementById('video-template');
-        var chatEl = document.getElementById('chat-messages');
-        var titleEl = document.getElementById('panel-title');
-        var badgeEl = document.getElementById('session-badge');
+        var headerEl = document.getElementById('chat-header-bar');
         var inputEl = document.getElementById('chat-input');
         var btnEl = document.getElementById('send-btn');
-        var headerEl = document.getElementById('chat-header-bar');
         var timerEl = document.getElementById('session-timer');
         var toggleBtn = document.getElementById('session-toggle-btn');
 
-        if (videoEl) { videoEl.classList.remove('panel-center'); videoEl.classList.add('panel-left'); }
-        if (chatEl) { chatEl.classList.remove('panel-right'); chatEl.classList.add('panel-center'); }
         if (headerEl) headerEl.style.display = 'flex';
-        if (badgeEl) badgeEl.style.display = 'none';
         if (timerEl) timerEl.style.display = 'inline-flex';
         if (toggleBtn) { toggleBtn.style.display = 'inline-flex'; toggleBtn.textContent = 'Start Session'; toggleBtn.style.background = 'linear-gradient(135deg, #6366f1, #8b5cf6)'; }
         sessionRunning = false;
@@ -348,19 +322,26 @@
     };
 
     window.switchToVideo = function() {
-        var videoEl = document.getElementById('video-template');
-        var chatEl = document.getElementById('chat-messages');
-        var titleEl = document.getElementById('panel-title');
-        var badgeEl = document.getElementById('session-badge');
+        var headerEl = document.getElementById('chat-header-bar');
         var inputEl = document.getElementById('chat-input');
         var btnEl = document.getElementById('send-btn');
-        var headerEl = document.querySelector('.chat-header-bar');
 
-        if (chatEl) { chatEl.classList.remove('panel-center'); chatEl.classList.add('panel-right'); }
-        if (videoEl) { videoEl.classList.remove('panel-left'); videoEl.classList.add('panel-center'); }
         if (headerEl) headerEl.style.display = 'none';
         if (inputEl) { inputEl.disabled = true; inputEl.value = ''; }
         if (btnEl) btnEl.disabled = true;
+    };
+
+    window.switchToVideo = function() {
+        var inputEl = document.getElementById('chat-input');
+        var btnEl = document.getElementById('send-btn');
+        var headerEl = document.getElementById('chat-header-bar');
+        var timerEl = document.getElementById('session-timer');
+        var toggleBtn = document.getElementById('session-toggle-btn');
+
+        if (headerEl) headerEl.style.display = 'none';
+        if (inputEl) { inputEl.disabled = true; inputEl.value = ''; }
+        if (btnEl) btnEl.disabled = true;
+        if (timerEl) timerEl.style.display = 'none';
     };
 
     window.switchToDashboard = function() { switchToVideo(); };
