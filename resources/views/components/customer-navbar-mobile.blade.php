@@ -17,7 +17,6 @@
                       <a href="{{ route('home') }}#home" class="block py-2 px-3 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Home</a>
                       <a href="{{ route('visa-tip') }}" class="block py-2 px-3 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Visa Tips</a>
                       <a href="{{ route('webinars.index') }}" class="block py-2 px-3 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Webinars</a>
-        <a href="{{ route('visa-training') }}" class="block py-2 px-3 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Visa Training</a>
           <a href="{{ route('home') }}#about" class="block py-2 px-3 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">About</a>
           <a href="{{ route('home') }}#contact" class="block py-2 px-3 text-gray-600 hover:text-indigo-600 font-medium transition-colors border-b border-gray-100">Contact</a>
           <a href="{{ route('coaching.booking') }}" class="block py-2 px-3 text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Coaching</a>
