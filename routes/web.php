@@ -12,7 +12,6 @@ use App\Http\Controllers\PaystackWebhookController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\StripeController;
 use App\Http\Controllers\VerificationController;
-use App\Http\Controllers\VisaTrainingController;
 use App\Http\Controllers\WebinarController;
 use App\Http\Controllers\WebinarRegistrationController;
 use App\Http\Controllers\WebinarWaitingListController;
@@ -98,18 +97,6 @@ Route::post('discount/apply', function (Request $request) {
 
     return redirect()->route('checkout')->with('discount_applied', true);
 })->name('discount.apply');
-
-// Visa Training routes
-Route::get('visa-training', [VisaTrainingController::class, 'index'])->name('visa-training');
-Route::post('visa-training/chat', [VisaTrainingController::class, 'chat'])->name('visa-training.chat');
-Route::get('visa-training/reset', [VisaTrainingController::class, 'reset'])->name('visa-training.reset');
-Route::get('visa-interview/plans', function () {
-    return view('visa-interview-plans', ['title' => 'Visa Interview Plans']);
-})->name('visa-interview.plans');
-
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::post('visa-training/video-plan', [VisaTrainingController::class, 'choosePlan'])->name('visa-training.choose-plan');
-});
 
 // Google OAuth
 Route::middleware(['web'])->group(function () {

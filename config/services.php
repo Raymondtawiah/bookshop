@@ -40,17 +40,4 @@ return [
         'client_secret' => env('GOOGLE_CLIENT_SECRET'),
         'redirect' => env('GOOGLE_REDIRECT_URI'),
     ],
-
-    'gemini' => [
-        'api_key' => env('GEMINI_API_KEY'),
-        'base_url' => 'https://generativelanguage.googleapis.com/v1beta',
-        'model' => 'gemini-2.5-flash',
-    ],
-
-    'groq' => [
-        'api_key' => env('GROQ_API_KEY'),
-        'base_url' => 'https://api.groq.com/openai/v1',
-        'model' => env('GROQ_MODEL', 'llama-3.3-70b-versatile'),
-    ],
-
 ];
