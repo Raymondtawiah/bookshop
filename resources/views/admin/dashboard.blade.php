@@ -162,6 +162,12 @@
                 </a>
             </div>
 
+            <!-- Orders Chart -->
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-8">
+                <h2 class="text-xl font-bold text-gray-900 mb-4">Orders Overview</h2>
+                <canvas id="ordersChart" style="max-height: 300px;"></canvas>
+            </div>
+
 <!-- Recent Activity -->
             <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
                 <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
@@ -328,5 +334,34 @@
             checkUpcomingMeetings();
             setInterval(checkUpcomingMeetings, 60000);
         </script>
+
+        @if(isset($chartLabels) && isset($chartValues))
+        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        <script>
+            (function() {
+                const ctx = document.getElementById('ordersChart').getContext('2d');
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: {!! json_encode($chartLabels) !!},
+                        datasets: [{
+                            label: 'Orders',
+                            data: {!! json_encode($chartValues) !!},
+                            backgroundColor: 'rgba(79, 70, 229, 0.2)',
+                            borderColor: 'rgb(79, 70, 229)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        scales: {
+                            y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                        }
+                    }
+                });
+            })();
+        </script>
+        @endif
 
 @endsection

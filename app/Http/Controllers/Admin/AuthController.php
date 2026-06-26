@@ -71,6 +71,17 @@ class AuthController extends Controller
     {
         $recentOrders = Order::with('user')->orderBy('created_at', 'desc')->take(10)->get();
 
-        return view('admin.dashboard', compact('recentOrders'));
+        $chartLabels = [];
+        $chartValues = [];
+
+        for ($i = 5; $i >= 0; $i--) {
+            $month = now()->subMonths($i);
+            $chartLabels[] = $month->format('M Y');
+            $chartValues[] = Order::whereYear('created_at', $month->year)
+                ->whereMonth('created_at', $month->month)
+                ->count();
+        }
+
+        return view('admin.dashboard', compact('recentOrders', 'chartLabels', 'chartValues'));
     }
 }

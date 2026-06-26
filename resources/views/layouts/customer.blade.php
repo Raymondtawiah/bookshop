@@ -7,7 +7,9 @@
         <x-flash-message />
         <x-customer-navbar />
 
+        <div class="pt-16">
             @yield('content')
+        </div>
 
         <x-customer-footer />
 
