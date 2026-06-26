@@ -1,7 +1,6 @@
 <?php
 
 use App\Http\Controllers\Admin\AuthController;
-use App\Http\Controllers\Admin\AttendanceController;
 use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Admin\CoachingController;
 use App\Http\Controllers\Admin\CustomerController;
@@ -104,12 +103,4 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::get('staff', [StaffController::class, 'index'])->name('staff.index');
     Route::get('staff/create', [StaffController::class, 'create'])->name('staff.create');
     Route::post('staff', [StaffController::class, 'store'])->name('staff.store');
-
-    // Attendance (for staff and admin)
-    Route::middleware(['auth:web', 'admin'])->group(function () {
-        Route::get('attendance', [AttendanceController::class, 'index'])->name('attendance.index');
-        Route::post('attendance/request', [AttendanceController::class, 'requestAttendance'])->name('attendance.request');
-        Route::post('attendance/{attendance}/approve', [AttendanceController::class, 'approve'])->name('attendance.approve');
-        Route::post('attendance/{attendance}/reject', [AttendanceController::class, 'reject'])->name('attendance.reject');
-    });
 });
