@@ -33,7 +33,7 @@
                             <p class="text-xs text-gray-500">Administrator</p>
                         </div>
                         <a href="{{ route('admin.settings') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">Settings</a>
-                        <a href="{{ route('admin.attendance.index') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">Request Attendance</a>
+
                         <form method="POST" action="{{ route('admin.logout') }}" class="border-t border-gray-100">
                             @csrf
                             <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">Logout</button>
