@@ -125,9 +125,16 @@
                 </a>
             </div>
         </form>
-    </div>
+        </div>
+        <!-- Orders Chart (Round) -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8 flex flex-col items-center">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Orders Overview</h2>
+            <div class="w-full max-w-md">
+                <canvas id="ordersChart"></canvas>
+            </div>
+        </div>
 
-    <!-- Orders Table -->
+        <!-- Orders Table -->
     <div class="bg-white rounded-xl shadow-lg border border-gray-100">
         <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-4 sm:px-6 py-3 sm:py-4">
             <h2 class="text-base sm:text-lg font-semibold text-white">Order List</h2>
@@ -252,4 +259,49 @@
         @endif
     </div>
 </div>
+
+@php
+    $chartData = [
+        'labels' => ['Total Orders', 'Paid Orders', 'Pending Orders'],
+        'values' => [$totalOrders, $totalPaid, $totalPending],
+    ];
+@endphp
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('ordersChart');
+        if (!ctx) return;
+
+        const chart = @json($chartData);
+
+        new Chart(ctx.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: chart.labels,
+                datasets: [{
+                    label: 'Orders',
+                    data: chart.values,
+                    backgroundColor: [
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(245, 158, 11, 0.8)',
+                    ],
+                    borderColor: [
+                        'rgb(59, 130, 246)',
+                        'rgb(16, 185, 129)',
+                        'rgb(245, 158, 11)',
+                    ],
+                    borderWidth: 1,
+                    hoverOffset: 4,
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+            },
+        });
+    });
+</script>
+
 @endsection
