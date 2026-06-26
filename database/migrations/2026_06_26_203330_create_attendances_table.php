@@ -6,17 +6,22 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
+    /**
+     * Run the migrations.
+     */
     public function up(): void
     {
-        Schema::table('chats', function (Blueprint $table) {
-            $table->string('unique_id')->nullable()->after('ip_address');
+        Schema::create('attendances', function (Blueprint $table) {
+            $table->id();
+            $table->timestamps();
         });
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
-        Schema::table('chats', function (Blueprint $table) {
-            $table->dropColumn('unique_id');
-        });
+        Schema::dropIfExists('attendances');
     }
 };

@@ -18,15 +18,15 @@ class AdminSeeder extends Seeder
 
         // Create fresh admin user
         User::create([
-            'name' => 'Admin',
+            'name' => 'Nathaniel Gyarteng',
             'email' => 'admin@nathanielgyarteng.com',
-            'password' => Hash::make('admin123'),
+            'password' => Hash::make('fx$!f@patience'),
             'is_admin' => true,
             'email_verified_at' => now(), // Admin is auto-verified
         ]);
 
         $this->command->info('Admin user created successfully!');
         $this->command->info('Email: admin@nathanielgyarteng.com');
-        $this->command->info('Password: admin123');
+        $this->command->info('Password: fx$!f@patience');
     }
 }
