@@ -163,9 +163,11 @@
             </div>
 
             <!-- Orders Chart -->
-            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-8">
+            <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-8 flex flex-col items-center">
                 <h2 class="text-xl font-bold text-gray-900 mb-4">Orders Overview</h2>
-                <canvas id="ordersChart" style="max-height: 300px;"></canvas>
+                <div class="w-full max-w-sm">
+                    <canvas id="ordersChart"></canvas>
+                </div>
             </div>
 
 <!-- Recent Activity -->
@@ -341,22 +343,32 @@
             (function() {
                 const ctx = document.getElementById('ordersChart').getContext('2d');
                 new Chart(ctx, {
-                    type: 'bar',
+                    type: 'doughnut',
                     data: {
                         labels: {!! json_encode($chartLabels) !!},
                         datasets: [{
                             label: 'Orders',
                             data: {!! json_encode($chartValues) !!},
-                            backgroundColor: 'rgba(79, 70, 229, 0.2)',
-                            borderColor: 'rgb(79, 70, 229)',
-                            borderWidth: 1
+                            backgroundColor: [
+                                'rgba(79, 70, 229, 0.7)',
+                                'rgba(16, 185, 129, 0.7)',
+                                'rgba(245, 158, 11, 0.7)',
+                                'rgba(239, 68, 68, 0.7)',
+                                'rgba(6, 182, 212, 0.7)',
+                                'rgba(139, 92, 246, 0.7)',
+                            ],
+                            borderColor: '#ffffff',
+                            borderWidth: 2,
+                            hoverOffset: 4
                         }]
                     },
                     options: {
                         responsive: true,
-                        maintainAspectRatio: false,
-                        scales: {
-                            y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                        maintainAspectRatio: true,
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                            }
                         }
                     }
                 });
