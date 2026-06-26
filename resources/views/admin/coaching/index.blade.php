@@ -81,6 +81,26 @@
         </div>
     </div>
 
+    @php
+        $coachingChartData = [
+            'labels' => ['Paid', 'Pending', 'Completed', 'Others'],
+            'values' => [
+                (int) $totalPaid,
+                (int) $totalPending,
+                (int) $totalCompleted,
+                max(0, (int) $totalBookings - (int) $totalPaid - (int) $totalPending - (int) $totalCompleted),
+            ],
+        ];
+    @endphp
+
+    <!-- Coaching Chart -->
+    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8 flex flex-col items-center">
+        <h2 class="text-xl font-bold text-gray-900 mb-4">Coaching Overview</h2>
+        <div class="w-full max-w-md">
+            <canvas id="coachingChart"></canvas>
+        </div>
+    </div>
+
     <!-- Search and Filters -->
     <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl shadow-lg border border-indigo-100 p-4 sm:p-6 mb-8">
         <form method="GET" action="{{ route('admin.coachings.index') }}" class="space-y-4 sm:space-y-6">
@@ -342,4 +362,44 @@
         @endif
     </div>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('coachingChart');
+        if (!ctx) return;
+
+        const chart = @json($coachingChartData);
+
+        new Chart(ctx.getContext('2d'), {
+            type: 'doughnut',
+            data: {
+                labels: chart.labels,
+                datasets: [{
+                    label: 'Bookings',
+                    data: chart.values,
+                    backgroundColor: [
+                        'rgba(16, 185, 129, 0.8)',
+                        'rgba(245, 158, 11, 0.8)',
+                        'rgba(59, 130, 246, 0.8)',
+                        'rgba(156, 163, 175, 0.8)',
+                    ],
+                    borderColor: '#ffffff',
+                    borderWidth: 2,
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                    }
+                }
+            }
+        });
+    });
+</script>
+
 @endsection
