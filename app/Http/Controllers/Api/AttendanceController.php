@@ -13,44 +13,6 @@ use Illuminate\Validation\ValidationException;
 
 class AttendanceController extends Controller
 {
-    public function clockIn(Request $request)
-    {
-        $user = $request->user();
-        $today = now()->toDateString();
-
-        $attendance = $user->attendances()->updateOrCreate(
-            ['date' => $today],
-            ['status' => 'pending']
-        );
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Attendance request sent for approval.',
-            'data' => $attendance,
-        ]);
-    }
-
-    public function clockOut(Request $request)
-    {
-        $user = $request->user();
-        $today = now()->toDateString();
-
-        $attendance = $user->attendances()->whereDate('date', $today)->first();
-
-        if (! $attendance) {
-            return response()->json([
-                'success' => false,
-                'message' => 'No attendance request found for today.',
-            ], 422);
-        }
-
-        return response()->json([
-            'success' => true,
-            'message' => 'Attendance updated.',
-            'data' => $attendance,
-        ]);
-    }
-
     public function myAttendance(Request $request)
     {
         $user = $request->user();
@@ -289,39 +251,3 @@ class AttendanceController extends Controller
             'success' => true,
             'data' => $data,
         ]);
-    }
-
-    public function userSummary(Request $request, $userId)
-    {
-        $request->validate([
-            'status' => ['nullable', 'in:all,approved,pending,rejected'],
-        ]);
-
-        $admin = $request->user();
-
-        if (! $admin || ! $admin->is_admin) {
-            abort(403, 'Unauthorized.');
-        }
-
-        $staffUser = User::where('is_staff', true)->findOrFail($userId);
-        $statusFilter = $request->query('status', 'approved');
-
-        $query = $staffUser->attendances();
-        if ($statusFilter !== 'all') {
-            $query->where('status', $statusFilter);
-        }
-
-        return response()->json([
-            'success' => true,
-            'data' => [
-                'user_id' => $staffUser->id,
-                'name' => $staffUser->name,
-                'email' => $staffUser->email,
-                'role' => $staffUser->role,
-                'weekly' => (clone $query)->whereBetween('date', [now()->startOfWeek()->toDateString(), now()->endOfWeek()->toDateString()])->count(),
-                'monthly' => (clone $query)->whereBetween('date', [now()->startOfMonth()->toDateString(), now()->endOfMonth()->toDateString()])->count(),
-                'yearly' => (clone $query)->whereBetween('date', [now()->startOfYear()->toDateString(), now()->endOfYear()->toDateString()])->count(),
-            ],
-        ]);
-    }
-}
