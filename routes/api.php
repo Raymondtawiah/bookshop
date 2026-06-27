@@ -3,7 +3,7 @@
 use App\Http\Controllers\Api\AttendanceController;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->group(function () {
+Route::prefix('api')->group(function () {
     Route::post('admin/staff', [AttendanceController::class, 'createStaff']);
     Route::get('admin/users', [AttendanceController::class, 'staffIndex']);
     Route::get('admin/attendance/pending', [AttendanceController::class, 'pending']);
