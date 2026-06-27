@@ -48,6 +48,16 @@ class AuthController extends Controller
 
         $request->session()->regenerate();
 
+        if ($request->expectsJson()) {
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'success' => true,
+                'token' => $token,
+                'user' => $user->only(['id', 'name', 'email', 'role', 'is_staff'])
+            ]);
+        }
+
         return redirect()->intended(route('admin.dashboard'));
     }
 
