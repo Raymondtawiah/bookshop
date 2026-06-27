@@ -36,6 +36,12 @@ class AttendanceController extends Controller
 
     public function pending(Request $request)
     {
+        $user = $request->user();
+
+        if (! $user->is_admin) {
+            abort(403, 'Unauthorized.');
+        }
+
         $records = \App\Models\Attendance::with('user')
             ->where('status', 'pending')
             ->orderByDesc('date')
@@ -62,6 +68,12 @@ class AttendanceController extends Controller
 
     public function approve(Request $request, $id)
     {
+        $user = $request->user();
+
+        if (! $user->is_admin) {
+            abort(403, 'Unauthorized.');
+        }
+
         $record = \App\Models\Attendance::findOrFail($id);
         $record->update(['status' => 'approved']);
 
@@ -74,6 +86,12 @@ class AttendanceController extends Controller
 
     public function reject(Request $request, $id)
     {
+        $user = $request->user();
+
+        if (! $user->is_admin) {
+            abort(403, 'Unauthorized.');
+        }
+
         $record = \App\Models\Attendance::findOrFail($id);
         $record->update(['status' => 'rejected']);
 
@@ -119,6 +137,12 @@ class AttendanceController extends Controller
 
     public function createStaff(CreateStaffRequest $request)
     {
+        $user = $request->user();
+
+        if (! $user->is_admin) {
+            abort(403, 'Unauthorized.');
+        }
+
         $validated = $request->validated();
 
         $user = User::create([
@@ -145,6 +169,12 @@ class AttendanceController extends Controller
 
     public function staffIndex(Request $request)
     {
+        $user = $request->user();
+
+        if (! $user->is_admin) {
+            abort(403, 'Unauthorized.');
+        }
+
         $staff = User::where('is_staff', true)
             ->orderBy('created_at', 'desc')
             ->get(['id', 'name', 'email', 'role', 'phone_number', 'created_at']);
@@ -157,13 +187,13 @@ class AttendanceController extends Controller
 
     public function staffSummary(StaffSummaryRequest $request)
     {
-        $statusFilter = $request->query('status', 'approved');
+        $user = $request->user();
 
-        $admin = $request->user();
-
-        if (! $admin || ! $admin->is_admin) {
+        if (! $user->is_admin) {
             abort(403, 'Unauthorized.');
         }
+
+        $statusFilter = $request->query('status', 'approved');
 
         $staff = User::where('is_staff', true)->get(['id', 'name', 'email', 'role']);
 
