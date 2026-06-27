@@ -56,10 +56,17 @@ class AuthController extends Controller
      */
     public function logout(Request $request)
     {
+        $user = Auth::user(); // Get the user before logging out
+
         Auth::logout();
 
         $request->session()->invalidate();
         $request->session()->regenerateToken();
+
+        // Revoke the user's tokens (if using Sanctum) to invalidate API tokens on logout
+        if ($user) {
+            $user->tokens()->delete();
+        }
 
         return redirect()->route('home');
     }
