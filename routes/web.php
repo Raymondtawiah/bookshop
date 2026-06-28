@@ -3,7 +3,6 @@
 use App\Http\Controllers\Admin\CoachingController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\CartController;
-use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
@@ -26,17 +25,8 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 
-// Chat routes (public - accessible to all)
-Route::middleware(['web'])->group(function () {
-    Route::post('chat', [ChatController::class, 'store'])->name('chat.store');
-    Route::get('chat/messages', [ChatController::class, 'customerChats'])->name('chat.messages');
-    Route::get('chat/unread', [ChatController::class, 'getUnreadCount'])->name('chat.unread');
-    Route::post('chat/read', [ChatController::class, 'markAsRead'])->name('chat.read');
-    Route::delete('chat/clear', [ChatController::class, 'clearAllChats'])->name('chat.clear');
-    Route::delete('chat/{id}', [ChatController::class, 'clearChatMessage'])->name('chat.delete');
-    Route::get('/test', function () {
-        return 'Laravel is working';
-    });
+Route::get('/test', function () {
+    return 'Laravel is working';
 });
 
 // Home and public routes - NO middleware needed
@@ -132,6 +122,15 @@ Route::middleware(['web'])->group(function () {
             $request->session()->regenerate();
 
             return redirect()->route('admin.dashboard');
+        }
+
+        // Check for finance team roles
+        if ($user->is_staff) {
+            Log::info('Finance login - redirecting to finance dashboard');
+            Auth::login($user, $remember);
+            $request->session()->regenerate();
+
+            return redirect()->route('finance.dashboard');
         }
 
         // Always verify customers on login (admin doesn't need verification)
@@ -349,3 +348,4 @@ Route::delete('webinar/{webinar}/waiting-list/leave', [WebinarWaitingListControl
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
+require __DIR__.'/finance.php';

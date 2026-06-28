@@ -7,13 +7,14 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
         <link rel="icon" href="/favicon.ico" sizes="any">
+        @stack('scripts')
     </head>
     <body class="bg-gray-50 font-sans">
         <x-flash-message />
         
         <x-admin-navbar />
 
-        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-8">
             @yield('content')
         </main>
 

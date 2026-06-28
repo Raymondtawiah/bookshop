@@ -97,16 +97,7 @@ Accept: application/json
 **POST** `http://localhost:8000/api/staff/login`
 *(Same as above - use staff credentials)*
 
-### 9. My Attendance (Protected - Requires Staff Token)
-**GET** `http://localhost:8000/api/attendance/mine`
-
-**Headers:**
-```
-Authorization: Bearer your-sanctum-token
-Accept: application/json
-```
-
-## Important Notes
+### 9. Staff Login (Get Token for Staff Routes)
 
 1. **Admin Summary Routes Require Admin Privileges**: 
    - The `/admin/attendance/summary` and `/admin/attendance/{userId}/summary` endpoints check for `is_admin` in addition to authentication
@@ -139,4 +130,4 @@ Accept: application/json
 1. **Get staff token** using admin credentials via `/api/staff/login`
 2. **Create a test staff user** via `/api/admin/staff` (optional)
 3. **Test open endpoints** (staff list, pending attendances, approve/reject)
-4. **Test protected endpoints** (staff summary, user summary, my attendance) using the token from step 1
+    4. **Test protected endpoints** (staff summary, user summary) using the token from step 1

@@ -82,7 +82,7 @@ class User extends Authenticatable implements MustVerifyEmail
      */
     public function isCustomer(): bool
     {
-        return $this->is_admin !== true;
+        return $this->is_admin !== true && $this->is_staff !== true;
     }
 
     public function deviceTokens()

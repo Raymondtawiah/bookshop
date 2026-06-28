@@ -188,6 +188,7 @@
             </div>
         </section>
 
+       
         <!-- Featured Books Section -->
         @if(isset($featuredBooks) && $featuredBooks->count() > 0)
         <section class="py-16 bg-white max-w-full">
@@ -414,7 +415,7 @@
                                 </svg>
                             </div>
                             <p class="text-white italic">"I followed the strategy in this book and got approved. The story formula really helped me present my case confidently."</p>
-                            <p class="text-white/70 text-sm mt-2">— F-1 Student</p>
+                            <p class="text-white/70 text-sm mt-2">ï¿½ F-1 Student</p>
                         </div>
                         <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                             <div class="flex items-center gap-1 mb-3">
@@ -435,7 +436,7 @@
                                 </svg>
                             </div>
                             <p class="text-white italic">"After a previous denial, this guide helped me fix my answers. I knew exactly what mistakes to avoid."</p>
-                            <p class="text-white/70 text-sm mt-2">— B1/B2 Applicant</p>
+                            <p class="text-white/70 text-sm mt-2">ï¿½ B1/B2 Applicant</p>
                         </div>
                         <div class="bg-white/10 backdrop-blur-sm rounded-xl p-6 border border-white/20">
                             <div class="flex items-center gap-1 mb-3">
@@ -456,7 +457,7 @@
                                 </svg>
                             </div>
                             <p class="text-white italic">"The interview practice questions were exactly what I needed. I felt prepared and got my visa approved first try!"</p>
-                            <p class="text-white/70 text-sm mt-2">— Graduate Student</p>
+                            <p class="text-white/70 text-sm mt-2">ï¿½ Graduate Student</p>
                         </div>
                     </div>
                 </div>
