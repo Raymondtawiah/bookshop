@@ -1,5 +1,4 @@
 <?php
-
 use App\Http\Controllers\Admin\AttendanceController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BookController;
