@@ -88,7 +88,7 @@
                  <div class="absolute top-1/2 left-1/3 w-24 h-24 bg-blue-300/20 rounded-full blur-xl"></div>
              </div>
              
-             <div class="relative max-w-7xl mx-auto px-6 py-20 sm:py-28">
+             <div class="relative max-w-7xl mx-auto px-6 py-20 sm:py-28 flex items-center justify-center">
                  <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
                      <!-- Text Content -->
                      <div class="space-y-8">
@@ -99,7 +99,7 @@
                              <span class="text-sm font-bold text-white">Visa Interview Preparation Resources</span>
                          </div>
                          
-                         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
+                         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight text-center">
                              Master Your
                              <span class="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">Visa Interview</span>
                          </h1>
@@ -108,7 +108,7 @@
                              Practical guides to help students and travelers understand visa interviews, avoid common mistakes, and answer visa officer questions with confidence.
                          </p>
                          
-                         <div class="flex flex-col sm:flex-row gap-4">
+                         <div class="flex flex-col sm:flex-row gap-4 items-center justify-center">
                              @if(\App\Models\Book::count() > 0)
                              <a href="#store" class="px-8 py-4 bg-white text-indigo-700 rounded-2xl font-bold text-lg hover:bg-indigo-50 transition-all duration-200 shadow-xl text-center">
                                  Explore Books

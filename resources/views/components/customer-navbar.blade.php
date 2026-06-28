@@ -37,7 +37,7 @@
             </a>
 
              <!-- Desktop Navigation -->
-             <div class="hidden md:flex items-center gap-6">
+             <div class="flex items-center gap-6">
                  <a href="{{ route('home') }}#home" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Home</a>
                  <a href="{{ route('visa-tip') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Tips</a>
                  <a href="{{ route('webinars.index') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Webinars</a>
@@ -114,7 +114,9 @@
                     @endif
                 </a>
                 @endauth
-                @include('components.customer-navbar-mobile')
+                <div class="md:hidden">
+                    @include('components.customer-navbar-mobile')
+                </div>
             </div>
         </div>
     </div>
