@@ -19,7 +19,7 @@
                 <a href="{{ route('home') }}#contact" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Contact</a>
                 <a href="{{ route('coaching.booking') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Coaching</a>
                 
-@auth
+                @auth
                     @php
                         $navbarCartCount = auth()->check() ? App\Models\Cart::where('user_id', auth()->id())->sum('quantity') : 0;
                     @endphp
@@ -64,17 +64,24 @@
                 @endguest
             </div>
 
-<!-- Mobile Menu Button -->
-             <div class="md:hidden">
-                 <button id="mobile-menu-btn" onclick="toggleCustomerMobileMenu()" class="p-2 text-gray-600 hover:text-indigo-600">
-                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="menu-icon">
-                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-                     </svg>
-                     <svg class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="close-icon">
-                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                     </svg>
-                 </button>
-             </div>
+            <!-- Mobile Menu Button -->
+            <div class="flex items-center gap-2 md:hidden">
+                @auth
+                    <a href="{{ route('cart') }}" class="relative p-2 text-gray-600 hover:text-indigo-600 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                        </svg>
+                    </a>
+                @endauth
+                <button id="mobile-menu-btn" onclick="toggleCustomerMobileMenu()" class="p-2 text-gray-600 hover:text-indigo-600">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="menu-icon">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                    </svg>
+                    <svg class="w-6 h-6 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="close-icon">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                    </svg>
+                </button>
+            </div>
         </div>
 
         <!-- Mobile Menu Dropdown -->
@@ -118,15 +125,15 @@
                     </svg>
                     <span>Contact</span>
                 </a>
-<a href="{{ route('coaching.booking') }}" class="flex items-center gap-3 px-3 py-3 rounded-lg text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 font-medium transition">
+                <a href="{{ route('coaching.booking') }}" class="flex items-center gap-3 px-3 py-3 rounded-lg text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 font-medium transition">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422A12.083 12.083 0 0120 17.944L12 22l-8-4.056a12.083 12.083 0 011.84-7.366L12 14z"/>
                     </svg>
                     <span>Visa Coaching</span>
                 </a>
-                
-@auth
+
+                @auth
                     <hr class="border-gray-200 my-2">
                     <a href="{{ route('cart') }}" class="flex items-center gap-3 px-3 py-3 rounded-lg text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 font-medium transition border-b border-gray-100">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
