@@ -25,9 +25,9 @@ class VerifyCustomerEmail
             return $next($request);
         }
 
-        // Admins don't need to verify their email
-        if ($user->is_admin) {
-            Log::info('VerifyCustomerEmail: User is admin, allowing through', ['user_id' => $user->id]);
+        // Admins and staff don't need to verify their email
+        if ($user->is_admin || $user->is_staff) {
+            Log::info('VerifyCustomerEmail: User is admin or staff, allowing through', ['user_id' => $user->id]);
 
             return $next($request);
         }

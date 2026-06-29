@@ -1,13 +1,13 @@
 <?php
-
+use App\Http\Controllers\Admin\AttendanceController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Admin\CoachingController;
 use App\Http\Controllers\Admin\CustomerController;
+use App\Http\Controllers\Admin\FinanceController;
 use App\Http\Controllers\Admin\FreeBookLeadsController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\OrderController;
-use App\Http\Controllers\Admin\StaffController;
 use App\Http\Controllers\Admin\WebinarController;
 use Illuminate\Support\Facades\Route;
 
@@ -100,7 +100,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::post('webinars/toggle-registration-form', [WebinarController::class, 'toggleRegistrationForm'])->name('webinars.toggleRegistrationForm');
 
     // Staff Management
-    Route::get('staff', [StaffController::class, 'index'])->name('staff.index');
-    Route::get('staff/create', [StaffController::class, 'create'])->name('staff.create');
-    Route::post('staff', [StaffController::class, 'store'])->name('staff.store');
+    Route::get('staff', [AttendanceController::class, 'index'])->name('staff.index');
+    Route::get('staff/create', [AttendanceController::class, 'create'])->name('staff.create');
+    Route::post('staff', [AttendanceController::class, 'store'])->name('staff.store');
+    Route::get('staff/{user}/attendance', [AttendanceController::class, 'history'])->name('staff.attendance');
+    Route::post('staff/{user}/approve', [AttendanceController::class, 'approveStaff'])->name('staff.approve');
+    Route::post('staff/{user}/reject', [AttendanceController::class, 'rejectStaff'])->name('staff.reject');
 });
