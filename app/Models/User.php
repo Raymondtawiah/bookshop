@@ -95,6 +95,11 @@ class User extends Authenticatable implements MustVerifyEmail
         return $this->hasMany(Attendance::class);
     }
 
+    public function latestAttendance()
+    {
+        return $this->hasOne(Attendance::class)->latestOfMany('attendance_date');
+    }
+
     /**
      * Determine if the user should verify their email
      * Only customers need to verify, admins don't

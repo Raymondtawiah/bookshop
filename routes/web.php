@@ -124,15 +124,6 @@ Route::middleware(['web'])->group(function () {
             return redirect()->route('admin.dashboard');
         }
 
-        // Check for finance team roles
-        if ($user->is_staff) {
-            Log::info('Finance login - redirecting to finance dashboard');
-            Auth::login($user, $remember);
-            $request->session()->regenerate();
-
-            return redirect()->route('finance.dashboard');
-        }
-
         // Always verify customers on login (admin doesn't need verification)
         Log::info('Customer login - sending verification code', ['user_id' => $user->id]);
         $request->session()->put('pending_login_user_id', $user->id);
@@ -348,4 +339,3 @@ Route::delete('webinar/{webinar}/waiting-list/leave', [WebinarWaitingListControl
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';
-require __DIR__.'/finance.php';

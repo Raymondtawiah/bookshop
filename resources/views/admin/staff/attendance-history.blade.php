@@ -10,7 +10,7 @@
     </div>
 
     <div class="bg-white dark:bg-zinc-800 rounded-3xl border border-zinc-200 dark:border-zinc-700 shadow-sm overflow-hidden">
-        <div class="px-6 py-5 border-b border-zinc-200 dark:border-zinc-700">
+        <div class="px-6 py-5 border-b border-zinc-200 dark:border-zinc-700 flex items-center justify-between">
             <div class="flex items-center gap-4">
                 <div class="w-12 h-12 rounded-xl bg-gradient-to-br from-indigo-400 to-indigo-600 flex items-center justify-center text-white font-bold shadow-md">
                     {{ strtoupper(substr($user->name, 0, 2)) }}
@@ -20,6 +20,28 @@
                     <p class="text-sm text-zinc-500 dark:text-zinc-400">{{ $user->email }}</p>
                 </div>
             </div>
+            <div class="flex items-center gap-2">
+                @php
+                    $filters = [
+                        ['label' => 'All', 'value' => 'all'],
+                        ['label' => 'Present', 'value' => 'present'],
+                        ['label' => 'Pending', 'value' => 'pending'],
+                        ['label' => 'Rejected', 'value' => 'rejected'],
+                    ];
+                @endphp
+                @foreach($filters as $filter)
+                    @php
+                        $isActive = $currentFilter === $filter['value'];
+                        $activeClass = $isActive
+                            ? 'bg-indigo-600 text-white shadow-md'
+                            : 'bg-white text-zinc-600 border border-zinc-300 hover:bg-zinc-50';
+                    @endphp
+                    <a href="{{ route('admin.staff.attendance', $user->id) }}?status={{ $filter['value'] }}"
+                       class="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all {{ $activeClass }}">
+                        {{ $filter['label'] }}
+                    </a>
+                @endforeach
+            </div>
         </div>
 
         <div class="overflow-x-auto">
@@ -28,14 +50,14 @@
                     <tr>
                         <th class="px-6 py-4 font-semibold">Date</th>
                         <th class="px-6 py-4 font-semibold">Status</th>
-                        <th class="px-6 py-4 font-semibold">Notes</th>
+                        <th class="px-6 py-4 font-semibold">Rejection Reason</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-zinc-100 dark:divide-zinc-700">
                     @forelse($attendances as $attendance)
                     <tr class="card-hover">
                         <td class="px-6 py-4 text-zinc-900 dark:text-zinc-100 font-medium">
-                            {{ \Carbon\Carbon::parse($attendance->date)->format('M j, Y') }}
+                            {{ \Carbon\Carbon::parse($attendance->attendance_date)->format('M j, Y') }}
                         </td>
                         <td class="px-6 py-4">
                             @php
@@ -52,7 +74,9 @@
                                 {{ ucfirst($status) }}
                             </span>
                         </td>
-                        <td class="px-6 py-4 text-zinc-600 dark:text-zinc-400">{{ $attendance->notes ?: '—' }}</td>
+                        <td class="px-6 py-4 text-zinc-600 dark:text-zinc-400">
+                            {{ $attendance->status === 'rejected' && $attendance->rejected_reason ? $attendance->rejected_reason : '—' }}
+                        </td>
                     </tr>
                     @empty
                     <tr>

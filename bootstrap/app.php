@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CheckUserActivity;
+use App\Http\Middleware\CorsMiddleware;
 use App\Http\Middleware\FinanceMiddleware;
 use App\Http\Middleware\ProtectWebinarLink;
 use App\Http\Middleware\ValidateWebinarAccessToken;
@@ -28,11 +29,18 @@ return Application::configure(basePath: dirname(__DIR__))
             'protect.webinar.link' => ProtectWebinarLink::class,
         ]);
 
+        $middleware->api(prepend: [
+            CorsMiddleware::class,
+        ]);
+
         $middleware->web(append: [
             VerifyCsrfToken::class,
             CheckUserActivity::class,
         ]);
     })
+    ->withProviders([
+        \App\Providers\AuthServiceProvider::class,
+    ])
     ->withExceptions(function (Exceptions $exceptions): void {
         //
     })->create();

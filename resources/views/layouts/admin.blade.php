@@ -7,7 +7,6 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
         <link rel="icon" href="/favicon.ico" sizes="any">
-        @stack('scripts')
     </head>
     <body class="bg-gray-50 font-sans">
         <x-flash-message />
@@ -19,5 +18,7 @@
         </main>
 
         <x-admin-footer />
+
+        @stack('scripts')
     </body>
 </html>
