@@ -24,10 +24,5 @@ Route::name('api.')->group(function () {
         Route::apiResource('finance/incomes', IncomeController::class);
         Route::apiResource('finance/expenses', ExpenseController::class);
         Route::apiResource('finance/payments', PaymentController::class);
-
-        Route::get('finance/dashboard', [FinanceController::class, 'dashboard'])->name('finance.dashboard');
-        Route::get('finance/reports', [FinanceController::class, 'reportIndex'])->name('finance.reports');
-        Route::get('finance/my-requests', [FinanceController::class, 'myRequests'])->name('finance.my-requests');
-        Route::post('finance/requests', [FinanceController::class, 'requestStore'])->name('finance.requests.store');
     });
 });
