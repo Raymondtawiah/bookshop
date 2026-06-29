@@ -43,7 +43,7 @@
                     <p class="text-gray-500 mt-2 text-sm italic">"{{ $todayRecord->notes }}"</p>
                 @endif
             </div>
-        @elseif($todayRecord && $todayRecord->status === 'approved')
+        @elseif($todayRecord && $todayRecord->status === 'present')
             <div class="text-center mb-8">
                 <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -52,17 +52,6 @@
                 </div>
                 <h2 class="text-2xl font-bold text-gray-900 mb-2">Attendance Approved</h2>
                 <p class="text-gray-600">Your attendance for today has been approved.</p>
-                @if($todayRecord->clock_in && $todayRecord->clock_out)
-                    <div class="mt-4 space-y-2">
-                        <p class="text-gray-600">Clock in: <strong>{{ \Carbon\Carbon::parse($todayRecord->clock_in)->format('g:i A') }}</strong></p>
-                        <p class="text-gray-600">Clock out: <strong>{{ \Carbon\Carbon::parse($todayRecord->clock_out)->format('g:i A') }}</strong></p>
-                    </div>
-                @elseif($todayRecord->clock_in && ! $todayRecord->clock_out)
-                    <div class="mt-4 space-y-2">
-                        <p class="text-gray-600">Clocked in at: <strong>{{ \Carbon\Carbon::parse($todayRecord->clock_in)->format('g:i A') }}</strong></p>
-                        <p class="text-gray-500 text-sm">Admin will update clock-out time after end of day.</p>
-                    </div>
-                @endif
             </div>
         @elseif($todayRecord && $todayRecord->status === 'rejected')
             <div class="text-center mb-4">
@@ -121,18 +110,17 @@
                 <thead class="bg-gray-50 border-b border-gray-200">
                     <tr>
                         <th class="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Date</th>
-                        <th class="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Clock In</th>
                         <th class="px-6 py-4 text-left text-sm font-bold text-gray-700 uppercase tracking-wider">Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-gray-100">
                     @foreach($recentRecords as $record)
                         <tr class="hover:bg-indigo-50/50 transition-colors">
-                            <td class="px-6 py-4 text-gray-900 font-semibold">{{ \Carbon\Carbon::parse($record->date)->format('M j, Y') }}</td>
+                            <td class="px-6 py-4 text-gray-900 font-semibold">{{ \Carbon\Carbon::parse($record->attendance_date)->format('M j, Y') }}</td>
                             <td class="px-6 py-4 text-gray-600 font-medium">{{ $record->clock_in ? \Carbon\Carbon::parse($record->clock_in)->format('g:i A') : '—' }}</td>
                             <td class="px-6 py-4">
                                 <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold
-                                    {{ $record->status === 'approved' ? 'bg-green-100 text-green-700' : '' }}
+                                    {{ $record->status === 'present' ? 'bg-green-100 text-green-700' : '' }}
                                     {{ $record->status === 'pending' ? 'bg-amber-100 text-amber-700' : '' }}
                                     {{ $record->status === 'rejected' ? 'bg-red-100 text-red-700' : '' }}">
                                     {{ ucfirst($record->status) }}

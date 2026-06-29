@@ -104,6 +104,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::get('staff/create', [AttendanceController::class, 'create'])->name('staff.create');
     Route::post('staff', [AttendanceController::class, 'store'])->name('staff.store');
     Route::get('staff/{user}/attendance', [AttendanceController::class, 'history'])->name('staff.attendance');
-    Route::post('staff/{user}/approve', [AttendanceController::class, 'approveStaff'])->name('staff.approve');
-    Route::post('staff/{user}/reject', [AttendanceController::class, 'rejectStaff'])->name('staff.reject');
+    Route::post('staff/attendance/{attendance}/approve', [AttendanceController::class, 'approveAttendance'])->name('staff.approve');
+    Route::post('staff/attendance/{attendance}/reject', [AttendanceController::class, 'rejectAttendance'])->name('staff.reject');
 });
