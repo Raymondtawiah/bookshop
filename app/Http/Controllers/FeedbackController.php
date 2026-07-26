@@ -25,22 +25,16 @@ class FeedbackController extends Controller
             Mail::to('raymondtawiah23@gmail.com')->send(
                 new FeedbackSubmitted($rating, $comment, $email)
             );
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Thank you for your feedback!',
-            ]);
         } catch (\Throwable $e) {
             Log::error('Feedback email failed: '.$e->getMessage(), [
                 'rating' => $rating,
                 'email' => $email,
-                'exception' => $e,
             ]);
-
-            return response()->json([
-                'success' => false,
-                'message' => 'Something went wrong. Please try again.',
-            ], 500);
         }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Thank you for your feedback!',
+        ]);
     }
 }

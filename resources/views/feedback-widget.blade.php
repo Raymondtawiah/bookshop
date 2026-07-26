@@ -37,9 +37,7 @@
         <textarea id="feedbackText" placeholder="Tell us a bit more (optional)"></textarea>
 
         <button class="submit-btn" id="submitBtn" disabled>
-            <span id="submitBtnText">Submit Feedback</span>
-            <span id="submitBtnLoader">Submitting...</span>
-            <span id="submitBtnSpinner" class="submit-btn-spinner"></span>
+            <span id="submitBtnContent">Submit Feedback</span>
         </button>
     </div>
 
@@ -162,12 +160,10 @@
   .submit-btn { width: 100%; padding: 13px; border: none; border-radius: 999px; background: linear-gradient(135deg, #6366f1, #22d3ee); color: #fff; font-size: 14.5px; font-weight: 600; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease; box-shadow: 0 8px 20px -6px rgba(99,102,241,0.6); display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
   .submit-btn:hover { transform: translateY(-2px); }
   .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
-  .submit-btn.loading #submitBtnText { display: none; }
-  .submit-btn.loading #submitBtnLoader { display: inline; }
+  .submit-btn.loading { opacity: 0.85; }
+  #submitBtnContent { display: inline-flex; align-items: center; gap: 8px; }
+  .submit-btn-spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; display: none; }
   .submit-btn.loading .submit-btn-spinner { display: inline-block; }
-  .submit-btn #submitBtnLoader { display: none; }
-  .submit-btn #submitBtnSpinner { display: none; }
-  .submit-btn-spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .thank-you { display: none; flex-direction: column; align-items: center; gap: 10px; animation: pop-in 0.4s cubic-bezier(.4,1.6,.5,1); }
@@ -265,6 +261,12 @@
         submitBtn.addEventListener('click', async () => {
             if (!selectedRating) return;
 
+            const btnContent = document.getElementById('submitBtnContent');
+            const originalText = btnContent ? btnContent.textContent : 'Submit Feedback';
+            if (btnContent) {
+                btnContent.innerHTML = '<span class="submit-btn-spinner" style="display:inline-block;"></span> Submitting...';
+            }
+
             submitBtn.classList.add('loading');
             submitBtn.disabled = true;
 
@@ -282,9 +284,10 @@
                     })
                 });
 
-                const data = await response.json();
+                const contentType = response.headers.get('content-type') || '';
+                const data = contentType.includes('application/json') ? await response.json() : {};
 
-                if (data.success) {
+                if (response.ok && data.success) {
                     if (rateForm) rateForm.classList.add('hide');
                     if (thankYou) thankYou.classList.add('show');
 
@@ -299,10 +302,13 @@
                         }, 300);
                     }, 1600);
                 } else {
-                    alert(data.message || 'Something went wrong. Please try again.');
+                    const message = data.message || 'Something went wrong. Please try again.';
+                    alert(message);
+                    if (btnContent) btnContent.textContent = originalText;
                 }
             } catch (e) {
                 alert('Something went wrong. Please try again.');
+                if (btnContent) btnContent.textContent = originalText;
             } finally {
                 submitBtn.classList.remove('loading');
                 submitBtn.disabled = false;
