@@ -6,6 +6,7 @@ use App\Mail\FeedbackSubmitted;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Session;
 
 class FeedbackController extends Controller
 {
@@ -16,6 +17,13 @@ class FeedbackController extends Controller
             'comment' => 'nullable|string|max:2000',
             'email' => 'nullable|email|max:255',
         ]);
+
+        if (Session::has('feedback_submitted')) {
+            return response()->json([
+                'success' => false,
+                'message' => 'You have already submitted feedback.',
+            ], 429);
+        }
 
         $rating = (int) $validated['rating'];
         $comment = $validated['comment'] ?? null;
@@ -31,6 +39,8 @@ class FeedbackController extends Controller
                 'email' => $email,
             ]);
         }
+
+        Session::put('feedback_submitted', true);
 
         return response()->json([
             'success' => true,
