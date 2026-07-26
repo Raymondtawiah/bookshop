@@ -67,7 +67,7 @@ class WebinarRegistrationController extends Controller
             ? $webinar->registrations()->where('user_id', $user->id)->first()
             : $webinar->registrations()->where('email', $request->email)->whereNull('user_id')->first();
 
-        if ($existingRegistration) {
+        if ($existingRegistration && $this->paymentToggleService->isPaymentEnabled($webinar)) {
             if ($existingRegistration->isPaid()) {
                 return response()->json([
                     'success' => false,

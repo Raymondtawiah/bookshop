@@ -261,12 +261,6 @@
         submitBtn.addEventListener('click', async () => {
             if (!selectedRating) return;
 
-            const btnContent = document.getElementById('submitBtnContent');
-            const originalText = btnContent ? btnContent.textContent : 'Submit Feedback';
-            if (btnContent) {
-                btnContent.innerHTML = '<span class="submit-btn-spinner" style="display:inline-block;"></span> Submitting...';
-            }
-
             submitBtn.classList.add('loading');
             submitBtn.disabled = true;
 
@@ -304,11 +298,9 @@
                 } else {
                     const message = data.message || 'Something went wrong. Please try again.';
                     alert(message);
-                    if (btnContent) btnContent.textContent = originalText;
                 }
             } catch (e) {
                 alert('Something went wrong. Please try again.');
-                if (btnContent) btnContent.textContent = originalText;
             } finally {
                 submitBtn.classList.remove('loading');
                 submitBtn.disabled = false;

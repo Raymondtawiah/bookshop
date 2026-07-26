@@ -91,7 +91,7 @@
                             @csrf
                             <span class="text-sm font-medium text-gray-700 truncate max-w-[140px]" title="{{ $webinar->title }}">{{ $webinar->title }}</span>
                             <label class="toggle">
-                                <input type="checkbox" name="payment_enabled" value="1" class="sr-only" {{ $webinar->payment_enabled ? 'checked' : '' }} onchange="this.form.submit()">
+                                <input type="checkbox" name="payment_enabled" value="1" class="sr-only" {{ $webinar->payment_enabled ? 'checked' : '' }} onchange="this.disabled=true; this.form.submit();">
                                 <span class="track"></span>
                             </label>
                             <span class="state-text">{{ $webinar->payment_enabled ? 'Paid' : 'Free' }}</span>
