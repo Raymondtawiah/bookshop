@@ -12,6 +12,8 @@ use App\Services\FCMNotificationService;
 use App\Services\FirebaseAuthService;
 use App\Services\LaravelEmailSender;
 use App\Services\OrderBookOfferTracker;
+use App\Services\WebinarPayment\WebinarPaymentToggleService;
+use App\Services\WebinarPayment\WebinarPaymentToggleServiceInterface;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\DB;
@@ -47,6 +49,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(EmailSenderInterface::class, function ($app) {
             return new LaravelEmailSender;
+        });
+
+        $this->app->singleton(WebinarPaymentToggleServiceInterface::class, function ($app) {
+            return new WebinarPaymentToggleService;
         });
     }
 

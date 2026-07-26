@@ -15,6 +15,7 @@ class WebinarSession extends Model
         'description',
         'webinar_link',
         'price',
+        'payment_enabled',
         'scheduled_at',
         'duration_minutes',
         'status',
@@ -25,6 +26,7 @@ class WebinarSession extends Model
 
     protected $casts = [
         'price' => 'decimal:2',
+        'payment_enabled' => 'boolean',
         'scheduled_at' => 'datetime',
         'duration_minutes' => 'integer',
         'is_registration_open' => 'boolean',
@@ -113,5 +115,14 @@ class WebinarSession extends Model
     public function registrationIsOpen(): bool
     {
         return $this->is_registration_open === true;
+    }
+
+    /**
+     * Check if payment is enabled for this webinar.
+     * When disabled, registration is free (no Stripe checkout).
+     */
+    public function isPaymentEnabled(): bool
+    {
+        return (bool) ($this->payment_enabled ?? true);
     }
 }

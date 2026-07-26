@@ -744,4 +744,6 @@
             </div>
         </main>
 
+        @include('feedback-widget')
+
         @endsection

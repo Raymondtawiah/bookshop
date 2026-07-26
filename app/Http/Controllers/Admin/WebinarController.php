@@ -36,8 +36,14 @@ class WebinarController extends Controller
      */
     public function index(Request $request)
     {
-        // Get all webinars for statistics only
-        $webinars = WebinarSession::latest()->get();
+        // Get webinars with optional payment_enabled filter
+        $webinarsQuery = WebinarSession::latest();
+
+        if ($request->has('payment_enabled') && $request->payment_enabled !== '') {
+            $webinarsQuery->where('payment_enabled', $request->boolean('payment_enabled'));
+        }
+
+        $webinars = $webinarsQuery->get();
 
         // Get filtered registrations - show ALL registrations regardless of payment status
         $registrationsQuery = WebinarRegistration::query()
@@ -262,6 +268,46 @@ class WebinarController extends Controller
     }
 
     /**
+     * Send reminder for free webinar registration (payment disabled).
+     */
+    public function sendFreeReminder(Request $request, WebinarSession $webinar, WebinarRegistration $registration)
+    {
+        if ($registration->webinar_id !== $webinar->id) {
+            return back()->with('error', 'Registration does not belong to this webinar.');
+        }
+
+        if ($registration->payment_status !== 'paid' || $registration->amount_paid > 0) {
+            return back()->with('error', 'This registration is not a free registration.');
+        }
+
+        $validated = $request->validate([
+            'reminder_type' => 'nullable|in:24_hours,1_hour,15_minutes,post_webinar',
+            'custom_message' => 'nullable|string',
+            'reminder_date' => 'nullable|date',
+            'reminder_time' => 'nullable|string',
+        ]);
+
+        $reminderType = $validated['reminder_type'] ?? '24_hours';
+        $customMessage = $validated['custom_message'] ?? null;
+        $reminderDateTime = null;
+        if ($validated['reminder_date']) {
+            $time = $validated['reminder_time'] ?? '09:00';
+            $reminderDateTime = $validated['reminder_date'].' '.$time;
+        }
+
+        $accessLink = $webinar->webinar_link;
+
+        Mail::to($registration->email)->send(new WebinarReminderMail($webinar, $registration, $reminderType, $accessLink, $customMessage, $reminderDateTime));
+
+        $registration->update([
+            'last_reminder_sent' => now(),
+            'reminder_count' => ($registration->reminder_count ?? 0) + 1,
+        ]);
+
+        return back()->with('success', 'Free registration reminder sent successfully.');
+    }
+
+    /**
      * Send webinar reminder to all paid registrations for a webinar.
      */
     public function sendPaidReminder(Request $request, WebinarSession $webinar)
@@ -356,6 +402,7 @@ class WebinarController extends Controller
             'description' => 'nullable|string',
             'webinar_link' => $isNew ? 'required|url' : 'sometimes|url',
             'is_registration_open' => 'sometimes|boolean',
+            'payment_enabled' => 'sometimes|boolean',
             'price' => 'required|numeric|min:0',
             'scheduled_at' => 'nullable|date',
             'duration_minutes' => 'nullable|integer|min:1',

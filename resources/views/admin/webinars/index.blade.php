@@ -10,16 +10,96 @@
         <p class="text-gray-600">Manage webinar registrations and send reminders to attendees</p>
     </div>
 
-    <!-- Registration Form Toggle -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8">
-        <form method="POST" action="{{ route('admin.webinars.toggleRegistrationForm') }}" class="flex flex-wrap items-center gap-4">
-            @csrf
-            <label class="relative inline-flex items-center cursor-pointer">
-                <input type="checkbox" name="is_enabled" value="1" class="sr-only peer" {{ $registrationFormEnabled ? 'checked' : '' }} onchange="this.form.submit()">
-                <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
-                <span class="ml-3 text-sm font-medium text-gray-900">Registration Form {{ $registrationFormEnabled ? 'Enabled' : 'Disabled' }}</span>
-            </label>
-        </form>
+    <style>
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 56px;
+            height: 30px;
+            flex-shrink: 0;
+        }
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .track {
+            position: absolute;
+            inset: 0;
+            background: #d1d3db;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: background 0.35s ease;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.2);
+        }
+        .track::before {
+            content: "";
+            position: absolute;
+            height: 24px;
+            width: 24px;
+            left: 3px;
+            top: 3px;
+            background: #ffffff;
+            border-radius: 50%;
+            transition: transform 0.35s cubic-bezier(.4, 1.6, .5, 1);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.35);
+        }
+        input:checked + .track {
+            background: linear-gradient(135deg, #6366f1, #22d3ee);
+            animation: glow 0.35s ease;
+        }
+        input:checked + .track::before {
+            transform: translateX(26px);
+        }
+        input:focus-visible + .track {
+            outline: 2px solid #22d3ee;
+            outline-offset: 2px;
+        }
+        @keyframes glow {
+            0%   { box-shadow: 0 0 0 0 rgba(99,102,241,0.6); }
+            100% { box-shadow: 0 0 0 8px rgba(99,102,241,0); }
+        }
+        .state-text {
+            color: #8b93a7;
+            font-size: 13px;
+            min-width: 36px;
+            transition: color 0.4s ease;
+            flex-shrink: 0;
+            text-align: center;
+        }
+    </style>
+
+    <!-- Toggle Controls -->
+    <div class="mb-8">
+        <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
+            <!-- Registration Form Toggle -->
+            <form method="POST" action="{{ route('admin.webinars.toggleRegistrationForm') }}" class="flex items-center gap-3" style="display: inline-flex;">
+                @csrf
+                <span class="text-sm font-medium text-gray-700 whitespace-nowrap">Registration Form</span>
+                <label class="toggle">
+                    <input type="checkbox" name="is_enabled" value="1" class="sr-only" {{ $registrationFormEnabled ? 'checked' : '' }} onchange="this.form.submit()">
+                    <span class="track"></span>
+                </label>
+                <span class="state-text">{{ $registrationFormEnabled ? 'On' : 'Off' }}</span>
+            </form>
+
+            <!-- Webinar Payment Toggles -->
+            @if($webinars->isNotEmpty())
+                <div class="flex flex-wrap items-center gap-4 lg:gap-6">
+                    @foreach($webinars as $webinar)
+                        <form method="POST" action="{{ route('admin.webinars.togglePayment', $webinar->id) }}" class="flex items-center gap-3" style="display: inline-flex;">
+                            @csrf
+                            <span class="text-sm font-medium text-gray-700 truncate max-w-[140px]" title="{{ $webinar->title }}">{{ $webinar->title }}</span>
+                            <label class="toggle">
+                                <input type="checkbox" name="payment_enabled" value="1" class="sr-only" {{ $webinar->payment_enabled ? 'checked' : '' }} onchange="this.form.submit()">
+                                <span class="track"></span>
+                            </label>
+                            <span class="state-text">{{ $webinar->payment_enabled ? 'Paid' : 'Free' }}</span>
+                        </form>
+                    @endforeach
+                </div>
+            @endif
+        </div>
     </div>
 
     <!-- Statistics Dashboard -->
@@ -32,7 +112,7 @@
                 </div>
                 <div class="bg-blue-50 p-3 rounded-lg">
                     <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                 </div>
             </div>
@@ -130,7 +210,7 @@
             </div>
 
             <!-- Filters Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                 <div>
                     <label for="payment_status_filter" class="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Payment Status</label>
                     <select name="payment_status" id="payment_status_filter" class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white shadow-sm transition-all">
@@ -138,6 +218,14 @@
                         <option value="paid" {{ request()->get('payment_status') == 'paid' ? 'selected' : '' }}>Paid</option>
                         <option value="pending" {{ request()->get('payment_status') == 'pending' ? 'selected' : '' }}>Pending</option>
                         <option value="failed" {{ request()->get('payment_status') == 'failed' ? 'selected' : '' }}>Failed</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="webinar_type_filter" class="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Webinar Type</label>
+                    <select name="payment_enabled" id="webinar_type_filter" class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white shadow-sm transition-all">
+                        <option value="">All Webinars</option>
+                        <option value="1" {{ request()->get('payment_enabled') === '1' ? 'selected' : '' }}>Paid Webinars</option>
+                        <option value="0" {{ request()->get('payment_enabled') === '0' ? 'selected' : '' }}>Free Webinars</option>
                     </select>
                 </div>
                 <div>
@@ -170,56 +258,61 @@
     </div>
 
     <!-- Registrations Table -->
-    <div class="bg-white rounded-xl shadow-lg border border-gray-100">
+    <div class="bg-white rounded-xl shadow-lg border border-gray-100 overflow-visible">
         <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-4 sm:px-6 py-3 sm:py-4">
             <h2 class="text-base sm:text-lg font-semibold text-white">Registration List</h2>
             <p class="text-indigo-100 text-xs sm:text-sm">Click on any row to toggle attendance status</p>
         </div>
         @if($registrations->isNotEmpty())
-            <table class="w-full">
-                <thead class="bg-gray-50 border-b border-gray-200">
-                    <tr>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Registrant Name</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Email</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Phone</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Registration Date</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Payment Status</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Attendance</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Reminders</th>
-                        <th class="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Actions</th>
-                    </tr>
-                </thead>
+            <div class="overflow-x-auto overflow-visible">
+                <table class="w-full min-w-[640px]">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Registrant Name</th>
+                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Email</th>
+                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Phone</th>
+                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Registration Date</th>
+                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Payment Status</th>
+                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Attendance</th>
+                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Reminders</th>
+                            <th class="px-3 sm:px-6 py-3 sm:py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Actions</th>
+                        </tr>
+                    </thead>
                     <tbody class="divide-y divide-gray-100">
                         @foreach($registrations as $registration)
                             <tr class="hover:bg-indigo-50 transition-colors">
-                                <td class="px-3 py-3">
-                                    <div class="font-semibold text-gray-900 text-xs">{{ $registration->full_name }}</div>
+                                <td class="px-3 sm:px-6 py-3 sm:py-4">
+                                    <div class="font-semibold text-gray-900 text-xs sm:text-sm">{{ $registration->full_name }}</div>
                                 </td>
-                                <td class="px-3 py-3 text-xs text-gray-600">
+                                <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs text-gray-600">
                                     {{ $registration->email }}
                                 </td>
-                                <td class="px-3 py-3 text-xs text-gray-600">
+                                <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs text-gray-600">
                                     {{ $registration->phone ?? '-' }}
                                 </td>
-                                <td class="px-3 py-3 text-xs text-gray-600">
+                                <td class="px-3 sm:px-6 py-3 sm:py-4 text-xs text-gray-600">
                                     {{ $registration->created_at->timezone('Africa/Accra')->format('d M Y, h:i A') }}
                                 </td>
-                                <td class="px-3 py-3">
-                                    <span class="inline-flex px-2 py-1 text-xs font-bold rounded-full
-                                        @if($registration->payment_status === 'paid') bg-green-100 text-green-700
-                                        @elseif($registration->payment_status === 'pending') bg-yellow-100 text-yellow-700
-                                        @else bg-red-100 text-red-700 @endif">
-                                        {{ ucfirst($registration->payment_status) }}
-                                    </span>
+                                <td class="px-3 sm:px-6 py-3 sm:py-4">
+                                    @if($registration->payment_status === 'paid' && $registration->amount_paid == 0)
+                                        <span class="inline-flex px-2 py-1 text-xs font-bold rounded-full bg-gray-100 text-gray-700">Free</span>
+                                    @else
+                                        <span class="inline-flex px-2 py-1 text-xs font-bold rounded-full
+                                            @if($registration->payment_status === 'paid') bg-green-100 text-green-700
+                                            @elseif($registration->payment_status === 'pending') bg-yellow-100 text-yellow-700
+                                            @else bg-red-100 text-red-700 @endif">
+                                            {{ ucfirst($registration->payment_status) }}
+                                        </span>
+                                    @endif
                                 </td>
-                                <td class="px-3 py-3">
+                                <td class="px-3 sm:px-6 py-3 sm:py-4">
                                     <span class="inline-flex px-2 py-1 text-xs font-bold rounded-full
                                         @if($registration->joined_at) bg-purple-100 text-purple-700
                                         @else bg-gray-100 text-gray-700 @endif">
                                         {{ $registration->joined_at ? 'Attended' : 'Not Attended' }}
                                     </span>
                                 </td>
-                                <td class="px-3 py-3">
+                                <td class="px-3 sm:px-6 py-3 sm:py-4">
                                     @if($registration->last_reminder_sent)
                                         <div class="text-xs">
                                             <span class="font-semibold text-gray-900">{{ $registration->reminder_count ?? 0 }}</span>
@@ -232,83 +325,126 @@
                                         <span class="text-xs text-gray-400">None</span>
                                     @endif
                                 </td>
-                                <td class="px-3 py-3">
-                                     <div class="relative inline-block" x-data="{ open: false }" @click.outside="open = false">
-                                         <button @click="open = !open" class="p-2 hover:bg-gray-100 rounded-lg transition-colors" type="button">
+                                 <td class="px-3 sm:px-6 py-3 sm:py-4">
+                                     <div x-data="{ open: false }" @keydown.escape.window="open = false">
+                                         <button @click="open = true" class="p-2 hover:bg-gray-100 rounded-lg transition-colors" type="button">
                                              <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
                                              </svg>
                                          </button>
-                                         <div x-show="open" 
-                                              x-transition:enter="transition ease-out duration-100"
-                                              x-transition:enter-start="transform opacity-0 scale-95"
-                                              x-transition:enter-end="transform opacity-100 scale-100"
-                                              x-transition:leave="transition ease-in duration-75"
-                                              x-transition:leave-start="transform opacity-100 scale-100"
-                                              x-transition:leave-end="transform opacity-0 scale-95"
-                                              class="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 z-50"
-                                              style="display: none;">
-                                             @if($registration->payment_status === 'paid')
-                                                 <form method="POST" action="{{ route('admin.webinars.sendWebinarReminder', [$registration->webinar_id, $registration->id]) }}">
-                                                     @csrf
-                                                     <div class="p-3 border-b border-gray-100">
-                                                          <label class="block text-xs font-semibold text-gray-700 mb-1">Webinar Date & Time</label>
-                                                          <div class="flex gap-2 mb-2">
-                                                              <input type="date" name="reminder_date" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" value="{{ $registration->webinar && $registration->webinar->scheduled_at ? $registration->webinar->scheduled_at->format('Y-m-d') : date('Y-m-d') }}">
-                                                              <input type="time" name="reminder_time" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" value="{{ $registration->webinar && $registration->webinar->scheduled_at ? $registration->webinar->scheduled_at->format('H:i') : '09:00' }}">
-                                                          </div>
-                                                          <p class="text-xs text-gray-500">This will be included in the reminder email</p>
-                                                      </div>
-                                                     <div class="p-3 border-b border-gray-100">
-                                                         <label class="block text-xs font-semibold text-gray-700 mb-1">Custom Message (Optional)</label>
-                                                         <textarea name="custom_message" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" rows="2" placeholder="Add a custom message to include in the reminder email..."></textarea>
-                                                     </div>
-                                                     <button type="submit" class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
-                                                         <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                                                         </svg>
-                                                         Send Webinar Reminder
-                                                     </button>
-                                                 </form>
-                                                 <form method="POST" action="{{ route('admin.webinars.toggleAttended', [$registration->webinar_id, $registration->id]) }}">
-                                                     @csrf
-                                                     <button type="submit" class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
-                                                         <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                         </svg>
-                                                         {{ $registration->joined_at ? 'Mark Not Attended' : 'Mark Attended' }}
-                                                     </button>
-                                                 </form>
-                                             @else
-                                                 <form method="POST" action="{{ route('admin.webinars.sendPaymentReminder', [$registration->webinar_id, $registration->id]) }}">
-                                                     @csrf
-                                                     <div class="p-3 border-b border-gray-100">
-                                                         <label class="block text-xs font-semibold text-gray-700 mb-1">Payment Due Date (Optional)</label>
-                                                         <input type="date" name="reminder_date" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" value="{{ date('Y-m-d') }}">
-                                                         <p class="text-xs text-gray-500 mt-1">Will be included in payment reminder</p>
-                                                     </div>
-                                                     <button type="submit" class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2">
-                                                         <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                                                         </svg>
-                                                         Remind to Pay
-                                                     </button>
-                                                 </form>
-                                             @endif
-                                             <form method="POST" action="{{ route('admin.webinars.registrations.destroy', [$registration->webinar_id, $registration->id]) }}" onsubmit="return confirm('Are you sure you want to delete this registration?');">
-                                                 @csrf
-                                                 @method('DELETE')
-                                                 <button type="submit" class="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2">
-                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
-                                                     </svg>
-                                                     Delete
-                                                 </button>
-                                             </form>
-                                         </div>
-                                     </div>
-                                     </td>
-                            </tr>
+                                          <div x-show="open" 
+                                               x-transition:enter="transition ease-out duration-100"
+                                               x-transition:enter-start="opacity-0"
+                                               x-transition:enter-end="opacity-100"
+                                               x-transition:leave="transition ease-in duration-75"
+                                               x-transition:leave-start="opacity-100"
+                                               x-transition:leave-end="opacity-0"
+                                               class="fixed inset-0 z-[9999] flex items-center justify-center"
+                                               style="display: none;">
+                                              <div class="absolute inset-0 bg-black/50 backdrop-blur-sm" @click="open = false"></div>
+                                              <div class="relative w-full max-w-sm bg-white rounded-lg shadow-2xl border border-gray-200 z-[9999] mx-4">
+                                                  <div class="flex items-center justify-between px-5 py-4 border-b border-gray-100">
+                                                      <h3 class="text-sm font-bold text-gray-900">Registration Actions</h3>
+                                                      <button @click="open = false" class="p-1 rounded-lg hover:bg-gray-100 text-gray-500" type="button">
+                                                          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+                                                          </svg>
+                                                      </button>
+                                                  </div>
+                                                  <div class="p-2">
+                                                     @if($registration->payment_status === 'paid' && $registration->amount_paid > 0)
+                                                         <form method="POST" action="{{ route('admin.webinars.sendWebinarReminder', [$registration->webinar_id, $registration->id]) }}">
+                                                             @csrf
+                                                             <div class="p-3 border-b border-gray-100">
+                                                                  <label class="block text-xs font-semibold text-gray-700 mb-1">Webinar Date & Time</label>
+                                                                  <div class="flex gap-2 mb-2">
+                                                                      <input type="date" name="reminder_date" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" value="{{ $registration->webinar && $registration->webinar->scheduled_at ? $registration->webinar->scheduled_at->format('Y-m-d') : date('Y-m-d') }}">
+                                                                      <input type="time" name="reminder_time" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" value="{{ $registration->webinar && $registration->webinar->scheduled_at ? $registration->webinar->scheduled_at->format('H:i') : '09:00' }}">
+                                                                  </div>
+                                                                  <p class="text-xs text-gray-500">This will be included in the reminder email</p>
+                                                              </div>
+                                                             <div class="p-3 border-b border-gray-100">
+                                                                 <label class="block text-xs font-semibold text-gray-700 mb-1">Custom Message (Optional)</label>
+                                                                 <textarea name="custom_message" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" rows="2" placeholder="Add a custom message to include in the reminder email..."></textarea>
+                                                             </div>
+                                                             <button type="submit" class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 rounded-lg">
+                                                                 <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 3 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                                                 </svg>
+                                                                 Paid Reminder
+                                                             </button>
+                                                         </form>
+                                                         <form method="POST" action="{{ route('admin.webinars.toggleAttended', [$registration->webinar_id, $registration->id]) }}">
+                                                             @csrf
+                                                             <button type="submit" class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 rounded-lg">
+                                                                 <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                                 </svg>
+                                                                 {{ $registration->joined_at ? 'Mark Not Attended' : 'Mark Attended' }}
+                                                             </button>
+                                                         </form>
+                                                     @elseif($registration->payment_status === 'paid' && $registration->amount_paid == 0)
+                                                         <form method="POST" action="{{ route('admin.webinars.sendFreeReminder', [$registration->webinar_id, $registration->id]) }}">
+                                                             @csrf
+                                                             <div class="p-3 border-b border-gray-100">
+                                                                  <label class="block text-xs font-semibold text-gray-700 mb-1">Webinar Date & Time</label>
+                                                                  <div class="flex gap-2 mb-2">
+                                                                      <input type="date" name="reminder_date" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" value="{{ $registration->webinar && $registration->webinar->scheduled_at ? $registration->webinar->scheduled_at->format('Y-m-d') : date('Y-m-d') }}">
+                                                                      <input type="time" name="reminder_time" class="flex-1 px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" value="{{ $registration->webinar && $registration->webinar->scheduled_at ? $registration->webinar->scheduled_at->format('H:i') : '09:00' }}">
+                                                                  </div>
+                                                                  <p class="text-xs text-gray-500">This will be included in the reminder email</p>
+                                                              </div>
+                                                             <div class="p-3 border-b border-gray-100">
+                                                                 <label class="block text-xs font-semibold text-gray-700 mb-1">Custom Message (Optional)</label>
+                                                                 <textarea name="custom_message" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" rows="2" placeholder="Add a custom message to include in the reminder email..."></textarea>
+                                                             </div>
+                                                             <button type="submit" class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 rounded-lg">
+                                                                 <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 3 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                                                 </svg>
+                                                                 Free Reminder
+                                                             </button>
+                                                         </form>
+                                                         <form method="POST" action="{{ route('admin.webinars.toggleAttended', [$registration->webinar_id, $registration->id]) }}">
+                                                             @csrf
+                                                             <button type="submit" class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 rounded-lg">
+                                                                 <svg class="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                                 </svg>
+                                                                 {{ $registration->joined_at ? 'Mark Not Attended' : 'Mark Attended' }}
+                                                             </button>
+                                                         </form>
+                                                     @else
+                                                         <form method="POST" action="{{ route('admin.webinars.sendPaymentReminder', [$registration->webinar_id, $registration->id]) }}">
+                                                             @csrf
+                                                             <div class="p-3 border-b border-gray-100">
+                                                                 <label class="block text-xs font-semibold text-gray-700 mb-1">Payment Due Date (Optional)</label>
+                                                                 <input type="date" name="reminder_date" class="w-full px-2 py-1 text-xs border border-gray-300 rounded focus:ring-1 focus:ring-blue-500" value="{{ date('Y-m-d') }}">
+                                                                 <p class="text-xs text-gray-500 mt-1">Will be included in payment reminder</p>
+                                                             </div>
+                                                             <button type="submit" class="w-full px-4 py-2 text-left text-sm text-gray-700 hover:bg-gray-100 flex items-center gap-2 rounded-lg">
+                                                                 <svg class="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                                 </svg>
+                                                                 Remind to Pay
+                                                             </button>
+                                                         </form>
+                                                     @endif
+                                                     <form method="POST" action="{{ route('admin.webinars.registrations.destroy', [$registration->webinar_id, $registration->id]) }}" onsubmit="return confirm('Are you sure you want to delete this registration?');">
+                                                         @csrf
+                                                         @method('DELETE')
+                              <button type="submit" class="w-full px-4 py-2 text-left text-sm text-red-600 hover:bg-red-50 flex items-center gap-2 rounded-lg">
+                                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+                                  </svg>
+                                  Delete
+                              </button>
+                          </form>
+                      </div>
+                  </div>
+               </div>
+           </td>
+                             </tr>
                         @endforeach
                     </tbody>
                 </table>

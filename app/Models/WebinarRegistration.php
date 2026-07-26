@@ -27,6 +27,7 @@ class WebinarRegistration extends Model
         'access_token_expires_at',
         'last_reminder_sent',
         'reminder_count',
+        'access_count',
     ];
 
     protected $casts = [
@@ -35,6 +36,7 @@ class WebinarRegistration extends Model
         'access_token_expires_at' => 'datetime',
         'last_reminder_sent' => 'datetime',
         'reminder_count' => 'integer',
+        'access_count' => 'integer',
         'deleted_at' => 'datetime',
     ];
 

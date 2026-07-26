@@ -195,6 +195,26 @@ class WebinarAccessService
             return null;
         }
 
+        if ($this->hasExceededAccessLimit($registration)) {
+            return null;
+        }
+
         return $registration;
+    }
+
+    /**
+     * Check if registration has exceeded max access count.
+     */
+    public function hasExceededAccessLimit(WebinarRegistration $registration, int $maxAccesses = 4): bool
+    {
+        return ($registration->access_count ?? 0) >= $maxAccesses;
+    }
+
+    /**
+     * Increment access count for a registration.
+     */
+    public function incrementAccessCount(WebinarRegistration $registration): void
+    {
+        $registration->increment('access_count');
     }
 }

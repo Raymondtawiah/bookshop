@@ -138,7 +138,7 @@
                     </div>
 
                     <!-- Registration Toggle -->
-                    <div class="flex items-center mt-6">
+                    <div class="flex items-center">
                         <input 
                             type="checkbox" 
                             name="is_registration_open" 

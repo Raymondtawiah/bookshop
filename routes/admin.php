@@ -1,14 +1,15 @@
 <?php
+
 use App\Http\Controllers\Admin\AttendanceController;
 use App\Http\Controllers\Admin\AuthController;
 use App\Http\Controllers\Admin\BookController;
 use App\Http\Controllers\Admin\CoachingController;
 use App\Http\Controllers\Admin\CustomerController;
-use App\Http\Controllers\Admin\FinanceController;
 use App\Http\Controllers\Admin\FreeBookLeadsController;
 use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\WebinarController;
+use App\Http\Controllers\Admin\WebinarPaymentController;
 use Illuminate\Support\Facades\Route;
 
 // Admin login routes - accessible without authentication
@@ -85,6 +86,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::post('webinars/{webinar}/registrations/{registration}/send-payment-reminder', [WebinarController::class, 'sendPaymentReminder'])->name('webinars.sendPaymentReminder')->where('webinar', '[0-9]+')->where('registration', '[0-9]+');
     Route::get('webinars/{webinar}/send-reminder/{registration?}', [WebinarController::class, 'showSendReminder'])->name('webinars.sendReminder.form')->where('webinar', '[0-9]+');
     Route::post('webinars/{webinar}/send-reminder/{registration?}', [WebinarController::class, 'sendWebinarReminder'])->name('webinars.sendWebinarReminder')->where('webinar', '[0-9]+');
+    Route::post('webinars/{webinar}/registrations/{registration}/send-free-reminder', [WebinarController::class, 'sendFreeReminder'])->name('webinars.sendFreeReminder')->where('webinar', '[0-9]+')->where('registration', '[0-9]+');
     Route::post('webinars/{webinar}/registrations/{registration}/toggle-finished', [WebinarController::class, 'toggleRegistrationFinished'])->name('webinars.toggleRegistrationFinished')->where('webinar', '[0-9]+')->where('registration', '[0-9]+');
     Route::post('webinars/{webinar}/registrations/{registration}/toggle-attended', [WebinarController::class, 'toggleAttended'])->name('webinars.toggleAttended')->where('webinar', '[0-9]+')->where('registration', '[0-9]+');
     Route::get('webinars/{webinar}/notifications/create', [WebinarController::class, 'createNotification'])->name('webinars.notifications.create')->where('webinar', '[0-9]+');
@@ -98,6 +100,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::post('webinars/{webinar}/toggle-visibility', [WebinarController::class, 'toggleVisibility'])->name('webinars.toggleVisibility')->where('webinar', '[0-9]+');
     Route::post('webinars/toggle-registration-visibility', [WebinarController::class, 'toggleRegistrationVisibility'])->name('webinars.toggleRegistrationVisibility');
     Route::post('webinars/toggle-registration-form', [WebinarController::class, 'toggleRegistrationForm'])->name('webinars.toggleRegistrationForm');
+    Route::post('webinars/{webinar}/toggle-payment', [WebinarPaymentController::class, 'toggle'])->name('webinars.togglePayment')->where('webinar', '[0-9]+');
+    Route::post('webinars/bulk-toggle-payment', [WebinarPaymentController::class, 'bulkToggle'])->name('webinars.bulkTogglePayment');
 
     // Staff Management
     Route::get('staff', [AttendanceController::class, 'index'])->name('staff.index');

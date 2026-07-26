@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\WebinarFreeRegistrationSuccess;
 use App\Mail\WebinarPaymentSuccess;
 use App\Models\WebinarRegistration;
 use App\Models\WebinarSession;
 use App\Services\StripeService;
 use App\Services\WebinarAccessService;
+use App\Services\WebinarPayment\WebinarPaymentToggleServiceInterface;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -17,11 +19,17 @@ class WebinarRegistrationController extends Controller
 
     protected $accessService;
 
-    public function __construct(StripeService $stripe, WebinarAccessService $accessService)
-    {
+    protected $paymentToggleService;
+
+    public function __construct(
+        StripeService $stripe,
+        WebinarAccessService $accessService,
+        WebinarPaymentToggleServiceInterface $paymentToggleService
+    ) {
         $this->middleware('auth')->except(['access', 'storeRegistration', 'payment', 'initializePayment', 'paymentCallback', 'paymentSuccess']);
         $this->stripe = $stripe;
         $this->accessService = $accessService;
+        $this->paymentToggleService = $paymentToggleService;
     }
 
     /**
@@ -75,17 +83,25 @@ class WebinarRegistrationController extends Controller
         }
 
         // Create registration - with user_id for logged-in users, null for guests
+        $requiresPayment = $this->paymentToggleService->isPaymentEnabled($webinar) && $webinar->current_price > 0;
+
         $registration = $webinar->registrations()->create([
             'user_id' => $user ? $user->id : null,
             'full_name' => $request->full_name,
             'email' => $request->email,
             'phone' => $request->phone,
             'registration_status' => 'registered',
-            'payment_status' => $webinar->current_price > 0 ? 'pending' : 'paid',
-            'amount_paid' => $webinar->current_price,
+            'payment_status' => $requiresPayment ? 'pending' : 'paid',
+            'amount_paid' => $requiresPayment ? $webinar->current_price : ($webinar->current_price > 0 ? 0 : $webinar->current_price),
         ]);
 
-        if ($webinar->current_price == 0) {
+        if (! $requiresPayment) {
+            \Mail::to($registration->email)->send(
+                new WebinarFreeRegistrationSuccess($registration, $webinar)
+            );
+
+            $registration->update(['email_sent_at' => now()]);
+
             return response()->json([
                 'success' => true,
                 'message' => 'Registration successful! Check your email for details.',
@@ -296,11 +312,14 @@ class WebinarRegistrationController extends Controller
      */
     public function showVerifiedJoin(WebinarSession $webinar, WebinarRegistration $registration)
     {
-        // Mark as joined if not already set
+        if ($this->accessService->hasExceededAccessLimit($registration)) {
+            abort(403, 'You have reached the maximum number of allowed accesses for this webinar. Please contact support if you need assistance.');
+        }
+
+        $this->accessService->incrementAccessCount($registration);
+
         if (! $registration->joined_at) {
-            $registration->update([
-                'joined_at' => now(),
-            ]);
+            $registration->update(['joined_at' => now()]);
         }
 
         return view('webinars.verified-join', compact('webinar', 'registration'));
@@ -357,7 +376,12 @@ class WebinarRegistrationController extends Controller
             abort(403, 'Your access link has expired. Please register again to access this webinar.');
         }
 
-        // Mark as joined if not already
+        if ($this->accessService->hasExceededAccessLimit($registration)) {
+            abort(403, 'You have reached the maximum number of allowed accesses for this webinar. Please contact support if you need assistance.');
+        }
+
+        $this->accessService->incrementAccessCount($registration);
+
         if (! $registration->joined_at) {
             $registration->update(['joined_at' => now()]);
         }

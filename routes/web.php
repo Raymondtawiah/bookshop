@@ -4,6 +4,7 @@ use App\Http\Controllers\Admin\CoachingController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\Customer\ProfileController;
+use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\PaymentController;
@@ -336,6 +337,9 @@ Route::get('webinar/{webinar}/waiting-list', [WebinarWaitingListController::clas
 
 Route::delete('webinar/{webinar}/waiting-list/leave', [WebinarWaitingListController::class, 'leave'])
     ->name('webinars.waiting-list.leave')->where('webinar', '[0-9]+');
+
+Route::post('feedback', [FeedbackController::class, 'submit'])
+    ->name('feedback.submit');
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

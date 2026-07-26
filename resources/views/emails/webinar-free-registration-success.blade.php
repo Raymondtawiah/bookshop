@@ -3,7 +3,7 @@
 
 Hello {{ $registration->full_name ?? $registration->user?->name ?? 'there' }},
 
-Your payment for the **{{ $webinar->title }}** has been successfully processed!
+You have successfully registered for **{{ $webinar->title }}**. This webinar is currently free!
 
 ## Webinar Details
 
@@ -11,9 +11,7 @@ Your payment for the **{{ $webinar->title }}** has been successfully processed!
 
 ## Your Registration Information
 
-**Registration ID:** {{ str_pad($registration->id, 6, '0', STR_PAD_LEFT) }}  
-**Payment Reference:** {{ $registration->transaction_reference ?? 'N/A' }}  
-**Amount Paid:** ${{ number_format($registration->amount_paid, 2) }}
+**Registration ID:** {{ str_pad($registration->id, 6, '0', STR_PAD_LEFT) }}
 
 ## Access Limit
 

@@ -660,6 +660,7 @@
         <x-install-pwa />
 
         @include('components.free-book-modal')
+        @include('feedback-widget')
     </div>
     </body>
 </html>
