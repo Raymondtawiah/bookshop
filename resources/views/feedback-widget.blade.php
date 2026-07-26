@@ -38,8 +38,8 @@
 
         <button class="submit-btn" id="submitBtn" disabled>
             <span id="submitBtnText">Submit Feedback</span>
-            <span id="submitBtnLoader" style="display:none;">Submitting...</span>
-            <span id="submitBtnSpinner" class="submit-btn-spinner" style="display:none;"></span>
+            <span id="submitBtnLoader">Submitting...</span>
+            <span id="submitBtnSpinner" class="submit-btn-spinner"></span>
         </button>
     </div>
 
@@ -164,9 +164,10 @@
   .submit-btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
   .submit-btn.loading #submitBtnText { display: none; }
   .submit-btn.loading #submitBtnLoader { display: inline; }
-  .submit-btn:not(.loading) #submitBtnLoader { display: none; }
-  .submit-btn-spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; display: none; }
   .submit-btn.loading .submit-btn-spinner { display: inline-block; }
+  .submit-btn #submitBtnLoader { display: none; }
+  .submit-btn #submitBtnSpinner { display: none; }
+  .submit-btn-spinner { width: 16px; height: 16px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; }
   @keyframes spin { to { transform: rotate(360deg); } }
 
   .thank-you { display: none; flex-direction: column; align-items: center; gap: 10px; animation: pop-in 0.4s cubic-bezier(.4,1.6,.5,1); }
