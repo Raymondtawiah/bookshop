@@ -169,10 +169,10 @@
                      <div class="detail-label">Price</div>
                      <div class="detail-value">${{ number_format($webinar->current_price, 2) }}</div>
                  </div>
-                 <div class="detail-item">
-                     <div class="detail-label">Status</div>
-                     <div class="detail-value">{{ ucfirst($webinar->status) }}</div>
-                 </div>
+                  <div class="detail-item">
+                      <div class="detail-label">Registration</div>
+                      <div class="detail-value">{{ $webinar->is_registration_open ? 'Open' : 'Closed' }}</div>
+                  </div>
              </div>
          </div>
 

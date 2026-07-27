@@ -114,6 +114,13 @@ class WebinarController extends Controller
      */
     public function create()
     {
+        $webinar = WebinarSession::first();
+
+        if ($webinar) {
+            return redirect()->route('admin.webinars.edit', $webinar)
+                ->with('info', 'A webinar already exists. You can edit it here.');
+        }
+
         return view('admin.webinars.create');
     }
 
@@ -414,12 +421,10 @@ class WebinarController extends Controller
             'title' => $isNew ? 'required|string|max:255' : 'sometimes|string|max:255',
             'description' => 'nullable|string',
             'webinar_link' => $isNew ? 'required|url' : 'sometimes|url',
-            'is_registration_open' => 'sometimes|boolean',
             'payment_enabled' => 'sometimes|boolean',
             'price' => 'required|numeric|min:0',
             'scheduled_at' => 'nullable|date',
             'duration_minutes' => 'nullable|integer|min:1',
-            'status' => 'required|in:active,inactive,scheduled,completed',
         ];
 
         $validator = Validator::make($request->all(), $rules);
