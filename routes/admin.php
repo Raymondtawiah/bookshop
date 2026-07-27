@@ -102,6 +102,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::post('webinars/toggle-registration-form', [WebinarController::class, 'toggleRegistrationForm'])->name('webinars.toggleRegistrationForm');
     Route::post('webinars/{webinar}/toggle-payment', [WebinarPaymentController::class, 'toggle'])->name('webinars.togglePayment')->where('webinar', '[0-9]+');
     Route::post('webinars/bulk-toggle-payment', [WebinarPaymentController::class, 'bulkToggle'])->name('webinars.bulkTogglePayment');
+    Route::post('webinars/{webinar}/update-price', [WebinarController::class, 'updatePrice'])->name('webinars.updatePrice')->where('webinar', '[0-9]+');
 
     // Staff Management
     Route::get('staff', [AttendanceController::class, 'index'])->name('staff.index');

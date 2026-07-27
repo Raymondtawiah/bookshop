@@ -96,6 +96,11 @@
                             </label>
                             <span class="state-text">{{ $webinar->payment_enabled ? 'Paid' : 'Free' }}</span>
                         </form>
+                        <form method="POST" action="{{ route('admin.webinars.updatePrice', $webinar->id) }}" class="flex items-center gap-2" onsubmit="event.preventDefault(); this.submit();">
+                            @csrf
+                            <input type="number" name="price" value="{{ old('price', $webinar->current_price) }}" min="0" step="0.01" class="w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                            <button type="submit" class="px-2 py-1 bg-indigo-600 text-white text-xs rounded hover:bg-indigo-700">Update</button>
+                        </form>
                     @endforeach
                 </div>
             @endif

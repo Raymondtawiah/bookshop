@@ -152,6 +152,19 @@ class WebinarController extends Controller
             ->with('success', 'Webinar updated successfully!');
     }
 
+    public function updatePrice(Request $request, WebinarSession $webinar)
+    {
+        $validated = $request->validate([
+            'price' => 'required|numeric|min:0',
+        ]);
+
+        $webinar->update([
+            'price' => $validated['price'],
+        ]);
+
+        return back()->with('success', 'Webinar price updated successfully!');
+    }
+
     /**
      * Delete a webinar.
      */

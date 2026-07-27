@@ -74,20 +74,24 @@ class WebinarSession extends Model
     }
 
     /**
-     * Fixed price for all webinars: $9.99.
-     */
-    public function getCurrentPriceAttribute(): float
-    {
-        return 9.99;
-    }
-
-    /**
-     * Price tier — fixed label for the new flat price.
-     */
-    public function getPriceTierAttribute(): string
-    {
-        return '$9.99 Webinar';
-    }
+      * Price for this webinar as set in the database.
+      */
+     public function getCurrentPriceAttribute(): float
+     {
+         return (float) ($this->price ?? 0);
+     }
+ 
+     /**
+      * Price tier label based on current price.
+      */
+     public function getPriceTierAttribute(): string
+     {
+         if ($this->current_price == 0) {
+             return 'Free Webinar';
+         }
+ 
+         return '$'.number_format($this->current_price, 2).' Webinar';
+     }
 
     /**
      * No early-bird pricing anymore — always false.
