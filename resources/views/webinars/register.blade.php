@@ -223,7 +223,7 @@
                                 showFlash('success', data.message || 'Registration successful! Check your email for details.');
                                 setTimeout(() => {
                                     window.location.href = '{{ route('webinars.index') }}';
-                                }, 2000);
+                                }, 4500);
                             }
                         } else {
                             showFlash('error', data.message || 'Registration failed. Please try again.');
