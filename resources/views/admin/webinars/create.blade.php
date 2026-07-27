@@ -117,40 +117,6 @@
                         @enderror
                     </div>
 
-                    <!-- Status -->
-                    <div>
-                        <label for="status" class="block text-sm font-semibold text-gray-900 mb-2">Status *</label>
-                        <select 
-                            name="status" 
-                            id="status"
-                            required
-                            class="w-full px-5 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
-                        >
-                            <option value="active" {{ old('status') === 'active' ? 'selected' : '' }}>Active - Accepting registrations</option>
-                            <option value="scheduled" {{ old('status') === 'scheduled' ? 'selected' : '' }}>Scheduled - Not yet accepting registrations</option>
-                            <option value="inactive" {{ old('status') === 'inactive' ? 'selected' : '' }}>Inactive - Not visible to users</option>
-                            <option value="completed" {{ old('status') === 'completed' ? 'selected' : '' }}>Completed</option>
-                        </select>
-                        @error('status')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
-                    </div>
-
-                    <!-- Registration Toggle -->
-                    <div class="flex items-center mt-6">
-                        <input 
-                            type="checkbox" 
-                            name="is_registration_open" 
-                            id="is_registration_open"
-                            value="1"
-                            {{ old('is_registration_open', true) ? 'checked' : '' }}
-                            class="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                        >
-                        <label for="is_registration_open" class="ml-2 block text-sm font-semibold text-gray-900">
-                            Registration Open (checked = accepting registrations)
-                        </label>
-                    </div>
-
                     <div class="flex items-center justify-end gap-4 pt-4">
                         <a href="{{ route('admin.webinars.index') }}" class="px-6 py-3 text-gray-600 hover:text-gray-900 font-medium">
                             Cancel
