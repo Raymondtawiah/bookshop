@@ -22,7 +22,7 @@ class WebinarSeeder extends Seeder
             WebinarSession::create([
                 'title' => 'Weekly Visa Interview Webinar',
                 'description' => 'Weekly Visa Interview Webinar. This webinar takes place every Friday at 4:00 PM. Master your visa interview with expert guidance. Learn proven strategies, common questions, and how to answer confidently to get your visa approved.',
-                'webinar_link' => 'https://meet.google.com/fwk-hngm-jva',
+                'webinar_link' => 'https://meet.google.com/yjq-bqcn-srx',
                 'scheduled_at' => $webinarDate,
                 'duration_minutes' => 60,
                 'price' => 9.99,
