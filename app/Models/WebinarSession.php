@@ -16,6 +16,7 @@ class WebinarSession extends Model
         'webinar_link',
         'price',
         'payment_enabled',
+        'payment_provider',
         'scheduled_at',
         'duration_minutes',
         'is_registration_open',

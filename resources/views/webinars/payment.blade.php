@@ -72,41 +72,37 @@
                     <h2 class="text-2xl font-bold text-gray-900 mb-6">Payment Method</h2>
 
                     <div class="mb-6">
-                         <p class="text-sm text-gray-600 mb-4">We accept secure payments via Stripe</p>
-                        
-                        <div class="grid grid-cols-3 gap-4 mb-6">
-                            <div class="border-2 border-gray-200 rounded-xl p-4 text-center hover:border-indigo-300 transition-colors">
-                                <svg class="w-8 h-8 mx-auto mb-2 text-gray-600" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/>
-                                </svg>
-                                <p class="text-sm font-medium">Card</p>
-                            </div>
-                            <div class="border-2 border-gray-200 rounded-xl p-4 text-center hover:border-indigo-300 transition-colors">
-                                <svg class="w-8 h-8 mx-auto mb-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                </svg>
-                                <p class="text-sm font-medium">Bank</p>
-                            </div>
-                            <div class="border-2 border-gray-200 rounded-xl p-4 text-center hover:border-indigo-300 transition-colors">
-                                <svg class="w-8 h-8 mx-auto mb-2 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/>
-                                </svg>
-                                <p class="text-sm font-medium">Mobile</p>
-                            </div>
+                        <p class="text-sm text-gray-600 mb-4">Select your preferred payment method</p>
+
+                        <div class="space-y-3 mb-6">
+                            <label class="flex items-center gap-3 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-indigo-300 transition-colors">
+                                <input type="radio" name="provider" value="stripe" checked class="h-4 w-4 text-indigo-600">
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold text-gray-900">Pay with Card (Stripe)</p>
+                                    <p class="text-xs text-gray-500">${{ number_format($webinar->current_price, 2) }} USD</p>
+                                </div>
+                            </label>
+                            <label class="flex items-center gap-3 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-indigo-300 transition-colors">
+                                <input type="radio" name="provider" value="paystack" class="h-4 w-4 text-indigo-600">
+                                <div class="flex-1">
+                                    <p class="text-sm font-semibold text-gray-900">Pay with Momo</p>
+                                    <p class="text-xs text-gray-500">GHS {{ number_format($webinar->current_price * 11.65, 2) }} (approx)</p>
+                                </div>
+                            </label>
                         </div>
                     </div>
 
-                    <button onclick="initiatePayment()" class="w-full py-4 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-medium text-lg flex items-center justify-center gap-2">
+                    <button type="button" onclick="initiatePayment()" class="w-full py-4 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors font-medium text-lg flex items-center justify-center gap-2">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/>
                         </svg>
-                         Pay Now with Stripe
+                        Proceed to Payment
                     </button>
 
                     <div class="mt-6 text-center">
                          <p class="text-sm text-gray-500">
                              Your payment is secured by
-                             <span class="font-semibold text-indigo-600">Stripe</span>
+                             <span class="font-semibold text-indigo-600">Stripe And Paystack</span>
                          </p>
                     </div>
                 </div>
@@ -125,21 +121,22 @@
     <!-- Hidden form for submitting payment -->
     <form id="paymentForm" action="{{ route('webinars.payment.initiate', [$webinar, $registration]) }}" method="POST" style="display: none;">
         @csrf
+        <input type="hidden" name="provider" id="providerInput" value="stripe">
     </form>
 
     <script>
         function initiatePayment() {
+            const provider = document.querySelector('input[name="provider"]:checked')?.value || 'stripe';
+            document.getElementById('providerInput').value = provider;
+
             const button = document.querySelector('button[onclick="initiatePayment()"]');
             const originalText = button.innerHTML;
-            
-            // Show loading state
+
             button.disabled = true;
             button.innerHTML = '<svg class="animate-spin w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg> Processing...';
-            
-            // Get form data
+
             const formData = new FormData(document.getElementById('paymentForm'));
-            
-            // Make AJAX request
+
             fetch('{{ route("webinars.payment.initiate", [$webinar, $registration]) }}', {
                 method: 'POST',
                 body: formData,
@@ -148,15 +145,12 @@
                     'Accept': 'application/json'
                 }
             })
-.then(response => response.json())
+            .then(response => response.json())
             .then(data => {
-                if (data.success && data.authorization_url) {
-                    // Redirect to Stripe
-                    window.location.href = data.authorization_url;
-} else {
-                    // Show error message
+                if (data.success && data.url) {
+                    window.location.href = data.url;
+                } else {
                     alert(data.message || 'Payment initialization failed. Please try again.');
-                    // Reset button
                     button.disabled = false;
                     button.innerHTML = originalText;
                 }
@@ -164,7 +158,6 @@
             .catch(error => {
                 console.error('Payment error:', error);
                 alert('An error occurred while processing your payment. Please try again.');
-                // Reset button
                 button.disabled = false;
                 button.innerHTML = originalText;
             });

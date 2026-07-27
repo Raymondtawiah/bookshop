@@ -70,12 +70,14 @@ class PaystackService
     {
         $reference = $reference ?? 'TXN-'.time().rand(1000, 9999);
 
+        $callbackUrl = $callbackUrl ?: url(config('paystack.callbackUrl'));
+
         $data = [
             'email' => $email,
-            'amount' => $amount * 100, // Paystack expects amount in kobo/cents
+            'amount' => $amount * 100,
             'reference' => $reference,
             'currency' => $currency,
-            'callback_url' => $callbackUrl ?? url(config('paystack.callbackUrl')),
+            'callback_url' => $callbackUrl,
             'metadata' => [
                 'custom_fields' => [
                     [

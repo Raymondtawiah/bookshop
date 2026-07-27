@@ -20,6 +20,7 @@ class WebinarRegistration extends Model
         'registration_status',
         'payment_status',
         'transaction_reference',
+        'payment_provider',
         'amount_paid',
         'paid_at',
         'joined_at',

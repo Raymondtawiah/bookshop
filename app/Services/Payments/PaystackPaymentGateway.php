@@ -9,12 +9,9 @@ class PaystackPaymentGateway implements PaymentGatewayInterface
 {
     protected PaystackService $paystack;
 
-    protected float $usdToGhsRate;
-
     public function __construct(PaystackService $paystack)
     {
         $this->paystack = $paystack;
-        $this->usdToGhsRate = 11.79;
     }
 
     public function createCheckout(
@@ -25,9 +22,9 @@ class PaystackPaymentGateway implements PaymentGatewayInterface
         string $cancelUrl,
         array $metadata = []
     ): array {
-        try {
-            $amountGhs = round($amountUsd * $this->usdToGhsRate, 2);
+        $amountGhs = $this->convertToGhs($amountUsd);
 
+        try {
             $result = $this->paystack->initializePayment(
                 $email,
                 $amountGhs,
@@ -66,29 +63,30 @@ class PaystackPaymentGateway implements PaymentGatewayInterface
     {
         $result = $this->paystack->verifyPayment($reference);
 
-        if ($result['success'] ?? false) {
-            $amountGhs = $result['amount'];
-            $amountUsd = round($amountGhs / $this->usdToGhsRate, 2);
-
+        if ($result['success']) {
             return [
                 'success' => true,
-                'amount' => $amountGhs,
-                'amount_usd' => $amountUsd,
-                'amount_ghs' => $amountGhs,
-                'currency' => 'GHS',
                 'status' => $result['status'],
                 'reference' => $result['reference'],
+                'amount' => $result['amount'],
+                'currency' => $result['currency'],
+                'provider' => 'paystack',
             ];
         }
 
         return [
             'success' => false,
-            'message' => $result['message'] ?? 'Payment verification failed',
+            'message' => $result['message'] ?? 'Paystack verification failed',
         ];
     }
 
     public function getProviderName(): string
     {
         return 'paystack';
+    }
+
+    private function convertToGhs(float $amountUsd): float
+    {
+        return round($amountUsd * 11.65, 2);
     }
 }

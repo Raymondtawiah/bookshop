@@ -308,6 +308,8 @@ Route::post('webinar/{webinar}/payment/initiate/{registration}', [WebinarRegistr
     ->name('webinars.payment.initiate')->where('webinar', '[0-9]+');
 Route::get('webinar/payment/callback', [WebinarRegistrationController::class, 'paymentCallback'])
     ->name('webinars.payment.callback');
+Route::get('webinar/payment/paystack/callback', [WebinarRegistrationController::class, 'paystackCallback'])
+    ->name('webinars.payment.paystack.callback');
 
 // Webinar routes - requires auth
 Route::middleware(['auth', 'verified'])->group(function () {

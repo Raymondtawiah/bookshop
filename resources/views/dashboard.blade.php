@@ -523,7 +523,11 @@
                                                     @else bg-red-100 text-red-700 @endif">
                                                     {{ ucfirst($registration->payment_status) }}
                                                 </span>
-                                                <span class="text-sm text-gray-500">${{ number_format($registration->amount_paid, 2) }}</span>
+                                                        @php
+                                                            $provider = $registration->payment_provider ?? 'stripe';
+                                                            $symbol = $provider === 'paystack' ? '₵' : '$';
+                                                        @endphp
+                                                        <span class="text-sm text-gray-500">{{ $symbol }}{{ number_format($registration->amount_paid, 2) }}</span>
                                             </div>
                                         </div>
                                         @if($registration->payment_status === 'paid')

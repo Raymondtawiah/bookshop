@@ -6,9 +6,11 @@ use App\Mail\WebinarFreeRegistrationSuccess;
 use App\Mail\WebinarPaymentSuccess;
 use App\Models\WebinarRegistration;
 use App\Models\WebinarSession;
+use App\Services\PaystackService;
 use App\Services\StripeService;
 use App\Services\WebinarAccessService;
 use App\Services\WebinarPayment\WebinarPaymentToggleServiceInterface;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
@@ -17,17 +19,21 @@ class WebinarRegistrationController extends Controller
 {
     protected $stripe;
 
+    protected $paystack;
+
     protected $accessService;
 
     protected $paymentToggleService;
 
     public function __construct(
         StripeService $stripe,
+        PaystackService $paystack,
         WebinarAccessService $accessService,
         WebinarPaymentToggleServiceInterface $paymentToggleService
     ) {
-        $this->middleware('auth')->except(['access', 'storeRegistration', 'payment', 'initializePayment', 'paymentCallback', 'paymentSuccess']);
+        $this->middleware('auth')->except(['access', 'storeRegistration', 'payment', 'initializePayment', 'paymentCallback', 'paymentSuccess', 'paystackCallback']);
         $this->stripe = $stripe;
+        $this->paystack = $paystack;
         $this->accessService = $accessService;
         $this->paymentToggleService = $paymentToggleService;
     }
@@ -144,42 +150,66 @@ class WebinarRegistrationController extends Controller
     /**
      * Initialize Stripe payment.
      */
-    public function initializePayment(Request $request, WebinarSession $webinar, WebinarRegistration $registration)
+    public function initializePayment(Request $request, WebinarSession $webinar, WebinarRegistration $registration): JsonResponse
     {
         $this->authorizePayment($registration);
 
         if ($registration->isPaid()) {
-            return redirect()->route('webinars.show', $webinar)
-                ->with('success', 'Payment already completed!');
+            return response()->json([
+                'success' => false,
+                'message' => 'Payment already completed!',
+            ]);
         }
 
-        $amount = $webinar->current_price; // Amount in USD
+        $amount = $webinar->current_price;
         $reference = 'WEB-'.$webinar->id.'-'.$registration->id.'-'.time();
+        $provider = $request->input('provider', 'stripe');
 
-        $result = $this->stripe->createCheckoutSession(
-            $registration->email,
-            $amount,
-            $reference,
-            route('webinars.payment.callback'),
-            route('webinars.index'),
-            [],
-            $webinar->title,
-            'Registration for webinar: '.$webinar->title
-        );
+        if ($provider === 'paystack') {
+            $amountGhs = round($amount * 11.65, 2);
+
+            $result = $this->paystack->initializePayment(
+                $registration->email,
+                $amountGhs,
+                $reference,
+                'GHS',
+                route('webinars.payment.paystack.callback')
+            );
+        } else {
+            $result = $this->stripe->createCheckoutSession(
+                $registration->email,
+                $amount,
+                $reference,
+                route('webinars.payment.callback'),
+                route('webinars.index'),
+                [],
+                $webinar->title,
+                'Registration for webinar: '.$webinar->title
+            );
+        }
 
         if ($result['success']) {
-            $registration->update(['transaction_reference' => $reference]);
+            $checkoutUrl = $result['authorization_url']
+                ?? $result['checkout_url']
+                ?? $result['url']
+                ?? null;
+
+            $registration->update([
+                'transaction_reference' => $reference,
+                'payment_provider' => $provider,
+            ]);
 
             return response()->json([
                 'success' => true,
-                'authorization_url' => $result['checkout_url'],
+                'url' => $checkoutUrl,
                 'reference' => $reference,
+                'provider' => $provider,
             ]);
         }
 
         return response()->json([
             'success' => false,
-            'message' => $result['message'] ?? 'Payment initialization failed',
+            'message' => $result['message'] ?? 'Payment initialization failed. Please try again.',
         ]);
     }
 
@@ -233,6 +263,52 @@ class WebinarRegistrationController extends Controller
             $accessLink = $this->accessService->generateAccessLink($registration);
 
             // Send confirmation email (non-critical - payment already confirmed)
+            $this->sendPaymentConfirmation($registration);
+
+            return redirect()->route('webinars.index')
+                ->with('success', 'Payment successful! Please check your email for the webinar access link.');
+        }
+
+        return redirect()->route('webinars.payment', [$registration->webinar, $registration])
+            ->with('error', 'Payment verification failed. Please try again.');
+    }
+
+    /**
+     * Handle Paystack payment callback.
+     */
+    public function paystackCallback(Request $request)
+    {
+        $reference = $request->query('reference');
+
+        if (! $reference) {
+            return redirect()->route('webinars.index')
+                ->with('error', 'Payment reference not found.');
+        }
+
+        $registration = WebinarRegistration::where('transaction_reference', $reference)->first();
+
+        if (! $registration) {
+            return redirect()->route('webinars.index')
+                ->with('error', 'Registration not found.');
+        }
+
+        if ($registration->isPaid()) {
+            return redirect()->route('webinars.index')
+                ->with('success', 'Payment already completed! Please check your email for the webinar access link.');
+        }
+
+        $result = $this->paystack->verifyPayment($reference);
+
+        if ($result['success']) {
+            $registration->update([
+                'payment_status' => 'paid',
+                'paid_at' => now(),
+                'transaction_reference' => $reference,
+                'payment_provider' => 'paystack',
+                'amount_paid' => $result['amount'] ?? $registration->amount_paid,
+            ]);
+
+            $accessLink = $this->accessService->generateAccessLink($registration);
             $this->sendPaymentConfirmation($registration);
 
             return redirect()->route('webinars.index')

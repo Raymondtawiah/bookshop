@@ -67,6 +67,19 @@ class PaymentRouterService
             'email' => $email,
         ]);
 
+        if (! empty($metadata['provider']) && isset($this->gateways[$metadata['provider']])) {
+            $provider = $metadata['provider'];
+
+            return $this->gateways[$provider]->createCheckout(
+                $email,
+                $amountUsd,
+                $reference,
+                $successUrl,
+                $cancelUrl,
+                $metadata
+            );
+        }
+
         $stripeGateway = $this->gateways['stripe'] ?? null;
         if ($stripeGateway) {
             $result = $stripeGateway->createCheckout(

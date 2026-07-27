@@ -12,8 +12,17 @@ Your payment for the **{{ $webinar->title }}** has been successfully processed!
 ## Your Registration Information
 
 **Registration ID:** {{ str_pad($registration->id, 6, '0', STR_PAD_LEFT) }}  
-**Payment Reference:** {{ $registration->transaction_reference ?? 'N/A' }}  
-**Amount Paid:** ${{ number_format($registration->amount_paid, 2) }}
+**Payment Reference:** {{ $registration->transaction_reference ?? 'N/A' }}
+@php
+    $provider = $registration->payment_provider ?? 'stripe';
+    $isGhs = $provider === 'paystack';
+    $symbol = $isGhs ? '₵' : '$';
+    $amount = $registration->amount_paid ?? 0;
+@endphp
+**Amount Paid:** {{ $symbol }}{{ number_format($amount, 2) }}
+@if($isGhs)
+    <span style="font-size: 12px; color: #666;">(approx. ${{ number_format($amount / 11.65, 2) }} USD)</span>
+@endif
 
 ## Access Limit
 
