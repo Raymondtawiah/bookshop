@@ -61,19 +61,19 @@
                     <!-- Stats with enhanced cards -->
                     <div class="grid grid-cols-3 gap-6">
                         <div class="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30 transform hover:scale-105 transition-transform duration-300">
-                            <div class="text-3xl font-bold text-white">
+                            <div class="text-xl font-bold text-white">
                                 {{ $webinars->count() ?? 0 }}+
                             </div>
                             <div class="text-white text-sm font-medium">Available Sessions</div>
                         </div>
                         <div class="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30 transform hover:scale-105 transition-transform duration-300">
-                            <div class="text-3xl font-bold text-white">
+                            <div class="text-xl font-bold text-white">
                                 5+
                             </div>
                             <div class="text-white text-sm font-medium">Expert Speakers</div>
                         </div>
                         <div class="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30 transform hover:scale-105 transition-transform duration-300">
-                            <div class="text-2xl font-bold text-white">
+                            <div class="text-xl font-bold text-white">
                                 60min
                             </div>
                             <div class="text-white text-sm font-medium">Each Session</div>
