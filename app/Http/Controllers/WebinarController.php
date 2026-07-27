@@ -13,7 +13,7 @@ class WebinarController extends Controller
      */
     public function index()
     {
-        $webinars = WebinarSession::active()->visible()->latest()->paginate(12);
+        $webinars = WebinarSession::visible()->latest()->paginate(12);
 
         $registrationFormEnabled = SiteSetting::get('webinar_registration_form_enabled', 'true') === 'true';
 
