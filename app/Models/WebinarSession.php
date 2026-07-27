@@ -18,7 +18,6 @@ class WebinarSession extends Model
         'payment_enabled',
         'scheduled_at',
         'duration_minutes',
-        'status',
         'is_registration_open',
         'is_visible',
         'created_by',
@@ -48,11 +47,6 @@ class WebinarSession extends Model
         return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function scopeActive($query)
-    {
-        return $query->where('status', 'active');
-    }
-
     public function scopeUpcoming($query)
     {
         return $query->where('scheduled_at', '>', now())->orderBy('scheduled_at', 'asc');
@@ -74,24 +68,24 @@ class WebinarSession extends Model
     }
 
     /**
-      * Price for this webinar as set in the database.
-      */
-     public function getCurrentPriceAttribute(): float
-     {
-         return (float) ($this->price ?? 0);
-     }
- 
-     /**
-      * Price tier label based on current price.
-      */
-     public function getPriceTierAttribute(): string
-     {
-         if ($this->current_price == 0) {
-             return 'Free Webinar';
-         }
- 
-         return '$'.number_format($this->current_price, 2).' Webinar';
-     }
+     * Price for this webinar as set in the database.
+     */
+    public function getCurrentPriceAttribute(): float
+    {
+        return (float) ($this->price ?? 0);
+    }
+
+    /**
+     * Price tier label based on current price.
+     */
+    public function getPriceTierAttribute(): string
+    {
+        if ($this->current_price == 0) {
+            return 'Free Webinar';
+        }
+
+        return '$'.number_format($this->current_price, 2).' Webinar';
+    }
 
     /**
      * No early-bird pricing anymore — always false.

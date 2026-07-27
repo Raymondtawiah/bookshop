@@ -27,7 +27,8 @@ class WebinarReminderService
         $webinars = WebinarSession::where('scheduled_at', '>', now())
             ->where('scheduled_at', '<=', now()->addHours(25))
             ->where('scheduled_at', '>', now()->addHours(23))
-            ->where('status', 'active')
+            ->where('is_visible', true)
+            ->where('is_registration_open', true)
             ->get();
 
         foreach ($webinars as $webinar) {
@@ -43,7 +44,8 @@ class WebinarReminderService
         $webinars = WebinarSession::where('scheduled_at', '>', now())
             ->where('scheduled_at', '<=', now()->addMinutes(65))
             ->where('scheduled_at', '>', now()->addMinutes(55))
-            ->where('status', 'active')
+            ->where('is_visible', true)
+            ->where('is_registration_open', true)
             ->get();
 
         foreach ($webinars as $webinar) {
@@ -59,7 +61,8 @@ class WebinarReminderService
         $webinars = WebinarSession::where('scheduled_at', '>', now())
             ->where('scheduled_at', '<=', now()->addMinutes(20))
             ->where('scheduled_at', '>', now()->addMinutes(10))
-            ->where('status', 'active')
+            ->where('is_visible', true)
+            ->where('is_registration_open', true)
             ->get();
 
         foreach ($webinars as $webinar) {
@@ -111,7 +114,8 @@ class WebinarReminderService
     {
         $webinars = WebinarSession::where('scheduled_at', '<', now()->subHours(2))
             ->where('scheduled_at', '>', now()->subHours(26))
-            ->where('status', 'active')
+            ->where('is_visible', true)
+            ->where('is_registration_open', true)
             ->get();
 
         foreach ($webinars as $webinar) {

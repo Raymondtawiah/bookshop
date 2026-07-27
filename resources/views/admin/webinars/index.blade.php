@@ -5,9 +5,14 @@
 @section('content')
 <div class="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
     <!-- Header -->
-    <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 mb-2">Webinar Management</h1>
-        <p class="text-gray-600">Manage webinar registrations and send reminders to attendees</p>
+    <div class="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Webinar Management</h1>
+            <p class="text-gray-600">Manage webinar registrations and send reminders to attendees</p>
+        </div>
+        <a href="{{ route('admin.webinars.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">
+            Create Webinar
+        </a>
     </div>
 
     <style>
@@ -95,11 +100,6 @@
                                 <span class="track"></span>
                             </label>
                             <span class="state-text">{{ $webinar->payment_enabled ? 'Paid' : 'Free' }}</span>
-                        </form>
-                        <form method="POST" action="{{ route('admin.webinars.updatePrice', $webinar->id) }}" class="flex items-center gap-2" onsubmit="event.preventDefault(); this.submit();">
-                            @csrf
-                            <input type="number" name="price" value="{{ old('price', $webinar->current_price) }}" min="0" step="0.01" class="w-20 px-2 py-1 text-sm border border-gray-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
-                            <button type="submit" class="px-2 py-1 bg-indigo-600 text-white text-xs rounded hover:bg-indigo-700">Update</button>
                         </form>
                     @endforeach
                 </div>
