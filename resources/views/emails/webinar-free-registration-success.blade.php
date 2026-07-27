@@ -15,17 +15,15 @@ You have successfully registered for **{{ $webinar->title }}**. This webinar is 
 
 ## Access Limit
 
-This link can be used a maximum of **4 times**. After reaching this limit, you will need to re-register if payment is still required.
+Your secure access link can be used a maximum of **4 times**. After reaching this limit, you will need to re-register.
 
-## Your Webinar Link
+@if($accessLink)
+## Your Webinar Access Link
 
-Your webinar link to join the session:
-
-@component('mail::button', ['url' => $webinarLink ?? '#' ])
+@component('mail::button', ['url' => $accessLink])
 Join Webinar
 @endcomponent
-
-**Important:** Click the button above to join the webinar at the scheduled time.
+@endif
 
 ## Important Schedule Information
 

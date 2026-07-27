@@ -20,11 +20,14 @@ class WebinarFreeRegistrationSuccess extends Mailable
 
     public $webinarLink;
 
-    public function __construct(WebinarRegistration $registration, WebinarSession $webinar, ?string $webinarLink = null)
+    public $accessLink;
+
+    public function __construct(WebinarRegistration $registration, WebinarSession $webinar, ?string $webinarLink = null, ?string $accessLink = null)
     {
         $this->registration = $registration;
         $this->webinar = $webinar;
         $this->webinarLink = $webinarLink ?? $webinar->webinar_link;
+        $this->accessLink = $accessLink;
     }
 
     public function envelope(): Envelope
@@ -42,6 +45,7 @@ class WebinarFreeRegistrationSuccess extends Mailable
                 'registration' => $this->registration,
                 'webinar' => $this->webinar,
                 'webinarLink' => $this->webinarLink,
+                'accessLink' => $this->accessLink,
             ],
         );
     }

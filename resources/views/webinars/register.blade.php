@@ -20,6 +20,20 @@
         </div>
         
         <div class="max-w-2xl mx-auto relative z-10">
+            <!-- Flash Messages -->
+            <div id="flash-container" class="mb-6 hidden">
+                <div id="flash-message" class="rounded-xl p-4 shadow-lg transform transition-all duration-500">
+                    <div class="flex items-center gap-3">
+                        <div id="flash-icon"></div>
+                        <div>
+             
+                        <p id="flash-title" class="font-bold text-sm"></p>
+                            <p id="flash-text" class="text-sm opacity-90"></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
             <!-- Back Button -->
             <a href="{{ route('webinars.index') }}" class="inline-flex items-center text-blue-600 hover:text-blue-800 mb-8 transition-colors">
                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -122,9 +136,49 @@
         .animate-fade-in-up {
             animation: fadeInUp 0.8s ease-out forwards;
         }
+
+        /* Flash messages */
+        #flash-container.success #flash-message {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+            border: 1px solid #34d399;
+        }
+        #flash-container.error #flash-message {
+            background: linear-gradient(135deg, #ef4444, #dc2626);
+            color: white;
+            border: 1px solid #f87171;
+        }
+        #flash-container.hidden {
+            display: none;
+        }
     </style>
     
     <script>
+        function showFlash(type, message) {
+            const container = document.getElementById('flash-container');
+            const flash = document.getElementById('flash-message');
+            const title = document.getElementById('flash-title');
+            const text = document.getElementById('flash-text');
+            const icon = document.getElementById('flash-icon');
+
+            container.classList.remove('hidden', 'success', 'error');
+            container.classList.add(type);
+
+            if (type === 'success') {
+                title.textContent = 'Success!';
+                icon.innerHTML = '<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+            } else {
+                title.textContent = 'Error';
+                icon.innerHTML = '<svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>';
+            }
+
+            text.textContent = message;
+
+            setTimeout(() => {
+                container.classList.add('hidden');
+            }, 4000);
+        }
+
         document.addEventListener('DOMContentLoaded', function() {
             // Add fade-in animation to the registration card
             const card = document.querySelector('.bg-white\\/95');
@@ -166,16 +220,18 @@
                             if (data.redirect_url) {
                                 window.location.href = data.redirect_url;
                             } else {
-                                alert('Registration successful! Check your email for details.');
-                                window.location.href = '{{ route('webinars.index') }}';
+                                showFlash('success', data.message || 'Registration successful! Check your email for details.');
+                                setTimeout(() => {
+                                    window.location.href = '{{ route('webinars.index') }}';
+                                }, 2000);
                             }
                         } else {
-                            alert(data.message || 'Registration failed. Please try again.');
+                            showFlash('error', data.message || 'Registration failed. Please try again.');
                         }
                     })
                     .catch(error => {
                         console.error('Error:', error);
-                        alert('An error occurred. Please try again.');
+                        showFlash('error', 'An error occurred. Please try again.');
                     })
                     .finally(() => {
                         submitBtn.textContent = originalText;

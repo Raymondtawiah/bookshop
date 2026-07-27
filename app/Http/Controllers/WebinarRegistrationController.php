@@ -62,20 +62,30 @@ class WebinarRegistrationController extends Controller
             'terms' => 'required',
         ]);
 
-        // Check if already registered (for logged-in users)
-        $existingRegistration = $user
-            ? $webinar->registrations()->where('user_id', $user->id)->first()
-            : $webinar->registrations()->where('email', $request->email)->whereNull('user_id')->first();
+        $existingRegistration = null;
 
-        if ($existingRegistration && $this->paymentToggleService->isPaymentEnabled($webinar)) {
-            if ($existingRegistration->isPaid()) {
+        if ($user) {
+            $existingRegistration = $webinar->registrations()
+                ->withTrashed()
+                ->where('user_id', $user->id)
+                ->first();
+        }
+
+        if (! $existingRegistration) {
+            $existingRegistration = $webinar->registrations()
+                ->withTrashed()
+                ->where('email', $request->email)
+                ->first();
+        }
+
+        if ($existingRegistration) {
+            if ($existingRegistration->isPaid() || ! $this->paymentToggleService->isPaymentEnabled($webinar)) {
                 return response()->json([
                     'success' => false,
-                    'message' => 'You are already registered and paid for this webinar. Check your email for the access link.',
+                    'message' => 'You are already registered for this webinar. Check your email for the access link.',
                 ]);
             }
 
-            // If not paid, redirect to payment
             return response()->json([
                 'success' => true,
                 'redirect_url' => route('webinars.payment', [$webinar, $existingRegistration]),
@@ -96,8 +106,10 @@ class WebinarRegistrationController extends Controller
         ]);
 
         if (! $requiresPayment) {
+            $accessLink = $this->accessService->generateAccessLink($registration);
+
             \Mail::to($registration->email)->send(
-                new WebinarFreeRegistrationSuccess($registration, $webinar)
+                new WebinarFreeRegistrationSuccess($registration, $webinar, $webinar->webinar_link, $accessLink)
             );
 
             $registration->update(['email_sent_at' => now()]);

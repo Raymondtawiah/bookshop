@@ -25,6 +25,8 @@ class WebinarPaymentToggleService implements WebinarPaymentToggleServiceInterfac
     {
         $newState = ! $this->isPaymentEnabled($webinar);
 
-        return $webinar->update(['payment_enabled' => $newState]);
+        $webinar->update(['payment_enabled' => $newState]);
+
+        return $newState;
     }
 }
