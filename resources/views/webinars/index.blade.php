@@ -2,8 +2,8 @@
 
 @section('content')
     <!-- Hero Section -->
-    <section class="py-20 text-white max-w-full relative overflow-hidden min-h-screen flex items-center" 
-             style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.85) 0%, rgba(99, 102, 241, 0.85) 50%, rgba(139, 92, 246, 0.85) 100%), url('/webinar.png'); background-size: cover; background-position: center; background-attachment: fixed;">
+    <section class="py-16 text-white max-w-full relative overflow-hidden min-h-screen flex items-center" 
+             style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.85) 0%, rgba(99, 102, 241, 0.85) 50%, rgba(139, 92, 246, 0.85) 100%), url('{{ asset('mr. nathaniel.jpeg') }}'); background-size: cover; background-position: center; background-attachment: fixed;">
         
         <!-- Animated overlay pattern -->
         <div class="absolute inset-0 opacity-20">
@@ -12,71 +12,71 @@
         
         <!-- Floating elements animation -->
         <div class="absolute inset-0 overflow-hidden">
-            <div class="absolute top-10 left-10 w-20 h-20 bg-white/10 rounded-full animate-pulse"></div>
-            <div class="absolute top-1/4 right-20 w-32 h-32 bg-blue-400/20 rounded-full animate-bounce" style="animation-delay: 0.5s;"></div>
-            <div class="absolute bottom-20 left-1/4 w-16 h-16 bg-purple-400/20 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
-            <div class="absolute top-1/2 right-1/3 w-24 h-24 bg-indigo-400/20 rounded-full animate-bounce" style="animation-delay: 1.5s;"></div>
+            <div class="absolute top-10 left-10 w-16 h-16 bg-white/10 rounded-full animate-pulse"></div>
+            <div class="absolute top-1/4 right-20 w-24 h-24 bg-blue-400/20 rounded-full animate-bounce" style="animation-delay: 0.5s;"></div>
+            <div class="absolute bottom-20 left-1/4 w-12 h-12 bg-purple-400/20 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
+            <div class="absolute top-1/2 right-1/3 w-20 h-20 bg-indigo-400/20 rounded-full animate-bounce" style="animation-delay: 1.5s;"></div>
         </div>
         
         <div class="px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid md:grid-cols-2 gap-12 items-center max-w-7xl mx-auto">
-                <div class="space-y-8">
+            <div class="grid md:grid-cols-2 gap-8 items-center max-w-7xl mx-auto">
+                <div class="space-y-6">
                     <!-- Badge with glow effect -->
-                    <div class="inline-flex items-center px-6 py-3 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 shadow-lg">
-                        <span class="relative flex h-3 w-3 mr-3">
+                    <div class="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 shadow-lg">
+                        <span class="relative flex h-2.5 w-2.5 mr-2.5">
                             <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-3 w-3 bg-green-500"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
                         </span>
-                        <span class="text-sm font-medium">Upcoming Sessions • Expert Led</span>
+                        <span class="text-xs font-medium">Upcoming Sessions • Expert Led</span>
                     </div>
                     
                     <!-- Main heading with solid text for better visibility -->
-                    <h1 class="text-5xl md:text-6xl font-bold leading-tight text-white">
+                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-white">
                         Visa Interview
                         <br>
                         Success Webinar
                     </h1>
                     
                     <!-- Description with better typography -->
-                    <p class="text-xl md:text-2xl text-blue-100 leading-relaxed max-w-lg">
+                    <p class="text-lg md:text-xl text-blue-100 leading-relaxed max-w-lg">
                         Master your visa interview with expert guidance. Learn proven strategies, common questions, and how to answer confidently to get your visa approved.
                     </p>
                     
                     <!-- CTA buttons with enhanced styling -->
-                    <div class="flex flex-col sm:flex-row gap-4">
+                    <div class="flex flex-col sm:flex-row gap-3">
                         @if($registrationFormEnabled && $webinars->isNotEmpty())
-                            <a href="#register" class="group relative px-8 py-4 bg-white text-blue-600 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
+                            <a href="#register" class="group relative px-6 py-3 bg-white text-blue-600 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
                                 <span class="relative z-10">Register Now</span>
                             </a>
                         @else
-                            <a href="#register" class="group relative px-8 py-4 bg-white text-blue-600 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
+                            <a href="#register" class="group relative px-6 py-3 bg-white text-blue-600 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
                                 <span class="relative z-10">Registration</span>
                             </a>
                         @endif
-                        <a href="#about" class="px-8 py-4 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white rounded-xl font-semibold text-lg hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
+                        <a href="#about" class="px-6 py-3 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white rounded-xl font-semibold text-base hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
                             Learn More
                         </a>
                     </div>
                     
                     <!-- Stats with enhanced cards -->
-                    <div class="grid grid-cols-3 gap-6">
-                        <div class="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30 transform hover:scale-105 transition-transform duration-300">
-                            <div class="text-xl font-bold text-white">
+                    <div class="grid grid-cols-3 gap-4">
+                        <div class="bg-white/20 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/30 transform hover:scale-105 transition-transform duration-300">
+                            <div class="text-lg font-bold text-white">
                                 {{ $webinars->count() ?? 0 }}+
                             </div>
-                            <div class="text-white text-sm font-medium">Available Sessions</div>
+                            <div class="text-white text-xs sm:text-sm font-medium">Available Sessions</div>
                         </div>
-                        <div class="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30 transform hover:scale-105 transition-transform duration-300">
-                            <div class="text-xl font-bold text-white">
+                        <div class="bg-white/20 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/30 transform hover:scale-105 transition-transform duration-300">
+                            <div class="text-lg font-bold text-white">
                                 5+
                             </div>
-                            <div class="text-white text-sm font-medium">Expert Speakers</div>
+                            <div class="text-white text-xs sm:text-sm font-medium">Expert Speakers</div>
                         </div>
-                        <div class="bg-white/20 backdrop-blur-sm rounded-xl p-4 border border-white/30 transform hover:scale-105 transition-transform duration-300">
-                            <div class="text-xl font-bold text-white">
+                        <div class="bg-white/20 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/30 transform hover:scale-105 transition-transform duration-300">
+                            <div class="text-lg font-bold text-white">
                                 60min
                             </div>
-                            <div class="text-white text-sm font-medium">Each Session</div>
+                            <div class="text-white text-xs sm:text-sm font-medium">Each Session</div>
                         </div>
                     </div>
                 </div>

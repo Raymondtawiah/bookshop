@@ -46,7 +46,7 @@ Route::get('visa-tip', function () {
 // Privacy Policy - Public route (no authentication required)
 // Is for someone having mobile app needing a privacy policy url
 // so pardon the me Thank you.
-Route::get('realgalaxyfc_privacy', function () {
+Route::get('privacy', function () {
     return view('privacy');
 })->name('privacy');
 

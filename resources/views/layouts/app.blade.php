@@ -18,5 +18,6 @@
         </main>
         <x-customer-footer />
         <x-free-book-modal />
+        @include('components.cookie-consent')
     </body>
 </html>

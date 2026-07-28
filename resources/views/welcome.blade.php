@@ -80,90 +80,90 @@
              </div>
          </div>
 
-         <!-- Hero Section -->
-         <section id="home" class="relative overflow-hidden hero-gradient">
-             <div class="absolute inset-0 overflow-hidden pointer-events-none">
-                 <div class="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
-                 <div class="absolute bottom-20 right-10 w-40 h-40 bg-purple-300/20 rounded-full blur-2xl"></div>
-                 <div class="absolute top-1/2 left-1/3 w-24 h-24 bg-blue-300/20 rounded-full blur-xl"></div>
-             </div>
-             
-             <div class="relative max-w-7xl mx-auto px-6 py-20 sm:py-28 flex items-center justify-center">
-                 <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-                     <!-- Text Content -->
-                     <div class="space-y-8">
-                         <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-md rounded-full border border-white/20">
-                             <svg class="w-5 h-5 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
-                             </svg>
-                             <span class="text-sm font-bold text-white">Visa Interview Preparation Resources</span>
-                         </div>
-                         
-                         <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight text-center">
-                             Master Your
-                             <span class="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">Visa Interview</span>
-                         </h1>
-                         
-                         <p class="text-lg sm:text-xl text-white/90 leading-relaxed max-w-lg">
-                             Practical guides to help students and travelers understand visa interviews, avoid common mistakes, and answer visa officer questions with confidence.
-                         </p>
-                         
-                         <div class="flex flex-col sm:flex-row gap-4 items-center justify-center">
-                             @if(\App\Models\Book::count() > 0)
-                             <a href="#store" class="px-8 py-4 bg-white text-indigo-700 rounded-2xl font-bold text-lg hover:bg-indigo-50 transition-all duration-200 shadow-xl text-center">
-                                 Explore Books
-                             </a>
-                             @else
-                             <a href="{{ route('register') }}" class="px-8 py-4 bg-white text-indigo-700 rounded-2xl font-bold text-lg hover:bg-indigo-50 transition-all duration-200 shadow-xl text-center">
-                                 Get Started
-                             </a>
-                             @endif
-                             @guest
-                             <a href="{{ route('register') }}" class="px-8 py-4 bg-white/15 backdrop-blur-sm text-white font-bold rounded-2xl border border-white/30 hover:bg-white/25 transition-all duration-200 text-center">
-                                 Create Account
-                             </a>
-                             @endguest
-                         </div>
-                         
-                         <div class="grid grid-cols-3 gap-4 sm:gap-6 pt-4">
-                             <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white/20">
-                                 <div class="text-2xl sm:text-3xl font-extrabold text-white">{{ \App\Models\Book::count() }}</div>
-                                 <div class="text-indigo-200 text-xs sm:text-sm font-medium">Resources</div>
-                             </div>
-                             <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white/20">
-                                 <div class="text-2xl sm:text-3xl font-extrabold text-white">10K+</div>
-                                 <div class="text-indigo-200 text-xs sm:text-sm font-medium">Readers</div>
-                             </div>
-                             <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white/20">
-                                 <div class="text-2xl sm:text-3xl font-extrabold text-white">4.9</div>
-                                 <div class="text-indigo-200 text-xs sm:text-sm font-medium">Rating</div>
-                             </div>
-                         </div>
-                     </div>
+          <!-- Hero Section -->
+          <section id="home" class="relative overflow-hidden" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.85) 0%, rgba(99, 102, 241, 0.85) 50%, rgba(139, 92, 246, 0.85) 100%), url('{{ asset('mr. nathaniel.jpeg') }}'); background-size: cover; background-position: center; background-attachment: fixed;">
+              <div class="absolute inset-0 overflow-hidden pointer-events-none">
+                  <div class="absolute top-20 left-10 w-32 h-32 bg-white/10 rounded-full blur-2xl"></div>
+                  <div class="absolute bottom-20 right-10 w-40 h-40 bg-purple-300/20 rounded-full blur-2xl"></div>
+                  <div class="absolute top-1/2 left-1/3 w-24 h-24 bg-blue-300/20 rounded-full blur-xl"></div>
+              </div>
+              
+              <div class="relative max-w-7xl mx-auto px-6 py-12 sm:py-16 flex items-center justify-center">
+                  <div class="grid lg:grid-cols-2 gap-8 lg:gap-8 items-center">
+                      <!-- Text Content -->
+                      <div class="space-y-6">
+                          <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-white/15 backdrop-blur-md rounded-full border border-white/20">
+                              <svg class="w-4 h-4 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                              </svg>
+                              <span class="text-xs font-bold text-white">Visa Interview Preparation Resources</span>
+                          </div>
+                          
+                          <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight tracking-tight text-center">
+                              Master Your
+                              <span class="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">Visa Interview</span>
+                          </h1>
+                          
+                          <p class="text-base sm:text-lg text-white/90 leading-relaxed max-w-lg">
+                              Practical guides to help students and travelers understand visa interviews, avoid common mistakes, and answer visa officer questions with confidence.
+                          </p>
+                          
+                          <div class="flex flex-col sm:flex-row gap-3 items-center justify-center">
+                              @if(\App\Models\Book::count() > 0)
+                              <a href="#store" class="px-6 py-3 bg-white text-indigo-700 rounded-2xl font-bold text-base hover:bg-indigo-50 transition-all duration-200 shadow-xl text-center">
+                                  Explore Books
+                              </a>
+                              @else
+                              <a href="{{ route('register') }}" class="px-6 py-3 bg-white text-indigo-700 rounded-2xl font-bold text-base hover:bg-indigo-50 transition-all duration-200 shadow-xl text-center">
+                                  Get Started
+                              </a>
+                              @endif
+                              @guest
+                              <a href="{{ route('register') }}" class="px-6 py-3 bg-white/15 backdrop-blur-sm text-white font-bold rounded-2xl border border-white/30 hover:bg-white/25 transition-all duration-200 text-center">
+                                  Create Account
+                              </a>
+                              @endguest
+                          </div>
+                          
+                          <div class="grid grid-cols-3 gap-3 sm:gap-6 pt-2">
+                              <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 sm:p-5 border border-white/20">
+                                  <div class="text-xl sm:text-3xl font-extrabold text-white">{{ \App\Models\Book::count() }}</div>
+                                  <div class="text-indigo-200 text-xs sm:text-sm font-medium">Resources</div>
+                              </div>
+                              <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 sm:p-5 border border-white/20">
+                                  <div class="text-xl sm:text-3xl font-extrabold text-white">10K+</div>
+                                  <div class="text-indigo-200 text-xs sm:text-sm font-medium">Readers</div>
+                              </div>
+                              <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 sm:p-5 border border-white/20">
+                                  <div class="text-xl sm:text-3xl font-extrabold text-white">4.9</div>
+                                  <div class="text-indigo-200 text-xs sm:text-sm font-medium">Rating</div>
+                              </div>
+                          </div>
+                      </div>
 
-                     <!-- Image / Visual -->
-                     <div class="hidden lg:block relative">
-                         <div class="relative group">
-                             <div class="absolute -inset-4 bg-gradient-to-tr from-blue-400 to-purple-400 rounded-3xl blur-2xl opacity-40 group-hover:opacity-60 transition-opacity duration-300"></div>
-                             <div class="relative rounded-3xl shadow-2xl overflow-hidden border border-white/20 bg-white/10 backdrop-blur-sm p-2">
-                             <img src="{{ asset('mr. nathaniel.jpeg') }}" alt="Visa Interview" 
-                                  class="relative rounded-2xl w-full h-50 object-cover shadow-xl">
-                             </div>
-                             <div class="absolute -top-4 -right-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-5 py-2 rounded-full text-sm font-black shadow-xl whitespace-nowrap inline-block z-10">
-                                 START NOW
-                             </div>
-                         </div>
-                     </div>
-                 </div>
-             </div>
-             
-             <!-- Wave separator -->
-             <div class="absolute bottom-0 left-0 right-0">
-                 <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                     <path d="M0 120L48 105C96 90 192 60 288 45C384 30 480 30 576 37.5C672 45 768 60 864 67.5C960 75 1056 75 1152 67.5C1248 60 1344 45 1392 37.5L1440 30V120H1392C1344 120 1248 120 1152 120C1056 120 960 120 864 120C768 120 672 120 576 120C480 120 384 120 288 120C192 120 96 120 48 120H0Z" fill="white"/>
-                 </svg>
-             </div>
-         </section>
+                      <!-- Image / Visual -->
+                      <div class="hidden lg:block relative">
+                          <div class="relative group">
+                              <div class="absolute -inset-4 bg-gradient-to-tr from-blue-400 to-purple-400 rounded-3xl blur-2xl opacity-40 group-hover:opacity-60 transition-opacity duration-300"></div>
+                              <div class="relative rounded-3xl shadow-2xl overflow-hidden border border-white/20 bg-white/10 backdrop-blur-sm p-2">
+                              <img src="{{ asset('mr. nathaniel.jpeg') }}" alt="Visa Interview" 
+                                   class="relative rounded-2xl w-full h-50 object-cover shadow-xl">
+                              </div>
+                              <div class="absolute -top-4 -right-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-5 py-2 rounded-full text-sm font-black shadow-xl whitespace-nowrap inline-block z-10">
+                                  START NOW
+                              </div>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              
+              <!-- Wave separator -->
+              <div class="absolute bottom-0 left-0 right-0">
+                  <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                      <path d="M0 120L48 105C96 90 192 60 288 45C384 30 480 30 576 37.5C672 45 768 60 864 67.5C960 75 1056 75 1152 67.5C1248 60 1344 45 1392 37.5L1440 30V120H1392C1344 120 1248 120 1152 120C1056 120 960 120 864 120C768 120 672 120 576 120C480 120 384 120 288 120C192 120 96 120 48 120H0Z" fill="white"/>
+                  </svg>
+              </div>
+          </section>
 
         <!-- Search Section -->
         <section class="py-8 bg-gray-50 max-w-full">
@@ -661,6 +661,7 @@
 
         @include('components.free-book-modal')
         @include('feedback-widget')
+        @include('components.cookie-consent')
     </div>
     </body>
 </html>
