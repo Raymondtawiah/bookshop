@@ -58,11 +58,9 @@
 
                     @if($webinar)
                         <!-- Price -->
-                        <div class="bg-green-50/80 border border-green-200 rounded-xl p-4 mb-6 transform hover:scale-105 transition-transform duration-300">
-                            <div class="flex items-center justify-between">
-                                <span class="text-green-800 font-medium">Registration Fee</span>
-                                <span class="text-3xl font-bold text-green-600 animate-pulse">${{ number_format($webinar->current_price, 2) }}</span>
-                            </div>
+                        <div class="flex items-center justify-between mb-6">
+                            <span class="text-gray-600 font-medium">Price</span>
+                            <span class="text-3xl font-bold text-gray-900">${{ number_format($webinar->current_price, 2) }}</span>
                         </div>
 
                         <!-- Registration Form -->

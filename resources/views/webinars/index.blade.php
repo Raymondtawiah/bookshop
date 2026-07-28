@@ -101,161 +101,204 @@
         </div>
     </section>
 
-    <!-- What You'll Learn -->
-    <section id="about" class="py-20 bg-slate-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-bold mb-4">What You'll Learn</h2>
-                <p class="text-xl text-slate-600">
-                    Master your visa interview with proven strategies
-                </p>
-            </div>
-            <div class="grid md:grid-cols-3 gap-8">
-                <div class="p-6 rounded-xl bg-white border border-slate-200 hover:shadow-lg transition-shadow">
-                    <div class="mb-4">
-                        <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Common Interview Questions</h3>
-                    <p class="text-slate-600">Learn the most frequently asked visa interview questions and how to answer them confidently.</p>
-                </div>
-                <div class="p-6 rounded-xl bg-white border border-slate-200 hover:shadow-lg transition-shadow">
-                    <div class="mb-4">
-                        <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Document Preparation</h3>
-                    <p class="text-slate-600">Understand exactly what documents you need and how to organize them for a successful interview.</p>
-                </div>
-                <div class="p-6 rounded-xl bg-white border border-slate-200 hover:shadow-lg transition-shadow">
-                    <div class="mb-4">
-                        <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Body Language & Confidence</h3>
-                    <p class="text-slate-600">Master the art of confident communication and positive body language during your interview.</p>
-                </div>
-                <div class="p-6 rounded-xl bg-white border border-slate-200 hover:shadow-lg transition-shadow">
-                    <div class="mb-4">
-                        <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Red Flags to Avoid</h3>
-                    <p class="text-slate-600">Learn the common mistakes that lead to visa denials and how to avoid them completely.</p>
-                </div>
-                <div class="p-6 rounded-xl bg-white border border-slate-200 hover:shadow-lg transition-shadow">
-                    <div class="mb-4">
-                        <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Mock Interview Practice</h3>
-                    <p class="text-slate-600">Participate in live mock interviews and get feedback on your performance from experts.</p>
-                </div>
-                <div class="p-6 rounded-xl bg-white border border-slate-200 hover:shadow-lg transition-shadow">
-                    <div class="mb-4">
-                        <svg class="w-12 h-12 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                        </svg>
-                    </div>
-                    <h3 class="text-xl font-semibold mb-2">Success Stories</h3>
-                    <p class="text-slate-600">Hear real success stories and learn from others who have successfully obtained their visas.</p>
-                </div>
-            </div>
+    <style>
+      #about{ padding: 96px 24px; }
+      #about .wrap{ max-width: 1180px; margin: 0 auto; }
+      #about .head{ text-align:center; margin-bottom: 64px; }
+      #about .eyebrow{ display:inline-flex; align-items:center; gap:8px; font-size:12px; letter-spacing:0.14em; text-transform:uppercase; font-weight:600; color:var(--indigo); margin-bottom:18px; }
+      #about .eyebrow::before{ content:""; width:16px; height:1px; background: linear-gradient(90deg, transparent, var(--indigo)); }
+      #about .eyebrow::after{ content:""; width:16px; height:1px; background: linear-gradient(90deg, var(--indigo), transparent); }
+      #about h2{ font-family:'Space Grotesk', sans-serif; font-size: clamp(32px, 4.2vw, 46px); font-weight:700; letter-spacing:-0.01em; margin-bottom: 14px; background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+      #about .subtext{ font-size: 17px; color: var(--muted); max-width: 480px; margin: 0 auto; }
+      #about .swipe-hint{ display:flex; align-items:center; justify-content:center; gap:6px; font-size:12px; color: var(--muted-dim); margin-top:14px; }
+      #about .swipe-hint svg{ width:14px; height:14px; stroke: var(--muted-dim); fill:none; stroke-width:2; stroke-linecap:round; stroke-linejoin:round; animation: swipe 1.6s ease-in-out infinite; }
+      @keyframes swipe{ 0%, 100% { transform: translateX(0); opacity:0.6; } 50% { transform: translateX(4px); opacity:1; } }
+      @media (min-width:768px){ #about .swipe-hint{ display:none; } }
+
+      #about .grid{ display:flex; flex-direction:row; gap:16px; overflow-x:auto; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; padding-bottom: 12px; margin: 0 -24px; padding-left: 24px; padding-right: 24px; scrollbar-width: none; }
+      #about .grid::-webkit-scrollbar{ display:none; }
+      #about .card{ scroll-snap-align: start; flex: 0 0 78%; }
+      @media (min-width:640px){ #about .card{ flex: 0 0 48%; } }
+      @media (min-width:768px){ #about .grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap: 22px; overflow-x: visible; margin: 0; padding: 0; } #about .card{ flex: initial; } }
+      #about .card{ position:relative; background: var(--card); border: 1px solid var(--card-line); border-radius: 18px; padding: 30px 26px; transition: transform 0.25s ease, background 0.25s ease, border-color 0.25s ease, box-shadow 0.25s ease; overflow:hidden; }
+      #about .card::before{ content:""; position:absolute; inset:0; background: linear-gradient(160deg, rgba(99,102,241,0.08), transparent 55%); opacity:0; transition: opacity 0.25s ease; pointer-events:none; }
+      #about .card:hover{ transform: translateY(-4px); background: var(--card-hover); border-color: rgba(139,92,246,0.4); box-shadow: 0 20px 40px -20px rgba(99,102,241,0.35); }
+      #about .card:hover::before{ opacity:1; }
+      #about .step-index{ position:absolute; top:24px; right:26px; font-family:'Space Grotesk', sans-serif; font-size:13px; font-weight:600; color: var(--muted-dim); letter-spacing:0.02em; }
+      #about .icon-badge{ width: 60px; height: 60px; border-radius: 18px; display:flex; align-items:center; justify-content:center; margin-bottom: 22px; background: #ffffff; box-shadow: 0 4px 12px rgba(0,0,0,0.25); }
+      #about .icon-badge svg{ width: 32px; height: 32px; stroke: #6366f1; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+      #about h3{ font-family:'Space Grotesk', sans-serif; font-size: 18px; font-weight:600; margin-bottom: 10px; letter-spacing:-0.005em; }
+      #about .card p{ font-size: 14.5px; line-height: 1.55; color: var(--muted); }
+      #about .rail{ position:absolute; left:0; top:0; bottom:0; width:3px; background: linear-gradient(180deg, var(--indigo), var(--blue)); opacity:0; transition: opacity 0.25s ease; }
+      #about .card:hover .rail{ opacity:1; }
+      @media (prefers-reduced-motion: reduce){ #about .card, #about .card::before, #about .rail{ transition:none; } #about .swipe-hint svg{ animation:none; } }
+    </style>
+
+<section id="about" style="background: radial-gradient(120% 100% at 50% -10%, #171C33 0%, var(--bg) 55%); color: var(--text); font-family:'Inter', sans-serif;">
+  <div class="wrap">
+    <div class="head">
+      <div class="eyebrow">Webinar curriculum</div>
+      <h2>What you'll learn</h2>
+      <p class="subtext">Six stages of preparation to walk into your visa interview ready — and walk out approved.</p>
+      <div class="swipe-hint">
+        Swipe to see all six
+        <svg viewBox="0 0 24 24" fill="none" stroke="var(--muted-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </div>
+    </div>
+
+    <div class="grid">
+
+      <div class="card">
+        <span class="rail"></span>
+        <span class="step-index">01</span>
+        <div class="icon-badge">
+          <svg viewBox="0 0 24 24" stroke="#6366f1"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8-1.06 0-2.077-.16-3.02-.454L3 21l1.5-4.5C3.55 15.16 3 13.63 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
         </div>
-    </section>
+        <h3>Common interview questions</h3>
+        <p>Learn the questions officers ask most often and how to answer them clearly and confidently.</p>
+      </div>
+
+      <div class="card">
+        <span class="rail"></span>
+        <span class="step-index">02</span>
+        <div class="icon-badge">
+          <svg viewBox="0 0 24 24" stroke="#6366f1"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6M9 9h1"/></svg>
+        </div>
+        <h3>Document preparation</h3>
+        <p>Know exactly which documents you need and how to organize them so nothing holds you back.</p>
+      </div>
+
+      <div class="card">
+        <span class="rail"></span>
+        <span class="step-index">03</span>
+        <div class="icon-badge">
+          <svg viewBox="0 0 24 24" stroke="#6366f1"><circle cx="12" cy="8" r="3.2"/><path d="M5 21c0-3.9 3.13-7 7-7s7 3.1 7 7"/></svg>
+        </div>
+        <h3>Body language &amp; confidence</h3>
+        <p>Master the posture, tone, and eye contact that project confidence in under a minute.</p>
+      </div>
+
+      <div class="card">
+        <span class="rail"></span>
+        <span class="step-index">04</span>
+        <div class="icon-badge">
+          <svg viewBox="0 0 24 24" stroke="#6366f1"><path d="M4 21V4"/><path d="M4 4h13l-2.5 4L17 12H4"/></svg>
+        </div>
+        <h3>Red flags to avoid</h3>
+        <p>Learn the common mistakes that lead to denials — and how to steer clear of them entirely.</p>
+      </div>
+
+      <div class="card">
+        <span class="rail"></span>
+        <span class="step-index">05</span>
+        <div class="icon-badge">
+          <svg viewBox="0 0 24 24" stroke="#6366f1"><rect x="2" y="6" width="14" height="12" rx="2"/><path d="M16 10l6-3v10l-6-3"/></svg>
+        </div>
+        <h3>Mock interview practice</h3>
+        <p>Join live mock interviews and get real-time feedback from experts on your performance.</p>
+      </div>
+
+      <div class="card">
+        <span class="rail"></span>
+        <span class="step-index">06</span>
+        <div class="icon-badge">
+          <svg viewBox="0 0 24 24" stroke="#6366f1"><path d="M12 2l2.9 6.26L21.5 9l-4.75 4.4L18 20l-6-3.5L6 20l1.25-6.6L2.5 9l6.6-.74z"/></svg>
+        </div>
+        <h3>Success stories</h3>
+        <p>Hear real approvals from past attendees and the exact strategies that worked for them.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+
 
     <!-- Registration Form Section -->
     @if($registrationFormEnabled)
-    <section id="register" class="py-20 relative overflow-hidden bg-gradient-to-br from-blue-600 via-indigo-700 to-purple-800">
+    <section id="register" class="relative overflow-hidden bg-white">
         
-        <!-- Animated gradient background -->
-        <div class="absolute inset-0">
-            <div class="absolute inset-0 bg-gradient-to-r from-blue-500/40 via-indigo-500/40 to-purple-500/40 animate-gradient-shift"></div>
-            <div class="absolute inset-0 bg-gradient-to-l from-purple-500/30 via-blue-500/30 to-indigo-500/30 animate-gradient-shift-reverse" style="animation-delay: 2s;"></div>
-        </div>
-        
-        <!-- Animated wave patterns -->
-        <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <svg class="absolute -top-10 -left-10 w-40 h-40 text-white/5 animate-spin" style="animation-duration: 30s;" viewBox="0 0 100 100">
-                <path d="M10,50 Q30,30 50,50 T90,50" stroke="currentColor" fill="none" stroke-width="2"/>
-            </svg>
-            <svg class="absolute -bottom-10 -right-10 w-40 h-40 text-white/5 animate-spin" style="animation-duration: 40s; animation-delay: 5s;" viewBox="0 0 100 100">
-                <path d="M10,50 Q30,70 50,50 T90,50" stroke="currentColor" fill="none" stroke-width="2"/>
-            </svg>
-            <svg class="absolute top-1/2 left-1/4 w-32 h-32 text-blue-200/10 animate-spin" style="animation-duration: 35s;" viewBox="0 0 100 100">
-                <circle cx="50" cy="50" r="40" stroke="currentColor" fill="none" stroke-width="2"/>
-            </svg>
-        </div>
-        
-        <!-- Floating particles with varied animations -->
-        <div class="absolute inset-0 overflow-hidden pointer-events-none">
-            <div class="absolute top-10 left-10 w-3 h-3 bg-white/30 rounded-full animate-float" style="animation-duration: 6s;"></div>
-            <div class="absolute top-20 right-20 w-2 h-2 bg-blue-200/40 rounded-full animate-float" style="animation-duration: 8s; animation-delay: 1s;"></div>
-            <div class="absolute top-1/3 left-1/4 w-4 h-4 bg-purple-200/30 rounded-full animate-float" style="animation-duration: 7s; animation-delay: 2s;"></div>
-            <div class="absolute bottom-20 right-1/3 w-2 h-2 bg-indigo-200/35 rounded-full animate-float" style="animation-duration: 9s; animation-delay: 0.5s;"></div>
-            <div class="absolute top-2/3 right-1/4 w-3 h-3 bg-white/25 rounded-full animate-float" style="animation-duration: 5s; animation-delay: 1.5s;"></div>
-            <div class="absolute bottom-1/3 left-2/3 w-2 h-2 bg-blue-300/30 rounded-full animate-float" style="animation-duration: 10s; animation-delay: 2.5s;"></div>
-            <div class="absolute top-1/4 left-3/4 w-1 h-1 bg-purple-300/40 rounded-full animate-float" style="animation-duration: 4s; animation-delay: 3s;"></div>
-            <div class="absolute bottom-1/4 left-1/3 w-3 h-3 bg-white/20 rounded-full animate-float" style="animation-duration: 11s; animation-delay: 0.8s;"></div>
-        </div>
-        
-        <!-- Animated grid pattern -->
-        <div class="absolute inset-0 opacity-10">
-            <div class="absolute inset-0" style="background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.3) 1px, transparent 0); background-size: 40px 40px;"></div>
-        </div>
-        
-        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="bg-white/95 backdrop-blur-sm rounded-2xl p-10 shadow-2xl text-center transform transition-all duration-500 hover:scale-[1.02]">
-                <div class="inline-flex items-center px-4 py-2 bg-blue-50 rounded-full mb-4 animate-pulse">
-                    <span class="relative flex h-2 w-2 mr-2">
-                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-500 opacity-75"></span>
-                        <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
+        <div class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 py-20">
+            <div class="bg-white border border-gray-200 rounded-[24px] p-10 sm:p-12 shadow-2xl relative overflow-hidden" style="box-shadow: 0 40px 80px -30px rgba(0,0,0,0.6);">
+                
+                <!-- Glow effect -->
+                <div class="absolute -top-20 -right-20 w-64 h-64 bg-gradient-to-br from-purple-500/20 to-blue-500/10 rounded-full blur-3xl pointer-events-none"></div>
+                
+                <!-- Signal row -->
+                <div class="flex items-center gap-3 mb-5">
+                    <span class="relative flex h-4 w-4">
+                        <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
+                        <span class="relative inline-flex rounded-full h-4 w-4 bg-indigo-600 shadow-sm" style="animation: zoomPulse 2s ease-in-out infinite;"></span>
                     </span>
-                    <span class="text-sm font-medium text-gray-800">Limited Spots Available</span>
+                    <span class="text-xs font-semibold tracking-widest uppercase text-indigo-700">Limited spots available</span>
                 </div>
-                
-                <h2 class="text-4xl font-bold mb-4 text-gray-800 bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-indigo-600">Register for Webinar</h2>
-                <p class="text-xl text-gray-600 mb-8">
-                    Secure your spot for the upcoming session
-                </p>
-                
+
+                <!-- Title & subtitle -->
+                <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-3 tracking-tight">Register for the webinar</h2>
+                <p class="text-base text-gray-600 leading-relaxed mb-8 max-w-lg">Secure your spot for the upcoming session before seats run out.</p>
+
+                <style>
+                    @keyframes zoomPulse {
+                        0%, 100% {
+                            transform: scale(1);
+                        }
+                        50% {
+                            transform: scale(1.2);
+                        }
+                    }
+
+                    @keyframes fillBarUp {
+                        from { height: 0; }
+                        to { height: var(--bar-height); }
+                    }
+                </style>
+
+                <!-- Seats meter -->
+                <div class="mb-8">
+                    <div class="flex gap-1 h-5 items-end mb-2" id="bars">
+                        @php
+                            $totalBars = 24;
+                            $filledBars = (int) round($totalBars * 0.92);
+                        @endphp
+                        @for($i = 0; $i < $totalBars; $i++)
+                            <span class="flex-1 rounded-sm {{ $i < $filledBars ? 'bg-gradient-to-t from-indigo-500 to-blue-500' : 'bg-gray-200' }}" style="height: 0; --bar-height: {{ 40 + ($i % 5) * 12 }}%; animation: fillBarUp 0.6s ease-out infinite; animation-delay: {{ $i * 0.04 }}s;"></span>
+                        @endfor
+                    </div>
+                    <div class="flex justify-between text-xs text-gray-500">
+                        <span>Seats filling fast</span>
+                        <strong class="text-gray-900 font-semibold">92% claimed</strong>
+                    </div>
+                </div>
+
+                <div class="h-px bg-gray-200 mb-6"></div>
+
                 @php
                     $webinar = $webinars->first();
                 @endphp
 
                 @if($webinar)
-                    <div class="bg-gradient-to-r from-blue-50 to-indigo-50 p-6 rounded-xl mb-6 border border-blue-100">
-                        <div class="flex items-center justify-center gap-3">
-                            <div class="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center animate-pulse">
-                                <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .896-3 2s1.343 2 3 2 3-.896 3-2-1.343-2-3-2zM12 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 16c-2.76 0-5-2.24-5-5v-2c0-2.76 2.24-5 5-5s5 2.24 5 5v2c0 2.76-2.24 5-5 5z"/>
-                                </svg>
-                            </div>
-                            <div>
-                                <span class="text-sm text-gray-600 block">Price:</span>
-                                <span class="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">${{ number_format($webinar->current_price, 2) }}</span>
-                            </div>
-                        </div>
+                    <!-- Price row -->
+                    <div class="flex items-baseline justify-between mb-8">
+                        <span class="text-xs font-semibold tracking-widest uppercase text-gray-500">Price</span>
+                        <span class="text-3xl font-bold text-gray-900 tracking-tight">${{ number_format($webinar->current_price, 2) }}</span>
                     </div>
 
-                    <a href="{{ route('webinars.register.page', $webinar->id) }}" target="_self" class="inline-block w-full py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg font-semibold text-lg hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 shadow-lg hover:shadow-2xl transform hover:scale-[1.02] relative overflow-hidden group">
-                        <span class="relative z-10">Proceed to Registration</span>
-                        <div class="absolute inset-0 bg-gradient-to-r from-white/0 via-white/20 to-white/0 transform translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700"></div>
+                    <!-- CTA -->
+                    <a href="{{ route('webinars.register.page', $webinar->id) }}" target="_self" class="flex items-center justify-center gap-2 w-full py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl font-semibold text-base hover:from-indigo-600 hover:to-purple-600 transition-all duration-300 shadow-lg" style="box-shadow: 0 12px 24px -8px rgba(139,92,246,0.35);">
+                        Proceed to registration
+                        <svg class="w-4 h-4 transition-transform duration-150 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     </a>
                 @else
-                    <div class="bg-gray-100 rounded-xl p-6 mb-6">
-                        <svg class="w-16 h-16 text-gray-400 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div class="bg-white/5 rounded-xl p-6 border border-white/10 text-center">
+                        <svg class="w-12 h-12 text-[#8C92AC] mx-auto mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
                         </svg>
-                        <h3 class="text-xl font-semibold text-gray-700 mb-2">No Webinars Available</h3>
-                        <p class="text-gray-600">There are currently no webinars available for registration.</p>
+                        <h3 class="text-lg font-semibold text-white mb-1">No Webinars Available</h3>
+                        <p class="text-sm text-[#8C92AC]">There are currently no webinars available for registration.</p>
                     </div>
                 @endif
+
+                <p class="text-center text-xs text-[#8C92AC] mt-5">No refunds after registration closes</p>
             </div>
         </div>
     </section>

@@ -60,46 +60,46 @@
     @if($isActive || $isAdmin)
 
     <!-- Hero Section -->
-    <section id="hero" class="relative overflow-hidden min-h-[90vh] flex items-center">
+    <section id="hero" class="relative overflow-hidden py-10 sm:py-16 lg:py-20">
         <div class="absolute inset-0 hero-gradient" style="background-image: url('/coaching.png'); background-size: cover; background-position: center; background-attachment: fixed; background-blend-mode: overlay;"></div>
         <div class="absolute inset-0 bg-indigo-900/60"></div>
         
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-28">
-            <div class="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
+        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-2 gap-6 lg:gap-8 items-center">
                 <!-- Text Content -->
-                <div class="space-y-8">
-                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-md rounded-full border border-white/20">
+                <div class="space-y-4 sm:space-y-6">
+                    <div class="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-white/15 backdrop-blur-md rounded-full border border-white/20">
                         <span class="w-2 h-2 bg-green-400 rounded-full animate-ping"></span>
-                        <span class="text-sm font-semibold text-white">Expert Coaching • Personalized Guidance</span>
+                        <span class="text-xs sm:text-sm font-semibold text-white">Expert Coaching • Personalized Guidance</span>
                     </div>
                     
-                    <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-white leading-tight tracking-tight">
+                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight tracking-tight">
                         Visa Interview
                         <span class="block text-indigo-200">Coaching</span>
                     </h1>
                     
-                    <p class="text-lg sm:text-xl text-indigo-100 leading-relaxed max-w-lg">
+                    <p class="text-base sm:text-lg text-indigo-100 leading-relaxed max-w-lg">
                         I help people prepare for visa interviews so they can walk in feeling confident, clear, and ready. Many qualified applicants get rejected simply because they were not well prepared.
                     </p>
-                    <p class="text-base text-indigo-200">I coach applicants for student, work, and travel visas (F-1, J-1, H-1B, B-1/B-2, and more).</p>
+                    <p class="text-sm sm:text-base text-indigo-200">I coach applicants for student, work, and travel visas (F-1, J-1, H-1B, B-1/B-2, and more).</p>
                     
-                    <div class="flex flex-col sm:flex-row gap-4">
-                        <a href="#pricing" class="px-8 py-4 bg-white text-indigo-700 rounded-2xl font-bold text-lg hover:bg-indigo-50 transition-all duration-200 shadow-xl text-center">
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <a href="#pricing" class="px-6 py-3 bg-white text-indigo-700 rounded-2xl font-bold text-base hover:bg-indigo-50 transition-all duration-200 shadow-xl text-center">
                             Book Your Session Now
                         </a>
                     </div>
                     
-                    <div class="grid grid-cols-3 gap-4 sm:gap-6">
-                        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white/20">
-                            <div class="text-2xl sm:text-3xl font-extrabold text-white">500+</div>
+                    <div class="grid grid-cols-3 gap-3 sm:gap-4">
+                        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-white/20">
+                            <div class="text-xl sm:text-2xl font-extrabold text-white">500+</div>
                             <div class="text-indigo-200 text-xs sm:text-sm font-medium">Sessions Done</div>
                         </div>
-                        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white/20">
-                            <div class="text-2xl sm:text-3xl font-extrabold text-white">95%</div>
+                        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-white/20">
+                            <div class="text-xl sm:text-2xl font-extrabold text-white">95%</div>
                             <div class="text-indigo-200 text-xs sm:text-sm font-medium">Success Rate</div>
                         </div>
-                        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white/20">
-                            <div class="text-2xl sm:text-3xl font-extrabold text-white">5★</div>
+                        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-white/20">
+                            <div class="text-xl sm:text-2xl font-extrabold text-white">5★</div>
                             <div class="text-indigo-200 text-xs sm:text-sm font-medium">Expert Rating</div>
                         </div>
                     </div>
