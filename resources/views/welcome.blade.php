@@ -135,7 +135,7 @@
                                  <div class="text-indigo-200 text-xs sm:text-sm font-medium">Readers</div>
                              </div>
                              <div class="bg-white/10 backdrop-blur-md rounded-2xl p-4 sm:p-5 border border-white/20">
-                                 <div class="text-2xl sm:text-3xl font-extrabold text-white">4.9?</div>
+                                 <div class="text-2xl sm:text-3xl font-extrabold text-white">4.9</div>
                                  <div class="text-indigo-200 text-xs sm:text-sm font-medium">Rating</div>
                              </div>
                          </div>
@@ -146,8 +146,8 @@
                          <div class="relative group">
                              <div class="absolute -inset-4 bg-gradient-to-tr from-blue-400 to-purple-400 rounded-3xl blur-2xl opacity-40 group-hover:opacity-60 transition-opacity duration-300"></div>
                              <div class="relative rounded-3xl shadow-2xl overflow-hidden border border-white/20 bg-white/10 backdrop-blur-sm p-2">
-                             <img src="{{ asset('officer-charles.png') }}" alt="Visa Interview Coaching" 
-                                  class="relative rounded-2xl w-full h-auto object-cover shadow-xl">
+                             <img src="{{ asset('mr. nathaniel.jpeg') }}" alt="Visa Interview" 
+                                  class="relative rounded-2xl w-full h-50 object-cover shadow-xl">
                              </div>
                              <div class="absolute -top-4 -right-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-5 py-2 rounded-full text-sm font-black shadow-xl whitespace-nowrap inline-block z-10">
                                  START NOW
