@@ -94,7 +94,7 @@
                     @foreach($webinars as $webinar)
                         <form method="POST" action="{{ route('admin.webinars.togglePayment', $webinar->id) }}" class="flex items-center gap-3" style="display: inline-flex;">
                             @csrf
-                            <span class="text-sm font-medium text-gray-700 truncate max-w-[140px]" title="{{ $webinar->title }}">{{ $webinar->title }}</span>
+                            <span class="text-sm font-medium text-gray-700 whitespace-nowrap">Payment</span>
                             <label class="toggle">
                                 <input type="checkbox" name="payment_enabled" value="1" class="sr-only" {{ $webinar->payment_enabled ? 'checked' : '' }} onchange="this.disabled=true; this.form.submit();">
                                 <span class="track"></span>
