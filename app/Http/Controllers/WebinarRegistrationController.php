@@ -6,6 +6,7 @@ use App\Mail\WebinarFreeRegistrationSuccess;
 use App\Mail\WebinarPaymentSuccess;
 use App\Models\WebinarRegistration;
 use App\Models\WebinarSession;
+use App\Services\NotificationService;
 use App\Services\PaystackService;
 use App\Services\StripeService;
 use App\Services\WebinarAccessService;
@@ -119,6 +120,8 @@ class WebinarRegistrationController extends Controller
             );
 
             $registration->update(['email_sent_at' => now()]);
+
+            NotificationService::newWebinarRegistration($registration);
 
             return response()->json([
                 'success' => true,
@@ -265,6 +268,8 @@ class WebinarRegistrationController extends Controller
             // Send confirmation email (non-critical - payment already confirmed)
             $this->sendPaymentConfirmation($registration);
 
+            NotificationService::newWebinarRegistration($registration);
+
             return redirect()->route('webinars.index')
                 ->with('success', 'Payment successful! Please check your email for the webinar access link.');
         }
@@ -310,6 +315,8 @@ class WebinarRegistrationController extends Controller
 
             $accessLink = $this->accessService->generateAccessLink($registration);
             $this->sendPaymentConfirmation($registration);
+
+            NotificationService::newWebinarRegistration($registration);
 
             return redirect()->route('webinars.index')
                 ->with('success', 'Payment successful! Please check your email for the webinar access link.');

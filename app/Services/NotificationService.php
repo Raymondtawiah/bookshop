@@ -45,4 +45,24 @@ class NotificationService
             route('admin.orders.show', $order->id)
         );
     }
+
+    public static function newFreeBookDownload($lead): void
+    {
+        AdminNotification::createNotification(
+            'free_book',
+            'New Free Book Request',
+            "{$lead->full_name} requested '{$lead->book_title}'",
+            route('admin.free-books')
+        );
+    }
+
+    public static function newWebinarRegistration($registration): void
+    {
+        AdminNotification::createNotification(
+            'webinar',
+            'New Webinar Registration',
+            "{$registration->full_name} registered for '{$registration->webinar->title}'",
+            route('admin.webinars.index')
+        );
+    }
 }

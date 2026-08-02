@@ -7,6 +7,7 @@ use App\Models\Cart;
 use App\Models\Discount;
 use App\Models\Nationality;
 use App\Models\Order;
+use App\Services\NotificationService;
 use App\Services\PaymentRouter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -89,6 +90,8 @@ class OrderController extends Controller
             'order_number' => $reference,
             'order_items' => $orderItems,
         ]);
+
+        NotificationService::newOrder($order);
 
         // Bank Transfer (manual, no redirect)
         if ($paymentMethod === 'bank') {

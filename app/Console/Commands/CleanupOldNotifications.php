@@ -9,13 +9,15 @@ class CleanupOldNotifications extends Command
 {
     protected $signature = 'notifications:cleanup';
 
-    protected $description = 'Delete notifications older than 12 hours';
+    protected $description = 'Delete read notifications older than 30 days';
 
     public function handle(): int
     {
-        $deleted = AdminNotification::deleteOlderThan(12);
+        $deleted = AdminNotification::where('is_read', true)
+            ->where('created_at', '<', now()->subDays(30))
+            ->delete();
 
-        $this->info("Deleted {$deleted} old notifications.");
+        $this->info("Deleted {$deleted} old read notifications.");
 
         return Command::SUCCESS;
     }

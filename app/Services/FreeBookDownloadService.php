@@ -4,30 +4,17 @@ namespace App\Services;
 
 use App\Models\Book;
 use App\Models\FreeBookLead;
+use App\Services\NotificationService;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
-/**
- * Free Book Download Service
- *
- * Follows SOLID principles:
- * - SRP: Responsible only for managing free book lead capture and download flow
- * - OCP: Can be extended without modifying core download logic
- * - DIP: Depends on abstractions (repositories/models), not concrete implementations
- */
 class FreeBookDownloadService
 {
-    /**
-     * Generate a unique download token
-     */
     public function generateToken(): string
     {
         return Str::random(60);
     }
 
-    /**
-     * Create a lead record when a user requests a free book download
-     */
     public function createLead(string $fullName, string $email, int $bookId): FreeBookLead
     {
         $book = Book::findOrFail($bookId);
@@ -50,12 +37,11 @@ class FreeBookDownloadService
             'email' => $email,
         ]);
 
+        NotificationService::newFreeBookDownload($lead);
+
         return $lead;
     }
 
-    /**
-     * Validate a download token and mark as downloaded
-     */
     public function fulfillDownload(string $token): FreeBookLead
     {
         $lead = FreeBookLead::where('download_token', $token)->firstOrFail();
@@ -72,9 +58,6 @@ class FreeBookDownloadService
         return $lead;
     }
 
-    /**
-     * Get the downloadable file path for a lead
-     */
     public function getDownloadPath(FreeBookLead $lead): string
     {
         $book = $lead->book;
