@@ -29,7 +29,11 @@ Join Webinar
 
 **This webinar takes place every Friday at 4:00 PM.** You will receive notifications from the admin when it's time for each session. Please keep an eye on your email for upcoming session reminders.
 
-If you have any questions, please don't hesitate to contact us at support@visawithnathaniel.com.
+@if(!empty($customMessage))
+## Admin Message
+
+{!! nl2br(e($customMessage)) !!}
+@endif
 
 Best regards,<br>
 The {{ config('app.name') }} Team

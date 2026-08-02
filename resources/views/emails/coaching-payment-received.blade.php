@@ -28,5 +28,5 @@ If you have any questions or need to reschedule, please contact us.
 See you at your session!
 
 Best regards,
-The Nathaniel Gyarteng Team
+ {{ config('app.name') }} 
 @endcomponent

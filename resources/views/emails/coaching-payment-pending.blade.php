@@ -18,5 +18,5 @@ Please make sure to complete your payment before this deadline.
 We look forward to seeing you.
 
 Thanks,<br>
-The Coaching Team
+ {{ config('app.name') }} 
 @endcomponent  

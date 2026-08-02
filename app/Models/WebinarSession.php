@@ -22,6 +22,7 @@ class WebinarSession extends Model
         'is_registration_open',
         'is_visible',
         'created_by',
+        'custom_email_message',
     ];
 
     protected $casts = [

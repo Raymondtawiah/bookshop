@@ -116,9 +116,25 @@
                         @error('scheduled_at')
                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
                         @enderror
-                    </div>
+                     </div>
 
-                    <div class="flex items-center justify-end gap-4 pt-4">
+                     <!-- Custom Email Message -->
+                     <div>
+                         <label for="custom_email_message" class="block text-sm font-semibold text-gray-900 mb-2">Custom Email Message</label>
+                         <textarea 
+                             name="custom_email_message" 
+                             id="custom_email_message"
+                             rows="5"
+                             class="w-full px-5 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
+                             placeholder="Enter a custom message that will be included in the body of the registration confirmation emails sent to customers..."
+                         >{{ old('custom_email_message', $webinar->custom_email_message) }}</textarea>
+                         <p class="text-sm text-gray-400 mt-1">This message will appear in both free and paid webinar confirmation emails after the default content.</p>
+                         @error('custom_email_message')
+                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                         @enderror
+                     </div>
+
+                     <div class="flex items-center justify-end gap-4 pt-4">
                         <a href="{{ route('admin.webinars.index') }}" class="px-6 py-3 text-gray-600 hover:text-gray-900 font-medium">
                             Cancel
                         </a>

@@ -71,7 +71,7 @@
             </p>
         </div>
         <div class="footer">
-            <p>&copy; {{ date('Y') }} Nathaniel Gyarteng Visa Interview Mentor. All rights reserved.</p>
+            <p>&copy; {{ date('Y') }} Visa With Nathaniel. All rights reserved.</p>
         </div>
     </div>
 </body>

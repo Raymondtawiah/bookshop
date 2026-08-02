@@ -25,5 +25,5 @@ Your coaching session has been successfully booked! We're excited to help you pr
 If you have any questions, please don't hesitate to reach out.
 
 Best regards,
-The Nathaniel Gyarteng Team
+ {{ config('app.name') }} 
 @endcomponent

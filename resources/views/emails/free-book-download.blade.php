@@ -14,5 +14,5 @@ Download Now
 If you have any questions, feel free to reply to this email.
 
 Best regards,  
-{{ config('app.name', 'Bookshop') }}
+ {{ config('app.name') }} 
 @endcomponent

@@ -16,5 +16,5 @@ Please complete your payment by: {{ \Illuminate\Support\Carbon::parse($reminderD
 We look forward to seeing you at the webinar.
 
 Thanks,<br>
-The Webinar Team
+ {{ config('app.name') }} 
 @endcomponent

@@ -425,6 +425,7 @@ class WebinarController extends Controller
             'price' => 'required|numeric|min:0',
             'scheduled_at' => 'nullable|date',
             'duration_minutes' => 'nullable|integer|min:1',
+            'custom_email_message' => 'nullable|string',
         ];
 
         $validator = Validator::make($request->all(), $rules);

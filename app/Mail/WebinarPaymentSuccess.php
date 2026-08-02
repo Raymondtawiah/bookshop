@@ -22,12 +22,15 @@ class WebinarPaymentSuccess extends Mailable
 
     public $accessLink;
 
+    public $customMessage;
+
     public function __construct(WebinarRegistration $registration, WebinarSession $webinar, ?string $webinarLink = null, ?string $accessLink = null)
     {
         $this->registration = $registration;
         $this->webinar = $webinar;
         $this->webinarLink = $webinarLink;
         $this->accessLink = $accessLink;
+        $this->customMessage = $webinar->custom_email_message;
     }
 
     public function envelope(): Envelope
@@ -46,6 +49,7 @@ class WebinarPaymentSuccess extends Mailable
                 'webinar' => $this->webinar,
                 'webinarLink' => $this->webinarLink,
                 'accessLink' => $this->accessLink,
+                'customMessage' => $this->customMessage,
             ],
         );
     }

@@ -35,5 +35,5 @@ If you have any issues joining the meeting, please contact us immediately.
 See you at your session!
 
 Best regards,
-The Nathaniel Gyarteng Team
+ {{ config('app.name') }} 
 @endcomponent
