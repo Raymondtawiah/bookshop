@@ -64,7 +64,7 @@
                         </div>
 
                         <!-- Registration Form -->
-                        <form id="registrationForm" method="POST" action="#" class="space-y-6">
+                        <form id="registrationForm" method="POST" action="{{ route('webinars.register.store', $webinar) }}" class="space-y-6">
                             @csrf
                             <input type="hidden" name="webinar_id" value="{{ $webinar->id ?? '' }}">
 
