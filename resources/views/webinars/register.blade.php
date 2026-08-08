@@ -204,7 +204,7 @@
                     submitBtn.textContent = 'Processing...';
                     submitBtn.disabled = true;
                     
-                    fetch(`/webinar/${webinarId}/register`, {
+                     fetch(form.action, {
                         method: 'POST',
                         body: formData,
                         headers: {
