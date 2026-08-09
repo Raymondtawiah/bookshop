@@ -86,6 +86,10 @@ class WebinarRegistrationController extends Controller
         }
 
         if ($existingRegistration) {
+            if ($existingRegistration->trashed()) {
+                $existingRegistration->restore();
+            }
+
             if ($existingRegistration->isPaid() || ! $this->paymentToggleService->isPaymentEnabled($webinar)) {
                 return response()->json([
                     'success' => false,
