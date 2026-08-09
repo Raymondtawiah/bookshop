@@ -177,7 +177,7 @@
             }, 4000);
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
+        function init() {
             // Add fade-in animation to the registration card
             const card = document.querySelector('.bg-white\\/95');
             if (card) {
@@ -204,7 +204,7 @@
                     submitBtn.textContent = 'Processing...';
                     submitBtn.disabled = true;
                     
-                     fetch(form.action, {
+                    fetch(form.action, {
                         method: 'POST',
                         body: formData,
                         headers: {
@@ -212,7 +212,12 @@
                             'Accept': 'application/json',
                         },
                     })
-                    .then(response => response.json())
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Network response was not ok: ' + response.status);
+                        }
+                        return response.json();
+                    })
                     .then(data => {
                         if (data.success) {
                             if (data.redirect_url) {
@@ -237,6 +242,12 @@
                     });
                 });
             }
-        });
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', init);
+        } else {
+            init();
+        }
     </script>
 @endsection
