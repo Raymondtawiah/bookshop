@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('webinar_sessions', function (Blueprint $table) {
-            $table->text('custom_email_message')->nullable()->after('status');
+            $table->text('custom_email_message')->nullable()->after('payment_provider');
         });
     }
 
