@@ -184,18 +184,24 @@
                         </div>
                         <h2 class="text-3xl font-bold text-gray-900">Featured Books</h2>
                     </div>
-                    <a href="{{ route('books.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
+                    <a href="{{ route('books.featured') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
                         View All
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
                         </svg>
                     </a>
+                    <!-- <a href="{{ route('books.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
+                        View All
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                        </svg>
+                    </a> -->
                 </div>
                 
                 <div class="flex flex-nowrap gap-4 overflow-x-auto scrollbar-hide pb-4" style="scroll-snap-type: x mandatory;">
                     @foreach($featuredBooks as $index => $book)
                     <div class="flex-shrink-0 scroll-snap-start w-[calc(100%-12px)] sm:w-[calc(50%-8px)] md:w-[calc(33.333%-8px)] lg:w-[calc(25%-12px)] xl:w-[calc(20%-12px)]">
-                        <a href="{{ route('product.show', $book->id) }}" class="group block">
+                        <a href="{{ route('books.index') }}" class="group block">
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:border-indigo-200 transition-all duration-300">
                             <div class="h-60 md:h-96 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative overflow-hidden">
                                 @if($book->cover_image)
@@ -641,8 +647,6 @@
         <x-customer-footer />
 
         <x-install-pwa />
-
-        @include('components.free-book-modal')
         @include('feedback-widget')
         @include('components.cookie-consent')
     </div>

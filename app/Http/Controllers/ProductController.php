@@ -54,6 +54,20 @@ class ProductController extends Controller
     }
 
     /**
+     * Display the featured book landing page.
+     */
+    public function featured()
+    {
+        $book = Book::where('is_featured', true)->latest()->first();
+
+        if (! $book) {
+            $book = Book::latest()->first();
+        }
+
+        return view('products.featured', compact('book'));
+    }
+
+    /**
      * Display product details page
      */
     public function show($id)
