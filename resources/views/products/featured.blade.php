@@ -35,8 +35,6 @@
             --blue: #3b82f6;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-
         .featured-stage {
             display: flex;
             flex-direction: column;
@@ -97,7 +95,7 @@
         }
 
         .featured-scene:hover .featured-book {
-            transform: rotateY(-14deg) rotateX(2deg);
+            transform: rotateY(-8deg) rotateX(6deg);
         }
 
         .featured-cover {
