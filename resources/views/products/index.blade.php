@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="overflow-x-hidden">
 <head>
     <meta charset="utf-8">
@@ -154,17 +154,12 @@
     <div class="w-full overflow-x-hidden min-w-0 mx-0 px-0">
         
         <!-- Page Header -->
-        <section class="py-12 bg-gradient-to-br from-indigo-600 via-indigo-700 to-purple-800">
-            <div class="max-w-7xl mx-auto px-6">
-                <div class="text-center">
-                    <h1 class="text-4xl md:text-5xl font-extrabold text-white mt-20">
-                        All Books
-                    </h1>
-                    <p class="text-xl text-indigo-100 max-w-2xl mx-auto">
-                        Discover our complete collection of visa interview guides and resources
-                    </p>
-                </div>
-            </div>
+        <section class="w-full">
+            <img src="{{ asset('hero.jpg') }}" alt="Hero" class="w-full h-auto object-cover">
+        </section>
+
+        <section class="w-full">
+            <img src="{{ asset('bookshelp.jpg') }}" alt="Books Help" class="w-full h-auto object-cover">
         </section>
 
         <!-- Search Section -->
@@ -218,24 +213,10 @@
             </div>
         </section>
 
-        @include('components.sections.contact-section')
-        @include('components.sections.animation-script')
-
-        <!-- Newsletter Section -->
-        <section class="py-16 bg-gradient-to-r from-indigo-600 to-purple-600 max-w-full">
-            <div class="max-w-4xl mx-auto px-6 text-center">
-                <h2 class="text-3xl font-bold text-white mb-4">Stay Updated</h2>
-                <p class="text-indigo-100 mb-8">Subscribe to our newsletter for exclusive deals, new arrivals, and reading recommendations!</p>
-                <form class="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto" onsubmit="handleSubscribe(event)">
-                    <input type="email" id="newsletter-email" placeholder="Enter your email" class="flex-1 px-6 py-3 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-white" required>
-                    <button type="submit" class="px-8 py-3 bg-white text-indigo-600 font-semibold rounded-lg hover:bg-gray-100 transition-colors">
-                        Subscribe
-                    </button>
-                </form>
-                <p class="text-indigo-200 text-sm mt-4">Join {{ \App\Models\User::where('is_admin', false)->count() }}+ subscribers</p>
-            </div>
+          <section class="w-full">
+            <img src="{{ asset('testimonials.jpg') }}" alt="Testimonials" class="w-full h-auto object-cover">
         </section>
-        
+
         <x-customer-footer />
 
         <x-install-pwa />
