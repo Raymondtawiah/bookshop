@@ -121,6 +121,7 @@
                 fontSize: '13px',
                 width: '100%',
                 display: isIOS ? 'block' : 'none'
+                border-radius: '12px',
             });
 
             installBtn.addEventListener('click', function() {

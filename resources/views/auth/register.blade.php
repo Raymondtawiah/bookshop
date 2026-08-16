@@ -103,7 +103,7 @@
         <!-- Submit -->
         <button 
             type="submit" 
-            class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg"
+            class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-3xl transition-colors shadow-md hover:shadow-lg"
         >
             Create Account
         </button>
