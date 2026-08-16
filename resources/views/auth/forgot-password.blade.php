@@ -52,7 +52,7 @@
         <!-- Submit -->
         <button
             type="submit"
-            class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg"
+            class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-3xl transition-colors shadow-md hover:shadow-lg"
         >
             Send Verification Code
         </button>
@@ -62,7 +62,7 @@
     <div class="mt-5 p-4 bg-gray-100 rounded-lg">
         <div class="flex items-center justify-center gap-2">
             <span class="text-gray-600 text-sm">Remember your password?</span>
-            <a href="{{ route('login') }}" class="text-indigo-600 hover:text-indigo-800 font-medium text-sm">
+            <a href="{{ route('login') }}" class="text-indigo-600 hover:text-indigo-800 font-medium text-sm rounded-3xl">
                 Sign in
             </a>
         </div>

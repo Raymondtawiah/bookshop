@@ -47,7 +47,7 @@
                 <button
                     type="button"
                     onclick="togglePassword('password')"
-                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none rounded-3xl"
                     aria-label="Toggle password visibility"
                 >
                     <svg id="password-eye" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -80,7 +80,7 @@
                 <button
                     type="button"
                     onclick="togglePassword('password_confirmation')"
-                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none"
+                    class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 focus:outline-none rounded-3xl"
                     aria-label="Toggle password confirmation visibility"
                 >
                     <svg id="password_confirmation-eye" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -100,7 +100,7 @@
         <!-- Submit -->
         <button
             type="submit"
-            class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-lg transition-colors shadow-md hover:shadow-lg"
+            class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold rounded-3xl transition-colors shadow-md hover:shadow-lg"
         >
             Reset Password
         </button>
@@ -110,7 +110,7 @@
     <div class="mt-5 p-4 bg-gray-100 rounded-lg">
         <div class="flex items-center justify-center gap-2">
             <span class="text-gray-600 text-sm">Remember your password?</span>
-            <a href="{{ route('login') }}" class="text-indigo-600 hover:text-indigo-800 font-medium text-sm">
+            <a href="{{ route('login') }}" class="text-indigo-600 hover:text-indigo-800 font-medium text-sm rounded-3xl">
                 Sign in
             </a>
         </div>
