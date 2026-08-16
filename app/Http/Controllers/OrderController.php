@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Book;
 use App\Models\Cart;
-use App\Models\Discount;
 use App\Models\Nationality;
 use App\Models\Order;
 use App\Services\NotificationService;
@@ -36,7 +35,6 @@ class OrderController extends Controller
             'nationality' => 'required|string|max:100',
             'contact' => 'required|string|max:20',
             'payment_method' => 'required|in:bank,card',
-            'discount_code' => 'nullable|string|max:50',
         ]);
 
         $cartItems = Cart::where('user_id', Auth::id())->with('book')->get();
@@ -49,17 +47,7 @@ class OrderController extends Controller
             return $item->unit_price * $item->quantity;
         });
 
-        // Apply discount if code provided
-        $discountCode = $request->discount_code;
-        $discountAmount = 0;
-        if ($discountCode) {
-            $discount = Discount::findByCode($discountCode);
-            if ($discount && $discount->type === 'ebook') {
-                $discountAmount = $discount->calculateDiscount($totalUsd);
-            }
-        }
-
-        $finalAmount = max(0, $totalUsd - $discountAmount);
+        $finalAmount = $totalUsd;
 
         $reference = 'ORD-'.time().rand(1000, 9999);
         $paymentMethod = $request->payment_method;
@@ -74,7 +62,7 @@ class OrderController extends Controller
             ];
         })->toArray();
 
-        // Create base order with discount info
+        // Create base order
         $order = Order::create([
             'user_id' => Auth::id(),
             'customer_name' => $request->customer_name,
@@ -83,8 +71,6 @@ class OrderController extends Controller
             'nationality' => $request->nationality,
             'contact' => $request->contact,
             'total_amount' => $finalAmount,
-            'discount_code' => $discountCode,
-            'discount_amount' => $discountAmount,
             'currency' => 'USD',
             'status' => 'pending',
             'order_number' => $reference,
@@ -101,12 +87,6 @@ class OrderController extends Controller
                 'payment_status' => 'pending',
                 'status' => 'pending_payment',
             ]);
-
-            // Clear the discount code from session and user
-            if ($discountCode && auth()->check()) {
-                session()->forget('discount_code');
-                auth()->user()->update(['discount_code' => null]);
-            }
 
             $cartItems->each->delete();
 
@@ -141,12 +121,6 @@ class OrderController extends Controller
             'currency' => $paymentResult['currency'],
             'total_amount_usd' => $paymentResult['amount_usd'],
         ]);
-
-        // Clear the discount code from session and user after successful order
-        if ($discountCode && auth()->check()) {
-            session()->forget('discount_code');
-            auth()->user()->update(['discount_code' => null]);
-        }
 
         return redirect($paymentResult['url']);
     }

@@ -245,6 +245,7 @@ Route::post('email/verification-notification', function (Request $request) {
 
 Route::get('product/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('product/{id}/download', [ProductController::class, 'downloadPdf'])->name('product.download');
+Route::get('books', [ProductController::class, 'index'])->name('books.index');
 
 // Free book lead capture (public - guests allowed)
 Route::post('free-book/lead', [ProductController::class, 'createLead'])->name('free-book.lead');

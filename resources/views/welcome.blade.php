@@ -60,25 +60,7 @@
         
 <div class="w-full overflow-x-hidden min-w-0 mx-0 px-0">
          
-     <!-- Announcement Banner -->
-     <div class="pt-16 bg-gradient-to-r from-green-50 to-emerald-50 border-b border-green-200">
-             <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-4">
-                 <div class="flex items-center gap-4">
-                     <div class="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
-                         <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                         </svg>
-                     </div>
-                     <div>
-                         <h3 class="font-bold text-gray-900 text-lg">Limited Time Discounts!</h3>
-                         <p class="text-gray-600 text-sm">Get 25% off all e-books and 30% off webinar registrations. Don't miss out!</p>
-                     </div>
-                 </div>
-                 <a href="{{ route('discounts') }}" class="px-6 py-2.5 bg-gradient-to-r from-green-600 to-emerald-600 text-white font-semibold rounded-xl hover:from-green-700 hover:to-emerald-700 transition-all shadow-md">
-                     Learn More
-                 </a>
-             </div>
-         </div>
+     
 
           <!-- Hero Section -->
           <section id="home" class="relative overflow-hidden" style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.85) 0%, rgba(99, 102, 241, 0.85) 50%, rgba(139, 92, 246, 0.85) 100%), url('{{ asset('mr. nathaniel.jpeg') }}'); background-size: cover; background-position: center; background-attachment: fixed;">
@@ -175,13 +157,13 @@
                             name="q"
                             value="{{ $query ?? '' }}"
                             placeholder="Search books by title, author..."
-                            class="search-input w-full px-5 py-3 pl-12 rounded-xl border border-gray-200 bg-white text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all hover:shadow-lg"
+                            class="search-input w-full px-5 py-3 pl-12 rounded-3xl border border-gray-200 bg-white text-gray-900 placeholder-gray-500 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all hover:shadow-lg"
                         >
                         <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
                         </svg>
                     </div>
-                    <button type="submit" class="px-6 py-3 bg-indigo-600 text-white font-medium rounded-xl hover:bg-indigo-700 transition-colors">
+                    <button type="submit" class="px-6 py-3 bg-indigo-600 text-white font-medium rounded-3xl hover:bg-indigo-700 transition-colors">
                         Search
                     </button>
                 </form>
@@ -202,7 +184,7 @@
                         </div>
                         <h2 class="text-3xl font-bold text-gray-900">Featured Books</h2>
                     </div>
-                    <a href="#store" class="text-sm font-medium text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
+                    <a href="{{ route('books.index') }}" class="text-sm font-medium text-indigo-600 hover:text-indigo-700 flex items-center gap-1">
                         View All
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
@@ -210,11 +192,12 @@
                     </a>
                 </div>
                 
-                <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-                    @foreach($featuredBooks as $book)
-                    <a href="{{ route('product.show', $book->id) }}" class="group">
+                <div class="flex flex-nowrap gap-4 overflow-x-auto scrollbar-hide pb-4" style="scroll-snap-type: x mandatory;">
+                    @foreach($featuredBooks as $index => $book)
+                    <div class="flex-shrink-0 scroll-snap-start w-[calc(100%-12px)] sm:w-[calc(50%-8px)] md:w-[calc(33.333%-8px)] lg:w-[calc(25%-12px)] xl:w-[calc(20%-12px)]">
+                        <a href="{{ route('product.show', $book->id) }}" class="group block">
                         <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:border-indigo-200 transition-all duration-300">
-                            <div class="aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative overflow-hidden">
+                            <div class="h-60 md:h-96 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative overflow-hidden">
                                 @if($book->cover_image)
                                     <img src="{{ $book->cover_image_url }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
                                 @else
@@ -245,7 +228,7 @@
                                 </div>
                             </div>
                         </div>
-                    </a>
+                    </div>
                     @endforeach
                 </div>
             </div>

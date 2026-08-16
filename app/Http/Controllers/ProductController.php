@@ -20,6 +20,40 @@ class ProductController extends Controller
     }
 
     /**
+     * Display all books with search functionality (like welcome page search)
+     */
+    public function index(Request $request)
+    {
+        $query = $request->input('q');
+
+        $books = Book::query();
+
+        // Search by title, author, description, category (like welcome page search)
+        if ($query) {
+            $books->where(function ($q) use ($query) {
+                $q->where('title', 'like', "%{$query}%")
+                  ->orWhere('author', 'like', "%{$query}%")
+                  ->orWhere('description', 'like', "%{$query}%")
+                  ->orWhere('category', 'like', "%{$query}%");
+            });
+        }
+
+        // Get books - latest first (display all matching books)
+        $books = $books->latest()->paginate(12)->withQueryString();
+
+        if ($request->ajax() || $request->wantsJson()) {
+            $html = view('products.partials.book-grid', compact('books'))->render();
+
+            return response()->json([
+                'html' => $html,
+                'count' => $books->total(),
+            ]);
+        }
+
+        return view('products.index', compact('books', 'query'));
+    }
+
+    /**
      * Display product details page
      */
     public function show($id)

@@ -6,37 +6,36 @@
             <p class="text-xl text-gray-600">Have questions? We'd love to hear from you!</p>
         </div>
         <div class="max-w-2xl mx-auto">
-             <!-- Responsive grid: 1 column on mobile, 3 on larger screens -->
-             <div class="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
-                <div class="text-center opacity-0 translate-y-8 transition-all duration-700 delay-100" data-animate-target>
-                    <div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-semibold text-gray-900 mb-2">Email</h3>
-                    <p class="text-gray-600">info@bookshop.com</p>
-                </div>
-                <div class="text-center opacity-0 translate-y-8 transition-all duration-700 delay-200" data-animate-target>
-                    <div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-6 h-6 text-indigo-600" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M20.2 15.7l-1.7-1.7c-.4-.4-1-.6-1.5-.3-1.7.8-3.5-1-4.2-2.7-.4-1 .1-2.2.9-3l1.5-1.5C13.9 3.5 12.6 3 11.2 3c-2.8 0-5.3 2.1-5.7 5-.3 1.9.4 3.8 1.9 5.1 1.5 1.3 3.4 1.6 5 1.7 1.5.1 2.7-.3 3.7-1.2l1.4 1.4c.3.3.8.4 1.2.2l2.1-1c.5-.2.7-.8.5-1.3l-.8-2.2c-.3-.7-.9-1.3-1.6-1.6l-2.2-.8c-.5-.2-1.1 0-1.3.5l-1 2z"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-semibold text-gray-900 mb-2">Phone</h3>
-                    <p class="text-gray-600">+1 (304) 517-4553</p>
-                </div>
-                <div class="text-center opacity-0 translate-y-8 transition-all duration-700 delay-300" data-animate-target>
-                    <div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
-                        </svg>
-                    </div>
-                    <h3 class="font-semibold text-gray-900 mb-2">Location</h3>
-                    <p class="text-gray-600">123 Book Street</p>
-                </div>
-            </div>
+             <div class="flex flex-nowrap gap-6 overflow-x-auto scrollbar-hide pb-4" style="scroll-snap-type: x mandatory;">
+                 <div class="flex-shrink-0 scroll-snap-start w-[calc(100%-12px)] sm:w-[calc(33.333%-8px)] text-center opacity-0 translate-y-8 transition-all duration-700 delay-100" data-animate-target>
+                     <div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                         <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                         </svg>
+                     </div>
+                     <h3 class="font-semibold text-gray-900 mb-2">Email</h3>
+                     <p class="text-gray-600">nathanielgyarteng@gmail.com</p>
+                 </div>
+                 <div class="flex-shrink-0 scroll-snap-start w-[calc(100%-12px)] sm:w-[calc(33.333%-8px)] text-center opacity-0 translate-y-8 transition-all duration-700 delay-200" data-animate-target>
+                     <div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                         <svg class="w-6 h-6 text-indigo-600" fill="currentColor" viewBox="0 0 24 24">
+                             <path d="M20.2 15.7l-1.7-1.7c-.4-.4-1-.6-1.5-.3-1.7.8-3.5-1-4.2-2.7-.4-1 .1-2.2.9-3l1.5-1.5C13.9 3.5 12.6 3 11.2 3c-2.8 0-5.3 2.1-5.7 5-.3 1.9.4 3.8 1.9 5.1 1.5 1.3 3.4 1.6 5 1.7 1.5.1 2.7-.3 3.7-1.2l1.4 1.4c.3.3.8.4 1.2.2l2.1-1c.5-.2.7-.8.5-1.3l-.8-2.2c-.3-.7-.9-1.3-1.6-1.6l-2.2-.8c-.5-.2-1.1 0-1.3.5l-1 2z"/>
+                         </svg>
+                     </div>
+                     <h3 class="font-semibold text-gray-900 mb-2">Phone</h3>
+                     <p class="text-gray-600">+1 (304) 517-4553</p>
+                 </div>
+                 <div class="flex-shrink-0 scroll-snap-start w-[calc(100%-12px)] sm:w-[calc(33.333%-8px)] text-center opacity-0 translate-y-8 transition-all duration-700 delay-300" data-animate-target>
+                     <div class="w-14 h-14 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                         <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                         </svg>
+                     </div>
+                     <h3 class="font-semibold text-gray-900 mb-2">Location</h3>
+                     <p class="text-gray-600">123 Book Street</p>
+                 </div>
+             </div>
             
             <!-- Social Media Links -->
             <div class="flex flex-wrap justify-center gap-4 md:gap-6 mt-12 opacity-0 translate-y-8 transition-all duration-700 delay-400" data-animate-target>

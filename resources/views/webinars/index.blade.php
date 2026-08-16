@@ -139,11 +139,6 @@
     <div class="head">
       <div class="eyebrow">Webinar curriculum</div>
       <h2>What you'll learn</h2>
-      <p class="subtext">Six stages of preparation to walk into your visa interview ready — and walk out approved.</p>
-      <div class="swipe-hint">
-        Swipe to see all six
-        <svg viewBox="0 0 24 24" fill="none" stroke="var(--muted-dim)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </div>
     </div>
 
     <div class="grid">
@@ -284,7 +279,7 @@
                     </div>
 
                     <!-- CTA -->
-                    <a href="{{ route('webinars.register.page', $webinar->id) }}" target="_self" class="flex items-center justify-center gap-2 w-full py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-xl font-semibold text-base hover:from-indigo-600 hover:to-purple-600 transition-all duration-300 shadow-lg" style="box-shadow: 0 12px 24px -8px rgba(139,92,246,0.35);">
+                    <a href="{{ route('webinars.register.page', $webinar->id) }}" target="_self" class="flex items-center justify-center gap-2 w-full py-4 bg-gradient-to-r from-indigo-500 to-purple-500 text-white rounded-3xl font-semibold text-base hover:from-indigo-600 hover:to-purple-600 transition-all duration-300 shadow-lg" style="box-shadow: 0 12px 24px -8px rgba(139,92,246,0.35);">
                         Proceed to registration
                         <svg class="w-4 h-4 transition-transform duration-150 group-hover:translate-x-1" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                     </a>

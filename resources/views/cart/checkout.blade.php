@@ -209,16 +209,6 @@
             @else
                 <!-- Checkout Form -->
                 <div class="bg-white rounded-lg shadow-md p-8">
-                    @if(session('discount_applied'))
-                    <div class="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg">
-                        <div class="flex items-center">
-                            <svg class="w-5 h-5 text-green-500 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-                            </svg>
-                            <span class="text-green-700 font-medium">Discount applied successfully!</span>
-                        </div>
-                    </div>
-                    @endif
                     <h1 class="text-2xl font-bold text-gray-900 mb-6">Checkout</h1>
                     
 <!-- Order Summary -->
@@ -240,30 +230,16 @@
                             <span class="text-lg font-bold">Total</span>
                             <span class="text-lg font-bold text-indigo-600" id="total-display">${{ number_format($total, 2) }}</span>
                         </div>
-                        @if($discount)
-                        <div class="flex justify-between items-center mt-2">
-                            <span class="text-md font-medium text-green-600">Discount Applied (-{{ $discount->percentage }}%)</span>
-                            <span class="text-md font-bold text-green-600" id="discount-amount">-${{ number_format($total - $discountedAmount, 2) }}</span>
-                        </div>
-                        @endif
                         <div class="flex justify-between items-center mt-2 pt-2 border-t" id="final-total-row">
                             <span class="text-xl font-bold">Final Amount</span>
-                            <span class="text-xl font-bold text-indigo-600" id="final-total">${{ number_format($discountedAmount, 2) }}</span>
+                            <span class="text-xl font-bold text-indigo-600" id="final-total">${{ number_format($total, 2) }}</span>
                         </div>
-                    </div>
-
-                    <!-- Discount Code Link -->
-                    <div class="mt-4 text-center">
-                        <a href="{{ route('discount.apply.form') }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
-                            Have a discount code? Click here to apply it
-                        </a>
                     </div>
 
                     <!-- Customer Name Form -->
                     <form action="{{ route('checkout.process') }}" method="POST" id="checkout-form">
                         @csrf
                         <input type="hidden" name="email" value="{{ auth()->user()->email ?? '' }}">
-                        <input type="hidden" name="discount_code" id="discount-code-input" value="{{ session('discount_code') }}">
                         
                         <div class="mb-6">
                             <label for="customer_name" class="block text-sm font-medium text-gray-700 mb-1">Customer Name *</label>
@@ -400,14 +376,13 @@
                              submitBtn.innerText = 'Processing...';
 
          const data = {
-                                 customer_name: formData.get('customer_name'),
-                                 email: formData.get('email'),
-                                 residence: formData.get('residence'),
-                                 nationality: formData.get('nationality'),
-                                 contact: formData.get('contact'),
-                                 payment_method: formData.get('payment_method'),
-                                 discount_code: document.getElementById('discount-code-input')?.value || ''
-                             };
+                                  customer_name: formData.get('customer_name'),
+                                  email: formData.get('email'),
+                                  residence: formData.get('residence'),
+                                  nationality: formData.get('nationality'),
+                                  contact: formData.get('contact'),
+                                  payment_method: formData.get('payment_method'),
+                              };
                             
                              try {
                                  const response = await fetch('{{ route("payment.initialize") }}', {

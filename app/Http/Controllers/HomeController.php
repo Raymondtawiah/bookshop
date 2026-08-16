@@ -17,11 +17,11 @@ class HomeController extends Controller
     public function index()
     {
         $books = Book::latest()->take(8)->get();
-        $featuredBooks = Book::where('is_featured', true)->latest()->take(2)->get();
+        $featuredBooks = Book::where('is_featured', true)->latest()->take(5)->get();
 
         // Fallback to latest books if no featured books exist
         if ($featuredBooks->count() === 0) {
-            $featuredBooks = Book::latest()->take(2)->get();
+            $featuredBooks = Book::latest()->take(5)->get();
         }
 
         return view('welcome', compact('books', 'featuredBooks'));

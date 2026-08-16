@@ -69,6 +69,22 @@
       "parentBranch": "dev",
       "createdAt": "2026-06-20T14:22:45.866Z",
       "remote": "origin"
+    },
+    "wt-1786832000724-1": {
+      "branch": "fortunate-browser",
+      "path": "c:\\users\\enter\\herd\\bookshop\\.kilo\\worktrees\\fortunate-browser",
+      "parentBranch": "dev",
+      "createdAt": "2026-08-15T22:13:20.724Z",
+      "remote": "origin",
+      "branchOwned": true
+    },
+    "wt-1786832016723-2": {
+      "branch": "modest-sweater",
+      "path": "c:\\users\\enter\\herd\\bookshop\\.kilo\\worktrees\\modest-sweater",
+      "parentBranch": "dev",
+      "createdAt": "2026-08-15T22:13:36.723Z",
+      "remote": "origin",
+      "branchOwned": true
     }
   },
   "sessions": {
@@ -111,11 +127,19 @@
     "ses_11a9653ebffew2QdAwJD0W5Twx": {
       "worktreeId": "wt-1781965365866-1",
       "createdAt": "2026-06-20T14:22:48.643Z"
+    },
+    "ses_ff8836125ffexAbQy6q2c3zRAz": {
+      "worktreeId": "wt-1786832000724-1",
+      "createdAt": "2026-08-15T22:13:26.873Z"
+    },
+    "ses_ff8832660ffeJJwlzXm0bbPncG": {
+      "worktreeId": "wt-1786832016723-2",
+      "createdAt": "2026-08-15T22:13:42.935Z"
     }
   },
   "tabOrder": {
     "local": [
-      "pending:1"
+      "pending:9fe699a0-95fc-4576-a8a6-b1443dfd2bb9"
     ]
   },
   "worktreeOrder": [
@@ -128,6 +152,9 @@
     "wt-1781903461992-2",
     "wt-1781904208949-3",
     "wt-1781904285437-4",
-    "wt-1781965365866-1"
-  ]
+    "wt-1781965365866-1",
+    "wt-1786832000724-1",
+    "wt-1786832016723-2"
+  ],
+  "sessionsCollapsed": false
 }

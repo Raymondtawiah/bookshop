@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
-use App\Models\Discount;
 use App\Models\Order;
 use App\Services\Payments\PaymentRouterService;
 use App\Services\Payments\PaystackPaymentGateway;
@@ -37,13 +36,12 @@ class PaymentController extends Controller
         try {
             $request->validate([
                 'payment_method' => 'required|in:card,paystack,bank',
-                'email' => 'nullable|email',
-                'contact' => 'required|string',
-                'customer_name' => 'required|string',
-                'residence' => 'required|string',
-                'nationality' => 'nullable|string',
-                'discount_code' => 'nullable|string|max:50',
-            ]);
+            'email' => 'nullable|email',
+            'contact' => 'required|string',
+            'customer_name' => 'required|string',
+            'residence' => 'required|string',
+            'nationality' => 'nullable|string',
+        ]);
 
             $cartItems = Cart::where('user_id', Auth::id())->get();
 
@@ -56,17 +54,6 @@ class PaymentController extends Controller
 
             $totalUsd = $cartItems->sum(fn ($item) => $item->unit_price * $item->quantity);
             $email = $request->input('email') ?? (Auth::check() ? Auth::user()->email : null);
-            $discountCode = $request->input('discount_code');
-            $discountAmount = 0;
-
-            if ($discountCode) {
-                $discount = Discount::findByCode($discountCode);
-                if ($discount && $discount->type === 'ebook') {
-                    $discountAmount = $discount->calculateDiscount($totalUsd);
-                }
-            }
-
-            $finalAmount = max(0, $totalUsd - $discountAmount);
 
             if (! $email) {
                 return response()->json(['success' => false, 'message' => 'Email is required'], 400);
@@ -76,11 +63,9 @@ class PaymentController extends Controller
             $paymentMethod = $request->payment_method;
 
             if ($paymentMethod === 'bank') {
-                $this->createPendingOrder($request, $finalAmount, $reference, [
+                $this->createPendingOrder($request, $totalUsd, $reference, [
                     'provider' => 'bank',
                     'currency' => 'USD',
-                    'discount_code' => $discountCode,
-                    'discount_amount' => $discountAmount,
                 ]);
 
                 return response()->json([
@@ -94,13 +79,13 @@ class PaymentController extends Controller
 
             $paymentResult = $this->paymentRouter->createCheckout(
                 $email,
-                $finalAmount,
+                $totalUsd,
                 $provider,
                 $reference
             );
 
             if ($paymentResult['success']) {
-                $this->createPendingOrder($request, $finalAmount, $reference, $paymentResult);
+                $this->createPendingOrder($request, $totalUsd, $reference, $paymentResult);
 
                 return response()->json([
                     'success' => true,
@@ -251,8 +236,6 @@ class PaymentController extends Controller
             'status' => 'pending',
             'payment_status' => 'pending',
             'order_items' => $orderItems,
-            'discount_code' => $paymentResult['discount_code'] ?? null,
-            'discount_amount' => $paymentResult['discount_amount'] ?? 0,
         ]);
     }
 

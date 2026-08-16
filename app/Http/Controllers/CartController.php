@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cart;
-use App\Models\Discount;
 use App\Models\Nationality;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -103,21 +102,9 @@ class CartController extends Controller
             return $item->unit_price * $item->quantity;
         });
 
-        // Apply discount if code exists in session or user's profile
-        $discountCode = session('discount_code') ?? auth()->user()?->discount_code;
-        $discountedAmount = $total;
-        $discount = null;
-
-        if ($discountCode) {
-            $discount = Discount::findByCode($discountCode);
-            if ($discount && $discount->type === 'ebook') {
-                $discountedAmount = max(0, $total - $discount->calculateDiscount($total));
-            }
-        }
-
         $nationalities = Nationality::select('name')->distinct()->orderBy('name')->get();
 
-        return view('cart.checkout', compact('cartItems', 'total', 'discountedAmount', 'discount', 'nationalities'));
+        return view('cart.checkout', compact('cartItems', 'total', 'nationalities'));
     }
 
     /**

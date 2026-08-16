@@ -182,7 +182,7 @@
                         </li>
                     </ul>
                     
-                    <button onclick="window.location.href='{{ route('coaching.booking.page', 'team') }}'" class="w-full py-3.5 rounded-2xl font-bold text-gray-700 border-2 border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all duration-200">
+                    <button onclick="window.location.href='{{ route('coaching.booking.page', 'team') }}'" class="w-full py-3.5 rounded-3xl font-bold text-gray-700 border-2 border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all duration-200">
                         Book Team Plan
                     </button>
                 </div>
@@ -238,7 +238,7 @@
                         </li>
                     </ul>
                     
-                    <button onclick="window.location.href='{{ route('coaching.booking.page', 'single') }}'" class="w-full py-3.5 rounded-2xl font-bold text-gray-700 border-2 border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all duration-200">
+                    <button onclick="window.location.href='{{ route('coaching.booking.page', 'single') }}'" class="w-full py-3.5 rounded-3xl font-bold text-gray-700 border-2 border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all duration-200">
                         Book 1 Week Intensive
                     </button>
                 </div>
@@ -298,7 +298,7 @@
                         </li>
                     </ul>
                     
-                    <button onclick="window.location.href='{{ route('coaching.booking.page', 'premium') }}'" class="w-full py-3.5 rounded-2xl font-bold text-white plan-gradient hover:opacity-90 transition-all duration-200 shadow-lg shadow-indigo-200">
+                    <button onclick="window.location.href='{{ route('coaching.booking.page', 'premium') }}'" class="w-full py-3.5 rounded-3xl font-bold text-white plan-gradient hover:opacity-90 transition-all duration-200 shadow-lg shadow-indigo-200">
                         Book Full Coaching
                     </button>
                 </div>

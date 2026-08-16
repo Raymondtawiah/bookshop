@@ -256,7 +256,7 @@
                             </div>
 
                             <!-- Submit Button -->
-                            <button type="submit" class="w-full plan-gradient text-white py-4 rounded-2xl font-bold text-lg hover:opacity-90 transition-all duration-200 shadow-lg shadow-indigo-200 flex items-center justify-center gap-3 group">
+                            <button type="submit" class="w-full plan-gradient text-white py-4 rounded-3xl font-bold text-lg hover:opacity-90 transition-all duration-200 shadow-lg shadow-indigo-200 flex items-center justify-center gap-3 group">
                                 <span>Confirm Booking</span>
                                 <span class="font-extrabold">${{ number_format($planInfo['price'], 2) }}</span>
                                 <svg class="w-5 h-5 transition-transform duration-200 group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
