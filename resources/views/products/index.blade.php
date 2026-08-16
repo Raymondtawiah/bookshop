@@ -159,7 +159,7 @@
         </section>
 
         <section class="w-full">
-            <img src="{{ asset('bookshelp.jpg') }}" alt="Books Help" class="w-full h-auto object-cover">
+            <img src="{{ asset('bookshelp.jpg') }}" alt="Books Help" class="w-full h-[520px] object-cover">
         </section>
 
         <!-- Search Section -->
@@ -214,7 +214,7 @@
         </section>
 
           <section class="w-full">
-            <img src="{{ asset('testimonials.jpg') }}" alt="Testimonials" class="w-full h-auto object-cover">
+            <img src="{{ asset('testimonials.jpg') }}" alt="Testimonials" class="w-full h-[520px] object-cover">
         </section>
 
         <x-customer-footer />
