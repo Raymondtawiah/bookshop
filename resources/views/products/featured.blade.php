@@ -293,11 +293,10 @@
 
     <div class="w-full overflow-x-hidden min-w-0 mx-0 px-0">
         <!-- Hero Image -->
-         <br>
-         <br>
-        <section class="w-full">
-            <img src="{{ asset('hero.jpg') }}" alt="Hero" class="w-full h-auto object-cover">
-        </section>
+        
+     <section class="w-full mt-16 md:mt-24 lg:mt-32">
+    <img src="{{ asset('hero.jpg') }}" alt="Hero" class="w-full h-auto object-cover">
+</section>
 
         <div class="featured-stage">
             <div class="featured-head">
