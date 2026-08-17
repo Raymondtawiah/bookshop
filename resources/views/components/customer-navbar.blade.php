@@ -20,20 +20,6 @@
                 <a href="{{ route('coaching.booking') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Coaching</a>
                 
                 @auth
-                    @php
-                        $navbarCartCount = auth()->check() ? App\Models\Cart::where('user_id', auth()->id())->sum('quantity') : 0;
-                    @endphp
-                    <a href="{{ route('cart') }}" class="relative p-2 text-gray-600 hover:text-indigo-600 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                        </svg>
-                        @if($navbarCartCount > 0)
-                            <span class="absolute -top-1 -right-1 bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center font-bold">{{ $navbarCartCount }}</span>
-                        @endif
-                    </a>
-                @endauth
-
-                @auth
                     <div class="relative group">
                         <button class="flex items-center gap-2 text-gray-600 hover:text-indigo-600 transition-colors">
                             <div class="w-8 h-8 rounded-full overflow-hidden border-2 border-indigo-600">
@@ -47,7 +33,6 @@
                             </div>
                             <a href="{{ route('profile') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">Settings</a>
                             <a href="{{ route('my-orders') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">My Orders</a>
-                            <a href="{{ route('cart') }}" class="block px-4 py-2 text-sm text-gray-700 hover:bg-indigo-50 hover:text-indigo-600">Shopping Cart</a>
                             <form method="POST" action="{{ route('logout') }}" class="border-t border-gray-100">
                                 @csrf
                                 <button type="submit" class="w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50">Logout</button>
@@ -66,13 +51,6 @@
 
             <!-- Mobile Menu Button -->
             <div class="flex items-center gap-2 md:hidden">
-                @auth
-                    <a href="{{ route('cart') }}" class="relative p-2 text-gray-600 hover:text-indigo-600 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                        </svg>
-                    </a>
-                @endauth
                 <button id="mobile-menu-btn" onclick="toggleCustomerMobileMenu()" class="p-2 text-gray-600 hover:text-indigo-600">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" id="menu-icon">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
@@ -135,12 +113,6 @@
 
                 @auth
                     <hr class="border-gray-200 my-2">
-                    <a href="{{ route('cart') }}" class="flex items-center gap-3 px-3 py-3 rounded-lg text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 font-medium transition border-b border-gray-100">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                        </svg>
-                        <span>Shopping Cart</span>
-                    </a>
                     <a href="{{ route('profile') }}" class="flex items-center gap-3 px-3 py-3 rounded-lg text-gray-700 hover:bg-indigo-50 hover:text-indigo-600 font-medium transition border-b border-gray-100">
                         <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317a1.724 1.724 0 013.35 0l.174.696a1.724 1.724 0 002.591 1.066l.61-.35a1.724 1.724 0 012.366.632l.35.61a1.724 1.724 0 01-1.066 2.591l-.696.174a1.724 1.724 0 000 3.35l.696.174a1.724 1.724 0 011.066 2.591l-.35.61a1.724 1.724 0 01-2.366.632l-.61-.35a1.724 1.724 0 00-2.591 1.066l-.174.696a1.724 1.724 0 01-3.35 0l-.174-.696a1.724 1.724 0 00-2.591-1.066l-.61.35a1.724 1.724 0 01-2.366-.632l-.35-.61a1.724 1.724 0 011.066-2.591l.696-.174a1.724 1.724 0 000-3.35l-.696-.174a1.724 1.724 0 01-1.066-2.591l.35-.61a1.724 1.724 0 012.366-.632l.61.35a1.724 1.724 0 002.591-1.066l.174-.696z"/>

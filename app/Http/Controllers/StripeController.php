@@ -41,7 +41,7 @@ class StripeController extends Controller
         $sessionId = $sessionId ?? $request->query('session_id');
 
         if (! $sessionId) {
-            return redirect()->route('checkout')
+            return redirect()->route('home')
                 ->with('error', 'Invalid payment session.');
         }
 
@@ -53,7 +53,7 @@ class StripeController extends Controller
                 'error' => $e->getMessage(),
             ]);
 
-            return redirect()->route('checkout')
+            return redirect()->route('home')
                 ->with('error', 'Unable to verify payment. Please contact support.');
         }
 
@@ -103,16 +103,13 @@ class StripeController extends Controller
                     $errorMessage = 'Error sending confirmation email. Please contact support.';
                 } elseif (strpos($e->getMessage(), 'NotificationService') !== false) {
                     $errorMessage = 'Error sending notifications. Please contact support.';
-                } elseif (strpos($e->getMessage(), 'Cart::where') !== false) {
-                    $errorMessage = 'Error clearing cart after payment. Please contact support.';
                 } elseif (strpos($e->getMessage(), 'SQLSTATE') !== false || strpos($e->getMessage(), 'query') !== false) {
                     $errorMessage = 'Database error during order completion. Please contact support.';
                 } else {
-                    // Show actual error message for debugging (remove in production)
                     $errorMessage = 'Payment failed: '.$e->getMessage();
                 }
 
-                return redirect()->route('checkout')
+                return redirect()->route('home')
                     ->with('error', $errorMessage);
             }
         }
@@ -127,7 +124,7 @@ class StripeController extends Controller
      */
     public function cancel(Request $request)
     {
-        return redirect()->route('checkout')
+        return redirect()->route('home')
             ->with('error', 'Payment was cancelled.');
     }
 

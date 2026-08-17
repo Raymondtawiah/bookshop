@@ -6,18 +6,6 @@
             </svg>
             <span class="text-xs font-medium">Home</span>
         </a>
-        <a href="{{ route('cart') }}" class="flex flex-col items-center gap-1 p-2 text-gray-600 hover:text-indigo-600 transition-colors relative">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-            </svg>
-            <span class="text-xs font-medium">Cart</span>
-            @php
-                $cartCount = auth()->check() ? App\Models\Cart::where('user_id', auth()->id())->sum('quantity') : 0;
-            @endphp
-            @if($cartCount > 0)
-                <span class="absolute top-1 right-1 bg-indigo-600 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center font-bold">{{ $cartCount }}</span>
-            @endif
-        </a>
         <a href="{{ route('profile') }}" class="flex flex-col items-center gap-1 p-2 text-gray-600 hover:text-indigo-600 transition-colors">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317a1.724 1.724 0 013.35 0l.174.696a1.724 1.724 0 002.591 1.066l.61-.35a1.724 1.724 0 012.366.632l.35.61a1.724 1.724 0 01-1.066 2.591l-.696.174a1.724 1.724 0 000 3.35l.696.174a1.724 1.724 0 011.066 2.591l-.35.61a1.724 1.724 0 01-2.366.632l-.61-.35a1.724 1.724 0 00-2.591 1.066l-.174.696a1.724 1.724 0 01-3.35 0l-.174-.696a1.724 1.724 0 00-2.591-1.066l-.61.35a1.724 1.724 0 01-2.366-.632l-.35-.61a1.724 1.724 0 011.066-2.591l.696-.174a1.724 1.724 0 000-3.35l-.696-.174a1.724 1.724 0 01-1.066-2.591l.35-.61a1.724 1.724 0 012.366-.632l.61.35a1.724 1.724 0 002.591-1.066l.174-.696z"/>

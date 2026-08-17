@@ -73,8 +73,8 @@
         </div>
 
         <div class="mt-6 text-center">
-            <a href="{{ route('checkout') }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
-                Skip discount and go to checkout →
+            <a href="{{ route('books.index') }}" class="text-sm text-indigo-600 hover:text-indigo-700 font-medium">
+                Browse Books →
             </a>
         </div>
     </div>

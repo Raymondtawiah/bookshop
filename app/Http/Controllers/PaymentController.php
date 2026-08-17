@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Cart;
 use App\Models\Order;
 use App\Services\Payments\PaymentRouterService;
 use App\Services\Payments\PaystackPaymentGateway;
@@ -36,23 +35,13 @@ class PaymentController extends Controller
         try {
             $request->validate([
                 'payment_method' => 'required|in:card,paystack,bank',
-            'email' => 'nullable|email',
-            'contact' => 'required|string',
-            'customer_name' => 'required|string',
-            'residence' => 'required|string',
-            'nationality' => 'nullable|string',
-        ]);
+                'email' => 'nullable|email',
+                'contact' => 'required|string',
+                'customer_name' => 'required|string',
+                'residence' => 'required|string',
+                'nationality' => 'nullable|string',
+            ]);
 
-            $cartItems = Cart::where('user_id', Auth::id())->get();
-
-            if ($cartItems->isEmpty()) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Your cart is empty',
-                ]);
-            }
-
-            $totalUsd = $cartItems->sum(fn ($item) => $item->unit_price * $item->quantity);
             $email = $request->input('email') ?? (Auth::check() ? Auth::user()->email : null);
 
             if (! $email) {
@@ -63,7 +52,7 @@ class PaymentController extends Controller
             $paymentMethod = $request->payment_method;
 
             if ($paymentMethod === 'bank') {
-                $this->createPendingOrder($request, $totalUsd, $reference, [
+                $this->createPendingOrder($request, 0, $reference, [
                     'provider' => 'bank',
                     'currency' => 'USD',
                 ]);
@@ -79,13 +68,13 @@ class PaymentController extends Controller
 
             $paymentResult = $this->paymentRouter->createCheckout(
                 $email,
-                $totalUsd,
+                0,
                 $provider,
                 $reference
             );
 
             if ($paymentResult['success']) {
-                $this->createPendingOrder($request, $totalUsd, $reference, $paymentResult);
+                $this->createPendingOrder($request, 0, $reference, $paymentResult);
 
                 return response()->json([
                     'success' => true,
@@ -206,25 +195,16 @@ class PaymentController extends Controller
     protected function createPendingOrder(Request $request, float $totalUsd, string $reference, array $paymentResult): Order
     {
         $user = Auth::user();
-        $cartItems = Cart::where('user_id', $user->id)->get();
-
-        $orderItems = $cartItems->map(fn ($item) => [
-            'book_id' => $item->book_id,
-            'product_name' => $item->product_name,
-            'unit_price_usd' => $item->unit_price,
-            'quantity' => $item->quantity,
-            'total_price_usd' => $item->unit_price * $item->quantity,
-        ])->toArray();
 
         $isPaystack = $paymentResult['provider'] === 'paystack';
-        $totalAmount = $isPaystack ? $paymentResult['amount_ghs'] : $totalUsd;
+        $totalAmount = $isPaystack ? ($paymentResult['amount_ghs'] ?? $totalUsd) : $totalUsd;
 
         return Order::create([
-            'user_id' => $user->id,
+            'user_id' => $user?->id,
             'order_number' => $reference,
-            'customer_name' => $request->customer_name ?? $user->name,
-            'email' => $request->email ?? $user->email,
-            'contact' => $request->contact ?? $user->phone ?? '',
+            'customer_name' => $request->customer_name ?? ($user?->name ?? ''),
+            'email' => $request->email ?? ($user?->email ?? ''),
+            'contact' => $request->contact ?? ($user?->phone ?? ''),
             'residence' => $request->residence ?? '',
             'nationality' => $request->nationality ?? '',
             'payment_method' => $this->mapProviderToMethod($paymentResult['provider']),
@@ -235,7 +215,7 @@ class PaymentController extends Controller
             'exchange_rate' => $isPaystack ? 11.79 : null,
             'status' => 'pending',
             'payment_status' => 'pending',
-            'order_items' => $orderItems,
+            'order_items' => [],
         ]);
     }
 

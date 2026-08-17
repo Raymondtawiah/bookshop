@@ -44,7 +44,7 @@ class PaymentRouter
             $amountUsd = max($amountUsd, 0.01);
 
             $successUrl = route('payment.stripe.success');
-            $cancelUrl = route('checkout');
+            $cancelUrl = route('home');
 
             $result = $this->stripe->createCheckoutSession(
                 $email,

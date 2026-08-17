@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Book;
-use App\Models\Cart;
 use App\Models\Nationality;
 use App\Models\Order;
 use App\Services\NotificationService;
@@ -23,46 +22,54 @@ class OrderController extends Controller
     }
 
     /**
-     * Process checkout with customer details.
-     * Accepts payment_method: 'card' (Stripe), 'bank' (manual transfer)
+     * Show direct checkout form for a single book.
      */
-    public function processCheckout(Request $request)
+    public function directCheckout($book_id)
+    {
+        $book = Book::findOrFail($book_id);
+        $nationalities = Nationality::select('name')->distinct()->orderBy('name')->get();
+
+        return view('cart.checkout', [
+            'book' => $book,
+            'total' => $book->price,
+            'nationalities' => $nationalities,
+            'direct' => true,
+        ]);
+    }
+
+    /**
+     * Process direct checkout for a single book.
+     */
+    public function processDirectCheckout(Request $request)
     {
         $request->validate([
+            'book_id' => 'required|exists:books,id',
             'customer_name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
             'residence' => 'required|string|max:500',
             'nationality' => 'required|string|max:100',
             'contact' => 'required|string|max:20',
-            'payment_method' => 'required|in:bank,card',
+            'payment_method' => 'required|in:bank,card,paystack',
         ]);
 
-        $cartItems = Cart::where('user_id', Auth::id())->with('book')->get();
+        $book = Book::findOrFail($request->book_id);
 
-        if ($cartItems->isEmpty()) {
-            return redirect()->route('cart')->with('error', 'Your cart is empty!');
+        if ($book->is_free && $book->book_pdf) {
+            return redirect()->route('product.show', $book->id)->with('error', 'This is a free book. Please download it directly.');
         }
 
-        $totalUsd = $cartItems->sum(function ($item) {
-            return $item->unit_price * $item->quantity;
-        });
-
-        $finalAmount = $totalUsd;
-
+        $totalUsd = $book->price;
         $reference = 'ORD-'.time().rand(1000, 9999);
         $paymentMethod = $request->payment_method;
 
-        $orderItems = $cartItems->map(function ($item) {
-            return [
-                'book_id' => $item->book_id,
-                'product_name' => $item->product_name,
-                'unit_price_usd' => $item->unit_price,
-                'quantity' => $item->quantity,
-                'total_price_usd' => $item->unit_price * $item->quantity,
-            ];
-        })->toArray();
+        $orderItems = [[
+            'book_id' => $book->id,
+            'product_name' => $book->title,
+            'unit_price_usd' => $book->price,
+            'quantity' => 1,
+            'total_price_usd' => $book->price,
+        ]];
 
-        // Create base order
         $order = Order::create([
             'user_id' => Auth::id(),
             'customer_name' => $request->customer_name,
@@ -70,7 +77,7 @@ class OrderController extends Controller
             'residence' => $request->residence,
             'nationality' => $request->nationality,
             'contact' => $request->contact,
-            'total_amount' => $finalAmount,
+            'total_amount' => $totalUsd,
             'currency' => 'USD',
             'status' => 'pending',
             'order_number' => $reference,
@@ -79,7 +86,6 @@ class OrderController extends Controller
 
         NotificationService::newOrder($order);
 
-        // Bank Transfer (manual, no redirect)
         if ($paymentMethod === 'bank') {
             $order->update([
                 'payment_method' => 'bank',
@@ -88,23 +94,20 @@ class OrderController extends Controller
                 'status' => 'pending_payment',
             ]);
 
-            $cartItems->each->delete();
-
             return view('cart.checkout', [
                 'order' => $order,
-                'total' => $finalAmount,
+                'total' => $totalUsd,
                 'bankTransfer' => true,
                 'bankDetails' => config('paystack.bankDetails'),
                 'nationalities' => Nationality::select('name')->distinct()->orderBy('name')->get(),
             ]);
         }
 
-        // Determine provider for digital payments
-        $provider = 'stripe';
+        $provider = $paymentMethod === 'paystack' ? 'paystack' : 'stripe';
 
         $paymentResult = $this->paymentRouter->createCheckout(
             $request->email,
-            $finalAmount,
+            $totalUsd,
             $provider,
             $reference
         );

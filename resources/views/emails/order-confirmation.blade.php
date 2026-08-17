@@ -102,26 +102,17 @@
             <p><strong>Payment Status:</strong> <span style="color: green;">{{ ucfirst($order->payment_status) }}</span></p>
         </div>
         
-        <h3>Items Ordered</h3>
-        <div class="order-details">
-            @foreach($cartItems as $item)
-            <div class="order-item">
-                <div>
-                    <strong>{{ is_array($item) ? $item['product_name'] : $item->product_name }}</strong>
-                    <br>
-                     <small>Qty: {{ is_array($item) ? $item['quantity'] : $item->quantity }} × ${{ is_array($item) ? number_format($item['unit_price_usd'] ?? $item['unit_price'], 2) : number_format($item->unit_price, 2) }}</small>
-                </div>
-                <div>${{ is_array($item) ? number_format(($item['unit_price_usd'] ?? $item['unit_price']) * $item['quantity'], 2) : number_format($item->unit_price * $item->quantity, 2) }}</div>
-            </div>
-            @endforeach
-            
-            <div class="order-item total">
-                <span>Total Amount (USD)</span>
-                <div>
-                    <span>${{ number_format($order->total_amount_usd ?? $order->total_amount, 2) }}</span>
-                </div>
-            </div>
-        </div>
+         <h3>Order Summary</h3>
+         <div class="order-details">
+             <p><strong>Book:</strong> {{ $order->order_items->first()['product_name'] ?? 'Ordered Book' }}</p>
+             
+             <div class="order-item total">
+                 <span>Total Amount (USD)</span>
+                 <div>
+                     <span>${{ number_format($order->total_amount_usd ?? $order->total_amount, 2) }}</span>
+                 </div>
+             </div>
+         </div>
         
         <h3>Delivery Details</h3>
         <div class="order-details">

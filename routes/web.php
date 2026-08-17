@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\Admin\CoachingController;
 use App\Http\Controllers\Auth\GoogleController;
-use App\Http\Controllers\CartController;
 use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\HomeController;
@@ -86,7 +85,7 @@ Route::post('discount/apply', function (Request $request) {
 
     $request->session()->put('discount_code', $request->discount_code);
 
-    return redirect()->route('checkout')->with('discount_applied', true);
+    return redirect()->route('books.index')->with('discount_applied', true);
 })->name('discount.apply');
 
 // Google OAuth
@@ -254,6 +253,10 @@ Route::post('free-book/lead', [ProductController::class, 'createLead'])->name('f
 // Free book download by token (public - token grants access)
 Route::get('free-book/download/{token}', [ProductController::class, 'downloadByToken'])->name('free-book.download');
 
+// Direct checkout routes (guests allowed)
+Route::get('checkout/{book_id}', [OrderController::class, 'directCheckout'])->name('checkout.direct');
+Route::post('checkout/direct-process', [OrderController::class, 'processDirectCheckout'])->name('checkout.direct.process');
+
 // Authenticated customer routes
 Route::middleware(['auth', 'verify.customer'])->group(function () {
     // Profile routes
@@ -261,12 +264,6 @@ Route::middleware(['auth', 'verify.customer'])->group(function () {
     Route::put('profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::put('password', [ProfileController::class, 'updatePassword'])->name('user.password.update');
 
-    Route::get('cart', [CartController::class, 'viewCart'])->name('cart');
-    Route::post('cart/add', [CartController::class, 'addToCart'])->name('cart.add');
-    Route::put('cart/{id}', [CartController::class, 'updateQuantity'])->name('cart.update');
-    Route::delete('cart/{id}', [CartController::class, 'removeFromCart'])->name('cart.remove');
-    Route::get('checkout', [CartController::class, 'checkout'])->name('checkout');
-    Route::post('checkout/process', [OrderController::class, 'processCheckout'])->name('checkout.process');
     Route::get('order/download/{order}', [OrderController::class, 'downloadPdf'])->name('order.download');
     Route::get('my-orders', [OrderController::class, 'myOrders'])->name('my-orders');
     Route::get('my-order/{order}', [OrderController::class, 'myOrderDetail'])->name('my-order.show');

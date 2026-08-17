@@ -148,7 +148,6 @@
                         <th class="px-2 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Customer</th>
                         <th class="px-2 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Book(s)</th>
                         <th class="px-2 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-24">Amount</th>
-                        <th class="px-2 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-24">Discount</th>
                         <th class="px-2 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Payment</th>
                         <th class="px-2 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
                         <th class="px-2 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-20">Date</th>
@@ -176,29 +175,20 @@
                                 }
                             @endphp
                             @if(count($itemsArray) > 0)
-                                <div class="font-semibold text-gray-900 text-xs truncate">
-                                    @foreach($itemsArray as $item)
-                                        @php
-                                            $name = is_array($item) ? ($item['product_name'] ?? 'Unknown') : ($item->product_name ?? 'Unknown');
-                                        @endphp
-                                        {{ \Illuminate\Support\Str::limit($name, 25) }}@if(!$loop->last), @endif
-                                    @endforeach
-                                </div>
-                                <div class="text-xs text-gray-500">Qty: {{ array_sum(array_column($itemsArray, 'quantity')) }}</div>
+                                 <div class="font-semibold text-gray-900 text-xs truncate">
+                                     @foreach($itemsArray as $item)
+                                         @php
+                                             $name = is_array($item) ? ($item['product_name'] ?? 'Unknown') : ($item->product_name ?? 'Unknown');
+                                         @endphp
+                                         {{ \Illuminate\Support\Str::limit($name, 25) }}@if(!$loop->last), @endif
+                                     @endforeach
+                                 </div>
                             @else
                                 <span class="text-gray-400">-</span>
                             @endif
                         </td>
                         <td class="px-2 py-3 text-xs text-gray-600">
-                            ${{ number_format($order->total_amount_usd ?? $order->total_amount, 2) }}
-                        </td>
-                        <td class="px-2 py-3 text-xs text-gray-600">
-                            @if($order->discount_code)
-                                <span class="text-green-600 font-medium">{{ $order->discount_code }}</span>
-                                <div class="text-xs text-gray-500">-${{ number_format($order->discount_amount ?? 0, 2) }}</div>
-                            @else
-                                <span class="text-gray-400">-</span>
-                            @endif
+                             ${{ number_format($order->total_amount_usd ?? $order->total_amount, 2) }}
                         </td>
                         <td class="px-2 py-3 whitespace-nowrap">
                             @if($order->payment_status === 'paid')

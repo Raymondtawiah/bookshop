@@ -7,7 +7,6 @@ use App\Contracts\EmailSenderInterface;
 use App\Contracts\FCMNotificationInterface;
 use App\Contracts\FirebaseAuthInterface;
 use App\Http\Middleware\CheckWebinarAccess;
-use App\Services\CartService;
 use App\Services\FCMNotificationService;
 use App\Services\FirebaseAuthService;
 use App\Services\LaravelEmailSender;
@@ -29,10 +28,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->singleton(CartService::class, function ($app) {
-            return new CartService;
-        });
-
         $this->app->singleton(FirebaseAuthInterface::class, function ($app) {
             return new FirebaseAuthService;
         });

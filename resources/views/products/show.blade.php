@@ -108,36 +108,22 @@
 
                             </div>
 
-                            <!-- Add to Cart -->
-                            @if($book->isFreePdf())
-                                <button onclick="openFreeBookModal({{ $book->id }}, '{{ $book->title }}')" class="flex-1 px-6 py-4 bg-gradient-to-r from-green-600 to-teal-600 text-white font-semibold rounded-3xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
-                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                    </svg>
-                                    Download Free PDF
-                                </button>
-                            @else
-                                @auth
-                                    <form action="{{ route('cart.add') }}" method="POST" class="flex flex-col sm:flex-row items-start sm:items-center gap-4">
-                                        @csrf
-                                        <input type="hidden" name="product_name" value="{{ $book->title }}">
-                                        <input type="hidden" name="unit_price" value="{{ $book->price }}">
-                                        <input type="hidden" name="book_id" value="{{ $book->id }}">
-                                        <input type="hidden" name="quantity" value="1">
-                                        
-                                        <button type="submit" class="flex-1 px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-3xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
-                                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                            </svg>
-                                            Add to Cart
-                                        </button>
-                                    </form>
-                                @else
-                                    <a href="{{ route('login') }}" class="block w-full text-center px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-3xl hover:opacity-90 transition-opacity">
-                                        Sign In to Add to Cart
-                                    </a>
-                                @endauth
-                            @endif
+                             <!-- Buy Now -->
+                             @if($book->isFreePdf())
+                                 <button onclick="openFreeBookModal({{ $book->id }}, '{{ $book->title }}')" class="flex-1 px-6 py-4 bg-gradient-to-r from-green-600 to-teal-600 text-white font-semibold rounded-3xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                     </svg>
+                                     Download Free PDF
+                                 </button>
+                             @else
+                                 <a href="{{ route('checkout.direct', $book->id) }}" class="flex-1 px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-3xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                     </svg>
+                                     Buy Now
+                                 </a>
+                             @endif
 
                             <!-- Back to Store -->
                             <div class="mt-6 text-center rounded-3xl px-4 py-2 bg-gray-50 hover:bg-gray-100 transition-colors">

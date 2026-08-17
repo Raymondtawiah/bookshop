@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Order;
 use App\Models\WebinarRegistration;
-use App\Services\CartService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -59,11 +58,7 @@ class HomeController extends Controller
         }
         $percentage = round(($profileComplete / $totalFields) * 100);
 
-        // Use CartService to get cart data - following SOLID principles
-        $cartService = app(CartService::class);
-        $cartCount = $cartService->getItemCount();
-
-        return view('dashboard', compact('books', 'featuredBooks', 'availableBooks', 'recentOrders', 'webinarRegistrations', 'percentage', 'cartCount'));
+        return view('dashboard', compact('books', 'featuredBooks', 'availableBooks', 'recentOrders', 'webinarRegistrations', 'percentage'));
     }
 
     /**
@@ -121,8 +116,6 @@ class HomeController extends Controller
         }
         $percentage = round(($profileComplete / $totalFields) * 100);
 
-        $cartCount = app(CartService::class)->getItemCount();
-
-        return compact('featuredBooks', 'availableBooks', 'recentOrders', 'webinarRegistrations', 'percentage', 'cartCount');
+        return compact('featuredBooks', 'availableBooks', 'recentOrders', 'webinarRegistrations', 'percentage');
     }
 }

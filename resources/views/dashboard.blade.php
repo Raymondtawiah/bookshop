@@ -17,17 +17,11 @@
                     </div>
 
                     <!-- Navigation -->
-                    <nav class="hidden md:flex items-center gap-1">
-                        <a href="{{ route('home') }}#store" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all">
-                            Browse Books
-                        </a>
-                        <a href="{{ route('cart') }}" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all flex items-center gap-2">
-                            Cart
-                            @if($cartCount > 0)
-                                <span class="bg-indigo-600 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">{{ $cartCount }}</span>
-                            @endif
-                        </a>
-                    </nav>
+                     <nav class="hidden md:flex items-center gap-1">
+                         <a href="{{ route('home') }}#store" class="px-4 py-2 rounded-lg text-sm font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900 transition-all">
+                             Browse Books
+                         </a>
+                     </nav>
 
                     <!-- User Menu with Dropdown -->
                     <div class="relative">
@@ -209,19 +203,6 @@
                 <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
                     <div class="flex items-center justify-between">
                         <div>
-                            <p class="text-sm text-gray-500">Cart Items</p>
-                            <p class="text-2xl font-bold text-gray-900">{{ $cartCount }}</p>
-                        </div>
-                        <div class="w-12 h-12 bg-orange-100 rounded-xl flex items-center justify-center">
-                            <svg class="w-6 h-6 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                            </svg>
-                        </div>
-                    </div>
-                </div>
-                <div class="bg-white rounded-xl p-5 shadow-sm border border-gray-100">
-                    <div class="flex items-center justify-between">
-                        <div>
                             <p class="text-sm text-gray-500">Total Spent</p>
                             @php($totalUsd = \App\Models\Order::where('user_id', auth()->id())->where('payment_status', 'paid')->sum('total_amount'))
                              <p class="text-2xl font-bold text-gray-900">${{ number_format($totalUsd, 2) }}</p>
@@ -369,16 +350,16 @@
             <!-- Quick Actions -->
             <div>
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                <a href="{{ route('cart') }}" class="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:border-indigo-200 transition-all">
+                <a href="{{ route('my-orders') }}" class="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:border-indigo-200 transition-all">
                     <div class="flex items-center gap-4">
                         <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
                             <svg class="w-7 h-7 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0v10l-8 4m8-14l-8 4m0 10l-8-4V7m8 4v10"/>
                             </svg>
                         </div>
                         <div>
-                            <h3 class="font-semibold text-gray-900">Shopping Cart</h3>
-                            <p class="text-sm text-gray-500">View your items</p>
+                            <h3 class="font-semibold text-gray-900">My Orders</h3>
+                            <p class="text-sm text-gray-500">View purchases</p>
                         </div>
                     </div>
                 </a>
@@ -463,26 +444,10 @@
                             @endif
                             <div class="mt-3 flex items-center justify-between">
                                  <p class="font-bold text-xl text-indigo-600">${{ number_format($book->price, 2) }}</p>
-                            </div>
-                            @auth
-                            <form action="{{ route('cart.add') }}" method="POST" class="mt-3">
-                                @csrf
-                                <input type="hidden" name="product_name" value="{{ $book->title }}">
-                                <input type="hidden" name="unit_price" value="{{ $book->price }}">
-                                <input type="hidden" name="book_id" value="{{ $book->id }}">
-                                <input type="hidden" name="quantity" value="1">
-                                <button type="submit" class="w-full px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-medium rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg flex items-center justify-center gap-2">
-                                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                    </svg>
-                                    Add to Cart
-                                </button>
-                            </form>
-                            @else
-                            <a href="{{ route('login') }}" class="block mt-3 text-center px-4 py-2 bg-gray-100 text-gray-600 text-sm font-medium rounded-xl hover:bg-gray-200 transition-colors">
-                                Sign in to Buy
-                            </a>
-                            @endauth
+                             </div>
+                             <a href="{{ route('checkout.direct', $book->id) }}" class="mt-3 w-full block text-center px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-sm font-medium rounded-xl hover:from-indigo-700 hover:to-purple-700 transition-all shadow-md hover:shadow-lg">
+                                 Buy Now
+                             </a>
                         </div>
                     </div>
                     @endforeach

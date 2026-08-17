@@ -53,24 +53,11 @@
                      @else
                       <p class="text-lg font-extrabold text-indigo-600 mt-1">${{ number_format($book->price, 2) }}</p>
                      @endif
-                     @if(!($book->is_free && $book->book_pdf))
-                     @auth
-                     <form action="{{ route('cart.add') }}" method="POST" class="mt-2">
-                         @csrf
-                         <input type="hidden" name="product_name" value="{{ $book->title }}">
-                         <input type="hidden" name="unit_price" value="{{ $book->price }}">
-                         <input type="hidden" name="book_id" value="{{ $book->id }}">
-                         <input type="hidden" name="quantity" value="1">
-                         <button type="submit" class="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                             Add
-                         </button>
-                     </form>
-                     @else
-                     <a href="{{ route('login') }}" class="inline-block mt-2 px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                         Add
-                     </a>
-                     @endauth
-                     @endif
+                      @if(!($book->is_free && $book->book_pdf))
+                      <a href="{{ route('checkout.direct', $book->id) }}" class="inline-block mt-2 px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
+                          Buy Now
+                      </a>
+                      @endif
                  </div>
               </div>
               @empty

@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use App\Contracts\EmailServiceInterface;
-use App\Models\Cart;
 use App\Models\Order;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
@@ -42,7 +41,7 @@ class CustomerEmailService implements EmailServiceInterface
                 return false;
             }
 
-            $cartItems = Cart::where('user_id', $order->user_id)->get();
+            $cartItems = collect($order->order_items ?? []);
 
             try {
                 $adminName = auth()->check() ? auth()->user()->name : 'Admin';

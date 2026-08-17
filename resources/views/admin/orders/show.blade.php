@@ -72,17 +72,10 @@
                             <dt class="text-sm font-medium text-gray-500">Order Date</dt>
                             <dd class="text-gray-900">{{ $order->created_at->format('M j, Y g:i A') }}</dd>
                         </div>
-<div>
+                         <div>
                              <dt class="text-sm font-medium text-gray-500">Total Amount</dt>
                              <dd class="text-xl font-bold text-indigo-600">${{ number_format($order->total_amount_usd ?? $order->total_amount, 2) }}</dd>
                          </div>
-                        @if($order->discount_code)
-                        <div class="pt-3 border-t border-gray-200">
-                            <dt class="text-sm font-medium text-gray-500">Discount Applied</dt>
-                            <dd class="text-sm text-green-600 font-medium">{{ $order->discount_code }}</dd>
-                            <dd class="text-xs text-gray-500">-${{ number_format($order->discount_amount ?? 0, 2) }}</dd>
-                        </div>
-                        @endif
                     </dl>
                 </div>
             </div>
@@ -135,12 +128,6 @@
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Ordered Books</h3>
                 @php
                     $items = $order->order_items;
-                    $itemsTotal = 0;
-                    foreach($items as $item) {
-                        $price = is_array($item) ? ($item['unit_price_usd'] ?? ($item['unit_price'] ?? 0)) : ($item->unit_price_usd ?? ($item->unit_price ?? 0));
-                        $qty = is_array($item) ? ($item['quantity'] ?? 1) : ($item->quantity ?? 1);
-                        $itemsTotal += $price * $qty;
-                    }
                 @endphp
                 @if(!empty($items) && $items->count() > 0)
                 <div class="bg-gray-50 rounded-lg overflow-hidden">
@@ -149,9 +136,6 @@
                             <thead class="bg-gray-100">
                                 <tr>
                                     <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Book</th>
-                                    <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Price</th>
-                                    <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Qty</th>
-                                    <th class="px-2 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider whitespace-nowrap">Total</th>
                                 </tr>
                             </thead>
                             <tbody class="bg-white divide-y divide-gray-200">
@@ -161,35 +145,22 @@
                                         @php
                                             $name = is_array($item) ? ($item['product_name'] ?? 'Unknown') : ($item->product_name ?? 'Unknown');
                                             $bookId = is_array($item) ? ($item['book_id'] ?? null) : ($item->book_id ?? null);
-                                            $price = is_array($item) ? ($item['unit_price_usd'] ?? ($item['unit_price'] ?? 0)) : ($item->unit_price_usd ?? ($item->unit_price ?? 0));
-                                            $qty = is_array($item) ? ($item['quantity'] ?? 1) : ($item->quantity ?? 1);
-                                            $total = is_array($item) ? ($item['total_price_usd'] ?? ($price * $qty)) : ($item->total_price_usd ?? ($price * $qty));
                                         @endphp
-                                        <div class="text-sm font-medium text-gray-900">{{ \Illuminate\Support\Str::limit($name, 40) }}</div>
+                                        <div class="text-sm font-medium text-gray-900">{{ \Illuminate\Support\Str::limit($name, 60) }}</div>
                                         @if($bookId)
                                             <div class="text-xs text-gray-500">Book ID: {{ $bookId }}</div>
                                         @endif
                                     </td>
-                                    <td class="px-2 py-3 text-sm text-gray-900 whitespace-nowrap">${{ number_format($price, 2) }}</td>
-                                    <td class="px-2 py-3 text-sm text-gray-900 whitespace-nowrap">{{ $qty }}</td>
-                                    <td class="px-2 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">${{ number_format($total, 2) }}</td>
                                 </tr>
                                 @endforeach
                             </tbody>
-                            <tfoot class="bg-gray-100">
-                                @if($order->discount_code)
-                                <tr>
-                                    <td colspan="3" class="px-2 py-2 text-sm font-medium text-green-600 text-right">Discount ({{ $order->discount_code }}):</td>
-                                    <td class="px-2 py-2 text-sm font-medium text-green-600">-${{ number_format($order->discount_amount ?? 0, 2) }}</td>
-                                </tr>
-                                @endif
-                                <tr>
-                                    <td colspan="3" class="px-2 py-3 text-sm font-bold text-gray-700 text-right">Final Total:</td>
-                                    <td class="px-2 py-3 text-sm font-bold text-indigo-600">${{ number_format($order->total_amount_usd ?? $itemsTotal, 2) }}</td>
-                                </tr>
-                            </tfoot>
                         </table>
                     </div>
+                </div>
+                @else
+                <p class="text-gray-500 text-sm">No order items found.</p>
+                @endif
+            </div>
                 </div>
                 @else
                 <p class="text-gray-500 text-sm">No order items found.</p>
