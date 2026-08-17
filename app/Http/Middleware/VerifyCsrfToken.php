@@ -13,5 +13,10 @@ class VerifyCsrfToken extends Middleware
      */
     protected $except = [
         'admin/*',
+        'payment/callback',
+        'payment/stripe/success',
+        'payment/stripe/cancel',
+        'webhook/stripe',
+        'webhook/paystack',
     ];
 }
