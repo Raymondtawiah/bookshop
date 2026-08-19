@@ -161,11 +161,6 @@
                 <p class="text-gray-500 text-sm">No order items found.</p>
                 @endif
             </div>
-                </div>
-                @else
-                <p class="text-gray-500 text-sm">No order items found.</p>
-                @endif
-            </div>
 
             <div class="mt-8 pt-6 border-t border-gray-200">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Update Order Status</h3>
