@@ -76,6 +76,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::post('notifications/toggle-read', [NotificationController::class, 'toggleRead'])->name('notifications.toggleRead');
     Route::post('notifications/delete', [NotificationController::class, 'delete'])->name('notifications.delete');
     Route::post('notifications/cleanup', [NotificationController::class, 'cleanup'])->name('notifications.cleanup');
+    Route::get('notifications/broadcast', [NotificationController::class, 'broadcastForm'])->name('notifications.broadcast');
+    Route::post('notifications/broadcast', [NotificationController::class, 'sendBroadcast'])->name('notifications.sendBroadcast');
 
     Route::get('notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unreadCount');
 

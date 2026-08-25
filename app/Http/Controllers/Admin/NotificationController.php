@@ -4,8 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\AdminNotification;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Log;
 
 class NotificationController extends Controller
 {
@@ -92,5 +95,70 @@ class NotificationController extends Controller
             'success' => true,
             'deleted' => $deleted,
         ]);
+    }
+
+    public function broadcastForm()
+    {
+        return view('admin.broadcast');
+    }
+
+    public function sendBroadcast(Request $request)
+    {
+        $request->validate([
+            'subject' => 'required|string|max:255',
+            'message' => 'required|string|max:5000',
+            'book_update' => 'nullable|string|max:2000',
+            'webinar_update' => 'nullable|string|max:2000',
+        ]);
+
+        $customers = User::where('is_admin', false)
+            ->where('is_staff', false)
+            ->whereNotNull('email')
+            ->where('email', '!=', '')
+            ->get();
+
+        if ($customers->isEmpty()) {
+            return back()->with('error', 'No customers found to send notifications to.');
+        }
+
+        $subject = $request->input('subject');
+        $message = $request->input('message');
+        $bookUpdate = $request->input('book_update');
+        $webinarUpdate = $request->input('webinar_update');
+        $sentCount = 0;
+        $failedCount = 0;
+
+        foreach ($customers as $customer) {
+            try {
+                Mail::send('emails.broadcast', [
+                    'name' => $customer->name,
+                    'subject' => $subject,
+                    'message' => $message,
+                    'bookUpdate' => $bookUpdate,
+                    'webinarUpdate' => $webinarUpdate,
+                    'url' => url('/'),
+                ], function ($mail) use ($customer, $subject) {
+                    $mail->to($customer->email, $customer->name)
+                        ->subject($subject);
+                });
+
+                $sentCount++;
+            } catch (\Exception $e) {
+                $failedCount++;
+                Log::error('Broadcast email failed', [
+                    'email' => $customer->email,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        AdminNotification::createNotification(
+            'customer',
+            'Broadcast Sent',
+            "Email broadcast sent to {$sentCount} customers. Failed: {$failedCount}.",
+            route('admin.notifications')
+        );
+
+        return back()->with('success', "Broadcast sent to {$sentCount} customers. Failed: {$failedCount}.");
     }
 }
