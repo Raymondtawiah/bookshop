@@ -123,13 +123,22 @@ class PaymentController extends Controller
 
             $paidAmount = $result['amount'];
         } else {
-            $reference = $request->input('reference') ?? $request->input('trxref');
-            if (! $reference) {
-                return redirect()->route('home')->with('error', 'Payment reference not found');
-            }
+        $reference = $request->input('reference') ?? $request->input('trxref');
+        if (! $reference) {
+            return redirect()->route('home')->with('error', 'Payment reference not found');
+        }
 
-            $provider = 'paystack';
-            $result = $this->paystackGateway->verifyPayment($reference);
+        $provider = 'paystack';
+        $order = Order::where('order_number', $reference)->first();
+        if (! $order) {
+            $order = Order::where('transaction_reference', $reference)->first();
+        }
+
+        if (! $order) {
+            return redirect()->route('home')->with('error', 'Order not found.');
+        }
+
+        $result = $this->paystackGateway->verifyPayment($reference);
 
             if (! $result['success']) {
                 return redirect()->route('home')->with('error', 'Payment verification failed. Please contact support.');
@@ -139,6 +148,10 @@ class PaymentController extends Controller
         }
 
         $order = Order::where('order_number', $reference)->first();
+
+        if (! $order) {
+            $order = Order::where('transaction_reference', $reference)->first();
+        }
 
         if (! $order) {
             return redirect()->route('home')->with('error', 'Order not found.');

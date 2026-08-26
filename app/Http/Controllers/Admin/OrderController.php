@@ -6,11 +6,14 @@ use App\Contracts\EmailOfferTrackerInterface;
 use App\Contracts\EmailSenderInterface;
 use App\Http\Controllers\Controller;
 use App\Mail\BookOfferMail;
+use App\Mail\PaymentReminder;
 use App\Mail\SendPdfToCustomer;
 use App\Models\Order;
 use App\Services\PassageService;
+use App\Services\Payments\PaymentRouterService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Facades\Storage;
 
 class OrderController extends Controller
@@ -19,10 +22,13 @@ class OrderController extends Controller
 
     protected EmailSenderInterface $emailSender;
 
-    public function __construct(EmailOfferTrackerInterface $bookOfferTracker, EmailSenderInterface $emailSender)
+    protected PaymentRouterService $paymentRouter;
+
+    public function __construct(EmailOfferTrackerInterface $bookOfferTracker, EmailSenderInterface $emailSender, PaymentRouterService $paymentRouter)
     {
         $this->bookOfferTracker = $bookOfferTracker;
         $this->emailSender = $emailSender;
+        $this->paymentRouter = $paymentRouter;
     }
 
     /**
@@ -231,6 +237,57 @@ class OrderController extends Controller
         }
 
         return redirect()->back()->with('error', 'Failed to send book offer email. Please try again.');
+    }
+
+    /**
+     * Send payment reminder to customer for pending order
+     */
+    public function sendPaymentReminder(Request $request, $id)
+    {
+        $order = Order::with('user')->findOrFail($id);
+
+        if ($order->payment_status !== 'pending') {
+            return redirect()->back()->with('error', 'This order is not pending payment.');
+        }
+
+        $recipientEmail = $order->user?->email ?? $order->email;
+
+        if (! $recipientEmail) {
+            return redirect()->back()->with('error', 'No email address found for this order.');
+        }
+
+        $provider = $order->payment_provider ?? 'stripe';
+        $amount = $order->total_amount_usd ?? $order->total_amount;
+
+        $reference = $order->order_number;
+
+        if ($provider === 'paystack') {
+            $reference = 'REM-'.$order->order_number.'-'.time();
+            $order->update(['transaction_reference' => $reference]);
+        }
+
+        $paymentResult = $this->paymentRouter->createCheckout(
+            $recipientEmail,
+            $amount,
+            $provider,
+            $reference
+        );
+
+        if (! $paymentResult['success']) {
+            Log::error('Payment reminder: failed to create checkout', [
+                'order_id' => $order->id,
+                'provider' => $provider,
+                'error' => $paymentResult['message'] ?? 'Unknown error',
+            ]);
+
+            return redirect()->back()->with('error', 'Failed to generate payment link. Please try again.');
+        }
+
+        $paymentLink = $paymentResult['url'];
+
+        Mail::to($recipientEmail)->send(new PaymentReminder($order, $paymentLink));
+
+        return redirect()->back()->with('success', 'Payment reminder sent successfully!');
     }
 
     /**

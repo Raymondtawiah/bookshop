@@ -73,8 +73,14 @@
                             <dd class="text-gray-900">{{ $order->created_at->format('M j, Y g:i A') }}</dd>
                         </div>
                          <div>
-                             <dt class="text-sm font-medium text-gray-500">Total Amount</dt>
-                             <dd class="text-xl font-bold text-indigo-600">${{ number_format($order->total_amount_usd ?? $order->total_amount, 2) }}</dd>
+                              <dt class="text-sm font-medium text-gray-500">Total Amount</dt>
+                              <dd class="text-xl font-bold text-indigo-600">
+                                  @if($order->currency === 'GHS')
+                                      ₵{{ number_format($order->total_amount, 2) }}
+                                  @else
+                                      ${{ number_format($order->total_amount_usd ?? $order->total_amount, 2) }}
+                                  @endif
+                              </dd>
                          </div>
                     </dl>
                 </div>
@@ -192,6 +198,21 @@
                     </button>
                 </form>
             </div>
+
+            @if($order->payment_status === 'pending')
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Payment Reminder</h3>
+                <div class="bg-yellow-50 rounded-lg p-4 sm:p-6">
+                    <p class="text-sm text-yellow-800 mb-4">Send a payment reminder to the customer so they can complete their payment.</p>
+                    <form action="{{ route('admin.orders.sendPaymentReminder', $order->id) }}" method="POST">
+                        @csrf
+                        <button type="submit" class="bg-yellow-600 text-white px-4 py-2 rounded-lg hover:bg-yellow-700 text-sm font-semibold">
+                            Send Payment Reminder
+                        </button>
+                    </form>
+                </div>
+            </div>
+            @endif
         </div>
     </div>
 </div>

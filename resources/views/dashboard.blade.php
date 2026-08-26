@@ -560,9 +560,9 @@
                                         <span class="px-2 py-1 text-xs bg-gray-100 text-gray-700 rounded-full">{{ ucfirst($order->status) }}</span>
                                     @endif
                                 </td>
-     <td class="px-6 py-4 font-medium text-gray-900">
-     ${{ number_format($order->total_amount, 2) }}
-     </td>
+      <td class="px-6 py-4 font-medium text-gray-900">
+      ${{ number_format($order->total_amount_usd ?? $order->total_amount, 2) }}
+      </td>
                                 <td class="px-6 py-4 text-right">
                                     <a href="{{ route('my-orders') }}" class="text-indigo-600 hover:text-indigo-700 text-sm font-medium">View</a>
                                 </td>

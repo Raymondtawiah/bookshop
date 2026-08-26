@@ -122,7 +122,10 @@ class OrderController extends Controller
             'payment_method' => $paymentMethod,
             'payment_provider' => $paymentResult['provider'],
             'currency' => $paymentResult['currency'],
-            'total_amount_usd' => $paymentResult['amount_usd'],
+            'total_amount' => $paymentResult['currency'] === 'GHS'
+                ? ($paymentResult['amount_ghs'] ?? $totalUsd)
+                : ($paymentResult['amount_usd'] ?? $totalUsd),
+            'total_amount_usd' => $paymentResult['amount_usd'] ?? $totalUsd,
         ]);
 
         return redirect($paymentResult['url']);

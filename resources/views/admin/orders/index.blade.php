@@ -188,7 +188,11 @@
                             @endif
                         </td>
                         <td class="px-2 py-3 text-xs text-gray-600">
-                             ${{ number_format($order->total_amount_usd ?? $order->total_amount, 2) }}
+                            @if($order->currency === 'GHS')
+                                ₵{{ number_format($order->total_amount, 2) }}
+                            @else
+                                ${{ number_format($order->total_amount_usd ?? $order->total_amount, 2) }}
+                            @endif
                         </td>
                         <td class="px-2 py-3 whitespace-nowrap">
                             @if($order->payment_status === 'paid')

@@ -26,14 +26,14 @@
         
         @if($bookUpdate)
         <div class="update-box">
-            <h3>🆕 New Books Available</h3>
+            <h3>New Books Available</h3>
             <p>{!! nl2br(e($bookUpdate)) !!}</p>
         </div>
         @endif
 
         @if($webinarUpdate)
         <div class="update-box">
-            <h3>🎓 Upcoming Webinars</h3>
+            <h3>Upcoming Webinars</h3>
             <p>{!! nl2br(e($webinarUpdate)) !!}</p>
         </div>
         @endif

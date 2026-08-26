@@ -85,6 +85,10 @@ protected ?string $secretKey;
         $order = Order::where('order_number', $reference)->first();
 
         if (! $order) {
+            $order = Order::where('transaction_reference', $reference)->first();
+        }
+
+        if (! $order) {
             Log::error('Paystack webhook: Order not found', ['reference' => $reference]);
 
             return response()->json(['error' => 'Order not found'], 404);
@@ -154,6 +158,10 @@ protected ?string $secretKey;
     public function verifyPayment(string $reference)
     {
         $order = Order::where('order_number', $reference)->first();
+
+        if (! $order) {
+            $order = Order::where('transaction_reference', $reference)->first();
+        }
 
         if (! $order) {
             return response()->json([
