@@ -87,6 +87,27 @@
             </div>
 
             <div class="mt-6 pt-6 border-t border-gray-200">
+                <h3 class="text-lg font-medium text-gray-900 mb-4">Payment Reminder Status</h3>
+                <dl class="space-y-3">
+                    @if($order->reminder_sent)
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Reminder Sent</dt>
+                            <dd class="text-green-600 font-medium">Yes</dd>
+                        </div>
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Sent At</dt>
+                            <dd class="text-gray-900">{{ $order->reminder_sent_at?->format('M j, Y g:i A') ?? 'N/A' }}</dd>
+                        </div>
+                    @else
+                        <div>
+                            <dt class="text-sm font-medium text-gray-500">Reminder Sent</dt>
+                            <dd class="text-gray-500">No</dd>
+                        </div>
+                    @endif
+                </dl>
+            </div>
+
+            <div class="mt-6 pt-6 border-t border-gray-200">
                 <h3 class="text-lg font-medium text-gray-900 mb-4">Book Offer Status</h3>
                 <dl class="space-y-3">
                     @if($order->book_offered)

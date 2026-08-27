@@ -72,10 +72,10 @@ class OrderController extends Controller
 
         $orders = $query->latest()->paginate(15)->appends($request->except('page'));
 
-        $totalOrders = Order::count();
-        $totalPaid = Order::where('payment_status', 'paid')->count();
-        $totalPending = Order::where('payment_status', 'pending')->count();
-        $totalRevenue = Order::where('payment_status', 'paid')->sum('total_amount_usd');
+        $totalOrders = $query->count();
+        $totalPaid = (clone $query)->where('payment_status', 'paid')->count();
+        $totalPending = (clone $query)->where('payment_status', 'pending')->count();
+        $totalRevenue = (clone $query)->where('payment_status', 'paid')->sum('total_amount_usd');
 
         return view('admin.orders.index', compact('orders', 'totalOrders', 'totalPaid', 'totalPending', 'totalRevenue'));
     }
@@ -286,6 +286,11 @@ class OrderController extends Controller
         $paymentLink = $paymentResult['url'];
 
         Mail::to($recipientEmail)->send(new PaymentReminder($order, $paymentLink));
+
+        $order->update([
+            'reminder_sent' => true,
+            'reminder_sent_at' => now(),
+        ]);
 
         return redirect()->back()->with('success', 'Payment reminder sent successfully!');
     }

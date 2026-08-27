@@ -43,12 +43,33 @@ class WebinarController extends Controller
             $webinarsQuery->where('payment_enabled', $request->boolean('payment_enabled'));
         }
 
+        if ($request->has('webinar_timing') && $request->webinar_timing !== '') {
+            if ($request->webinar_timing === 'current') {
+                $webinarsQuery->where('scheduled_at', '>', now());
+            } elseif ($request->webinar_timing === 'previous') {
+                $webinarsQuery->where('scheduled_at', '<=', now());
+            }
+        }
+
         $webinars = $webinarsQuery->get();
 
         // Get filtered registrations - show ALL registrations regardless of payment status
         $registrationsQuery = WebinarRegistration::query()
             ->with(['webinar', 'user'])
             ->latest();
+
+        // Apply webinar timing filter to registrations via webinar relationship
+        if ($request->has('webinar_timing') && $request->webinar_timing !== '') {
+            if ($request->webinar_timing === 'current') {
+                $registrationsQuery->whereHas('webinar', function ($query) {
+                    $query->where('scheduled_at', '>', now());
+                });
+            } elseif ($request->webinar_timing === 'previous') {
+                $registrationsQuery->whereHas('webinar', function ($query) {
+                    $query->where('scheduled_at', '<=', now());
+                });
+            }
+        }
 
         // Apply search
         if ($request->filled('search')) {
@@ -58,11 +79,6 @@ class WebinarController extends Controller
                     ->orWhere('email', 'like', '%'.$searchTerm.'%')
                     ->orWhere('phone', 'like', '%'.$searchTerm.'%');
             });
-        }
-
-        // Apply payment status filter
-        if ($request->has('payment_status') && $request->payment_status != '') {
-            $registrationsQuery->where('payment_status', $request->payment_status);
         }
 
         // Apply attendance filter

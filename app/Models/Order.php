@@ -36,6 +36,8 @@ class Order extends Model
         'transaction_reference',
         'discount_code',
         'discount_amount',
+        'reminder_sent',
+        'reminder_sent_at',
     ];
 
     protected $casts = [
@@ -47,6 +49,8 @@ class Order extends Model
         'pdf_sent_at' => 'datetime',
         'book_offered' => 'boolean',
         'book_offered_at' => 'datetime',
+        'reminder_sent' => 'boolean',
+        'reminder_sent_at' => 'datetime',
         'order_items' => 'array',
         'discount_amount' => 'decimal:2',
     ];

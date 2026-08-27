@@ -66,9 +66,16 @@
         </div>
     </div>
 
-    <!-- Search and Filters -->
+    <!-- Orders Chart (Round) -->
+        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8 flex flex-col items-center">
+            <h2 class="text-xl font-bold text-gray-900 mb-4">Orders Overview</h2>
+            <div class="w-full max-w-md">
+                <canvas id="ordersChart"></canvas>
+            </div>
+        </div>
+            <!-- Search and Filters -->
     <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl shadow-lg border border-indigo-100 p-4 sm:p-6 mb-8">
-        <form method="GET" action="{{ route('admin.orders') }}" class="space-y-4 sm:space-y-6">
+        <form method="GET" action="{{ route('admin.orders') }}" id="orders-filter-form" class="space-y-4 sm:space-y-6">
             <!-- Search Bar -->
             <div>
                 <label for="search" class="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Search Orders</label>
@@ -85,7 +92,7 @@
             </div>
 
             <!-- Filters Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-3 sm:gap-4">
                 <div>
                     <label for="payment_status_filter" class="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Payment Status</label>
                     <select name="payment_status" id="payment_status_filter" class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white shadow-sm transition-all">
@@ -114,27 +121,10 @@
                     </div>
                 </div>
             </div>
-
-            <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:justify-end">
-                <button type="submit" class="w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all font-semibold shadow-md text-sm">
-                    Apply Filters
-                </button>
-                <a href="{{ route('admin.orders') }}" class="w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-3 text-gray-600 hover:text-gray-900 hover:bg-white rounded-lg transition-all font-semibold text-center shadow-sm text-sm">
-                    Reset
-                </a>
-            </div>
         </form>
-        </div>
-        <!-- Orders Chart (Round) -->
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 mb-8 flex flex-col items-center">
-            <h2 class="text-xl font-bold text-gray-900 mb-4">Orders Overview</h2>
-            <div class="w-full max-w-md">
-                <canvas id="ordersChart"></canvas>
-            </div>
-        </div>
+    </div>
 
-        <!-- Orders Table -->
+    <!-- Orders Table -->
     <div class="bg-white rounded-xl shadow-lg border border-gray-100">
         <div class="bg-gradient-to-r from-indigo-600 to-purple-600 px-4 sm:px-6 py-3 sm:py-4">
             <h2 class="text-base sm:text-lg font-semibold text-white">Order List</h2>
@@ -151,6 +141,7 @@
                         <th class="px-2 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Payment</th>
                         <th class="px-2 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">Status</th>
                         <th class="px-2 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-20">Date</th>
+                        <th class="px-2 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-20">Reminder</th>
                         <th class="px-2 py-2 text-left text-xs font-bold text-gray-700 uppercase tracking-wider w-16">Actions</th>
                     </tr>
                 </thead>
@@ -229,6 +220,22 @@
                             {{ $order->created_at->format('M d, Y') }}
                         </td>
                         <td class="px-2 py-3 whitespace-nowrap">
+                            @if($order->reminder_sent)
+                                <span class="inline-flex px-1 py-0.5 text-xs font-bold rounded-full bg-blue-100 text-blue-700">
+                                    Sent
+                                </span>
+                                @if($order->reminder_sent_at)
+                                    <div class="text-xs text-gray-500 mt-1">
+                                        {{ $order->reminder_sent_at->format('M d, Y') }}
+                                    </div>
+                                @endif
+                            @else
+                                <span class="inline-flex px-1 py-0.5 text-xs font-bold rounded-full bg-gray-100 text-gray-500">
+                                    Not Sent
+                                </span>
+                            @endif
+                        </td>
+                        <td class="px-2 py-3 whitespace-nowrap">
                             <a href="{{ route('admin.orders.show', $order->id) }}" class="text-indigo-600 hover:text-indigo-800" title="View Order">
                                 <svg class="w-4 h-4 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
@@ -295,6 +302,30 @@
                 maintainAspectRatio: true,
             },
         });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('orders-filter-form');
+        if (!form) return;
+
+        const autoSubmitFields = form.querySelectorAll('select, input[type="date"]');
+
+        autoSubmitFields.forEach(function(field) {
+            field.addEventListener('change', function() {
+                form.submit();
+            });
+        });
+
+        const searchInput = form.querySelector('input[name="search"]');
+        if (searchInput) {
+            let debounceTimer;
+            searchInput.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(function() {
+                    form.submit();
+                }, 800);
+            });
+        }
     });
 </script>
 

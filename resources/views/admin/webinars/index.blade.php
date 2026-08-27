@@ -198,7 +198,7 @@
 
     <!-- Search and Filters -->
     <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl shadow-lg border border-indigo-100 p-4 sm:p-6 mb-8">
-        <form method="GET" action="{{ route('admin.webinars.index') }}" class="space-y-4 sm:space-y-6">
+        <form method="GET" action="{{ route('admin.webinars.index') }}" id="webinar-filter-form" class="space-y-4 sm:space-y-6">
             <!-- Search Bar -->
             <div>
                 <label for="search" class="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Search Registrations</label>
@@ -215,14 +215,13 @@
             </div>
 
             <!-- Filters Grid -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 sm:gap-4">
                 <div>
-                    <label for="payment_status_filter" class="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Payment Status</label>
-                    <select name="payment_status" id="payment_status_filter" class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white shadow-sm transition-all">
-                        <option value="">All Statuses</option>
-                        <option value="paid" {{ request()->get('payment_status') == 'paid' ? 'selected' : '' }}>Paid</option>
-                        <option value="pending" {{ request()->get('payment_status') == 'pending' ? 'selected' : '' }}>Pending</option>
-                        <option value="failed" {{ request()->get('payment_status') == 'failed' ? 'selected' : '' }}>Failed</option>
+                    <label for="webinar_timing_filter" class="block text-xs sm:text-sm font-semibold text-gray-700 mb-2">Webinar Timing</label>
+                    <select name="webinar_timing" id="webinar_timing_filter" class="w-full px-3 sm:px-4 py-2 sm:py-3 text-sm border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white shadow-sm transition-all">
+                        <option value="">All Webinars</option>
+                        <option value="current" {{ request()->get('webinar_timing') == 'current' ? 'selected' : '' }}>Current / Upcoming</option>
+                        <option value="previous" {{ request()->get('webinar_timing') == 'previous' ? 'selected' : '' }}>Previous</option>
                     </select>
                 </div>
                 <div>
@@ -248,16 +247,6 @@
                         <input type="date" name="end_date" id="end_date" class="flex-1 px-3 py-2 text-sm border border-indigo-200 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-white shadow-sm transition-all" value="{{ request()->get('end_date') }}">
                     </div>
                 </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row gap-2 sm:gap-3 sm:justify-end">
-                <button type="submit" class="w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all font-semibold shadow-md text-sm">
-                    Apply Filters
-                </button>
-                <a href="{{ route('admin.webinars.index') }}" class="w-full sm:w-auto px-6 sm:px-8 py-2 sm:py-3 text-gray-600 hover:text-gray-900 hover:bg-white rounded-lg transition-all font-semibold text-center shadow-sm text-sm">
-                    Reset
-                </a>
             </div>
         </form>
     </div>
@@ -504,6 +493,29 @@
                 }
             }
         });
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('webinar-filter-form');
+        if (!form) return;
+
+        const autoSubmitFields = form.querySelectorAll('select, input[type="date"]');
+        autoSubmitFields.forEach(function(field) {
+            field.addEventListener('change', function() {
+                form.submit();
+            });
+        });
+
+        const searchField = form.querySelector('input[name="search"]');
+        if (searchField) {
+            let timeout;
+            searchField.addEventListener('input', function() {
+                clearTimeout(timeout);
+                timeout = setTimeout(function() {
+                    form.submit();
+                }, 800);
+            });
+        }
     });
 </script>
 
