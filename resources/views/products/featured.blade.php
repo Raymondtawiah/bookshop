@@ -322,7 +322,7 @@
 
         <x-install-pwa />
 
-        @include('feedback-widget')
+        @include('chat-widget')
         @include('components.cookie-consent')
     </div>
 </body>

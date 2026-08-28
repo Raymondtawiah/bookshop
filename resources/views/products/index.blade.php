@@ -222,7 +222,7 @@
         <x-install-pwa />
 
         @include('components.free-book-modal')
-        @include('feedback-widget')
+        @include('chat-widget')
         @include('components.cookie-consent')
     </div>
 </body>

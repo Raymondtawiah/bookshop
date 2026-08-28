@@ -64,7 +64,24 @@
             border-radius: 6px;
             margin-top: 20px;
         }
-    </style>
+        .video-box {
+            background: white;
+            border: 2px dashed #4f46e5;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        .video-box a {
+            color: #4f46e5;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .video-icon {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+</style>
 </head>
 <body>
     <div class="header">
@@ -123,6 +140,13 @@
         
         <p>If the button doesn't work, copy and paste this link into your browser:</p>
         <p style="word-break: break-all; color: #4f46e5;">{{ $paymentLink }}</p>
+
+        <div class="video-box">
+            <div class="video-icon">▶️</div>
+            <h3 style="margin-top: 0; margin-bottom: 10px;">How to Complete Your Payment</h3>
+            <p style="margin-bottom: 15px;">Watch our quick guide to complete your payment using {{ $order->payment_provider === 'paystack' ? 'Paystack' : 'Card' }}.</p>
+            <a href="{{ asset($order->payment_provider === 'paystack' ? 'paystack.mp4' : 'stripe.mp4') }}" class="btn" style="background: #dc2626;">Watch Payment Guide Video</a>
+        </div>
         
         <p>If you have already made payment, please disregard this message. If you have any questions, feel free to contact us.</p>
         

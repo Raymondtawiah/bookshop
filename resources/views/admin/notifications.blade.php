@@ -15,6 +15,28 @@
     </div>
 
     <div id="notifications-list" class="space-y-3">
+        @php
+            $chatNotifications = \App\Models\ChatMessage::where('status', 'unread')
+                ->whereIn('sender_type', ['customer', 'guest'])
+                ->latest()
+                ->limit(10)
+                ->get();
+        @endphp
+
+        @if($chatNotifications->count() > 0)
+            @foreach($chatNotifications as $chat)
+                <div class="p-4 rounded-xl border bg-indigo-50 border-indigo-200 hover:shadow-md transition-shadow cursor-pointer" data-chat-id="{{ $chat->id }}">
+                    <div class="flex items-start justify-between">
+                        <div class="flex-1">
+                            <h3 class="text-sm font-semibold text-gray-900">New Chat Message</h3>
+                            <p class="text-sm text-gray-600 mt-1">{{ $chat->message }}</p>
+                            <p class="text-xs text-gray-400 mt-2">{{ $chat->created_at->format('M d, Y g:i A') }}</p>
+                        </div>
+                    </div>
+                </div>
+            @endforeach
+        @endif
+
         @if($notifications->count() > 0)
             @foreach($notifications as $notification)
                 @php
@@ -67,14 +89,16 @@
                 </div>
             @endforeach
         @else
-            <div class="text-center py-12">
-                <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                    </svg>
+            @if($chatNotifications->count() === 0)
+                <div class="text-center py-12">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                        <svg class="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                        </svg>
+                    </div>
+                    <p class="text-gray-500">No notifications yet</p>
                 </div>
-                <p class="text-gray-500">No notifications yet</p>
-            </div>
+            @endif
         @endif
     </div>
 </div>
@@ -180,6 +204,30 @@ document.addEventListener('DOMContentLoaded', function() {
             if (link) {
                 window.location.href = link;
             }
+        });
+    });
+
+    document.querySelectorAll('[data-chat-id]').forEach(item => {
+        item.addEventListener('click', function(e) {
+            if (e.target.closest('button')) return;
+
+            const chatId = this.dataset.chatId;
+
+            fetch('{{ route('admin.chat.read') }}', {
+                method: 'POST',
+                headers: {
+                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                    'X-Requested-With': 'XMLHttpRequest',
+                    'Content-Type': 'application/json',
+                },
+            }).then(() => {
+                this.style.opacity = '0.5';
+                this.style.pointerEvents = 'none';
+                updateUnreadCount();
+                setTimeout(() => {
+                    window.location.href = '{{ route('admin.chat.index') }}';
+                }, 500);
+            });
         });
     });
 });

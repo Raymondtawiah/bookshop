@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\CoachingController;
 use App\Http\Controllers\Auth\GoogleController;
+use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Customer\ProfileController;
 use App\Http\Controllers\FeedbackController;
 use App\Http\Controllers\HomeController;
@@ -25,9 +26,9 @@ use Illuminate\Support\Facades\Password;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
 
-Route::get('/test', function () {
-    return 'Laravel is working';
-});
+// Route::get('/test', function () {
+//     return 'Laravel is working';
+// });
 
 // Home and public routes - NO middleware needed
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -341,6 +342,13 @@ Route::delete('webinar/{webinar}/waiting-list/leave', [WebinarWaitingListControl
 
 Route::post('feedback', [FeedbackController::class, 'submit'])
     ->name('feedback.submit');
+
+Route::middleware('web')->group(function () {
+    Route::get('chat', [ChatController::class, 'index'])->name('chat.index');
+    Route::post('chat', [ChatController::class, 'store'])->name('chat.store');
+    Route::get('chat/messages', [ChatController::class, 'getMessages'])->name('chat.messages');
+    Route::post('chat/read', [ChatController::class, 'markAsRead'])->name('chat.read');
+});
 
 require __DIR__.'/settings.php';
 require __DIR__.'/admin.php';

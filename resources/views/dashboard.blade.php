@@ -713,6 +713,6 @@
             </div>
         </main>
 
-        @include('feedback-widget')
+        @include('chat-widget')
 
         @endsection

@@ -22,11 +22,34 @@ class NotificationController extends Controller
 
         if ($request->wantsJson() || $request->ajax()) {
             $notifications = $query->latest()->limit(20)->get();
+
+            $chatNotifications = \App\Models\ChatMessage::where('status', 'unread')
+                ->whereIn('sender_type', ['customer', 'guest'])
+                ->latest()
+                ->limit(5)
+                ->get()
+                ->map(function ($chat) {
+                    return [
+                        'id' => 'chat_'.$chat->id,
+                        'type' => 'chat',
+                        'title' => 'New Chat Message',
+                        'message' => $chat->message,
+                        'created_at' => $chat->created_at->toIso8601String(),
+                        'is_read' => false,
+                        'link' => route('admin.chat.index'),
+                    ];
+                });
+
+            $allNotifications = $notifications->concat($chatNotifications)->sortByDesc('created_at')->values();
+
             $unreadCount = AdminNotification::getUnreadCount();
+            $chatUnreadCount = \App\Models\ChatMessage::where('status', 'unread')
+                ->whereIn('sender_type', ['customer', 'guest'])
+                ->count();
 
             return response()->json([
-                'notifications' => $notifications,
-                'unread_count' => $unreadCount,
+                'notifications' => $allNotifications,
+                'unread_count' => $unreadCount + $chatUnreadCount,
             ]);
         }
 
@@ -55,8 +78,13 @@ class NotificationController extends Controller
 
     public function unreadCount(): JsonResponse
     {
+        $unreadCount = AdminNotification::getUnreadCount();
+        $chatUnreadCount = \App\Models\ChatMessage::where('status', 'unread')
+            ->whereIn('sender_type', ['customer', 'guest'])
+            ->count();
+
         return response()->json([
-            'unread_count' => AdminNotification::getUnreadCount(),
+            'unread_count' => $unreadCount + $chatUnreadCount,
         ]);
     }
 

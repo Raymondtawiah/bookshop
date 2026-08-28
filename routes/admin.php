@@ -10,6 +10,7 @@ use App\Http\Controllers\Admin\NotificationController;
 use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\WebinarController;
 use App\Http\Controllers\Admin\WebinarPaymentController;
+use App\Http\Controllers\ChatController;
 use Illuminate\Support\Facades\Route;
 
 // Admin login routes - accessible without authentication
@@ -117,4 +118,13 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::get('staff/{user}/attendance', [AttendanceController::class, 'history'])->name('staff.attendance');
     Route::post('staff/attendance/{attendance}/approve', [AttendanceController::class, 'approveAttendance'])->name('staff.approve');
     Route::post('staff/attendance/{attendance}/reject', [AttendanceController::class, 'rejectAttendance'])->name('staff.reject');
+
+    // Chat
+    Route::get('chat', [ChatController::class, 'index'])->name('chat.index');
+    Route::post('chat', [ChatController::class, 'store'])->name('chat.store');
+    Route::get('chat/messages', [ChatController::class, 'getMessages'])->name('chat.messages');
+    Route::get('chat/conversations', [ChatController::class, 'getConversations'])->name('chat.conversations');
+    Route::get('chat/conversation/{conversationId}', [ChatController::class, 'getConversationMessages'])->name('chat.conversation.messages');
+    Route::post('chat/reply', [ChatController::class, 'adminReply'])->name('chat.reply');
+    Route::post('chat/read', [ChatController::class, 'markAsRead'])->name('chat.read');
 });

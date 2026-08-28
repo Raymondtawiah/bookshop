@@ -26,25 +26,25 @@
                       <!-- Notifications Bell -->
                  <div class="relative">
                       <button id="notification-bell" class="relative p-2 text-gray-600 hover:text-indigo-600 transition-colors cursor-pointer">
-                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                         </svg>
-                         <span id="notification-badge" class="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-600 rounded-full" style="display: none;">0</span>
-                     </button>
+                          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 3 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                          </svg>
+                          <span id="notification-badge" class="absolute -top-1 -right-1 inline-flex items-center justify-center px-1.5 py-0.5 text-xs font-bold leading-none text-white transform translate-x-1/4 -translate-y-1/4 bg-red-600 rounded-full" style="display: none;">0</span>
+                      </button>
 
-                     <!-- Notifications Dropdown -->
-                     <div id="notification-dropdown" class="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50 opacity-0 invisible transition-all duration-200">
-                         <div class="px-4 py-2 border-b border-gray-100 flex items-center justify-between">
-                             <h3 class="text-sm font-semibold text-gray-900">Notifications</h3>
-                             <a href="{{ route('admin.notifications') }}" class="text-xs text-indigo-600 hover:text-indigo-700 font-medium">View All</a>
-                         </div>
-                         <div id="notification-list" class="max-h-96 overflow-y-auto">
-                             <div class="px-4 py-6 text-center text-sm text-gray-500">Loading...</div>
-                         </div>
-                     </div>
-                 </div>
-                 <div class="relative group">
-                     <button class="flex items-center gap-2 text-gray-600 hover:text-indigo-600 transition-colors">
+                      <!-- Notifications Dropdown -->
+                      <div id="notification-dropdown" class="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50 opacity-0 invisible transition-all duration-200">
+                          <div class="px-4 py-2 border-b border-gray-100 flex items-center justify-between">
+                              <h3 class="text-sm font-semibold text-gray-900">Notifications</h3>
+                              <a href="{{ route('admin.notifications') }}" class="text-xs text-indigo-600 hover:text-indigo-700 font-medium">View All</a>
+                          </div>
+                          <div id="notification-list" class="max-h-96 overflow-y-auto">
+                              <div class="px-4 py-6 text-center text-sm text-gray-500">Loading...</div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="relative group">
+                      <button class="flex items-center gap-2 text-gray-600 hover:text-indigo-600 transition-colors">
                          <div class="w-8 h-8 rounded-full overflow-hidden border-2 border-indigo-600">
                              <img src="{{ asset('user_icon.jpg') }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
                          </div>
@@ -89,7 +89,8 @@
                   <a href="{{ route('admin.webinars.index') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.webinars*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Webinars</a>
              <a href="{{ route('admin.notifications.broadcast') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.notifications.broadcast') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Broadcast</a>
              <a href="{{ route('admin.settings') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.settings*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Settings</a>
-            <a href="{{ route('admin.notifications') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.notifications*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Notifications</a>
+             <a href="{{ route('admin.notifications') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.notifications*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Notifications</a>
+             <a href="{{ route('admin.chat.index') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.chat*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Chat</a>
         </div>
         <div class="border-t border-gray-200 px-4 py-3">
             <div class="flex items-center gap-3 mb-3">
@@ -180,6 +181,7 @@
                                 payment: 'bg-emerald-50 border-emerald-200',
                                 free_book: 'bg-amber-50 border-amber-200',
                                 webinar: 'bg-indigo-50 border-indigo-200',
+                                chat: 'bg-pink-50 border-pink-200',
                             };
                             const colorClass = typeColors[notification.type] || 'bg-gray-50 border-gray-200';
 
