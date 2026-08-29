@@ -494,4 +494,32 @@ class FinanceController extends Controller
 
         return view('finance.settings.index', compact('financeTeam'));
     }
+
+    public function attendanceIndex(Request $request)
+    {
+        $user = $request->user();
+
+        $attendances = $user->attendances()
+            ->orderByDesc('attendance_date')
+            ->paginate(20);
+
+        $totalDays = $attendances->total();
+        $presentDays = $user->attendances()->where('status', 'present')->count();
+        $avgAttendance = $totalDays > 0 ? round(($presentDays / $totalDays) * 100) : 0;
+
+        $todayAttendance = $user->attendances()
+            ->whereDate('attendance_date', now()->toDateString())
+            ->first();
+
+        return view('finance.attendance.index', compact('attendances', 'totalDays', 'presentDays', 'avgAttendance', 'todayAttendance'));
+    }
+
+    public function attendanceStore(Request $request)
+    {
+        $user = $request->user();
+
+        $attendance = $this->attendanceService->markAttendance($user);
+
+        return redirect()->route('finance.attendance')->with('success', 'Attendance submitted successfully. Awaiting admin approval.');
+    }
 }

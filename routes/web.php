@@ -392,7 +392,8 @@ Route::middleware(['web', 'auth', App\Http\Middleware\FinanceMiddleware::class])
     Route::get('reports', [FinanceController::class, 'reportsIndex'])->name('reports');
     Route::get('reports/download', [FinanceController::class, 'reportsDownload'])->name('reports.download');
     Route::get('settings', [FinanceController::class, 'settings'])->name('settings');
-    Route::get('attendance', [FinanceController::class, 'attendanceData'])->name('attendance');
+    Route::get('attendance', [FinanceController::class, 'attendanceIndex'])->name('attendance');
+    Route::post('attendance', [FinanceController::class, 'attendanceStore'])->name('attendance.store');
     Route::post('requests', [FinanceController::class, 'requestStore'])->name('requests.store');
     Route::get('requests', [FinanceController::class, 'myRequests'])->name('requests.index');
 });
