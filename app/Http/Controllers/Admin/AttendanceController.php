@@ -91,6 +91,38 @@ class AttendanceController extends Controller
             ->with('success', 'Staff member created successfully.');
     }
 
+    public function destroy(User $user)
+    {
+        if ($user->is_admin) {
+            return redirect()->route('admin.staff.index')
+                ->with('error', 'You cannot delete an admin account.');
+        }
+
+        $user->delete();
+
+        return redirect()->route('admin.staff.index')
+            ->with('success', 'Staff member deleted successfully.');
+    }
+
+    public function resetPassword(Request $request, User $user)
+    {
+        if ($user->is_admin) {
+            return redirect()->route('admin.staff.index')
+                ->with('error', 'You cannot reset an admin password from here.');
+        }
+
+        $request->validate([
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $user->update([
+            'password' => Hash::make($request->password),
+        ]);
+
+        return redirect()->route('admin.staff.index')
+            ->with('success', 'Password reset successfully for ' . $user->name);
+    }
+
     // Web route - shows attendance history page for a staff user
     public function history(Request $request, User $user)
     {

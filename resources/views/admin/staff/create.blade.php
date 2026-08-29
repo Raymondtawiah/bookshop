@@ -47,7 +47,8 @@
                     <select name="role" required class="w-full px-4 py-3 rounded-xl border border-zinc-300 dark:border-zinc-600 bg-white dark:bg-zinc-800 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500">
                         <option value="">Select Role</option>
                         <option value="employee" {{ old('role') === 'employee' ? 'selected' : '' }}>Employee</option>
-                        <option value="finances" {{ old('role') === 'finances' ? 'selected' : '' }}>Finances</option>
+                        <option value="Finance Admin" {{ old('role') === 'Finance Admin' ? 'selected' : '' }}>Finance Admin</option>
+                        <option value="Finance Member" {{ old('role') === 'Finance Member' ? 'selected' : '' }}>Finance Member</option>
                         <option value="inventory" {{ old('role') === 'inventory' ? 'selected' : '' }}>Inventory</option>
                     </select>
                 </div>

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\CoachingController;
+use App\Http\Controllers\Admin\FinanceController;
 use App\Http\Controllers\Auth\GoogleController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\Customer\ProfileController;
@@ -117,6 +118,14 @@ Route::middleware(['web'])->group(function () {
             ])->onlyInput('email');
         }
 
+        Log::info('Login user loaded', [
+            'id' => $user->id,
+            'email' => $user->email,
+            'is_admin' => (bool) $user->is_admin,
+            'is_staff' => (bool) $user->is_staff,
+            'role' => (string) $user->role,
+        ]);
+
         if ($user->is_admin) {
             Log::info('Admin login - redirecting to admin dashboard');
             Auth::login($user, $remember);
@@ -125,7 +134,14 @@ Route::middleware(['web'])->group(function () {
             return redirect()->route('admin.dashboard');
         }
 
-        // Always verify customers on login (admin doesn't need verification)
+        if ($user->is_staff) {
+            Log::info('Finance/staff login - redirecting to finance dashboard');
+            Auth::login($user, $remember);
+            $request->session()->regenerate();
+
+            return redirect()->route('finance.dashboard');
+        }
+
         Log::info('Customer login - sending verification code', ['user_id' => $user->id]);
         $request->session()->put('pending_login_user_id', $user->id);
         app(VerificationService::class)->sendCode($user, 'login');
@@ -348,6 +364,37 @@ Route::middleware('web')->group(function () {
     Route::post('chat', [ChatController::class, 'store'])->name('chat.store');
     Route::get('chat/messages', [ChatController::class, 'getMessages'])->name('chat.messages');
     Route::post('chat/read', [ChatController::class, 'markAsRead'])->name('chat.read');
+});
+
+// Finance auth routes with OTP verification
+Route::prefix('finance')->name('finance.')->group(function () {
+    Route::get('login', [\App\Http\Controllers\Finance\AuthController::class, 'showLoginForm'])->name('login');
+    Route::post('login', [\App\Http\Controllers\Finance\AuthController::class, 'login'])->name('login.store');
+    Route::get('verify', [\App\Http\Controllers\Finance\AuthController::class, 'showVerifyForm'])->name('login.verify');
+    Route::post('verify', [\App\Http\Controllers\Finance\AuthController::class, 'verify'])->name('login.verify.post');
+    Route::post('verify/resend', [\App\Http\Controllers\Finance\AuthController::class, 'resend'])->name('login.resend');
+    Route::post('logout', [\App\Http\Controllers\Finance\AuthController::class, 'logout'])->name('logout');
+});
+
+// Finance routes - accessible to finance staff and admins
+Route::middleware(['web', 'auth', App\Http\Middleware\FinanceMiddleware::class])->prefix('finance')->name('finance.')->group(function () {
+    Route::get('dashboard', [FinanceController::class, 'dashboard'])->name('dashboard');
+    Route::get('income', [FinanceController::class, 'incomeIndex'])->name('income');
+    Route::post('income', [FinanceController::class, 'incomeStore'])->name('income.store');
+    Route::match(['PUT', 'POST'], 'income/{income}', [FinanceController::class, 'incomeUpdate'])->name('income.update');
+    Route::delete('income/{income}', [FinanceController::class, 'incomeDestroy'])->name('income.destroy');
+    Route::get('expenses', [FinanceController::class, 'expensesIndex'])->name('expenses');
+    Route::get('expenses/download', [FinanceController::class, 'expensesDownload'])->name('expenses.download');
+    Route::post('expenses', [FinanceController::class, 'expensesStore'])->name('expenses.store');
+    Route::match(['PUT', 'POST'], 'expenses/{expense}', [FinanceController::class, 'expensesUpdate'])->name('expenses.update');
+    Route::delete('expenses/{expense}', [FinanceController::class, 'expensesDestroy'])->name('expenses.destroy');
+    Route::get('payments', [FinanceController::class, 'paymentsIndex'])->name('payments');
+    Route::get('reports', [FinanceController::class, 'reportsIndex'])->name('reports');
+    Route::get('reports/download', [FinanceController::class, 'reportsDownload'])->name('reports.download');
+    Route::get('settings', [FinanceController::class, 'settings'])->name('settings');
+    Route::get('attendance', [FinanceController::class, 'attendanceData'])->name('attendance');
+    Route::post('requests', [FinanceController::class, 'requestStore'])->name('requests.store');
+    Route::get('requests', [FinanceController::class, 'myRequests'])->name('requests.index');
 });
 
 require __DIR__.'/settings.php';

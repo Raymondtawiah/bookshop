@@ -175,9 +175,53 @@
         <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
             <h2 class="text-lg font-semibold text-gray-900">Recent Orders</h2>
         </div>
-        <div class="p-6 text-center">
-            <p class="text-gray-500">No orders yet</p>
-        </div>
+        @if($recentOrders->isNotEmpty())
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50 border-b border-gray-200">
+                        <tr>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Order #</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Customer</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Amount</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100">
+                        @foreach($recentOrders as $order)
+                        <tr class="hover:bg-indigo-50 transition-colors">
+                            <td class="px-4 py-3 text-sm font-medium text-gray-900">#{{ $order->order_number ?? $order->id }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-600">{{ $order->user->name ?? 'Guest' }}</td>
+                            <td class="px-4 py-3 text-sm text-gray-900 font-medium">
+                                @if($order->currency === 'GHS')
+                                    ₵{{ number_format($order->total_amount, 2) }}
+                                @else
+                                    ${{ number_format($order->total_amount_usd ?? $order->total_amount, 2) }}
+                                @endif
+                            </td>
+                            <td class="px-4 py-3">
+                                @if($order->payment_status === 'paid')
+                                    <span class="inline-flex px-2 py-1 text-xs font-bold rounded-full bg-green-100 text-green-700">Paid</span>
+                                @elseif($order->payment_status === 'pending')
+                                    <span class="inline-flex px-2 py-1 text-xs font-bold rounded-full bg-yellow-100 text-yellow-700">Pending</span>
+                                @else
+                                    <span class="inline-flex px-2 py-1 text-xs font-bold rounded-full bg-red-100 text-red-700">{{ ucfirst($order->payment_status ?? 'Failed') }}</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">{{ $order->created_at->format('M d, Y') }}</td>
+                        </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+            <div class="px-6 py-3 border-t border-gray-100 bg-gray-50 text-right">
+                <a href="{{ route('admin.orders') }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">View all orders →</a>
+            </div>
+        @else
+            <div class="p-6 text-center">
+                <p class="text-gray-500">No orders yet</p>
+            </div>
+        @endif
     </div>
 
     <!-- Meeting Notification Container -->

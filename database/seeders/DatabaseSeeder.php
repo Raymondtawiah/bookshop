@@ -19,6 +19,8 @@ class DatabaseSeeder extends Seeder
             WebinarSeeder::class,
             DiscountSeeder::class,
             BookSeeder::class,
+            FinanceSeeder::class,
+
         ]);
     }
 }

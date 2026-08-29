@@ -299,3 +299,6 @@
     </section>
     @endif
 @endsection
+
+  @include('chat-widget')
+   @include('components.cookie-consent')

@@ -129,7 +129,14 @@ class VerificationController extends Controller
         // Clear rate limiter
         RateLimiter::clear($key);
 
-        // Redirect to dashboard with success message
+        if ($user->is_admin) {
+            return redirect()->route('admin.dashboard')->with('success', 'Login successful!');
+        }
+
+        if ($user->is_staff) {
+            return redirect()->route('finance.dashboard')->with('success', 'Login successful!');
+        }
+
         return redirect()->route('home')->with('success', 'Login successful!');
     }
 
