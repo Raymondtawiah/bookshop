@@ -182,6 +182,34 @@
             })();
         </script>
 
+        <script>
+            (function() {
+                const IDLE_TIMEOUT = 120;
+                const LOGOUT_URL = '{{ route('finance.logout') }}';
+                const CSRF_TOKEN = '{{ csrf_token() }}';
+                let idleTimer = null;
+
+                function resetIdleTimer() {
+                    clearTimeout(idleTimer);
+                    idleTimer = setTimeout(autoLogout, IDLE_TIMEOUT * 1000);
+                }
+
+                function autoLogout() {
+                    navigator.sendBeacon(LOGOUT_URL, new URLSearchParams({ _token: CSRF_TOKEN }));
+                    setTimeout(function() {
+                        window.location.href = '{{ route('finance.login') }}';
+                    }, 200);
+                }
+
+                const events = ['mousemove', 'mousedown', 'keydown', 'scroll', 'touchstart', 'click'];
+                events.forEach(function(evt) {
+                    document.addEventListener(evt, resetIdleTimer, true);
+                });
+
+                idleTimer = setTimeout(autoLogout, IDLE_TIMEOUT * 1000);
+            })();
+        </script>
+
         @stack('scripts')
     </body>
 </html>
