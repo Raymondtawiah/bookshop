@@ -6,14 +6,14 @@
             <p class="text-xl text-gray-600 max-w-2xl mx-auto">Handpicked selections from our latest collection</p>
         </div>
         
-        <!-- 3 books per row -->
-        <div class="grid grid-cols-3 gap-4">
+        <!-- 3 books per row on desktop, horizontal scroll on mobile -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             @forelse($books->take(5) as $index => $book)
               @php
                   $coverUrl = $book->cover_image_url ?? asset('welcome.jpg');
-                  $badge = $book->is_featured ? 'featured' : ($book->is_free ? 'new' : null);
+                  $badge = $book->is_featured ? 'bestseller' : ($book->is_free ? 'new' : null);
                   $badgeLabel = match($badge) {
-                      'featured' => 'Featured',
+                      'bestseller' => 'Bestseller',
                       'new' => 'Free',
                       default => null,
                   };
@@ -28,18 +28,18 @@
                           @endif
                           <img src="{{ $coverUrl }}" alt="Cover of {{ $book->title }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
                       </div>
-                      <div class="p-2 flex flex-col flex-1">
-                          <h3 class="text-xs font-bold text-gray-900 leading-snug line-clamp-2 mb-1 group-hover:text-indigo-600 transition-colors">{{ $book->title }}</h3>
-                          <p class="text-[10px] text-gray-500 truncate mb-1">{{ $book->author }}</p>
-                          <div class="flex items-baseline gap-1 mb-2 mt-auto">
+                      <div class="p-3 flex flex-col flex-1">
+                          <h3 class="text-sm font-bold text-gray-900 leading-snug line-clamp-2 mb-1 group-hover:text-indigo-600 transition-colors">{{ $book->title }}</h3>
+                          <p class="text-xs text-gray-500 truncate mb-2">{{ $book->author }}</p>
+                          <div class="flex items-baseline gap-1 mb-3 mt-auto">
                               @if($book->is_free && $book->book_pdf)
-                                  <span class="text-sm font-extrabold text-emerald-600">FREE</span>
+                                  <span class="text-base font-extrabold text-emerald-600">FREE</span>
                               @else
-                                  <span class="text-sm font-extrabold text-emerald-600">${{ number_format($book->price, 2) }}</span>
+                                  <span class="text-base font-extrabold text-emerald-600">${{ number_format($book->price, 2) }}</span>
                               @endif
                           </div>
                           <div class="flex gap-1">
-                              <a href="{{ route('product.show', $book->id) }}" class="flex-1 text-center text-[10px] font-semibold px-1.5 py-1 rounded border border-gray-200 text-gray-900 hover:bg-gray-50 transition-colors">Preview</a>
+                              <a href="{{ route('product.show', $book->id) }}" class="flex-1 text-center text-xs font-semibold px-2 py-2 rounded-md border border-gray-200 text-gray-900 hover:bg-gray-50 transition-colors">Preview</a>
                           </div>
                       </div>
                   </div>
