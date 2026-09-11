@@ -70,10 +70,10 @@
                   <div class="absolute top-1/2 left-1/3 w-24 h-24 bg-blue-300/20 rounded-full blur-xl"></div>
               </div>
               
-              <div class="relative max-w-7xl mx-auto px-6 py-12 sm:py-16 flex items-center justify-center">
-                  <div class="grid lg:grid-cols-2 gap-8 lg:gap-8 items-center">
-                      <!-- Text Content -->
-                      <div class="space-y-6">
+              <div class="relative max-w-7xl mx-auto px-6 py-6 sm:py-10 flex items-center justify-center">
+                   <div class="grid lg:grid-cols-2 gap-6 lg:gap-8 items-center">
+                       <!-- Text Content -->
+                       <div class="space-y-4">
                           <div class="inline-flex items-center gap-2 px-3 py-1.5 bg-white/15 backdrop-blur-md rounded-full border border-white/20">
                               <svg class="w-4 h-4 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
@@ -90,7 +90,7 @@
                               Practical guides to help students and travelers understand visa interviews, avoid common mistakes, and answer visa officer questions with confidence.
                           </p>
                           
-                          <div class="flex flex-col sm:flex-row gap-3 items-center justify-center">
+                           <div class="flex flex-col sm:flex-row gap-2 items-center justify-center">
                               @if(\App\Models\Book::count() > 0)
                               <a href="#store" class="px-6 py-3 bg-white text-indigo-700 rounded-2xl font-bold text-base hover:bg-indigo-50 transition-all duration-200 shadow-xl text-center">
                                   Explore Books
@@ -107,7 +107,7 @@
                               @endguest
                           </div>
                           
-                          <div class="grid grid-cols-3 gap-3 sm:gap-6 pt-2">
+                           <div class="grid grid-cols-3 gap-2 sm:gap-4 pt-2">
                               <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 sm:p-5 border border-white/20">
                                   <div class="text-xl sm:text-3xl font-extrabold text-white">{{ \App\Models\Book::count() }}</div>
                                   <div class="text-indigo-200 text-xs sm:text-sm font-medium">Resources</div>
@@ -128,8 +128,8 @@
                           <div class="relative group">
                               <div class="absolute -inset-4 bg-gradient-to-tr from-blue-400 to-purple-400 rounded-3xl blur-2xl opacity-40 group-hover:opacity-60 transition-opacity duration-300"></div>
                               <div class="relative rounded-3xl shadow-2xl overflow-hidden border border-white/20 bg-white/10 backdrop-blur-sm p-2">
-                              <img src="{{ asset('mr. nathaniel.jpeg') }}" alt="Visa Interview" 
-                                   class="relative rounded-2xl w-full h-50 object-cover shadow-xl">
+                               <img src="{{ asset('mr. nathaniel.jpeg') }}" alt="Visa Interview" 
+                                    class="relative rounded-2xl w-full h-96 object-cover shadow-xl">
                               </div>
                               <div class="absolute -top-4 -right-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-5 py-2 rounded-full text-sm font-black shadow-xl whitespace-nowrap inline-block z-10">
                                   START NOW
@@ -198,39 +198,39 @@
                     </a> -->
                 </div>
                 
-                <div class="flex flex-nowrap gap-4 overflow-x-auto scrollbar-hide pb-4" style="scroll-snap-type: x mandatory;">
+                <div class="grid grid-cols-3 gap-4">
                     @foreach($featuredBooks as $index => $book)
-                    <div class="flex-shrink-0 scroll-snap-start w-[calc(100%-12px)] sm:w-[calc(50%-8px)] md:w-[calc(33.333%-8px)] lg:w-[calc(25%-12px)] xl:w-[calc(20%-12px)]">
-                        <a href="{{ route('books.index') }}" class="group block">
-                        <div class="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl hover:border-indigo-200 transition-all duration-300">
-                            <div class="h-60 md:h-96 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative overflow-hidden">
-                                @if($book->cover_image)
-                                    <img src="{{ $book->cover_image_url }}" alt="{{ $book->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
-                                @else
-                                    <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                                    </svg>
-                                @endif
-                                <div class="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                    <span class="bg-white/90 backdrop-blur-sm text-gray-700 text-xs font-medium px-2 py-1 rounded-full shadow-sm">
-                                        View Details
+                    @php
+                        $coverUrl = $book->cover_image_url ?? asset('welcome.jpg');
+                        $badge = $book->is_featured ? 'featured' : ($book->is_free ? 'new' : null);
+                        $badgeLabel = match($badge) {
+                            'featured' => 'Featured',
+                            'new' => 'Free',
+                            default => null,
+                        };
+                    @endphp
+                    <div>
+                        <div class="group relative bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all duration-300 flex flex-col h-full">
+                            <div class="relative aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+                                @if(!empty($badge))
+                                    <span class="absolute top-2.5 left-2.5 z-10 text-[10.5px] font-extrabold tracking-widest uppercase px-2.5 py-1 rounded-md text-white shadow-sm bg-amber-500">
+                                        {{ $badgeLabel }}
                                     </span>
-                                </div>
-                            </div>
-                            <div class="p-4">
-                                <h3 class="font-semibold text-gray-900 text-sm truncate group-hover:text-indigo-600 transition-colors">{{ $book->title }}</h3>
-                                <p class="text-xs text-gray-500 truncate mt-1">{{ $book->author }}</p>
-                                @if($book->description)
-                                <div class="mt-2">
-                                    <p class="text-xs text-gray-500 line-clamp-2">{{ \Illuminate\Support\Str::limit($book->description, 60) }}</p>
-                                </div>
                                 @endif
-                                <div class="mt-3 flex items-center justify-between">
-                                    @if($book->book_pdf)
-                                        <p class="font-bold text-lg text-green-600">FREE</p>
+                                <img src="{{ $coverUrl }}" alt="Cover of {{ $book->title }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
+                            </div>
+                            <div class="p-2 flex flex-col flex-1">
+                                <h3 class="text-xs font-bold text-gray-900 leading-snug line-clamp-2 mb-1 group-hover:text-indigo-600 transition-colors">{{ $book->title }}</h3>
+                                <p class="text-[10px] text-gray-500 truncate mb-1">{{ $book->author }}</p>
+                                <div class="flex items-baseline gap-1 mb-2 mt-auto">
+                                    @if($book->is_free && $book->book_pdf)
+                                        <span class="text-sm font-extrabold text-emerald-600">FREE</span>
                                     @else
-                                        <p class="font-bold text-lg text-indigo-600">${{ number_format($book->price, 2) }}</p>
+                                        <span class="text-sm font-extrabold text-emerald-600">${{ number_format($book->price, 2) }}</span>
                                     @endif
+                                </div>
+                                <div class="flex gap-1">
+                                    <a href="{{ route('product.show', $book->id) }}" class="flex-1 text-center text-[10px] font-semibold px-1.5 py-1 rounded border border-gray-200 text-gray-900 hover:bg-gray-50 transition-colors">Preview</a>
                                 </div>
                             </div>
                         </div>
@@ -242,7 +242,7 @@
         @endif
 
         <!-- Store Section -->
-        @include('components.sections.store-section', ['books' => $books])
+        @include('components.sections.store-section', ['books' => \App\Models\Book::where('is_featured', true)->take(5)->get()])
 
         <!-- Search Results -->
         @if(isset($query) && $query)
@@ -251,73 +251,50 @@
                 <h2 class="text-2xl font-bold text-gray-900 mb-6">Search Results for "{{ $query }}"</h2>
                 @if($books->count() > 0)
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-    @foreach($books as $book)
+                @foreach($books as $book)
+                    @php
+                        $coverUrl = $book->cover_image_url ?? asset('welcome.jpg');
+                        $badge = $book->is_featured ? 'bestseller' : ($book->is_free ? 'new' : null);
+                        $badgeLabel = match($badge) {
+                            'bestseller' => 'Bestseller',
+                            'new' => 'Free',
+                            default => null,
+                        };
+                        $previewUrl = route('product.show', $book->id);
+                    @endphp
 
-        {{-- Detect PDF using book_pdf --}}
-        @if($book->is_free && $book->book_pdf)
-            <button onclick="openFreeBookModal({{ $book->id }}, '{{ $book->title }}')"
-               class="block bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 group">
-        @else
-            <a href="{{ route('product.show', $book->id) }}"
-               class="block bg-white rounded-2xl overflow-hidden shadow-sm border border-gray-100 hover:shadow-xl hover:border-indigo-200 transition-all duration-300 group">
-        @endif
-
-            <!-- Cover -->
-            <div class="h-48 bg-gradient-to-br from-gray-100 to-gray-200 relative overflow-hidden">
-
+                    <article class="group relative bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all duration-300 flex flex-col h-full">
+                        <div class="relative aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+                            @if(!empty($badge))
+                                <span class="absolute top-2.5 left-2.5 z-10 text-[10.5px] font-extrabold tracking-widest uppercase px-2.5 py-1 rounded-md text-white shadow-sm bg-amber-500">
+                                    {{ $badgeLabel }}
+                                </span>
+                            @endif
                             @if($book->cover_image)
-                                <img src="{{ $book->cover_image_url }}" 
-                                    alt="{{ $book->title }}" 
-                                    class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                <img src="{{ $coverUrl }}" alt="Cover of {{ $book->title }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
                             @else
                                 <div class="w-full h-full flex items-center justify-center">
-                                    <svg class="w-16 h-16 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" 
-                                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253"/>
+                                    <svg class="w-14 h-14 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18c-1.746 0-3.332.477-4.5 1.253"/>
                                     </svg>
                                 </div>
                             @endif
-
                         </div>
-
-                        <!-- Content -->
-                        <div class="p-4">
-                            <h3 class="font-semibold text-gray-900 text-sm truncate group-hover:text-indigo-600 transition-colors">
-                                {{ $book->title }}
-                            </h3>
-
-                            <p class="text-xs text-gray-500 mt-1">
-                                {{ $book->author }}
-                            </p>
-
-                            <!-- Price / FREE -->
-                            <div class="mt-3 flex items-center justify-between">
-                            @if($book->book_pdf)
-                                    <p class="font-bold text-xl text-green-600">FREE</p>
+                        <div class="p-3 flex flex-col flex-1">
+                            <h3 class="text-sm font-bold text-gray-900 leading-snug line-clamp-2 mb-1 group-hover:text-indigo-600 transition-colors">{{ $book->title }}</h3>
+                            <p class="text-xs text-gray-500 truncate mb-2">{{ $book->author }}</p>
+                            <div class="flex items-baseline gap-1 mb-3 mt-auto">
+                                @if($book->is_free && $book->book_pdf)
+                                    <span class="text-lg font-extrabold text-emerald-600">FREE</span>
                                 @else
-    <p class="font-bold text-xl text-indigo-600">
-                                          {{ number_format($book->price, 2) }}
-                                     </p>
+                                    <span class="text-lg font-extrabold text-emerald-600">${{ number_format($book->price, 2) }}</span>
                                 @endif
                             </div>
-
-                            <!-- Login prompt only for paid books -->
-                            @guest
-                                @if(!$book->book_pdf)
-                                    <a href="{{ route('login') }}"
-                                    class="block mt-3 text-center px-4 py-2 bg-gray-100 text-gray-600 text-sm font-medium rounded-xl hover:bg-gray-200 transition-colors">
-                                        Sign in to Buy
-                                    </a>
-                                @endif
-                            @endguest
+                            <div class="flex gap-1">
+                                <a href="{{ $previewUrl }}" class="flex-1 text-center text-xs font-semibold px-2 py-2 rounded-md border border-gray-200 text-gray-900 hover:bg-gray-50 transition-colors">Preview</a>
+                            </div>
                         </div>
-
-        @if($book->is_free && $book->book_pdf)
-                </button>
-        @else
-                    </a>
-        @endif
-
+                    </article>
                 @endforeach
             </div>
                 @else

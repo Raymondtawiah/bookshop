@@ -2,7 +2,7 @@
 
 @section('content')
     <!-- Hero Section -->
-    <section class="py-16 text-white max-w-full relative overflow-hidden min-h-screen flex items-center" 
+    <section class="py-10 text-white max-w-full relative overflow-hidden min-h-[420px] md:min-h-[520px] flex items-center" 
              style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.85) 0%, rgba(99, 102, 241, 0.85) 50%, rgba(139, 92, 246, 0.85) 100%), url('{{ asset('mr. nathaniel.jpeg') }}'); background-size: cover; background-position: center; background-attachment: fixed;">
         
         <!-- Animated overlay pattern -->
@@ -275,7 +275,7 @@
                     <!-- Price row -->
                     <div class="flex items-baseline justify-between mb-8">
                         <span class="text-xs font-semibold tracking-widest uppercase text-gray-500">Price</span>
-                        <span class="text-3xl font-bold text-gray-900 tracking-tight">${{ number_format($webinar->current_price, 2) }}</span>
+                        <span class="text-3xl font-bold text-indigo-900 tracking-tight bg-indigo-100 px-4 py-1.5 rounded-3xl shadow-sm">${{ number_format($webinar->current_price, 2) }}</span>
                     </div>
 
                     <!-- CTA -->

@@ -6,59 +6,43 @@
             <p class="text-xl text-gray-600 max-w-2xl mx-auto">Handpicked selections from our latest collection</p>
         </div>
         
-        <!-- Horizontal scroll on mobile, grid on desktop -->
-        <div class="flex flex-nowrap gap-4 overflow-x-auto scrollbar-hide pb-4" style="scroll-snap-type: x mandatory;">
+        <!-- 3 books per row -->
+        <div class="grid grid-cols-3 gap-4">
             @forelse($books->take(5) as $index => $book)
-              <div class="opacity-0 translate-y-8 transition-all duration-700 flex-shrink-0 scroll-snap-start w-[calc(100%-12px)] sm:w-[calc(50%-8px)] md:w-[calc(33.333%-8px)] lg:w-[calc(25%-8px)]" data-animate-target style="transition-delay: {{ $index * 100 }}ms;">
-                @if($book->is_free && $book->book_pdf)
-                <button onclick="openFreeBookModal({{ $book->id }}, '{{ $book->title }}')" class="block transform group-hover:-translate-y-2 transition-all duration-300" title="Download PDF">
-                @else
-                <a href="{{ route('product.show', $book->id) }}" class="block transform group-hover:-translate-y-2 transition-all duration-300">
-                @endif
-                      <div class="w-full h-60 md:h-96 rounded-xl shadow-lg overflow-hidden relative z-10 bg-white border border-gray-100 group-hover:shadow-2xl group-hover:border-indigo-200 transition-all duration-300">
-                         @if($book->cover_image)
-                             <img src="{{ $book->cover_image_url }}" alt="{{ $book->title }}" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
-                         @else
-                             <img src="{{ asset('welcome.jpg') }}" alt="{{ $book->title }}" class="w-full h-full object-cover opacity-90 group-hover:opacity-100 group-hover:scale-105 transition-all duration-500">
-                         @endif
-                         
-                         <!-- Free/Paid Badge Overlay on Cover -->
-                         @if($book->is_free && $book->book_pdf)
-                         <div class="absolute inset-0 bg-gradient-to-t from-green-600/80 via-green-600/20 to-transparent flex flex-col items-center justify-end pb-4">
-                             <div class="bg-white rounded-full px-4 py-1.5 shadow-lg flex items-center gap-2">
-                                 <svg class="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                 </svg>
-                                 <span class="text-green-600 font-bold text-sm">FREE PDF</span>
-                             </div>
-                         </div>
-                         @endif
-                         
-                         @if($book->is_featured)
-                         <div class="absolute top-3 right-3 bg-gradient-to-r from-yellow-500 to-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow-md">FEATURED</div>
-                         @endif
-                         
-                         <!-- Gradient overlay on hover -->
-                         <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                     </div>
-                 @if($book->is_free && $book->book_pdf)
-                 </button>
-                 @else
-                 </a>
-                 @endif
-                 <div class="text-center mt-4">
-                      <h3 class="text-base font-bold text-gray-900 truncate mx-auto group-hover:text-indigo-600 transition-colors duration-300">{{ $book->title }}</h3>
-                     @if($book->is_free && $book->book_pdf)
-                     <p class="text-lg font-extrabold text-green-600 mt-1">FREE</p>
-                     @else
-                      <p class="text-lg font-extrabold text-indigo-600 mt-1">${{ number_format($book->price, 2) }}</p>
-                     @endif
-                      @if(!($book->is_free && $book->book_pdf))
-                      <a href="{{ route('checkout.direct', $book->id) }}" class="inline-block mt-2 px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded-lg hover:bg-indigo-700 hover:shadow-lg transition-all duration-300 transform hover:scale-105">
-                          Buy Now
-                      </a>
-                      @endif
-                 </div>
+              @php
+                  $coverUrl = $book->cover_image_url ?? asset('welcome.jpg');
+                  $badge = $book->is_featured ? 'featured' : ($book->is_free ? 'new' : null);
+                  $badgeLabel = match($badge) {
+                      'featured' => 'Featured',
+                      'new' => 'Free',
+                      default => null,
+                  };
+              @endphp
+              <div>
+                  <div class="group relative bg-white border border-gray-100 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-indigo-200 transition-all duration-300 flex flex-col h-full">
+                      <div class="relative aspect-[3/4] bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
+                          @if(!empty($badge))
+                              <span class="absolute top-2.5 left-2.5 z-10 text-[10.5px] font-extrabold tracking-widest uppercase px-2.5 py-1 rounded-md text-white shadow-sm bg-amber-500">
+                                  {{ $badgeLabel }}
+                              </span>
+                          @endif
+                          <img src="{{ $coverUrl }}" alt="Cover of {{ $book->title }}" loading="lazy" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 ease-out">
+                      </div>
+                      <div class="p-2 flex flex-col flex-1">
+                          <h3 class="text-xs font-bold text-gray-900 leading-snug line-clamp-2 mb-1 group-hover:text-indigo-600 transition-colors">{{ $book->title }}</h3>
+                          <p class="text-[10px] text-gray-500 truncate mb-1">{{ $book->author }}</p>
+                          <div class="flex items-baseline gap-1 mb-2 mt-auto">
+                              @if($book->is_free && $book->book_pdf)
+                                  <span class="text-sm font-extrabold text-emerald-600">FREE</span>
+                              @else
+                                  <span class="text-sm font-extrabold text-emerald-600">${{ number_format($book->price, 2) }}</span>
+                              @endif
+                          </div>
+                          <div class="flex gap-1">
+                              <a href="{{ route('product.show', $book->id) }}" class="flex-1 text-center text-[10px] font-semibold px-1.5 py-1 rounded border border-gray-200 text-gray-900 hover:bg-gray-50 transition-colors">Preview</a>
+                          </div>
+                      </div>
+                  </div>
               </div>
               @empty
               <div class="col-span-full text-center py-12">
