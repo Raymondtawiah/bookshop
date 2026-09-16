@@ -22,21 +22,21 @@
     <div class="content">
         <p>Dear {{ $name ?? 'Customer' }},</p>
         
-        <p>{!! nl2br(e($message ?? '')) !!}</p>
-        
-        @if($bookUpdate)
-        <div class="update-box">
-            <h3>New Books Available</h3>
-            <p>{!! nl2br(e($bookUpdate)) !!}</p>
-        </div>
-        @endif
+         <p>{!! nl2br(e($body ?? '')) !!}</p>
+         
+         @if(!empty($book_update_text))
+         <div class="update-box">
+             <h3>New Books Available</h3>
+             <p>{!! nl2br(e($book_update_text)) !!}</p>
+         </div>
+         @endif
 
-        @if($webinarUpdate)
-        <div class="update-box">
-            <h3>Upcoming Webinars</h3>
-            <p>{!! nl2br(e($webinarUpdate)) !!}</p>
-        </div>
-        @endif
+         @if(!empty($webinar_update_text))
+         <div class="update-box">
+             <h3>Upcoming Webinars</h3>
+             <p>{!! nl2br(e($webinar_update_text)) !!}</p>
+         </div>
+         @endif
         
         <p>Don't miss these valuable resources. Visit our website now to explore the latest books and register for upcoming webinars!</p>
         

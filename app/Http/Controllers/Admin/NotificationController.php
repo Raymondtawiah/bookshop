@@ -171,21 +171,11 @@ class NotificationController extends Controller
                 $payload = [
                     'name' => $customer->name,
                     'subject' => $subject,
-                    'message' => $message,
-                    'bookUpdate' => $bookUpdate,
-                    'webinarUpdate' => $webinarUpdate,
+                    'body' => (string) ($message ?? ''),
+                    'book_update_text' => (string) ($bookUpdate ?? ''),
+                    'webinar_update_text' => (string) ($webinarUpdate ?? ''),
                     'url' => url('/'),
                 ];
-
-                if (isset($payload['message'])) {
-                    $payload['message'] = nl2br(e($payload['message']));
-                }
-                if (isset($payload['bookUpdate'])) {
-                    $payload['bookUpdate'] = nl2br(e($payload['bookUpdate']));
-                }
-                if (isset($payload['webinarUpdate'])) {
-                    $payload['webinarUpdate'] = nl2br(e($payload['webinarUpdate']));
-                }
 
                 Mail::send('emails.broadcast', $payload, function ($mail) use ($customer, $subject) {
                     $mail->to($customer->email, $customer->name)
