@@ -11,9 +11,9 @@
             @forelse($books->take(5) as $index => $book)
               @php
                   $coverUrl = $book->cover_image_url ?? asset('welcome.jpg');
-                  $badge = $book->is_featured ? 'bestseller' : ($book->is_free ? 'new' : null);
+                  $badge = $book->is_featured ? 'featured' : ($book->is_free ? 'new' : null);
                   $badgeLabel = match($badge) {
-                      'bestseller' => 'Bestseller',
+                      'featured' => 'Featured',
                       'new' => 'Free',
                       default => null,
                   };

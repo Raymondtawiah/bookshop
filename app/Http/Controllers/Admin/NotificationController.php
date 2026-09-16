@@ -139,11 +139,21 @@ class NotificationController extends Controller
             'webinar_update' => 'nullable|string|max:2000',
         ]);
 
-        $customers = User::where('is_admin', false)
+        $customersQuery = User::where('is_admin', false)
             ->where('is_staff', false)
             ->whereNotNull('email')
             ->where('email', '!=', '')
-            ->get();
+            ->where('email', 'not like', '%invalid%')
+            ->whereRaw('LENGTH(TRIM(email)) > 5')
+            ->orderByDesc('id');
+
+        $testMode = (bool) $request->input('test_mode');
+
+        if ($testMode) {
+            $customers = $customersQuery->limit(1)->get();
+        } else {
+            $customers = $customersQuery->get();
+        }
 
         if ($customers->isEmpty()) {
             return back()->with('error', 'No customers found to send notifications to.');
@@ -158,14 +168,26 @@ class NotificationController extends Controller
 
         foreach ($customers as $customer) {
             try {
-                Mail::send('emails.broadcast', [
+                $payload = [
                     'name' => $customer->name,
                     'subject' => $subject,
                     'message' => $message,
                     'bookUpdate' => $bookUpdate,
                     'webinarUpdate' => $webinarUpdate,
                     'url' => url('/'),
-                ], function ($mail) use ($customer, $subject) {
+                ];
+
+                if (isset($payload['message'])) {
+                    $payload['message'] = nl2br(e($payload['message']));
+                }
+                if (isset($payload['bookUpdate'])) {
+                    $payload['bookUpdate'] = nl2br(e($payload['bookUpdate']));
+                }
+                if (isset($payload['webinarUpdate'])) {
+                    $payload['webinarUpdate'] = nl2br(e($payload['webinarUpdate']));
+                }
+
+                Mail::send('emails.broadcast', $payload, function ($mail) use ($customer, $subject) {
                     $mail->to($customer->email, $customer->name)
                         ->subject($subject);
                 });
@@ -175,7 +197,8 @@ class NotificationController extends Controller
                 $failedCount++;
                 Log::error('Broadcast email failed', [
                     'email' => $customer->email,
-                    'error' => $e->getMessage(),
+                    'subject' => $subject,
+                    'message' => $e->getMessage(),
                 ]);
             }
         }
