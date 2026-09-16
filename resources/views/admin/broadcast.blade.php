@@ -58,10 +58,6 @@
                     This will send an email to all customers in the system.
                 </p>
                 <div class="flex items-center gap-3">
-                    <label class="flex items-center gap-2 text-sm text-gray-700">
-                        <input type="checkbox" name="test_mode" value="1" class="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500">
-                        Test to 1 user
-                    </label>
                     <button type="submit" class="px-6 py-3 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition-colors">
                         Send Broadcast
                     </button>
