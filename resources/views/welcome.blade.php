@@ -70,14 +70,30 @@
         
 <div class="w-full overflow-x-hidden min-w-0 mx-0 px-0">
             <div class="h-16"></div>
-             <section id="home" class="relative overflow-hidden bg-gray-100">
-                   <div style="width:100%;max-width:1200px;height:600px;margin:0 auto;position:relative;">
-                      <img src="{{ asset('new_hero.jpg') }}" alt="Hero" style="width:100%;height:100%;object-fit:cover;display:block;">
-                      <div id="star-overlay" style="position:absolute;inset:0;background:rgba(59, 130, 246, 0.2);"></div>
-                  </div>
-                 <div class="relative max-w-7xl mx-auto px-6 py-2 flex items-center justify-center">
-                 </div>
-             </section>
+            <section id="home" class="relative overflow-hidden bg-gray-100">
+                <div style="width:100%;max-width:1200px;height:600px;margin:0 auto;position:relative;background:linear-gradient(135deg, rgba(59, 130, 246, 0.85) 0%, rgba(99, 102, 241, 0.85) 50%, rgba(139, 92, 246, 0.85) 100%);">
+                    <div id="star-overlay" style="position:absolute;inset:0;background:rgba(59, 130, 246, 0.2);"></div>
+                    <div class="relative max-w-7xl mx-auto px-6 py-40 sm:py-56 flex items-center justify-center h-full">
+                        <div class="text-center max-w-3xl mx-auto space-y-5">
+                            <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-md rounded-full border border-white/20">
+                                <svg class="w-5 h-5 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11.049 2.927c.3-.921 1.603-.921 1.902 0l1.519 4.674a1 1 0 00.95.69h4.915c.969 0 1.371 1.24.588 1.81l-3.976 2.888a1 1 0 00-.363 1.118l1.518 4.674c.3.922-.755 1.688-1.538 1.118l-3.976-2.888a1 1 0 00-1.176 0l-3.976 2.888c-.783.57-1.838-.197-1.538-1.118l1.518-4.674a1 1 0 00-.363-1.118l-3.976-2.888c-.784-.57-.38-1.81.588-1.81h4.914a1 1 0 00.951-.69l1.519-4.674z"/>
+                                </svg>
+                                <span class="text-sm font-bold text-white">Visa Interview Preparation Resources</span>
+                            </div>
+                            
+                            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight tracking-tight">
+                                Master Your
+                                <span class="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">Visa Interview</span>
+                            </h1>
+                            
+                            <p class="text-base sm:text-lg text-white/90 leading-relaxed max-w-2xl mx-auto">
+                                Practical guides to help students and travelers understand visa interviews, avoid common mistakes, and answer visa officer questions with confidence.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
         <!-- Search Section -->
         <section class="py-8 bg-gray-50 max-w-full">

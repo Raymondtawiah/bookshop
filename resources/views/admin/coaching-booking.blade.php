@@ -61,9 +61,28 @@
 
     <!-- Hero Section -->
     <section id="hero" class="relative overflow-hidden bg-gray-100">
-        <div style="width:100%;max-width:1200px;height:700px;margin:0 auto;position:relative;">
-            <img src="{{ asset('coaching_hero.png') }}" alt="Hero" style="width:100%;height:100%;object-fit:cover;display:block;">
+        <div style="width:100%;max-width:1200px;height:500px;margin:0 auto;position:relative;background:linear-gradient(135deg, rgba(59, 130, 246, 0.85) 0%, rgba(99, 102, 241, 0.85) 50%, rgba(139, 92, 246, 0.85) 100%);">
             <div id="star-overlay" style="position:absolute;inset:0;background:rgba(59, 130, 246, 0.2);"></div>
+            <div class="relative max-w-7xl mx-auto px-6 py-40 sm:py-56 flex items-center justify-center h-full">
+                <div class="text-center max-w-3xl mx-auto space-y-5">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 bg-white/15 backdrop-blur-md rounded-full border border-white/20">
+                        <span class="relative flex h-2.5 w-2.5 mr-2.5">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
+                        </span>
+                        <span class="text-sm font-medium">Expert Coaching • Personalized Guidance</span>
+                    </div>
+                    
+                    <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight tracking-tight">
+                        Visa Interview
+                        <span class="block text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-orange-300">Coaching</span>
+                    </h1>
+                    
+                    <p class="text-base sm:text-lg text-white/90 leading-relaxed max-w-2xl mx-auto">
+                        I help people prepare for visa interviews so they can walk in feeling confident, clear, and ready. Many qualified applicants get rejected simply because they were not well prepared.
+                    </p>
+                </div>
+            </div>
         </div>
         <div class="relative max-w-7xl mx-auto px-6 py-2 flex items-center justify-center">
         </div>
