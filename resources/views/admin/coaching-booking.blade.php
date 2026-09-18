@@ -60,69 +60,50 @@
     @if($isActive || $isAdmin)
 
     <!-- Hero Section -->
-    <section id="hero" class="relative overflow-hidden py-10 sm:py-16 lg:py-20">
-        <div class="absolute inset-0 hero-gradient" style="background-image: url('/coaching.png'); background-size: cover; background-position: center; background-attachment: fixed; background-blend-mode: overlay;"></div>
-        <div class="absolute inset-0 bg-indigo-900/60"></div>
-        
-        <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid lg:grid-cols-2 gap-6 lg:gap-8 items-center">
-                <!-- Text Content -->
-                <div class="space-y-4 sm:space-y-6">
-                    <div class="inline-flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-white/15 backdrop-blur-md rounded-full border border-white/20">
-                        <span class="w-2 h-2 bg-green-400 rounded-full animate-ping"></span>
-                        <span class="text-xs sm:text-sm font-semibold text-white">Expert Coaching • Personalized Guidance</span>
-                    </div>
-                    
-                    <h1 class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white leading-tight tracking-tight">
-                        Visa Interview
-                        <span class="block text-indigo-200">Coaching</span>
-                    </h1>
-                    
-                    <p class="text-base sm:text-lg text-indigo-100 leading-relaxed max-w-lg">
-                        I help people prepare for visa interviews so they can walk in feeling confident, clear, and ready. Many qualified applicants get rejected simply because they were not well prepared.
-                    </p>
-                    <p class="text-sm sm:text-base text-indigo-200">I coach applicants for student, work, and travel visas (F-1, J-1, H-1B, B-1/B-2, and more).</p>
-                    
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <a href="#pricing" class="px-6 py-3 bg-white text-indigo-700 rounded-2xl font-bold text-base hover:bg-indigo-50 transition-all duration-200 shadow-xl text-center">
-                            Book Your Session Now
-                        </a>
-                    </div>
-                    
-                    <div class="grid grid-cols-3 gap-3 sm:gap-4">
-                        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-white/20">
-                            <div class="text-xl sm:text-2xl font-extrabold text-white">500+</div>
-                            <div class="text-indigo-200 text-xs sm:text-sm font-medium">Sessions Done</div>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-white/20">
-                            <div class="text-xl sm:text-2xl font-extrabold text-white">95%</div>
-                            <div class="text-indigo-200 text-xs sm:text-sm font-medium">Success Rate</div>
-                        </div>
-                        <div class="bg-white/10 backdrop-blur-md rounded-2xl p-3 sm:p-4 border border-white/20">
-                            <div class="text-xl sm:text-2xl font-extrabold text-white">5★</div>
-                            <div class="text-indigo-200 text-xs sm:text-sm font-medium">Expert Rating</div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Image / Visual -->
-                <div class="hidden lg:block relative">
-                    <div class="relative">
-                        <div class="absolute -inset-4 bg-gradient-to-tr from-blue-400 to-purple-400 rounded-3xl blur-2xl opacity-40 animate-float"></div>
-                        <img src="/coaching.png" alt="Visa Interview Coaching" 
-                             class="relative rounded-3xl shadow-2xl w-full h-auto object-cover border border-white/20">
-                    </div>
-                </div>
-            </div>
+    <section id="hero" class="relative overflow-hidden bg-gray-100">
+        <div style="width:100%;max-width:1200px;height:700px;margin:0 auto;position:relative;">
+            <img src="{{ asset('coaching_hero.png') }}" alt="Hero" style="width:100%;height:100%;object-fit:cover;display:block;">
+            <div id="star-overlay" style="position:absolute;inset:0;background:rgba(59, 130, 246, 0.2);"></div>
         </div>
-        
-        <!-- Wave separator -->
-        <div class="absolute bottom-0 left-0 right-0">
-            <svg viewBox="0 0 1440 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 120L48 105C96 90 192 60 288 45C384 30 480 30 576 37.5C672 45 768 60 864 67.5C960 75 1056 75 1152 67.5C1248 60 1344 45 1392 37.5L1440 30V120H1392C1344 120 1248 120 1152 120C1056 120 960 120 864 120C768 120 672 120 576 120C480 120 384 120 288 120C192 120 96 120 48 120H0Z" fill="white"/>
-            </svg>
+        <div class="relative max-w-7xl mx-auto px-6 py-2 flex items-center justify-center">
         </div>
     </section>
+
+    <style>
+      @keyframes twinkle {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.2); }
+      }
+      .star {
+          position: absolute;
+          background: white;
+          border-radius: 50%;
+          animation: twinkle 2s infinite ease-in-out;
+      }
+    </style>
+
+    <script>
+      (function() {
+        const container = document.getElementById('star-overlay');
+        if (!container) return;
+        const count = 60;
+        for (let i = 0; i < count; i++) {
+            const star = document.createElement('div');
+            star.style.position = 'absolute';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.left = Math.random() * 100 + '%';
+            const size = Math.random() * 3 + 1;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            star.style.background = 'white';
+            star.style.borderRadius = '50%';
+            star.style.opacity = Math.random() * 0.6 + 0.2;
+            star.style.animation = 'twinkle ' + (Math.random() * 2 + 1) + 's infinite ease-in-out';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            container.appendChild(star);
+        }
+      })();
+    </script>
 
     <!-- Pricing Section -->
     <section id="pricing" class="py-16 sm:py-24 bg-white">
@@ -135,6 +116,7 @@
 
             <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8 max-w-6xl mx-auto">
                 <!-- Team Plan -->
+                @if(false)
                 <div class="group relative bg-white rounded-3xl border-2 border-gray-200 p-6 sm:p-8 hover:border-indigo-300 hover:shadow-2xl hover:shadow-indigo-100/50 transition-all duration-300">
                     <div class="mb-6">
                         <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mb-4">
@@ -186,8 +168,10 @@
                         Book Team Plan
                     </button>
                 </div>
+                @endif
 
                 <!-- 1 Week Intensive -->
+                @if(false)
                 <div class="group relative bg-white rounded-3xl border-2 border-gray-200 p-6 sm:p-8 hover:border-indigo-300 hover:shadow-2xl hover:shadow-indigo-100/50 transition-all duration-300">
                     <div class="mb-6">
                         <div class="w-12 h-12 bg-indigo-50 rounded-2xl flex items-center justify-center mb-4">
@@ -238,10 +222,11 @@
                         </li>
                     </ul>
                     
-                    <button onclick="window.location.href='{{ route('coaching.booking.page', 'single') }}'" class="w-full py-3.5 rounded-3xl font-bold text-gray-700 border-2 border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all duration-200">
+                    <button onclick="window.location.href='{{ route('coaching.booking.page', 'single') }}'" class="w-full py-3.5 rounded-3xl font-bold text-gray-700 border-2 border-gray-200 hover:border-indigo-300 hover:text-indigo-600 transition-all duration-200 ">
                         Book 1 Week Intensive
                     </button>
                 </div>
+                @endif
 
                 <!-- Full Coaching (Featured) -->
                 <div class="group relative bg-white rounded-3xl border-2 border-indigo-500 p-6 sm:p-8 shadow-xl shadow-indigo-100/50 md:-mt-4 md:mb-4 overflow-visible">
@@ -260,7 +245,7 @@
                     </div>
                     
                     <div class="mb-6">
-                        <span class="text-4xl font-extrabold text-indigo-600">$216.36</span>
+                         <span class="text-4xl font-extrabold text-indigo-600">$10</span>
                     </div>
                     
                     <p class="text-sm text-gray-600 mb-6 leading-relaxed">For deeper preparation and lasting skills development.</p>
@@ -270,7 +255,7 @@
                             <svg class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                             </svg>
-                            <span class="text-sm text-gray-600">Four high-intensity 60-minute sessions</span>
+                             <span class="text-sm text-gray-600">One focused 20-minute session</span>
                         </li>
                         <li class="flex items-start gap-3">
                             <svg class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -282,7 +267,7 @@
                             <svg class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
                             </svg>
-                            <span class="text-sm text-gray-600">Multiple mock interviews with feedback</span>
+                             <span class="text-sm text-gray-600">Targeted 20-minute interview prep</span>
                         </li>
                         <li class="flex items-start gap-3">
                             <svg class="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -298,7 +283,7 @@
                         </li>
                     </ul>
                     
-                    <button onclick="window.location.href='{{ route('coaching.booking.page', 'premium') }}'" class="w-full py-3.5 rounded-3xl font-bold text-white plan-gradient hover:opacity-90 transition-all duration-200 shadow-lg shadow-indigo-200">
+                    <button onclick="window.location.href='https://calendly.com/nathanielgyarteng/new-meeting-1?primary_color=6004d4'" class="w-full py-3.5 rounded-3xl font-bold text-white plan-gradient hover:opacity-90 transition-all duration-200 shadow-lg shadow-indigo-200">
                         Book Full Coaching
                     </button>
                 </div>
@@ -321,55 +306,63 @@
                 <h2 class="text-3xl sm:text-4xl font-extrabold text-gray-900">Frequently Asked Questions</h2>
             </div>
             
-            <div class="space-y-4" x-data="{ selected: null }">
-                <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:border-indigo-200 transition-colors">
-                    <button @click="selected = selected === 1 ? null : 1" class="w-full px-6 py-5 text-left flex items-center justify-between">
-                        <span class="font-semibold text-gray-900 pr-4">Can I really prepare effectively in a last-minute session?</span>
-                        <svg class="w-5 h-5 text-indigo-500 transition-transform duration-200 flex-shrink-0" :class="selected === 1 ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                    </button>
-                    <div x-show="selected === 1" x-collapse class="px-6 pb-5 text-gray-600 leading-relaxed">
-                        Absolutely! Even a single focused session can significantly boost your confidence and preparedness. We'll focus on the most critical areas and common questions to maximize your chances of success.
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:border-indigo-200 transition-colors">
-                    <button @click="selected = selected === 2 ? null : 2" class="w-full px-6 py-5 text-left flex items-center justify-between">
-                        <span class="font-semibold text-gray-900 pr-4">What if I need to reschedule?</span>
-                        <svg class="w-5 h-5 text-indigo-500 transition-transform duration-200 flex-shrink-0" :class="selected === 2 ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                    </button>
-                    <div x-show="selected === 2" x-collapse class="px-6 pb-5 text-gray-600 leading-relaxed">
-                        We offer flexible rescheduling up to 24 hours before your session. Simply contact us and we'll find a new time that works for you.
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:border-indigo-200 transition-colors">
-                    <button @click="selected = selected === 3 ? null : 3" class="w-full px-6 py-5 text-left flex items-center justify-between">
-                        <span class="font-semibold text-gray-900 pr-4">What interview types do you cover?</span>
-                        <svg class="w-5 h-5 text-indigo-500 transition-transform duration-200 flex-shrink-0" :class="selected === 3 ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                    </button>
-                    <div x-show="selected === 3" x-collapse class="px-6 pb-5 text-gray-600 leading-relaxed">
-                        We cover all types including visa interviews, job interviews, university admissions, immigration interviews, and more.
-                    </div>
-                </div>
-                
-                <div class="bg-white rounded-2xl border border-gray-200 overflow-hidden hover:border-indigo-200 transition-colors">
-                    <button @click="selected = selected === 4 ? null : 4" class="w-full px-6 py-5 text-left flex items-center justify-between">
-                        <span class="font-semibold text-gray-900 pr-4">How does the payment work?</span>
-                        <svg class="w-5 h-5 text-indigo-500 transition-transform duration-200 flex-shrink-0" :class="selected === 4 ? 'rotate-180' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
-                        </svg>
-                    </button>
-                    <div x-show="selected === 4" x-collapse class="px-6 pb-5 text-gray-600 leading-relaxed">
-                        Payments are processed securely through Stripe. You'll receive payment details after booking confirmation.
-                    </div>
-                </div>
-            </div>
+             <div class="grid grid-cols-1 md:grid-cols-2 gap-6" x-data="{ selected: null }">
+                 <div class="group bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 hover:border-indigo-300 hover:shadow-2xl hover:shadow-indigo-100/50 transition-all duration-300">
+                     <div class="flex items-start gap-4">
+                         <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8-1.06 0-2.077-.16-3.02-.454L3 21l1.5-4.5C3.55 15.16 3 13.63 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                         </div>
+                         <div class="flex-1">
+                             <button @click="selected = selected === 1 ? null : 1" class="w-full text-left font-semibold text-gray-900 mb-2">Can I really prepare effectively in a last-minute session?</button>
+                             <div x-show="selected === 1" x-collapse class="text-gray-600 leading-relaxed">
+                                 Absolutely! Even a single focused session can significantly boost your confidence and preparedness. We'll focus on the most critical areas and common questions to maximize your chances of success.
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 
+                 <div class="group bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 hover:border-indigo-300 hover:shadow-2xl hover:shadow-indigo-100/50 transition-all duration-300">
+                     <div class="flex items-start gap-4">
+                         <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                         </div>
+                         <div class="flex-1">
+                             <button @click="selected = selected === 2 ? null : 2" class="w-full text-left font-semibold text-gray-900 mb-2">What if I need to reschedule?</button>
+                             <div x-show="selected === 2" x-collapse class="text-gray-600 leading-relaxed">
+                                 We offer flexible rescheduling up to 24 hours before your session. Simply contact us and we'll find a new time that works for you.
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 
+                 <div class="group bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 hover:border-indigo-300 hover:shadow-2xl hover:shadow-indigo-100/50 transition-all duration-300">
+                     <div class="flex items-start gap-4">
+                         <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 13.255A23.931 23.931 0 0112 21c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M12 18h.01M7 21h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                         </div>
+                         <div class="flex-1">
+                             <button @click="selected = selected === 3 ? null : 3" class="w-full text-left font-semibold text-gray-900 mb-2">What interview types do you cover?</button>
+                             <div x-show="selected === 3" x-collapse class="text-gray-600 leading-relaxed">
+                                 We cover all types including visa interviews, job interviews, university admissions, immigration interviews, and more.
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+                 
+                 <div class="group bg-white border border-gray-200 rounded-3xl p-6 sm:p-8 hover:border-indigo-300 hover:shadow-2xl hover:shadow-indigo-100/50 transition-all duration-300">
+                     <div class="flex items-start gap-4">
+                         <div class="w-12 h-12 bg-indigo-50 text-indigo-600 rounded-2xl flex items-center justify-center flex-shrink-0">
+                             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                         </div>
+                         <div class="flex-1">
+                             <button @click="selected = selected === 4 ? null : 4" class="w-full text-left font-semibold text-gray-900 mb-2">How does the payment work?</button>
+                             <div x-show="selected === 4" x-collapse class="text-gray-600 leading-relaxed">
+                                 Payments are processed securely through Stripe. You'll receive payment details after booking confirmation.
+                             </div>
+                         </div>
+                     </div>
+                 </div>
+             </div>
         </div>
     </section>
 

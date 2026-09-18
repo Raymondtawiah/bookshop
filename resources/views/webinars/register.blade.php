@@ -3,6 +3,52 @@
 @section('title', 'Register for Webinar')
 
 @section('content')
+    <!-- Hero Section -->
+    <section id="home" class="relative overflow-hidden bg-gray-100">
+        <div style="width:100%;max-width:1200px;height:1200px;margin:0 auto;position:relative;">
+            <img src="{{ asset('register_webinar.png') }}" alt="Hero" style="width:100%;height:100%;object-fit:cover;display:block;">
+            <div id="star-overlay" style="position:absolute;inset:0;background:rgba(59, 130, 246, 0.2);"></div>
+        </div>
+        <div class="relative max-w-7xl mx-auto px-6 py-2 flex items-center justify-center">
+        </div>
+    </section>
+
+    <style>
+      @keyframes twinkle {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.2); }
+      }
+      .star {
+          position: absolute;
+          background: white;
+          border-radius: 50%;
+          animation: twinkle 2s infinite ease-in-out;
+      }
+    </style>
+
+    <script>
+      (function() {
+        const container = document.getElementById('star-overlay');
+        if (!container) return;
+        const count = 60;
+        for (let i = 0; i < count; i++) {
+            const star = document.createElement('div');
+            star.style.position = 'absolute';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.left = Math.random() * 100 + '%';
+            const size = Math.random() * 3 + 1;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            star.style.background = 'white';
+            star.style.borderRadius = '50%';
+            star.style.opacity = Math.random() * 0.6 + 0.2;
+            star.style.animation = 'twinkle ' + (Math.random() * 2 + 1) + 's infinite ease-in-out';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            container.appendChild(star);
+        }
+      })();
+    </script>
+
     <div class="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4 py-12 px-4 sm:px-6 lg:px-8">
         
         <!-- Flash Messages -->

@@ -2,104 +2,50 @@
 
 @section('content')
     <!-- Hero Section -->
-    <section class="py-10 text-white max-w-full relative overflow-hidden min-h-[420px] md:min-h-[520px] flex items-center" 
-             style="background: linear-gradient(135deg, rgba(59, 130, 246, 0.85) 0%, rgba(99, 102, 241, 0.85) 50%, rgba(139, 92, 246, 0.85) 100%), url('{{ asset('mr. nathaniel.jpeg') }}'); background-size: cover; background-position: center; background-attachment: fixed;">
-        
-        <!-- Animated overlay pattern -->
-        <div class="absolute inset-0 opacity-20">
-            <div class="absolute inset-0" style="background-image: url('data:image/svg+xml,%3Csvg width=&quot;60&quot; height=&quot;60&quot; viewBox=&quot;0 0 60 60&quot; xmlns=&quot;http://www.w3.org/2000/svg&quot;%3E%3Cg fill=&quot;none&quot; fill-rule=&quot;evenodd&quot;%3E%3Cg fill=&quot;%23ffffff&quot; fill-opacity=&quot;0.3&quot;%3E%3Cpath d=&quot;M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z&quot;/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');"></div>
+    <section id="home" class="relative overflow-hidden bg-gray-100">
+        <div style="width:100%;max-width:1200px;height:1200px;margin:0 auto;position:relative;">
+            <img src="{{ asset('webinar_hero.jpg') }}" alt="Hero" style="width:100%;height:100%;object-fit:cover;display:block;">
+            <div id="star-overlay" style="position:absolute;inset:0;background:rgba(59, 130, 246, 0.2);"></div>
         </div>
-        
-        <!-- Floating elements animation -->
-        <div class="absolute inset-0 overflow-hidden">
-            <div class="absolute top-10 left-10 w-16 h-16 bg-white/10 rounded-full animate-pulse"></div>
-            <div class="absolute top-1/4 right-20 w-24 h-24 bg-blue-400/20 rounded-full animate-bounce" style="animation-delay: 0.5s;"></div>
-            <div class="absolute bottom-20 left-1/4 w-12 h-12 bg-purple-400/20 rounded-full animate-pulse" style="animation-delay: 1s;"></div>
-            <div class="absolute top-1/2 right-1/3 w-20 h-20 bg-indigo-400/20 rounded-full animate-bounce" style="animation-delay: 1.5s;"></div>
-        </div>
-        
-        <div class="px-4 sm:px-6 lg:px-8 relative z-10">
-            <div class="grid md:grid-cols-2 gap-8 items-center max-w-7xl mx-auto">
-                <div class="space-y-6">
-                    <!-- Badge with glow effect -->
-                    <div class="inline-flex items-center px-4 py-2 bg-white/20 backdrop-blur-sm rounded-full border border-white/30 shadow-lg">
-                        <span class="relative flex h-2.5 w-2.5 mr-2.5">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-green-500"></span>
-                        </span>
-                        <span class="text-xs font-medium">Upcoming Sessions • Expert Led</span>
-                    </div>
-                    
-                    <!-- Main heading with solid text for better visibility -->
-                    <h1 class="text-3xl sm:text-4xl md:text-5xl font-bold leading-tight text-white">
-                        Visa Interview
-                        <br>
-                        Success Webinar
-                    </h1>
-                    
-                    <!-- Description with better typography -->
-                    <p class="text-lg md:text-xl text-blue-100 leading-relaxed max-w-lg">
-                        Master your visa interview with expert guidance. Learn proven strategies, common questions, and how to answer confidently to get your visa approved.
-                    </p>
-                    
-                    <!-- CTA buttons with enhanced styling -->
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        @if($registrationFormEnabled && $webinars->isNotEmpty())
-                            <a href="#register" class="group relative px-6 py-3 bg-white text-blue-600 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
-                                <span class="relative z-10">Register Now</span>
-                            </a>
-                        @else
-                            <a href="#register" class="group relative px-6 py-3 bg-white text-blue-600 rounded-xl font-semibold text-base transition-all duration-300 transform hover:scale-105 shadow-xl hover:shadow-2xl">
-                                <span class="relative z-10">Registration</span>
-                            </a>
-                        @endif
-                        <a href="#about" class="px-6 py-3 bg-white/10 backdrop-blur-sm border-2 border-white/30 text-white rounded-xl font-semibold text-base hover:bg-white/20 transition-all duration-300 transform hover:scale-105">
-                            Learn More
-                        </a>
-                    </div>
-                    
-                    <!-- Stats with enhanced cards -->
-                    <div class="grid grid-cols-3 gap-4">
-                        <div class="bg-white/20 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/30 transform hover:scale-105 transition-transform duration-300">
-                            <div class="text-lg font-bold text-white">
-                                {{ $webinars->count() ?? 0 }}+
-                            </div>
-                            <div class="text-white text-xs sm:text-sm font-medium">Available Sessions</div>
-                        </div>
-                        <div class="bg-white/20 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/30 transform hover:scale-105 transition-transform duration-300">
-                            <div class="text-lg font-bold text-white">
-                                5+
-                            </div>
-                            <div class="text-white text-xs sm:text-sm font-medium">Expert Speakers</div>
-                        </div>
-                        <div class="bg-white/20 backdrop-blur-sm rounded-xl p-3 sm:p-4 border border-white/30 transform hover:scale-105 transition-transform duration-300">
-                            <div class="text-lg font-bold text-white">
-                                60min
-                            </div>
-                            <div class="text-white text-xs sm:text-sm font-medium">Each Session</div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Enhanced image section with effects -->
-                <div class="hidden md:block relative">
-                    <div class="relative group">
-                        <!-- Glow effect behind image -->
-                        <div class="absolute -inset-4 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur-xl opacity-50 group-hover:opacity-75 transition-opacity duration-300"></div>
-                        
-                        <!-- Main image with enhanced styling -->
-                        <img src="/webinar.png" alt="Professional Webinars" 
-                             class="relative rounded-3xl shadow-2xl w-full h-auto object-cover transform group-hover:scale-105 transition-transform duration-500">
-                        
-                        <!-- Floating badge -->
-                        <div class="absolute -top-4 -right-4 bg-gradient-to-r from-green-500 to-emerald-600 text-white px-4 py-2 rounded-full text-sm font-bold shadow-lg animate-bounce">
-                            LIVE NOW
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="relative max-w-7xl mx-auto px-6 py-2 flex items-center justify-center">
         </div>
     </section>
+
+    <style>
+      @keyframes twinkle {
+          0%, 100% { opacity: 0.3; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.2); }
+      }
+      .star {
+          position: absolute;
+          background: white;
+          border-radius: 50%;
+          animation: twinkle 2s infinite ease-in-out;
+      }
+    </style>
+
+    <script>
+      (function() {
+        const container = document.getElementById('star-overlay');
+        if (!container) return;
+        const count = 60;
+        for (let i = 0; i < count; i++) {
+            const star = document.createElement('div');
+            star.style.position = 'absolute';
+            star.style.top = Math.random() * 100 + '%';
+            star.style.left = Math.random() * 100 + '%';
+            const size = Math.random() * 3 + 1;
+            star.style.width = size + 'px';
+            star.style.height = size + 'px';
+            star.style.background = 'white';
+            star.style.borderRadius = '50%';
+            star.style.opacity = Math.random() * 0.6 + 0.2;
+            star.style.animation = 'twinkle ' + (Math.random() * 2 + 1) + 's infinite ease-in-out';
+            star.style.animationDelay = Math.random() * 2 + 's';
+            container.appendChild(star);
+        }
+      })();
+    </script>
 
     <style>
       #about{ padding: 96px 24px; }
