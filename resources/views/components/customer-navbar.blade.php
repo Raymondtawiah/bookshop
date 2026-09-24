@@ -11,9 +11,9 @@
 
             <!-- Desktop Navigation -->
             <div class="hidden md:flex items-center gap-6">
-                <a href="{{ route('home') }}#home" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Home</a>
-                <a href="{{ route('webinars.index') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Webinars</a>
-                <a href="{{ route('coaching.booking') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Coaching</a>
+                <a href="{{ route('home') }}#home" class="nav-link text-gray-600 hover:text-indigo-600 font-medium transition-colors">Home</a>
+                <a href="{{ route('webinars.index') }}" class="nav-link text-gray-600 hover:text-indigo-600 font-medium transition-colors">Webinars</a>
+                <a href="{{ route('coaching.booking') }}" class="nav-link text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Coaching</a>
                 
                 @auth
                     <div class="relative group">
@@ -39,19 +39,19 @@
             </div>
 
             <!-- Mobile Navigation -->
-            <div class="md:hidden flex items-center gap-4">
-                <a href="{{ route('home') }}#home" class="text-gray-600 hover:text-indigo-600 transition-colors" title="Home">
+            <div class="md:hidden flex items-center gap-3">
+                <a href="{{ route('home') }}#home" class="nav-link text-indigo-600 hover:text-indigo-700 transition-colors" title="Home">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10l9-7 9 7v10a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1V10z"/>
                     </svg>
                 </a>
-                <a href="{{ route('webinars.index') }}" class="text-gray-600 hover:text-indigo-600 transition-colors" title="Webinars">
+                <a href="{{ route('webinars.index') }}" class="nav-link text-indigo-600 hover:text-indigo-700 transition-colors" title="Webinars">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14v-4z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h11a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z"/>
                     </svg>
                 </a>
-                <a href="{{ route('coaching.booking') }}" class="text-gray-600 hover:text-indigo-600 transition-colors" title="Visa Coaching">
+                <a href="{{ route('coaching.booking') }}" class="nav-link text-indigo-600 hover:text-indigo-700 transition-colors" title="Visa Coaching">
                     <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422A12.083 12.083 0 0120 17.944L12 22l-8-4.056a12.083 12.083 0 011.84-7.366L12 14z"/>
@@ -83,3 +83,19 @@
         </div>
     </div>
 </nav>
+
+<script>
+    (function() {
+        const navLinks = document.querySelectorAll('.nav-link');
+
+        navLinks.forEach(function(link) {
+            link.addEventListener('click', function() {
+                const loader = document.getElementById('page-loader');
+                if (loader) {
+                    loader.style.opacity = '1';
+                    loader.classList.remove('hidden');
+                }
+            });
+        });
+    })();
+</script>

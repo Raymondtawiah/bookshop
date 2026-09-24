@@ -146,9 +146,10 @@ class WebinarAccessService
 
     /**
      * Calculate access expiration based on webinar scheduled date.
-     * If webinar is scheduled for today, expire at end of day.
-     * If webinar is in the future, expire after the webinar date.
-     * If no scheduled date, default to 7 days from now.
+     * Email access links should remain valid without forcing users to re-register.
+     * If webinar is scheduled for today, allow access through end of day.
+     * If webinar is in the future, allow access through the day after the webinar.
+     * If no scheduled date, allow access for 7 days from now.
      */
     private function getWebinarExpiration(WebinarRegistration $registration): CarbonInterface
     {

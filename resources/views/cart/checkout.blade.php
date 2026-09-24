@@ -15,6 +15,7 @@
     <link rel="apple-touch-icon" href="/favicon.ico">
 </head>
 <body class="antialiased overflow-x-hidden m-0 p-0 box-border w-full min-w-0">
+    <x-page-loader />
     <x-flash-message />
     <x-customer-navbar />
 

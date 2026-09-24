@@ -17,6 +17,7 @@
     </style>
 </head>
 <body class="bg-gray-50 font-sans pt-16 m-0 p-0 box-border w-full min-w-0">
+    <x-page-loader />
     <x-flash-message />
     
     @include('components.customer-navbar')

@@ -98,16 +98,6 @@ class WebinarRegistrationController extends Controller
             return redirect()->route('webinars.payment', [$webinar, $existingRegistration]);
         }
 
-        $emailRegistrationCount = WebinarRegistration::where('email', $request->email)
-            ->where('webinar_id', '!=', $webinar->id)
-            ->count();
-
-        if ($emailRegistrationCount >= 3) {
-            return redirect()->back()
-                ->withInput()
-                ->with('error', 'You have already registered for the maximum number of webinars allowed with this email.');
-        }
-
         // Create registration - with user_id for logged-in users, null for guests
         $requiresPayment = $this->paymentToggleService->isPaymentEnabled($webinar) && $webinar->current_price > 0;
 

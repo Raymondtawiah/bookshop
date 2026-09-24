@@ -9,6 +9,7 @@
     <link rel="apple-touch-icon" href="/apple-touch-icon.png">
     </head>
     <body class="antialiased bg-gray-50">
+        <x-page-loader />
         <x-flash-message />
         <x-customer-navbar />
 
