@@ -10,9 +10,13 @@
             <h1 class="text-3xl font-bold text-gray-900 mb-2">Webinar Management</h1>
             <p class="text-gray-600">Manage webinar registrations and send reminders to attendees</p>
         </div>
-        <a href="{{ route('admin.webinars.create') }}" class="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">
-            Create Webinar
-        </a>
+        <div class="flex items-center gap-2">
+            <a href="{{ route('admin.webinars.create') }}" class="inline-flex items-center justify-center w-10 h-10 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors" title="Create Webinar">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                </svg>
+            </a>
+        </div>
     </div>
 
     <style>

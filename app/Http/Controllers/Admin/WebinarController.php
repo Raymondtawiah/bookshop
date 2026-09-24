@@ -442,6 +442,7 @@ class WebinarController extends Controller
             'scheduled_at' => 'nullable|date',
             'duration_minutes' => 'nullable|integer|min:1',
             'custom_email_message' => 'nullable|string',
+            'payment_provider' => 'nullable|in:stripe,paystack,both',
         ];
 
         $validator = Validator::make($request->all(), $rules);

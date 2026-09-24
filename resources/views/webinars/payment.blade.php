@@ -50,19 +50,30 @@
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
                                 </svg>
                                 <div>
-                                     <p class="text-sm font-medium text-indigo-900">{{ $webinar->scheduled_at->timezone('Africa/Accra')->format('F j, Y') }}</p>
-                                     <p class="text-sm text-indigo-700">{{ $webinar->scheduled_at->timezone('Africa/Accra')->format('g:i A') }}</p>
+                                     <p class="text-sm font-medium text-indigo-900">{{ $webinar->scheduled_at->format('F j, Y') }}</p>
+                                     <p class="text-sm text-indigo-700">{{ $webinar->scheduled_at->format('g:i A') }}</p>
                                 </div>
                             </div>
                         </div>
                     @endif
 
-                    <!-- Payment Amount -->
-                    <div class="bg-gray-50 rounded-xl p-6 text-center mb-6">
-                        <p class="text-sm text-gray-500 mb-2">Amount to Pay</p>
-                         <p class="text-4xl font-bold text-indigo-600 mb-2">${{ number_format($webinar->current_price, 2) }}</p>
-                         <p class="text-sm text-gray-500 mt-2">Pay via Stripe</p>
-                    </div>
+                     <!-- Payment Amount -->
+                     <div class="bg-gray-50 rounded-xl p-6 text-center mb-6">
+                         <p class="text-sm text-gray-500 mb-2">Amount to Pay</p>
+                          <p class="text-4xl font-bold text-indigo-600 mb-2">${{ number_format($webinar->current_price, 2) }}</p>
+                          <p class="text-sm text-gray-500 mt-2">
+                              @php
+                                  $provider = $webinar->payment_provider ?? 'both';
+                              @endphp
+                              @if($provider === 'paystack')
+                                  Pay via Paystack / Momo
+                              @elseif($provider === 'stripe')
+                                  Pay via Stripe
+                              @else
+                                  Secure Checkout
+                              @endif
+                          </p>
+                     </div>
                 </div>
             </div>
 
@@ -75,20 +86,37 @@
                         <p class="text-sm text-gray-600 mb-4">Select your preferred payment method</p>
 
                         <div class="space-y-3 mb-6">
+                            @php
+                                $provider = $webinar->payment_provider ?? 'both';
+                                $showStripe = in_array($provider, ['stripe', 'both']);
+                                $showPaystack = in_array($provider, ['paystack', 'both']);
+                            @endphp
+
+                            @if($showStripe)
                             <label class="flex items-center gap-3 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-indigo-300 transition-colors">
-                                <input type="radio" name="provider" value="stripe" checked class="h-4 w-4 text-indigo-600">
+                                <input type="radio" name="provider" value="stripe" {{ (!old('provider') && !$showPaystack) || old('provider') == 'stripe' ? 'checked' : '' }} class="h-4 w-4 text-indigo-600">
                                 <div class="flex-1">
                                     <p class="text-sm font-semibold text-gray-900">Pay with Card (Stripe)</p>
                                     <p class="text-xs text-gray-500">${{ number_format($webinar->current_price, 2) }} USD</p>
                                 </div>
                             </label>
+                            @endif
+
+                            @if($showPaystack)
                             <label class="flex items-center gap-3 border border-gray-200 rounded-xl p-4 cursor-pointer hover:border-indigo-300 transition-colors">
-                                <input type="radio" name="provider" value="paystack" class="h-4 w-4 text-indigo-600">
+                                <input type="radio" name="provider" value="paystack" {{ old('provider') == 'paystack' || (!$showStripe && !old('provider')) ? 'checked' : '' }} class="h-4 w-4 text-indigo-600">
                                 <div class="flex-1">
                                     <p class="text-sm font-semibold text-gray-900">Pay with Momo</p>
                                     <p class="text-xs text-gray-500">GHS {{ number_format($webinar->current_price * 11.65, 2) }} (approx)</p>
                                 </div>
                             </label>
+                            @endif
+
+                            @if(!$showStripe && !$showPaystack)
+                            <div class="bg-yellow-50 border border-yellow-200 rounded-xl p-4 text-sm text-yellow-800">
+                                No payment methods are currently configured for this webinar. Please contact support.
+                            </div>
+                            @endif
                         </div>
                     </div>
 
@@ -102,9 +130,18 @@
                     <div class="mt-6 text-center">
                          <p class="text-sm text-gray-500">
                              Your payment is secured by
-                             <span class="font-semibold text-indigo-600">Stripe And Paystack</span>
+                             @php
+                                 $provider = $webinar->payment_provider ?? 'both';
+                             @endphp
+                             @if($provider === 'paystack')
+                                 <span class="font-semibold text-indigo-600">Paystack</span>
+                             @elseif($provider === 'stripe')
+                                 <span class="font-semibold text-indigo-600">Stripe</span>
+                             @else
+                                 <span class="font-semibold text-indigo-600">Stripe and Paystack</span>
+                             @endif
                          </p>
-                    </div>
+                     </div>
                 </div>
 
                 <div class="mt-6 bg-gray-50 rounded-xl p-6">

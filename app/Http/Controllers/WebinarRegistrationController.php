@@ -91,16 +91,21 @@ class WebinarRegistrationController extends Controller
             }
 
             if ($existingRegistration->isPaid() || ! $this->paymentToggleService->isPaymentEnabled($webinar)) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'You are already registered for this webinar. Check your email for the access link.',
-                ]);
+                return redirect()->route('webinars.index')
+                    ->with('error', 'You are already registered for this webinar. Check your email for the access link.');
             }
 
-            return response()->json([
-                'success' => true,
-                'redirect_url' => route('webinars.payment', [$webinar, $existingRegistration]),
-            ]);
+            return redirect()->route('webinars.payment', [$webinar, $existingRegistration]);
+        }
+
+        $emailRegistrationCount = WebinarRegistration::where('email', $request->email)
+            ->where('webinar_id', '!=', $webinar->id)
+            ->count();
+
+        if ($emailRegistrationCount >= 3) {
+            return redirect()->back()
+                ->withInput()
+                ->with('error', 'You have already registered for the maximum number of webinars allowed with this email.');
         }
 
         // Create registration - with user_id for logged-in users, null for guests
@@ -127,16 +132,11 @@ class WebinarRegistrationController extends Controller
 
             NotificationService::newWebinarRegistration($registration);
 
-            return response()->json([
-                'success' => true,
-                'message' => 'Registration successful! Check your email for details.',
-            ]);
+            return redirect()->route('webinars.index')
+                ->with('success', 'Registration successful! Check your email for details.');
         }
 
-        return response()->json([
-            'success' => true,
-            'redirect_url' => route('webinars.payment', [$webinar, $registration]),
-        ]);
+        return redirect()->route('webinars.payment', [$webinar, $registration]);
     }
 
     /**
@@ -170,7 +170,19 @@ class WebinarRegistrationController extends Controller
 
         $amount = $webinar->current_price;
         $reference = 'WEB-'.$webinar->id.'-'.$registration->id.'-'.time();
-        $provider = $request->input('provider', 'stripe');
+        $requestedProvider = $request->input('provider', 'stripe');
+        $allowedProviders = [];
+        $webinarProvider = $webinar->payment_provider ?? 'both';
+
+        if ($webinarProvider === 'both') {
+            $allowedProviders = ['stripe', 'paystack'];
+        } elseif ($webinarProvider === 'stripe') {
+            $allowedProviders = ['stripe'];
+        } elseif ($webinarProvider === 'paystack') {
+            $allowedProviders = ['paystack'];
+        }
+
+        $provider = in_array($requestedProvider, $allowedProviders) ? $requestedProvider : ($allowedProviders[0] ?? 'stripe');
 
         if ($provider === 'paystack') {
             $amountGhs = round($amount * 11.65, 2);

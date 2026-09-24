@@ -10,7 +10,7 @@ Your coaching session has been successfully booked! We're excited to help you pr
 **Interview Type:** {{ $booking->interview_type }}
 **Date:** {{ $booking->interview_date->format('F j, Y') }}
 **Time:** {{ $booking->interview_time }}
-**Package:** {{ ucfirst($booking->package) }}
+**Package:** Personal Coaching
 
 @if($booking->notes)
 **Notes:** {{ $booking->notes }}

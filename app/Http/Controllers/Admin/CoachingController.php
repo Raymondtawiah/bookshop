@@ -10,6 +10,7 @@ use App\Mail\CoachingPaymentReceived;
 use App\Models\CoachingBooking;
 use App\Models\SiteSetting;
 use App\Services\NotificationService;
+use App\Services\PaystackService;
 use App\Services\StripeService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -20,9 +21,12 @@ class CoachingController extends Controller
 {
     protected $stripe;
 
-    public function __construct(StripeService $stripe)
+    protected $paystack;
+
+    public function __construct(StripeService $stripe, PaystackService $paystack)
     {
         $this->stripe = $stripe;
+        $this->paystack = $paystack;
     }
 
     public function index()
@@ -57,20 +61,22 @@ class CoachingController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'phone' => 'nullable|string|max:20',
+            'phone' => 'required|string|max:20',
             'interview_type' => 'required|string|max:255',
             'interview_date' => 'required|date|after_or_equal:today',
             'interview_time' => 'required',
             'package' => 'required|in:team,single,premium',
+            'mobile_network' => 'nullable|in:mtn,vodafone,airteltigo',
+            'payment_method' => 'required|in:stripe,momo',
             'notes' => 'nullable|string',
         ]);
 
         // Prices in USD
         $packagePrice = match ($validated['package']) {
             'team' => 49.99,
-            'single' => 129.78,
+            'single' => 50,
             'premium' => 216.36,
-            default => 129.78,
+            default => 50,
         };
 
         $reference = 'COACH-'.time().rand(1000, 9999);
@@ -91,7 +97,44 @@ class CoachingController extends Controller
             'amount' => $packagePrice,
         ]);
 
-        // Use Stripe for payment
+        // Use selected payment method
+        $paymentMethod = $validated['payment_method'];
+
+        \Log::info('Coaching payment method selected', [
+            'payment_method' => $paymentMethod,
+            'package' => $validated['package'],
+            'price' => $packagePrice,
+        ]);
+
+        if ($paymentMethod === 'momo') {
+            $amountGhs = round($packagePrice * 11.65, 2);
+            $reference = 'COACH-'.$booking->id.'-'.time();
+
+            $paystackResult = $this->paystack->initializePayment(
+                $booking->email,
+                $amountGhs,
+                $reference,
+                'GHS',
+                route('coaching.paystack.callback')
+            );
+
+            if ($paystackResult && isset($paystackResult['success']) && $paystackResult['success']) {
+                $booking->update([
+                    'payment_reference' => $reference,
+                    'payment_provider' => 'paystack',
+                ]);
+
+                return redirect($paystackResult['authorization_url']);
+            }
+
+            \Log::error('Paystack initialization failed', ['response' => $paystackResult]);
+
+            return redirect()->route('coaching.booking')->with('error', 'Failed to initialize Paystack payment. Please try again.');
+        }
+
+        $reference = 'COACH-'.time().rand(1000, 9999);
+        $booking->update(['payment_reference' => $reference]);
+
         $paymentResult = $this->stripe->createCheckoutSession(
             $booking->email,
             $packagePrice,
@@ -99,11 +142,13 @@ class CoachingController extends Controller
             route('coaching.callback'),
             route('coaching.booking'),
             [],
-            $validated['package'] === 'team' ? 'Team Coaching Plan' : ($validated['package'] === 'single' ? '1 Week Interview Intensive' : 'Full Coaching Program'),
+            'Personal Coaching Nathaniel Gyarteng',
             'Coaching session booking'
         );
 
         if ($paymentResult && isset($paymentResult['success']) && $paymentResult['success']) {
+            $booking->update(['payment_provider' => 'stripe']);
+
             return redirect($paymentResult['checkout_url']);
         }
 
@@ -113,22 +158,27 @@ class CoachingController extends Controller
     public function callback(Request $request)
     {
         $sessionId = $request->get('session_id');
+        $reference = $request->get('reference');
 
-        if (! $sessionId) {
+        if (!$sessionId && !$reference) {
             return redirect()->route('coaching.booking')->with('error', 'Payment session not found.');
         }
 
-        $booking = CoachingBooking::where('payment_reference', $request->reference)->first();
+        $booking = CoachingBooking::where('payment_reference', $reference ?? $request->reference)->first();
 
-        if (! $booking) {
+        if (!$booking) {
             return redirect()->route('coaching.booking')->with('error', 'Booking not found.');
         }
 
         if ($booking->payment_status === 'paid') {
-            return redirect()->route('home')->with('success', 'Your booking is confirmed!');
+            return redirect()->route('coaching.booking')->with('success', 'Your booking is confirmed!');
         }
 
-        $verification = $this->stripe->verifyPayment($sessionId);
+        if ($booking->payment_provider === 'paystack') {
+            $verification = $this->paystack->verifyPayment($reference);
+        } else {
+            $verification = $this->stripe->verifyPayment($sessionId);
+        }
 
         if ($verification && isset($verification['success']) && $verification['success']) {
             $booking->update([
@@ -138,10 +188,47 @@ class CoachingController extends Controller
 
             Mail::to($booking->email)->send(new CoachingPaymentReceived($booking));
 
-            // Send admin notification
             NotificationService::newCoachingBooking($booking);
 
-            return redirect()->route('home')->with('success', 'Payment successful! Your coaching session is confirmed.');
+            return redirect()->route('coaching.booking')->with('success', 'Payment successful! Your coaching session is confirmed.');
+        }
+
+        $booking->update(['payment_status' => 'failed']);
+
+        return redirect()->route('coaching.booking')->with('error', 'Payment verification failed. Please try again.');
+    }
+
+    public function paystackCallback(Request $request)
+    {
+        $reference = $request->get('reference');
+
+        if (!$reference) {
+            return redirect()->route('coaching.booking')->with('error', 'Payment reference not found.');
+        }
+
+        $booking = CoachingBooking::where('payment_reference', $reference)->first();
+
+        if (!$booking) {
+            return redirect()->route('coaching.booking')->with('error', 'Booking not found.');
+        }
+
+        if ($booking->payment_status === 'paid') {
+            return redirect()->route('coaching.booking')->with('success', 'Your booking is confirmed!');
+        }
+
+        $verification = $this->paystack->verifyPayment($reference);
+
+        if ($verification && isset($verification['success']) && $verification['success']) {
+            $booking->update([
+                'payment_status' => 'paid',
+                'status' => 'confirmed',
+            ]);
+
+            Mail::to($booking->email)->send(new CoachingPaymentReceived($booking));
+
+            NotificationService::newCoachingBooking($booking);
+
+            return redirect()->route('coaching.booking')->with('success', 'Payment successful! Your coaching session is confirmed.');
         }
 
         $booking->update(['payment_status' => 'failed']);
@@ -154,7 +241,7 @@ class CoachingController extends Controller
         // Check if coaching is enabled
         $isActive = SiteSetting::get('coaching_booking_active', 'true');
         if ($isActive !== 'true') {
-            return redirect()->route('home')->with('error', 'Coaching booking is currently disabled.');
+            return redirect()->route('coaching.booking')->with('error', 'Coaching booking is currently disabled.');
         }
 
         $bookings = CoachingBooking::where('email', auth()->user()->email)

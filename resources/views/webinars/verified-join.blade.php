@@ -4,6 +4,12 @@
 
 @section('content')
     <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+           <!-- Back to Webinars -->
+        <div class="text-center">
+            <a href="{{ route('webinars.index') }}" class="text-indigo-600 hover:text-indigo-700 font-medium">
+                ← Back to All Webinars
+            </a>
+        </div>
         <!-- Webinar Notifications -->
         <x-webinar-notifications :webinar="$webinar" />
         <!-- Success Header -->
@@ -120,13 +126,6 @@
                     <span>Your registration and payment have been confirmed</span>
                 </li>
             </ul>
-        </div>
-
-        <!-- Back to Webinars -->
-        <div class="text-center">
-            <a href="{{ route('webinars.index') }}" class="text-indigo-600 hover:text-indigo-700 font-medium">
-                ← Back to All Webinars
-            </a>
         </div>
     </div>
 @endsection

@@ -311,7 +311,6 @@ Route::post('webhook/paystack', [PaystackWebhookController::class, 'handleWebhoo
 // Webinar routes (public - accessible to all)
 Route::get('webinars', [WebinarController::class, 'index'])->name('webinars.index');
 Route::get('webinar/{webinar}', [WebinarController::class, 'show'])->name('webinars.show')->where('webinar', '[0-9]+');
-Route::get('webinar/{webinar}/register-page', [WebinarController::class, 'registerPage'])->name('webinars.register.page')->where('webinar', '[0-9]+');
 
 // Webinar registration (public - guests allowed)
 Route::post('webinar/{webinar}/register', [WebinarRegistrationController::class, 'storeRegistration'])

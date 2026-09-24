@@ -15,7 +15,7 @@ You have successfully registered for **{{ $webinar->title }}**. This webinar is 
 
 ## Access Limit
 
-Your secure access link can be used a maximum of **4 times**. After reaching this limit, you will need to re-register.
+Your secure access link can be used a maximum of **3 times**. After reaching this limit, you will need to re-register.
 
 @if($accessLink)
 ## Your Webinar Access Link
@@ -27,14 +27,14 @@ Join Webinar
 
 ## Important Schedule Information
 
-**This webinar takes place every Friday at 4:00 PM.** You will receive notifications from the admin when it's time for each session. Please keep an eye on your email for upcoming session reminders.
+**This webinar takes place every Saturday at 4:00 PM.**.
 
 @if(!empty($customMessage))
-## Admin Message
+## Further Information
 
 {!! nl2br(e($customMessage)) !!}
 @endif
 
 Best regards,<br>
-The {{ config('app.name') }} Team
+{{ config('app.name') }} 
 @endcomponent

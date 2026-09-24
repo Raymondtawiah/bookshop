@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Book;
 use App\Models\Order;
 use App\Models\WebinarRegistration;
+use App\Models\WebinarSession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -18,12 +19,20 @@ class HomeController extends Controller
         $books = Book::latest()->take(8)->get();
         $featuredBooks = Book::where('is_featured', true)->latest()->take(5)->get();
 
-        // Fallback to latest books if no featured books exist
         if ($featuredBooks->count() === 0) {
             $featuredBooks = Book::latest()->take(5)->get();
         }
 
-        return view('welcome', compact('books', 'featuredBooks'));
+        $featuredWebinar = WebinarSession::visible()->latest()->first();
+        
+        \Log::info('Welcome page featured webinar', [
+            'id' => $featuredWebinar?->id,
+            'title' => $featuredWebinar?->title,
+            'price' => $featuredWebinar?->current_price,
+            'payment_enabled' => $featuredWebinar?->payment_enabled,
+        ]);
+
+        return view('welcome', compact('books', 'featuredBooks', 'featuredWebinar'));
     }
 
     /**

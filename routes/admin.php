@@ -24,8 +24,10 @@ Route::get('coaching-booking', [CoachingController::class, 'index'])->name('coac
 Route::get('coaching-booking/{plan}', [CoachingController::class, 'bookingPage'])->name('coaching.booking.page');
 Route::post('coaching-booking', [CoachingController::class, 'store'])->name('coaching.store');
 Route::get('coaching/callback', [CoachingController::class, 'callback'])->name('coaching.callback');
-Route::get('coaching/status', [CoachingController::class, 'getBookingStatus'])->name('coaching.status');
 
+Route::get('coaching/paystack/callback', [CoachingController::class, 'paystackCallback'])->name('coaching.paystack.callback');
+
+Route::get('coaching/status', [CoachingController::class, 'getBookingStatus'])->name('coaching.status');
 // Admin routes - requires login via web guard with is_admin=true
 Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group(function () {
     Route::get('dashboard', [AuthController::class, 'dashboard'])->name('dashboard');

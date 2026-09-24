@@ -16,8 +16,24 @@ class WebinarController extends Controller
         $webinars = WebinarSession::visible()->latest()->paginate(12);
 
         $registrationFormEnabled = SiteSetting::get('webinar_registration_form_enabled', 'true') === 'true';
+        $curriculum = SiteSetting::get('webinar_curriculum', [
+            'heading' => 'What you\'ll learn',
+            'subheading' => 'Webinar curriculum',
+            'cards' => [
+                ['title' => 'Common interview questions', 'message' => 'Learn the questions officers ask most often and how to answer them clearly and confidently.'],
+                ['title' => 'Document preparation', 'message' => 'Know exactly which documents you need and how to organize them so nothing holds you back.'],
+                ['title' => 'Body language & confidence', 'message' => 'Master the posture, tone, and eye contact that project confidence in under a minute.'],
+                ['title' => 'Red flags to avoid', 'message' => 'Learn the common mistakes that lead to denials — and how to steer clear of them entirely.'],
+                ['title' => 'Mock interview practice', 'message' => 'Join live mock interviews and get real-time feedback from experts on your performance.'],
+                ['title' => 'Success stories', 'message' => 'Hear real approvals from past attendees and the exact strategies that worked for them.'],
+            ],
+        ]);
 
-        return view('webinars.index', compact('webinars', 'registrationFormEnabled'));
+        if (is_string($curriculum)) {
+            $curriculum = json_decode($curriculum, true) ?: $curriculum;
+        }
+
+        return view('webinars.index', compact('webinars', 'registrationFormEnabled', 'curriculum'));
     }
 
     /**
@@ -25,20 +41,7 @@ class WebinarController extends Controller
      */
     public function show(WebinarSession $webinar)
     {
-        $user = Auth::user();
-
-        if (! $user) {
-            return redirect()->route('login')->with('error', 'Please log in to access this webinar.');
-        }
-
-        // Admins should be redirected to admin view
-        if ($user->is_admin) {
-            return redirect()->route('admin.webinars.index', ['webinar_id' => $webinar->id]);
-        }
-
-        $registration = $webinar->registrations()->where('user_id', $user->id)->first();
-
-        return view('webinars.show', compact('webinar', 'registration'));
+        return redirect()->route('webinars.register.page', $webinar);
     }
 
     /**

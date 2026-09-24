@@ -141,11 +141,11 @@ class PaystackService
     {
         $reference = $reference ?? 'MOMO-'.time().rand(1000, 9999);
 
-        // Format phone number for Ghana (remove leading 0 if present)
-        $formattedPhone = $mobileNumber;
-        if (substr($formattedPhone, 0, 1) === '0') {
+        $formattedPhone = preg_replace('/\D/', '', (string) $mobileNumber);
+
+        if (str_starts_with($formattedPhone, '0')) {
             $formattedPhone = '233'.substr($formattedPhone, 1);
-        } elseif (substr($formattedPhone, 0, 3) !== '233') {
+        } elseif (!str_starts_with($formattedPhone, '233')) {
             $formattedPhone = '233'.$formattedPhone;
         }
 
@@ -155,8 +155,10 @@ class PaystackService
             'reference' => $reference,
             'currency' => 'GHS',
             'country' => 'GH',
-            'mobile' => $formattedPhone,
-            'network' => $network,
+            'mobile_money' => [
+                'phone' => $formattedPhone,
+                'network' => $network,
+            ],
             'authorization_type' => 'mobile_money',
             'callback_url' => url(config('paystack.callbackUrl')),
             'metadata' => [

@@ -103,22 +103,40 @@
                         </div>
                     </div>
 
-                    <!-- Scheduled Date/Time -->
-                    <div>
-                        <label for="scheduled_at" class="block text-sm font-semibold text-gray-900 mb-2">Scheduled Date & Time</label>
-                        <input 
-                            type="datetime-local" 
-                            name="scheduled_at" 
-                            id="scheduled_at"
-                            value="{{ old('scheduled_at', $webinar->scheduled_at ? $webinar->scheduled_at->format('Y-m-d\TH:i') : '') }}"
-                            class="w-full px-5 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
-                        >
-                        @error('scheduled_at')
-                            <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
-                        @enderror
+                     <!-- Scheduled Date/Time -->
+                     <div>
+                         <label for="scheduled_at" class="block text-sm font-semibold text-gray-900 mb-2">Scheduled Date & Time</label>
+                         <input 
+                             type="datetime-local" 
+                             name="scheduled_at" 
+                             id="scheduled_at"
+                             value="{{ old('scheduled_at', $webinar->scheduled_at ? $webinar->scheduled_at->format('Y-m-d\TH:i') : '') }}"
+                             class="w-full px-5 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
+                         >
+                         @error('scheduled_at')
+                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                         @enderror
+                      </div>
+
+                      <!-- Payment Provider -->
+                     <div>
+                         <label for="payment_provider" class="block text-sm font-semibold text-gray-900 mb-2">Payment Provider</label>
+                         <select 
+                             name="payment_provider" 
+                             id="payment_provider"
+                             class="w-full px-5 py-3 rounded-xl border border-gray-200 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 outline-none transition-all"
+                         >
+                             <option value="stripe" {{ old('payment_provider', $webinar->payment_provider ?? 'stripe') === 'stripe' ? 'selected' : '' }}>Stripe</option>
+                             <option value="paystack" {{ old('payment_provider', $webinar->payment_provider ?? 'stripe') === 'paystack' ? 'selected' : '' }}>Paystack / Momo</option>
+                             <option value="both" {{ old('payment_provider', $webinar->payment_provider ?? 'stripe') === 'both' ? 'selected' : '' }}>Both Stripe and Paystack</option>
+                         </select>
+                         <p class="text-sm text-gray-400 mt-1">Choose which payment methods to accept for this webinar.</p>
+                         @error('payment_provider')
+                             <p class="text-red-500 text-sm mt-1">{{ $message }}</p>
+                         @enderror
                      </div>
 
-                     <!-- Custom Email Message -->
+                      <!-- Custom Email Message -->
                      <div>
                          <label for="custom_email_message" class="block text-sm font-semibold text-gray-900 mb-2">Custom Email Message</label>
                          <textarea 

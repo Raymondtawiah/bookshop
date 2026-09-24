@@ -7,7 +7,7 @@ Great news! Your payment has been successfully processed and your coaching sessi
 
 ## Booking Details
 
-**Package:** {{ ucfirst($booking->package) }}
+**Package:** Personal Coaching
 **Interview Type:** {{ $booking->interview_type }}
 **Interview Date:** {{ $booking->interview_date->format('F j, Y') }}
 **Interview Time:** {{ $booking->interview_time }}
