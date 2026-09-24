@@ -124,9 +124,7 @@
                         <div class="group relative bg-white/10 backdrop-blur-md border border-gray-200/70 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-indigo-300 transition-all duration-300 flex flex-col h-full">
                             <div class="flex gap-4 p-3 flex-1">
                                 <div class="relative w-24 h-36 flex-shrink-0 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-xl overflow-hidden flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                    </svg>
+                                    <img src="{{ asset('webinar.jpeg') }}" alt="Webinar" class="w-full h-full object-cover">
                                 </div>
                                 <div class="flex flex-col flex-1 min-w-0">
                                     <h3 class="text-sm font-bold text-gray-900 leading-snug line-clamp-2 mb-1 group-hover:text-indigo-600 transition-colors">{{ $webinar->title ?? 'Live Webinar' }}</h3>
@@ -150,14 +148,12 @@
                         <div class="group relative bg-white/10 backdrop-blur-md border border-gray-200/70 rounded-2xl overflow-hidden shadow-sm hover:shadow-xl hover:border-indigo-300 transition-all duration-300 flex flex-col h-full">
                             <div class="flex gap-4 p-3 flex-1">
                                 <div class="relative w-24 h-36 flex-shrink-0 bg-gradient-to-br from-indigo-100 to-indigo-200 rounded-xl overflow-hidden flex items-center justify-center">
-                                    <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-indigo-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
-                                    </svg>
+                                    <img src="{{ asset('coaching.jpeg') }}" alt="Coaching" class="w-full h-full object-cover">
                                 </div>
                                 <div class="flex flex-col flex-1 min-w-0">
                                     <h3 class="text-sm font-bold text-gray-900 leading-snug line-clamp-2 mb-1 group-hover:text-indigo-600 transition-colors">Personal Coaching</h3>
                                     <p class="text-xs text-gray-500 truncate mb-2">Practice your answers and receive personal feedback</p>
-                                    <p class="text-xs text-gray-500 truncate mb-2">20 minute session</p>
+                                    <p class="text-xs text-gray-500 truncate mb-2">30 minute session</p>
                                     <div class="flex items-baseline gap-1 mb-3">
                                         <span class="text-base font-extrabold text-emerald-600">$50</span>
                                     </div>

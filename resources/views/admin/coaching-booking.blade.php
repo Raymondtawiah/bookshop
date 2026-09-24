@@ -49,7 +49,7 @@
                 <p class="text-xs font-bold tracking-widest uppercase text-indigo-700 mb-3">Personal Coaching</p>
                 <h1 class="text-3xl sm:text-4xl font-extrabold text-gray-900 tracking-tight mb-3">Practice your visa interview with Nathaniel</h1>
                 <h2 class="text-lg sm:text-xl text-gray-600 font-medium mb-4">One focused session with feedback on your answers</h2>
-                <p class="text-sm text-gray-500">20 minutes . online . $50 USD</p>
+                <p class="text-sm text-gray-500">30 minutes . online . $50 USD</p>
             </div>
 
             <div class="bg-white rounded-3xl shadow-xl shadow-gray-200/60 border border-gray-100 p-6 sm:p-10">

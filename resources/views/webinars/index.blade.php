@@ -23,7 +23,7 @@
                     </div>
 
                     <div class="text-center mb-8">
-                        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-3 tracking-tight">Prepare for Your Visa Interview</h2>
+                        <h2 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-3 tracking-tight">{{ $webinar->title }}</h2>
                         <p class="text-base text-gray-600 leading-relaxed max-w-lg mx-auto">Practical guidance and live Q&amp;A with Nathaniel.</p>
                     </div>
 
