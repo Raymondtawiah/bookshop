@@ -1,5 +1,7 @@
 <?php
 
+require_once __DIR__.'/helpers.php';
+
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\CheckUserActivity;
 use App\Http\Middleware\CorsMiddleware;

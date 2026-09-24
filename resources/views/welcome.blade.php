@@ -10,7 +10,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="manifest" href="/manifest.json">
     <title>{{ config('app.name', 'Bookshop') }}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="{{ vite_asset('resources/css/app.css') }}">
+    <script type="module" src="{{ vite_asset('resources/js/app.js') }}"></script>
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="apple-touch-icon" href="/favicon.ico">
         <script>
@@ -129,13 +130,22 @@
                                 <div class="flex flex-col flex-1 min-w-0">
                                     <h3 class="text-sm font-bold text-gray-900 leading-snug line-clamp-2 mb-1 group-hover:text-indigo-600 transition-colors">{{ $webinar->title ?? 'Live Webinar' }}</h3>
                                     <p class="text-xs text-gray-500 truncate mb-2">{{ $webinar->description ?? 'Learn with Nathaniel and ask your questions live.' }}</p>
-                                    <div class="flex items-baseline gap-1 mb-3">
-                                        @if($webinar && ($webinar->payment_enabled ?? false) !== false && ($webinar->current_price ?? 0) > 0)
+                                    
+                                    @if($webinar && ($webinar->payment_enabled ?? false) !== false && ($webinar->current_price ?? 0) > 0)
+                                        <div class="flex items-baseline gap-1 mb-3">
                                             <span class="text-base font-extrabold text-emerald-600">${{ number_format($webinar->current_price, 2) }}</span>
-                                        @else
-                                            <span class="text-base font-extrabold text-emerald-600">FREE</span>
-                                        @endif
-                                    </div>
+                                        </div>
+                                    @else
+                                        <div class="flex items-center gap-2 mb-3">
+                                            <span class="inline-flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-full px-2.5 py-1">
+                                                <svg class="w-3.5 h-3.5 text-indigo-500 animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 5v2m0 4v2m0 4v2M5 5a2 2 0 00-2 2v3a2 2 0 110 4v3a2 2 0 002 2h14a2 2 0 002-2v-3a2 2 0 110-4V7a2 2 0 00-2-2H5z"/>
+                                                </svg>
+                                                <span class="text-[10px] font-bold text-gray-700 uppercase tracking-wide">Seats filling fast</span>
+                                            </span>
+                                        </div>
+                                    @endif
+                                    
                                     <div class="flex gap-1 mt-auto">
                                         <a href="{{ $webinar ? route('webinars.index') : route('webinars.index') }}" class="flex-1 text-center text-xs font-semibold px-2 py-2 rounded-md bg-violet-600 text-white hover:bg-violet-700 transition-colors">View Webinar</a>
                                     </div>

@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Book Your Coaching Session - {{ config('app.name', 'Nathaniel Gyarteng') }}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="{{ vite_asset('resources/css/app.css') }}">
+    <script type="module" src="{{ vite_asset('resources/js/app.js') }}"></script>
     <link rel="icon" href="/favicon.ico" sizes="any">
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
@@ -216,15 +217,8 @@
                                             <select name="interview_time" id="interview_time" required
                                                 class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl field-focus transition-all duration-200 appearance-none pr-10 cursor-pointer">
                                                 <option value="">Select time...</option>
-                                                <option value="09:00" {{ old('interview_time') == '09:00' ? 'selected' : '' }}>9:00 AM</option>
-                                                <option value="10:00" {{ old('interview_time') == '10:00' ? 'selected' : '' }}>10:00 AM</option>
-                                                <option value="11:00" {{ old('interview_time') == '11:00' ? 'selected' : '' }}>11:00 AM</option>
-                                                <option value="12:00" {{ old('interview_time') == '12:00' ? 'selected' : '' }}>12:00 PM</option>
-                                                <option value="13:00" {{ old('interview_time') == '13:00' ? 'selected' : '' }}>1:00 PM</option>
-                                                <option value="14:00" {{ old('interview_time') == '14:00' ? 'selected' : '' }}>2:00 PM</option>
-                                                <option value="15:00" {{ old('interview_time') == '15:00' ? 'selected' : '' }}>3:00 PM</option>
-                                                <option value="16:00" {{ old('interview_time') == '16:00' ? 'selected' : '' }}>4:00 PM</option>
-                                                <option value="17:00" {{ old('interview_time') == '17:00' ? 'selected' : '' }}>5:00 PM</option>
+                                <option value="08:00-10:00" {{ old('interview_time') == '08:00-10:00' ? 'selected' : '' }}>8:00 AM - 10:00 AM</option>
+                                <option value="12:00-15:00" {{ old('interview_time') == '12:00-15:00' ? 'selected' : '' }}>12:00 PM - 3:00 PM</option>
                                             </select>
                                             <div class="absolute inset-y-0 right-0 pr-3.5 flex items-center pointer-events-none">
                                                 <svg class="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

@@ -114,6 +114,48 @@
     display: none;
 }
 
+@keyframes seatWave {
+    0% { opacity: 0.55; transform: translateY(0); }
+    50% { opacity: 1; transform: translateY(-1px); }
+    100% { opacity: 0.55; transform: translateY(0); }
+}
+
+.seat-bar {
+    animation: seatWave 2.8s ease-in-out infinite;
+    transform-origin: bottom;
+}
+
+@keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.35); }
+    50% { box-shadow: 0 0 0 6px rgba(79, 70, 229, 0); }
+}
+
+.seat-pulse {
+    animation: pulseGlow 1.6s ease-in-out infinite;
+}
+
+@keyframes seatShake {
+    0%, 100% { transform: translateY(0); }
+    25% { transform: translateY(-1px); }
+    75% { transform: translateY(1px); }
+}
+
+.seat-shake {
+    animation: seatShake 0.6s ease-in-out infinite;
+}
+
+@keyframes colorStep {
+    0% { background-color: #1f2937; }
+    25% { background-color: #4f46e5; }
+    50% { background-color: #7c3aed; }
+    75% { background-color: #2563eb; }
+    100% { background-color: #1f2937; }
+}
+
+.seat-color-step {
+    animation: colorStep 2.2s ease-in-out infinite;
+}
+
 @media (max-width: 767px) {
     body {
         padding-bottom: 64px;

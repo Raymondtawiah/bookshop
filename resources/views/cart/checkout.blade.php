@@ -10,7 +10,8 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <link rel="manifest" href="/manifest.json">
     <title>Checkout - {{ config('app.name', 'Bookshop') }}</title>
-    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <link rel="stylesheet" href="{{ vite_asset('resources/css/app.css') }}">
+    <script type="module" src="{{ vite_asset('resources/js/app.js') }}"></script>
     <link rel="icon" href="/favicon.ico" sizes="any">
     <link rel="apple-touch-icon" href="/favicon.ico">
 </head>

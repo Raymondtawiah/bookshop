@@ -4,7 +4,8 @@
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>@yield('title', config('app.name', 'Visa Resources'))</title>
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
+        <link rel="stylesheet" href="{{ vite_asset('resources/css/app.css') }}">
+<script type="module" src="{{ vite_asset('resources/js/app.js') }}"></script>
         <link rel="icon" href="/favicon.ico" sizes="any">
         <meta name="csrf-token" content="{{ csrf_token() }}">
         <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>

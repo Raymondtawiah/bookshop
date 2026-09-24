@@ -21,7 +21,8 @@
 <link rel="preconnect" href="https://fonts.bunny.net">
 <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
 
-@vite(['resources/css/app.css', 'resources/js/app.js'])
+<link rel="stylesheet" href="{{ vite_asset('resources/css/app.css') }}">
+<script type="module" src="{{ vite_asset('resources/js/app.js') }}"></script>
 
 <script>
     // Register service worker for PWA

@@ -27,21 +27,33 @@
                         <p class="text-base text-gray-600 leading-relaxed max-w-lg mx-auto">Practical guidance and live Q&amp;A with Nathaniel.</p>
                     </div>
 
+                    <div class="flex items-center justify-center gap-3 mb-6">
+                        <div class="flex gap-2 items-end" id="bars">
+                            @php
+                                $totalBars = 8;
+                            @endphp
+                            @for($i = 0; $i < $totalBars; $i++)
+                                <span class="seat-color-step rounded bg-gray-900" style="width: {{ 16 + ($totalBars - $i) * 4 }}px; height: {{ 16 + ($totalBars - $i) * 4 }}px; animation-delay: {{ $i * 90 }}ms;"></span>
+                            @endfor
+                        </div>
+                        <div class="text-xs text-gray-500">
+                            <strong class="text-gray-900 font-semibold">Seats are filling up</strong>
+                        </div>
+                    </div>
+
                     <div class="flex flex-wrap items-center justify-center gap-3 mb-6 text-xs font-medium text-gray-600">
-                        @if($webinar->scheduled_at)
-                            <span class="inline-flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-full px-3 py-1.5">
-                                <svg class="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                                </svg>
-                                {{ $webinar->scheduled_at->format('M d, Y') }}
+                        <span class="inline-flex items-center gap-1.5 bg-gray-50 border border-gray-200 rounded-full px-3 py-1.5">
+                            <svg class="w-4 h-4 text-indigo-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            {{ $webinar->scheduled_at->format('M d, Y') }}
+                            <span class="text-gray-400">•</span>
+                            <span>{{ $webinar->scheduled_at->format('g:i A') }}</span>
+                            @if($webinar->duration_minutes)
                                 <span class="text-gray-400">•</span>
-                                <span>{{ $webinar->scheduled_at->format('g:i A') }}</span>
-                                @if($webinar->duration_minutes)
-                                    <span class="text-gray-400">•</span>
-                                    <span>{{ $webinar->duration_minutes }} min</span>
-                                @endif
-                            </span>
-                        @endif
+                                <span>{{ $webinar->duration_minutes }} min</span>
+                            @endif
+                        </span>
 
                         <span class="inline-flex items-center gap-1.5 bg-emerald-50 border border-emerald-100 text-emerald-700 rounded-full px-3 py-1.5">
                             @if(($webinar->payment_enabled ?? false) !== false && ($webinar->current_price ?? 0) > 0)
