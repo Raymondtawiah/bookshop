@@ -59,8 +59,8 @@
                     </svg>
                 </div>
                 <div>
-                    <div class="stat-label">Books sold</div>
-                    <div class="stat-value">{{ \App\Models\Order::where('payment_status', 'paid')->sum('quantity') ?? 0 }}</div>
+                    <div class="stat-label">Orders</div>
+                    <div class="stat-value">{{ \App\Models\Order::where('payment_status', 'paid')->count() }}</div>
                 </div>
             </div>
 
