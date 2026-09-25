@@ -140,7 +140,7 @@
                 @php
                     $pendingPayments = \App\Models\Order::where('payment_status', 'pending')->count();
                     $pendingCoachings = \App\Models\CoachingBooking::where('payment_status', 'pending')->count();
-                    $missingLinks = \App\Models\WebinarSession::whereNull('meeting_link')->orWhere('meeting_link', '')->count();
+                    $missingLinks = \App\Models\CoachingBooking::where('status', '!=', 'cancelled')->whereNull('meeting_link')->orWhere('meeting_link', '')->count();
                 @endphp
 
                 @if($pendingPayments > 0 || $pendingCoachings > 0 || $missingLinks > 0)
