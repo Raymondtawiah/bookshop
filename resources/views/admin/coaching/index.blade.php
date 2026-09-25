@@ -212,7 +212,7 @@
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center gap-2">
-                                    <button type="button" class="p-2 text-gray-500 hover:bg-gray-50 rounded-lg transition-colors" title="View details" onclick="openBookingModal({{ $booking->id }}, '{{ addslashes($booking->name) }}', '{{ addslashes($booking->email) }}', '{{ $booking->phone ?? '' }}', '{{ addslashes($booking->package) }}', '{{ addslashes($booking->interview_type) }}', '{{ $booking->interview_date->format('Y-m-d') }}', '{{ $booking->interview_time ?? '' }}', '{{ ucfirst($booking->payment_status) }}', '{{ ucfirst($booking->status) }}', '{{ $booking->amount ?? '0' }}', '{{ addslashes($booking->payment_reference ?? '') }}')">
+                                    <button type="button" class="p-2 text-gray-500 hover:bg-gray-50 rounded-lg transition-colors" title="View details" onclick="openBookingModal({{ $booking->id }}, '{{ addslashes($booking->name) }}', '{{ addslashes($booking->email) }}', '{{ $booking->phone ?? '' }}', '{{ addslashes($booking->package) }}', '{{ addslashes($booking->interview_type) }}', '{{ $booking->interview_date->format('Y-m-d') }}', '{{ $booking->interview_time ?? '' }}', '{{ ucfirst($booking->payment_status) }}', '{{ ucfirst($booking->status) }}', '{{ $booking->amount ?? '0' }}', '{{ addslashes($booking->payment_reference ?? '') }}', '{{ addslashes($booking->notes ?? '') }}')">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -316,21 +316,19 @@
                         <p id="modal-reference" class="text-sm font-semibold text-gray-900"></p>
                     </div>
                 </div>
-                                @if($booking->notes)
-                                <div class="mt-3 md:mt-4">
-                                    <label class="block text-sm font-medium text-gray-500">Notes</label>
-                                    <p id="modal-notes-{{ $booking->id }}" class="text-sm font-semibold text-gray-900 break-words">{{ $booking->notes }}</p>
-                                </div>
-                                @endif
+                <div id="modal-notes-container" class="mt-3 md:mt-4 hidden">
+                    <label class="block text-sm font-medium text-gray-500">Notes</label>
+                    <p id="modal-notes" class="text-sm font-semibold text-gray-900 break-words"></p>
+                </div>
             </div>
-            <div class="p-6 border-t border-gray-200 flex justify-end">
+            <div class="p-4 md:p-6 border-t border-gray-200 flex justify-end">
                 <button type="button" onclick="closeBookingModal()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">Close</button>
             </div>
         </div>
     </div>
 
     <script>
-        function openBookingModal(id, name, email, phone, package, interviewType, date, time, paymentStatus, status, amount, reference) {
+        function openBookingModal(id, name, email, phone, package, interviewType, date, time, paymentStatus, status, amount, reference, notes) {
             document.getElementById('modal-name').textContent = name;
             document.getElementById('modal-email').textContent = email;
             document.getElementById('modal-phone').textContent = phone || '-';
@@ -342,6 +340,15 @@
             document.getElementById('modal-status').textContent = status;
             document.getElementById('modal-amount').textContent = '$' + (amount || '0.00');
             document.getElementById('modal-reference').textContent = reference || '-';
+
+            const notesContainer = document.getElementById('modal-notes-container');
+            const notesElement = document.getElementById('modal-notes');
+            if (notes && notes.trim()) {
+                notesElement.textContent = notes;
+                notesContainer.classList.remove('hidden');
+            } else {
+                notesContainer.classList.add('hidden');
+            }
 
             const modal = document.getElementById('booking-modal');
             modal.classList.remove('hidden');
