@@ -244,6 +244,10 @@ class OrderController extends Controller
      */
     public function sendPaymentReminder(Request $request, $id)
     {
+        $request->validate([
+            'custom_message' => 'nullable|string|max:1000',
+        ]);
+
         $order = Order::with('user')->findOrFail($id);
 
         if ($order->payment_status !== 'pending') {
@@ -284,8 +288,9 @@ class OrderController extends Controller
         }
 
         $paymentLink = $paymentResult['url'];
+        $customMessage = $request->input('custom_message');
 
-        Mail::to($recipientEmail)->send(new PaymentReminder($order, $paymentLink));
+        Mail::to($recipientEmail)->send(new PaymentReminder($order, $paymentLink, $customMessage));
 
         $order->update([
             'reminder_sent' => true,

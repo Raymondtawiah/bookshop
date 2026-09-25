@@ -72,8 +72,13 @@
                             <label for="interview_time" class="block text-sm font-semibold text-gray-700 mb-1.5">Time <span class="text-red-500">*</span></label>
                             <select name="interview_time" id="interview_time" required class="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 transition-all appearance-none cursor-pointer">
                                 <option value="">Select time...</option>
-                                <option value="08:00-10:00" {{ old('interview_time') == '08:00-10:00' ? 'selected' : '' }}>8:00 AM - 10:00 AM</option>
-                                <option value="12:00-15:00" {{ old('interview_time') == '12:00-15:00' ? 'selected' : '' }}>12:00 PM - 3:00 PM</option>
+                                <option value="08:30 AM" {{ old('interview_time') == '08:30 AM' ? 'selected' : '' }}>8:30 AM  / 12:30 PM GMT</option>
+                                <option value="09:20 AM" {{ old('interview_time') == '09:20 AM' ? 'selected' : '' }}>9:20 AM  / 1:20 PM GMT</option>
+                                <option value="12:00 PM" {{ old('interview_time') == '12:00 PM' ? 'selected' : '' }}>12:00 PM  / 4:00 PM GMT</option>
+                                <option value="12:40 PM" {{ old('interview_time') == '12:40 PM' ? 'selected' : '' }}>12:40 PM  / 4:40 PM GMT</option>
+                                <option value="01:20 PM" {{ old('interview_time') == '01:20 PM' ? 'selected' : '' }}>1:20 PM  / 5:20 PM GMT</option>
+                                <option value="01:50 PM" {{ old('interview_time') == '01:50 PM' ? 'selected' : '' }}>1:50 PM  / 5:50 PM GMT</option>
+                                <option value="02:30 PM" {{ old('interview_time') == '02:30 PM' ? 'selected' : '' }}>2:30 PM  / 6:30 PM GMT</option>
                             </select>
                         </div>
                     </div>

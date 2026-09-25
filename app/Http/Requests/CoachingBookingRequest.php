@@ -28,7 +28,7 @@ class CoachingBookingRequest extends FormRequest
             'phone' => 'nullable|string|max:20',
             'interview_type' => 'required|string|in:visa_interview,job_interview,general_consultation',
             'interview_date' => 'required|date|after:today',
-            'interview_time' => 'required|date_format:H:i',
+            'interview_time' => 'required|regex:/^(0?[1-9]|1[0-2]):[0-5][0-9] (AM|PM)$/i',
             'package' => 'required|in:single,premium,team',
             'notes' => 'nullable|string|max:1000',
         ];
@@ -58,7 +58,7 @@ class CoachingBookingRequest extends FormRequest
             'booking_type.in' => 'Invalid booking type selected.',
             'package.in' => 'Invalid package selected.',
             'interview_date.after' => 'Interview date must be in the future.',
-            'interview_time.date_format' => 'Interview time must be in HH:MM format.',
+            'interview_time.regex' => 'Interview time must be in HH:MM AM/PM format.',
         ];
     }
 }

@@ -1,256 +1,273 @@
 @extends('layouts.admin')
 
-@section('title', 'Admin Dashboard')
+@section('title', 'Overview - Visa with Nathaniel')
 
 @section('content')
-    <!-- Welcome Section with Wave -->
-    <div class="relative bg-gradient-to-r from-indigo-600 to-purple-600 rounded-2xl p-8 mb-8 text-white overflow-hidden">
-        <h1 class="text-3xl font-bold mb-2">Welcome back, {{ auth()->user()->name }}! ⚙️</h1>
-        <p class="text-white/90 relative z-30 mb-6">Manage your bookstore from this dashboard</p>
-        <!-- Wave Shape -->
-        <div class="absolute bottom-0 left-0 w-full h-12">
-            <svg class="absolute bottom-0 w-full h-full" viewBox="0 0 1440 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M0 25C120 10 240 0 360 0C480 0 540 10 600 20C660 30 720 35 840 35C960 35 1080 20 1200 10C1320 5 1380 5 1440 10V50H0V25Z" fill="white"/>
-            </svg>
-        </div>
-    </div>
-
-    <!-- Statistics Cards -->
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-500">Total Books</p>
-                    <p class="text-2xl font-bold mt-1 text-gray-900">{{ \App\Models\Book::count() }}</p>
-                </div>
-                <div class="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center">
-                    <svg class="w-7 h-7 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-500">Total Customers</p>
-                    <p class="text-2xl font-bold mt-1 text-gray-900">{{ \App\Models\User::where('is_admin', false)->count() }}</p>
-                </div>
-                <div class="w-14 h-14 bg-green-100 rounded-xl flex items-center justify-center">
-                    <svg class="w-7 h-7 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-500">Total Orders</p>
-                    <p class="text-2xl font-bold mt-1 text-gray-900">{{ \App\Models\Order::count() }}</p>
-                </div>
-                <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center">
-                    <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                    </svg>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-500">Total Revenue</p>
-                    @php($totalUsd = \App\Models\Order::where('payment_status', 'paid')->sum('total_amount'))
-                    <p class="text-2xl font-bold mt-1 text-gray-900 break-words">${{ number_format($totalUsd, 2) }}</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Coaching Statistics -->
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-8">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">Coaching</h2>
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-6">
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-500">Total Bookings</p>
-                    <p class="text-2xl font-bold mt-1 text-gray-900">{{ \App\Models\CoachingBooking::count() }}</p>
-                </div>
-                <div class="w-12 h-12 bg-indigo-100 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
-                    </svg>
-                </div>
-            </div>
-
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-500">Paid Bookings</p>
-                    <p class="text-2xl font-bold mt-1 text-gray-900">{{ \App\Models\CoachingBooking::where('payment_status', 'paid')->count() }}</p>
-                </div>
-                <div class="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                </div>
-            </div>
-
-            <div class="flex items-center justify-between">
-                <div>
-                    <p class="text-sm font-medium text-gray-500">Pending Payment</p>
-                    <p class="text-2xl font-bold mt-1 text-gray-900">{{ \App\Models\CoachingBooking::where('payment_status', 'pending')->count() }}</p>
-                </div>
-                <div class="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
-                    <svg class="w-6 h-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
-                    </svg>
-                </div>
-            </div>
-
+    <div class="content">
+        <!-- =================================
+             PAGE HEADER
+        ================================== -->
+        <div class="page-header">
             <div>
-                <p class="text-sm font-medium text-gray-500">Total Revenue</p>
-                <p class="text-xl font-bold mt-1 text-gray-900 break-words">${{ number_format(\App\Models\CoachingBooking::where('payment_status', 'paid')->sum('amount'), 2) }}</p>
+                <h1 class="page-title">Overview</h1>
+                <p class="page-subtitle">Your business at a glance</p>
             </div>
         </div>
-    </div>
 
-    <!-- Quick Actions -->
-    <div class="grid grid-cols-2 md:grid-cols-3 gap-6 mb-8">
-        <a href="{{ route('admin.books.create') }}" class="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:border-indigo-200 transition-all">
-            <div class="flex items-center gap-4">
-                <div class="w-14 h-14 bg-orange-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <svg class="w-7 h-7 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+        <!-- =================================
+             STATISTICS
+        ================================== -->
+        <button type="button" id="stats-toggle" class="filter-toggle" aria-label="Toggle statistics" onclick="toggleFilters('stats-body')">
+            <span style="font-size:18px;font-weight:bold;line-height:1;">&lt;</span>
+        </button>
+        <div class="stats-grid" id="stats-body">
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24">
+                        <circle cx="9" cy="8" r="3"></circle>
+                        <circle cx="17" cy="9" r="2.5"></circle>
+                        <path d="M3 20c0-3.5 2.5-5.5 6-5.5s6 2 6 5.5"></path>
+                        <path d="M15 14c3 0 5 1.7 5.5 4.5"></path>
                     </svg>
                 </div>
                 <div>
-                    <h3 class="font-semibold text-gray-900">Add New Book</h3>
-                    <p class="text-sm text-gray-500">Upload a book</p>
+                    <div class="stat-label">Webinar registrations</div>
+                    <div class="stat-value">{{ \App\Models\WebinarRegistration::count() }}</div>
                 </div>
             </div>
-        </a>
 
-        <a href="{{ route('admin.books') }}" class="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:border-indigo-200 transition-all">
-            <div class="flex items-center gap-4">
-                <div class="w-14 h-14 bg-indigo-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <svg class="w-7 h-7 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24">
+                        <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                        <path d="M8 3v4"></path>
+                        <path d="M16 3v4"></path>
+                        <path d="M3 10h18"></path>
                     </svg>
                 </div>
                 <div>
-                    <h3 class="font-semibold text-gray-900">Manage Books</h3>
-                    <p class="text-sm text-gray-500">Edit or delete</p>
+                    <div class="stat-label">Coaching bookings</div>
+                    <div class="stat-value">{{ \App\Models\CoachingBooking::count() }}</div>
                 </div>
             </div>
-        </a>
 
-        <a href="{{ route('admin.customers') }}" class="group bg-white rounded-xl p-6 shadow-sm border border-gray-100 hover:shadow-lg hover:border-indigo-200 transition-all">
-            <div class="flex items-center gap-4">
-                <div class="w-14 h-14 bg-purple-100 rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform">
-                    <svg class="w-7 h-7 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 4h7v16H4z"></path>
+                        <path d="M13 4h7v16h-7z"></path>
                     </svg>
                 </div>
                 <div>
-                    <h3 class="font-semibold text-gray-900">View Customers</h3>
-                    <p class="text-sm text-gray-500">Customer list</p>
+                    <div class="stat-label">Books sold</div>
+                    <div class="stat-value">{{ \App\Models\Order::where('payment_status', 'paid')->sum('quantity') ?? 0 }}</div>
                 </div>
             </div>
-        </a>
-    </div>
 
-    <!-- Orders Chart -->
-    <div class="bg-white rounded-xl p-6 shadow-sm border border-gray-100 mb-8 flex flex-col items-center">
-        <h2 class="text-xl font-bold text-gray-900 mb-4">Orders Overview</h2>
-        <div class="w-full max-w-sm">
-            <canvas id="ordersChart"></canvas>
+            <div class="stat-card">
+                <div class="stat-icon">
+                    <svg viewBox="0 0 24 24">
+                        <path d="M4 20V12"></path>
+                        <path d="M10 20V7"></path>
+                        <path d="M16 20V10"></path>
+                        <path d="M22 20V4"></path>
+                    </svg>
+                </div>
+                <div>
+                    <div class="stat-label">Paid revenue</div>
+                    <div class="stat-value">${{ number_format(\App\Models\Order::where('payment_status', 'paid')->sum('total_amount'), 2) }}</div>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <!-- Recent Activity -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-        <div class="px-6 py-4 border-b border-gray-100 bg-gray-50">
-            <h2 class="text-lg font-semibold text-gray-900">Recent Orders</h2>
-        </div>
-        @if($recentOrders->isNotEmpty())
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead class="bg-gray-50 border-b border-gray-200">
-                        <tr>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Order #</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Customer</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Amount</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
-                            <th class="px-4 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Date</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100">
-                        @foreach($recentOrders as $order)
-                        <tr class="hover:bg-indigo-50 transition-colors">
-                            <td class="px-4 py-3 text-sm font-medium text-gray-900">#{{ $order->order_number ?? $order->id }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-600">{{ $order->user->name ?? 'Guest' }}</td>
-                            <td class="px-4 py-3 text-sm text-gray-900 font-medium">
-                                @if($order->currency === 'GHS')
-                                    ₵{{ number_format($order->total_amount, 2) }}
+        <!-- =================================
+             WEEKEND + ATTENTION
+        ================================== -->
+        <div class="two-column">
+            <!-- THIS WEEKEND -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">This weekend</h2>
+                </div>
+                <div class="weekend-body">
+                    @php
+                        $upcoming = \App\Models\CoachingBooking::where('interview_date', '>=', now()->toDateString())
+                            ->where('interview_date', '<=', now()->addDays(2)->toDateString())
+                            ->orderBy('interview_date')
+                            ->orderBy('interview_time')
+                            ->limit(3)
+                            ->get();
+                    @endphp
+
+                    @forelse($upcoming as $booking)
+                        <div class="event">
+                            <div>
+                                <div class="event-time">{{ $booking->interview_date->format('D · g:i A') }}</div>
+                                <div class="event-date">{{ $booking->interview_date->format('M d, Y') }}</div>
+                            </div>
+                            <div class="event-name">{{ $booking->name }}</div>
+                            <div class="event-right">
+                                @if($booking->payment_status === 'paid')
+                                    <span class="confirmed">Confirmed</span>
                                 @else
-                                    ${{ number_format($order->total_amount_usd ?? $order->total_amount, 2) }}
+                                    <span class="text-yellow-600">Pending</span>
                                 @endif
-                            </td>
-                            <td class="px-4 py-3">
-                                @if($order->payment_status === 'paid')
-                                    <span class="inline-flex px-2 py-1 text-xs font-bold rounded-full bg-green-100 text-green-700">Paid</span>
-                                @elseif($order->payment_status === 'pending')
-                                    <span class="inline-flex px-2 py-1 text-xs font-bold rounded-full bg-yellow-100 text-yellow-700">Pending</span>
-                                @else
-                                    <span class="inline-flex px-2 py-1 text-xs font-bold rounded-full bg-red-100 text-red-700">{{ ucfirst($order->payment_status ?? 'Failed') }}</span>
-                                @endif
-                            </td>
-                            <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">{{ $order->created_at->format('M d, Y') }}</td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            <div class="px-6 py-3 border-t border-gray-100 bg-gray-50 text-right">
-                <a href="{{ route('admin.orders') }}" class="text-sm text-indigo-600 hover:text-indigo-800 font-medium">View all orders →</a>
-            </div>
-        @else
-            <div class="p-6 text-center">
-                <p class="text-gray-500">No orders yet</p>
-            </div>
-        @endif
-    </div>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="event">
+                            <div class="event-name" style="grid-column: 1 / -1; text-align: center; color: #737d8e;">
+                                No upcoming sessions this weekend
+                            </div>
+                        </div>
+                    @endforelse
 
-    <!-- Meeting Notification Container -->
-    <div id="meeting-notification" class="fixed bottom-4 right-4 z-50 max-w-md hidden">
-        <div class="bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-xl shadow-2xl p-4">
-            <div class="flex items-start gap-3">
-                <div class="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center flex-shrink-0">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
-                    </svg>
+                    <div class="weekend-note">
+                        <svg viewBox="0 0 24 24">
+                            <circle cx="12" cy="12" r="9"></circle>
+                            <path d="M12 7v5l3 2"></path>
+                        </svg>
+                        Times shown in your account time zone (GMT+0).
+                    </div>
                 </div>
-                <div class="flex-1">
-                    <p class="font-semibold">Upcoming Meeting<span id="meeting-count"></span>!</p>
-                    <p id="meeting-customer-name" class="text-sm text-white/90"></p>
-                    <p id="meeting-additional" class="text-xs text-white/70 mt-1"></p>
-                    <p id="meeting-time" class="text-sm text-white/80 mt-1"></p>
-                    <a id="meeting-link" href="#" target="_blank" class="inline-block mt-2 text-sm bg-white text-indigo-600 px-3 py-1 rounded-lg hover:bg-white/90">
-                        Join Meeting →
-                    </a>
-                    <button id="send-reminder-btn" onclick="sendManualReminder()" class="mt-2 ml-2 text-xs bg-yellow-500 text-white px-2 py-1 rounded hover:bg-yellow-600">
-                        Send Reminder
-                    </button>
-                </div>
-                <button onclick="dismissMeetingNotification()" class="text-white/60 hover:text-white">
-                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-                    </svg>
-                </button>
             </div>
+
+            <!-- NEEDS ATTENTION -->
+            <div class="panel">
+                <div class="panel-header">
+                    <h2 class="panel-title">Needs attention</h2>
+                </div>
+                @php
+                    $pendingPayments = \App\Models\Order::where('payment_status', 'pending')->count();
+                    $pendingCoachings = \App\Models\CoachingBooking::where('payment_status', 'pending')->count();
+                    $missingLinks = \App\Models\WebinarSession::whereNull('meeting_link')->orWhere('meeting_link', '')->count();
+                @endphp
+
+                @if($pendingPayments > 0 || $pendingCoachings > 0 || $missingLinks > 0)
+                    @if($pendingPayments > 0 || $pendingCoachings > 0)
+                        <div class="attention-item">
+                            <div class="attention-icon red">
+                                <svg viewBox="0 0 24 24">
+                                    <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                                    <path d="M3 10h18"></path>
+                                </svg>
+                            </div>
+                            <div class="attention-text">
+                                <div class="attention-title">{{ $pendingPayments + $pendingCoachings }} payment{{ $pendingPayments + $pendingCoachings > 1 ? 's' : '' }} pending</div>
+                                <div class="attention-subtitle">Complete payment review</div>
+                            </div>
+                            <svg class="attention-arrow" viewBox="0 0 24 24">
+                                <path d="M9 6l6 6-6 6"></path>
+                            </svg>
+                        </div>
+                    @endif
+
+                    @if($missingLinks > 0)
+                        <div class="attention-item">
+                            <div class="attention-icon red">
+                                <svg viewBox="0 0 24 24">
+                                    <path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.2 1.2"></path>
+                                    <path d="M14 11a5 5 0 0 0-7.1-.1l-2 2a5 5 0 0 0 7.1 7.1l1.2-1.2"></path>
+                                </svg>
+                            </div>
+                            <div class="attention-text">
+                                <div class="attention-title">Next webinar: joining link missing</div>
+                                <div class="attention-subtitle">Add a joining link before the event</div>
+                            </div>
+                            <svg class="attention-arrow" viewBox="0 0 24 24">
+                                <path d="M9 6l6 6-6 6"></path>
+                            </svg>
+                        </div>
+                    @endif
+                @else
+                    <div class="attention-item">
+                        <div class="attention-text" style="text-align: center; color: #737d8e; width: 100%;">
+                            All caught up!
+                        </div>
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        <!-- =================================
+             QUICK ACTIONS + ACTIVITY
+        ================================== -->
+        <div class="bottom-grid">
+            <!-- QUICK ACTIONS -->
+            <div class="panel quick-actions">
+                <div class="panel-header">
+                    <h2 class="panel-title">Quick actions</h2>
+                </div>
+                <div class="quick-body">
+                    <div class="quick-buttons">
+                        <a href="{{ route('admin.webinars.create') }}" class="quick-btn primary">
+                            <svg viewBox="0 0 24 24">
+                                <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                                <path d="M8 3v4"></path>
+                                <path d="M16 3v4"></path>
+                                <path d="M3 10h18"></path>
+                            </svg>
+                            Create webinar
+                        </a>
+                        <a href="{{ route('admin.coachings.index') }}" class="quick-btn">
+                            <svg viewBox="0 0 24 24">
+                                <circle cx="9" cy="8" r="3"></circle>
+                                <circle cx="17" cy="9" r="2.5"></circle>
+                                <path d="M3 20c0-3.5 2.5-5.5 6-5.5s6 2 6 5.5"></path>
+                            </svg>
+                            Manage availability
+                        </a>
+                        <a href="{{ route('admin.books.create') }}" class="quick-btn">
+                            <svg viewBox="0 0 24 24">
+                                <path d="M4 20h4L19 9l-4-4L4 16v4z"></path>
+                                <path d="M13 6l4 4"></path>
+                            </svg>
+                            Add new book
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECENT ACTIVITY -->
+            <div class="panel activity">
+                <div class="activity-header">
+                    <h2 class="panel-title">Recent activity</h2>
+                    <a href="{{ route('admin.orders') }}" class="view-all">View all</a>
+                </div>
+                <div class="activity-body">
+                    @php
+                        $recentOrders = \App\Models\Order::latest()->limit(3)->get();
+                    @endphp
+
+                    @forelse($recentOrders as $order)
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <svg viewBox="0 0 24 24">
+                                    <circle cx="9" cy="20" r="1"></circle>
+                                    <circle cx="18" cy="20" r="1"></circle>
+                                    <path d="M3 4h2l2.5 11h10l2-7H6"></path>
+                                </svg>
+                            </div>
+                            <div class="activity-text">
+                                <div class="activity-title">Book order completed</div>
+                                <div class="activity-date">{{ $order->created_at->format('M d, Y · g:i A') }}</div>
+                            </div>
+                            <div class="activity-price">${{ number_format($order->total_amount, 2) }}</div>
+                        </div>
+                    @empty
+                        <div class="activity-item">
+                            <div class="activity-text" style="text-align: center; color: #737d8e; width: 100%;">
+                                No recent activity
+                            </div>
+                        </div>
+                    @endforelse
+                </div>
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            Design concept • Sample data
         </div>
     </div>
 @endsection

@@ -94,6 +94,12 @@
         
         <p>We noticed that your payment for order <strong>#{{ $order->order_number }}</strong> is still pending.</p>
         
+        @if(!empty($customMessage))
+        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; margin: 20px 0; border-radius: 6px;">
+            <p style="margin: 0; font-style: italic;">{{ $customMessage }}</p>
+        </div>
+        @endif
+        
         <p>Please complete your payment to confirm your order and receive your book(s).</p>
         
         <div class="order-details">

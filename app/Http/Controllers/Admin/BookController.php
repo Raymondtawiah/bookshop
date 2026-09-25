@@ -54,7 +54,11 @@ class BookController extends Controller
             $books = Book::latest()->paginate(10);
         }
 
-        return view('admin.books.index', compact('books'));
+        $book = Book::first();
+        $orders = \App\Models\Order::latest()->get();
+        $bonusSessions = collect([]);
+
+        return view('admin.books.index', compact('books', 'book', 'orders', 'bonusSessions'));
     }
 
     public function create()

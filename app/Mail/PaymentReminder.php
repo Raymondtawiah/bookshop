@@ -17,10 +17,13 @@ class PaymentReminder extends Mailable
 
     public $paymentLink;
 
-    public function __construct(Order $order, string $paymentLink)
+    public $customMessage;
+
+    public function __construct(Order $order, string $paymentLink, ?string $customMessage = null)
     {
         $this->order = $order;
         $this->paymentLink = $paymentLink;
+        $this->customMessage = $customMessage;
     }
 
     public function envelope(): Envelope
@@ -37,6 +40,7 @@ class PaymentReminder extends Mailable
             with: [
                 'order' => $this->order,
                 'paymentLink' => $this->paymentLink,
+                'customMessage' => $this->customMessage,
             ],
         );
     }
