@@ -22,7 +22,7 @@
 
     <div class="w-full overflow-x-hidden min-w-0 mx-0 px-0 pt-24">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-32 items-start">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
                 
                 <div>
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
