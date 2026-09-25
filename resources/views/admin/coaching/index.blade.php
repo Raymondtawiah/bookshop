@@ -10,11 +10,6 @@
                 <h1 class="page-title">Coaching</h1>
                 <p class="page-subtitle">Manage coaching bookings and sessions.</p>
             </div>
-            <a href="{{ route('coaching.booking') }}" class="p-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors shadow-sm" title="New booking">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-                </svg>
-            </a>
         </div>
 
         <!-- STATS -->
@@ -219,14 +214,11 @@
                                         </svg>
                                     </button>
                                     @if($booking->payment_status === 'paid')
-                                        <form method="POST" action="{{ route('admin.coachings.sendReminder', $booking->id) }}" class="inline" onsubmit="return confirm('Send reminder to {{ $booking->name }}?')">
-                                            @csrf
-                                            <button type="submit" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Send reminder">
-                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
-                                                </svg>
-                                            </button>
-                                        </form>
+                                        <button type="button" class="p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Send reminder" onclick="openReminderModal({{ $booking->id }}, '{{ addslashes($booking->name) }}', '{{ addslashes($booking->meeting_link ?? '') }}')">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 002 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                                            </svg>
+                                        </button>
                                     @else
                                         <form method="POST" action="{{ route('admin.coachings.sendPaymentReminder', $booking->id) }}" class="inline" onsubmit="return confirm('Send payment reminder to {{ $booking->name }}?')">
                                             @csrf
@@ -327,6 +319,38 @@
         </div>
     </div>
 
+    <!-- REMINDER MODAL -->
+    <div id="reminder-modal" class="fixed inset-0 bg-black/30 backdrop-blur-sm hidden items-center justify-center z-50 overflow-y-auto overflow-x-hidden">
+        <div class="bg-white rounded-2xl shadow-xl w-full mx-auto max-w-md max-h-[90vh] overflow-y-auto m-4 md:m-8">
+            <div class="p-4 md:p-6 border-b border-gray-200">
+                <h3 class="text-xl font-bold text-gray-900">Send Session Reminder</h3>
+            </div>
+            <form id="reminder-form" method="POST" action="">
+                @csrf
+                <div class="p-4 md:p-6 space-y-4">
+                    <p class="text-sm text-gray-600">Send a meeting reminder to <strong id="reminder-customer-name" class="text-gray-900"></strong>. The reminder will use their originally selected interview time.</p>
+                    
+                    <div>
+                        <label for="reminder-meeting-link" class="block text-sm font-medium text-gray-700 mb-1">Meeting Link *</label>
+                        <input type="url" name="meeting_link" id="reminder-meeting-link" required class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100" placeholder="https://...">
+                    </div>
+
+                    <div>
+                        <label for="reminder-meeting-notes" class="block text-sm font-medium text-gray-700 mb-1">Meeting Notes (optional)</label>
+                        <textarea name="meeting_notes" id="reminder-meeting-notes" rows="3" class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 resize-none" placeholder="Any additional notes for the client..."></textarea>
+                    </div>
+
+                    <div id="reminder-error" class="hidden bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm"></div>
+                    <div id="reminder-success" class="hidden bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-sm"></div>
+                </div>
+                <div class="p-4 md:p-6 border-t border-gray-200 flex justify-end gap-3">
+                    <button type="button" onclick="closeReminderModal()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">Cancel</button>
+                    <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors">Send Reminder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         function openBookingModal(id, name, email, phone, package, interviewType, date, time, paymentStatus, status, amount, reference, notes) {
             const timeMap = {
@@ -371,6 +395,82 @@
             modal.classList.add('hidden');
             modal.classList.remove('flex');
         }
+
+        function openReminderModal(bookingId, customerName, existingMeetingLink) {
+            document.getElementById('reminder-customer-name').textContent = customerName;
+            document.getElementById('reminder-form').action = '/admin/coachings/' + bookingId + '/send-reminder';
+            document.getElementById('reminder-meeting-link').value = existingMeetingLink || '';
+            document.getElementById('reminder-meeting-notes').value = '';
+            document.getElementById('reminder-error').classList.add('hidden');
+            document.getElementById('reminder-success').classList.add('hidden');
+            
+            const modal = document.getElementById('reminder-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeReminderModal() {
+            const modal = document.getElementById('reminder-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+            document.getElementById('reminder-form').reset();
+            document.getElementById('reminder-error').classList.add('hidden');
+            document.getElementById('reminder-success').classList.add('hidden');
+        }
+
+        document.getElementById('reminder-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const form = this;
+            const submitBtn = form.querySelector('button[type="submit"]');
+            const originalBtnText = submitBtn.textContent;
+            const errorDiv = document.getElementById('reminder-error');
+            const successDiv = document.getElementById('reminder-success');
+            
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Sending...';
+            errorDiv.classList.add('hidden');
+            successDiv.classList.add('hidden');
+            
+            const formData = new FormData(form);
+            formData.append('_token', '{{ csrf_token() }}');
+            
+            fetch(form.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'Accept': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    successDiv.textContent = data.message || 'Reminder sent successfully!';
+                    successDiv.classList.remove('hidden');
+                    setTimeout(() => {
+                        closeReminderModal();
+                    }, 1500);
+                } else {
+                    errorDiv.textContent = data.message || 'Failed to send reminder. Please try again.';
+                    errorDiv.classList.remove('hidden');
+                }
+            })
+            .catch(err => {
+                errorDiv.textContent = 'An error occurred. Please try again.';
+                errorDiv.classList.remove('hidden');
+            })
+            .finally(() => {
+                submitBtn.disabled = false;
+                submitBtn.textContent = originalBtnText;
+            });
+        });
+
+        window.addEventListener('click', function(e) {
+            const reminderModal = document.getElementById('reminder-modal');
+            if (e.target === reminderModal) {
+                closeReminderModal();
+            }
+        });
     </script>
 @endsection
 

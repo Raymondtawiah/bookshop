@@ -21,8 +21,25 @@ class CoachingMeetingReminder extends Mailable
 
     public function envelope(): Envelope
     {
+        $minutes = (int) $this->minutesUntil;
+        if ($minutes < 60) {
+            $timeText = $minutes . ' minute' . ($minutes !== 1 ? 's' : '');
+        } elseif ($minutes < 1440) {
+            $hours = floor($minutes / 60);
+            $mins = $minutes % 60;
+            if ($mins === 0) {
+                $timeText = $hours . ' hour' . ($hours !== 1 ? 's' : '');
+            } else {
+                $timeText = $hours . ' hour' . ($hours !== 1 ? 's' : '') . ' ' . $mins . ' minute' . ($mins !== 1 ? 's' : '');
+            }
+        } else {
+            $days = floor($minutes / 1440);
+            $hours = floor(($minutes % 1440) / 60);
+            $timeText = $days . ' day' . ($days !== 1 ? 's' : '') . ' ' . $hours . ' hour' . ($hours !== 1 ? 's' : '');
+        }
+
         return new Envelope(
-            subject: "Reminder: Your Coaching Session in {$this->minutesUntil} minutes",
+            subject: "Reminder: Your Coaching Session in {$timeText}",
         );
     }
 

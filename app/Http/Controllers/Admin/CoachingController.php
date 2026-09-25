@@ -236,21 +236,6 @@ class CoachingController extends Controller
         return redirect()->route('coaching.booking')->with('error', 'Payment verification failed. Please try again.');
     }
 
-    public function myBookings()
-    {
-        // Check if coaching is enabled
-        $isActive = SiteSetting::get('coaching_booking_active', 'true');
-        if ($isActive !== 'true') {
-            return redirect()->route('coaching.booking')->with('error', 'Coaching booking is currently disabled.');
-        }
-
-        $bookings = CoachingBooking::where('email', auth()->user()->email)
-            ->orderBy('created_at', 'desc')
-            ->get();
-
-        return view('customer.my-bookings', compact('bookings'));
-    }
-
     public function adminIndex()
     {
         $query = CoachingBooking::query();
@@ -404,28 +389,33 @@ class CoachingController extends Controller
     public function sendReminder(Request $request, CoachingBooking $booking)
     {
         $validated = $request->validate([
-            'reminder_datetime' => 'nullable|date',
             'meeting_link' => 'nullable|url',
+            'meeting_notes' => 'nullable|string',
         ]);
 
-        // Update meeting time if provided
-        if ($validated['reminder_datetime']) {
-            $booking->update(['meeting_time' => Carbon::parse($validated['reminder_datetime'])]);
+        $updateData = [];
+        if (!empty($validated['meeting_link'])) {
+            $updateData['meeting_link'] = $validated['meeting_link'];
+        }
+        if (!empty($validated['meeting_notes'])) {
+            $updateData['meeting_notes'] = $validated['meeting_notes'];
+        }
+        if (!empty($updateData)) {
+            $booking->update($updateData);
         }
 
-        // Update meeting link if provided
-        if ($validated['meeting_link']) {
-            $booking->update(['meeting_link' => $validated['meeting_link']]);
+        $reminderDatetime = null;
+        try {
+            $reminderDatetime = Carbon::createFromFormat('Y-m-d H:i A', $booking->interview_date . ' ' . $booking->interview_time);
+        } catch (\Exception $e) {
+            $reminderDatetime = $booking->meeting_time;
         }
-
-        // Use provided datetime or fall back to meeting_time
-        $reminderDatetime = $booking->fresh()->meeting_time;
 
         if (! $reminderDatetime) {
             return response()->json(['success' => false, 'message' => 'No meeting time set'], 400);
         }
 
-        $meetingLink = $validated['meeting_link'] ?? $booking->fresh()->meeting_link;
+        $meetingLink = $booking->meeting_link;
 
         if (! $meetingLink) {
             return response()->json(['success' => false, 'message' => 'No meeting link provided'], 400);

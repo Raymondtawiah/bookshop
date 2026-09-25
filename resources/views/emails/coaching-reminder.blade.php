@@ -24,7 +24,26 @@
                 <p class="text-gray-600 mb-2">Hi {{ $booking->name }},</p>
                 <p class="text-gray-600 mb-2">
                     This is a friendly reminder that your coaching session is starting in 
-                    <span class="font-bold text-indigo-600">{{ $minutesUntil }} minutes</span>.
+                    <span class="font-bold text-indigo-600">
+                        @php
+                            $minutes = (int) $minutesUntil;
+                            if ($minutes < 60) {
+                                echo $minutes . ' minute' . ($minutes !== 1 ? 's' : '');
+                            } elseif ($minutes < 1440) {
+                                $hours = floor($minutes / 60);
+                                $mins = $minutes % 60;
+                                if ($mins === 0) {
+                                    echo $hours . ' hour' . ($hours !== 1 ? 's' : '');
+                                } else {
+                                    echo $hours . ' hour' . ($hours !== 1 ? 's' : '') . ' ' . $mins . ' minute' . ($mins !== 1 ? 's' : '');
+                                }
+                            } else {
+                                $days = floor($minutes / 1440);
+                                $hours = floor(($minutes % 1440) / 60);
+                                echo $days . ' day' . ($days !== 1 ? 's' : '') . ' ' . $hours . ' hour' . ($hours !== 1 ? 's' : '');
+                            }
+                        @endphp
+                    </span>.
                 </p>
                 @if($reminderDatetime)
                 <p class="text-gray-600">

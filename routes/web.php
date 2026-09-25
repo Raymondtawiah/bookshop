@@ -285,7 +285,6 @@ Route::middleware(['auth', 'verify.customer'])->group(function () {
     Route::get('my-orders', [OrderController::class, 'myOrders'])->name('my-orders');
     Route::get('my-order/{order}', [OrderController::class, 'myOrderDetail'])->name('my-order.show');
     Route::match(['get', 'post'], 'my-order/{order}/resume-payment', [OrderController::class, 'resumePayment'])->name('my-order.resume-payment');
-    Route::get('my-bookings', [CoachingController::class, 'myBookings'])->name('customer.my-bookings');
 
     // Payment routes
     Route::match(['get', 'post'], 'payment/initialize', [PaymentController::class, 'initializePayment'])->name('payment.initialize');
