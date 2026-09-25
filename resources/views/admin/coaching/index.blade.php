@@ -212,7 +212,7 @@
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center gap-2">
-                                    <button type="button" class="p-2 text-gray-500 hover:bg-gray-50 rounded-lg transition-colors" title="View details" onclick="openBookingModal({{ $booking->id }}, '{{ addslashes($booking->name) }}', '{{ addslashes($booking->email) }}', '{{ $booking->phone ?? '' }}', '{{ addslashes($booking->package) }}', '{{ addslashes($booking->interview_type) }}', '{{ $booking->interview_date->format('Y-m-d') }}', '{{ $booking->interview_time ?? '' }}', '{{ ucfirst($booking->payment_status) }}', '{{ ucfirst($booking->status) }}', '{{ $booking->amount ?? '0' }}', '{{ addslashes($booking->payment_reference ?? '') }}', '{{ addslashes($booking->notes ?? '') }}')">
+                                    <button type="button" class="p-2 text-gray-500 hover:bg-gray-50 rounded-lg transition-colors" title="View details" onclick="openBookingModal({{ $booking->id }}, '{{ addslashes($booking->name) }}', '{{ addslashes($booking->email) }}', '{{ addslashes($booking->phone ?? '') }}', '{{ addslashes($booking->package ?? '') }}', '{{ addslashes($booking->interview_type ?? '') }}', '{{ $booking->interview_date ? $booking->interview_date->format('Y-m-d') : '' }}', '{{ addslashes($booking->interview_time ?? '') }}', '{{ ucfirst($booking->payment_status ?? '') }}', '{{ ucfirst($booking->status ?? '') }}', '{{ $booking->amount ?? '0' }}', '{{ addslashes($booking->payment_reference ?? '') }}', '{{ addslashes($booking->notes ?? '') }}')">
                                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -329,13 +329,24 @@
 
     <script>
         function openBookingModal(id, name, email, phone, package, interviewType, date, time, paymentStatus, status, amount, reference, notes) {
+            const timeMap = {
+                '08:30 AM': '8:30 AM / 12:30 PM GMT',
+                '09:20 AM': '9:20 AM / 1:20 PM GMT',
+                '12:00 PM': '12:00 PM / 4:00 PM GMT',
+                '12:40 PM': '12:40 PM / 4:40 PM GMT',
+                '01:20 PM': '1:20 PM / 5:20 PM GMT',
+                '01:50 PM': '1:50 PM / 5:50 PM GMT',
+                '02:30 PM': '2:30 PM / 6:30 PM GMT'
+            };
+            const displayTime = time && timeMap[time] ? timeMap[time] : (time || '-');
+
             document.getElementById('modal-name').textContent = name;
             document.getElementById('modal-email').textContent = email;
             document.getElementById('modal-phone').textContent = phone || '-';
             document.getElementById('modal-package').textContent = package;
             document.getElementById('modal-interview-type').textContent = interviewType;
             document.getElementById('modal-date').textContent = date;
-            document.getElementById('modal-time').textContent = time || '-';
+            document.getElementById('modal-time').textContent = displayTime;
             document.getElementById('modal-payment-status').textContent = paymentStatus;
             document.getElementById('modal-status').textContent = status;
             document.getElementById('modal-amount').textContent = '$' + (amount || '0.00');
