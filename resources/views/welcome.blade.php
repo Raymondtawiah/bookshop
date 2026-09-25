@@ -180,6 +180,7 @@
         @endif
 
         <x-customer-footer />
+        <x-install-pwa />
 
     @include('chat-widget')
 

@@ -141,6 +141,7 @@
     @endif
     @include('chat-widget')
     @include('components.customer-footer')
+    <x-install-pwa />
 
     <script>
         function checkBookingStatus() {
