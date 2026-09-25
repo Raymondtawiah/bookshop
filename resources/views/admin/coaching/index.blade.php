@@ -212,6 +212,12 @@
                             </td>
                             <td class="px-4 py-3">
                                 <div class="flex items-center gap-2">
+                                    <button type="button" class="p-2 text-gray-500 hover:bg-gray-50 rounded-lg transition-colors" title="View details" onclick="openBookingModal({{ $booking->id }}, '{{ addslashes($booking->name) }}', '{{ addslashes($booking->email) }}', '{{ $booking->phone ?? '' }}', '{{ addslashes($booking->package) }}', '{{ addslashes($booking->interview_type) }}', '{{ $booking->interview_date->format('Y-m-d') }}', '{{ $booking->interview_time ?? '' }}', '{{ ucfirst($booking->payment_status) }}', '{{ ucfirst($booking->status) }}', '{{ $booking->amount ?? '0' }}', '{{ addslashes($booking->payment_reference ?? '') }}')">
+                                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                        </svg>
+                                    </button>
                                     @if($booking->payment_status === 'paid')
                                         <form method="POST" action="{{ route('admin.coachings.sendReminder', $booking->id) }}" class="inline" onsubmit="return confirm('Send reminder to {{ $booking->name }}?')">
                                             @csrf
@@ -257,7 +263,97 @@
         <div class="footer">
             Design concept • Sample data
         </div>
+    <!-- BOOKING DETAILS MODAL -->
+    <div id="booking-modal" class="fixed inset-0 bg-black/30 backdrop-blur-sm hidden items-center justify-center z-50 overflow-y-auto overflow-x-hidden">
+        <div class="bg-white rounded-2xl shadow-xl w-full mx-auto max-w-2xl max-h-[90vh] overflow-y-auto m-4 md:m-8">
+            <div class="p-4 md:p-6 border-b border-gray-200">
+                <h3 class="text-xl font-bold text-gray-900">Booking Details</h3>
+            </div>
+            <div class="p-4 md:p-6">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">Full Name</label>
+                        <p id="modal-name" class="text-sm font-semibold text-gray-900"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">Email</label>
+                        <p id="modal-email" class="text-sm font-semibold text-gray-900"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">Phone</label>
+                        <p id="modal-phone" class="text-sm font-semibold text-gray-900"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">Package</label>
+                        <p id="modal-package" class="text-sm font-semibold text-gray-900"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">Interview Type</label>
+                        <p id="modal-interview-type" class="text-sm font-semibold text-gray-900"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">Date</label>
+                        <p id="modal-date" class="text-sm font-semibold text-gray-900"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">Time</label>
+                        <p id="modal-time" class="text-sm font-semibold text-gray-900"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">Payment Status</label>
+                        <p id="modal-payment-status" class="text-sm font-semibold text-gray-900"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">Booking Status</label>
+                        <p id="modal-status" class="text-sm font-semibold text-gray-900"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">Amount</label>
+                        <p id="modal-amount" class="text-sm font-semibold text-gray-900"></p>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-500">Payment Reference</label>
+                        <p id="modal-reference" class="text-sm font-semibold text-gray-900"></p>
+                    </div>
+                </div>
+                                @if($booking->notes)
+                                <div class="mt-3 md:mt-4">
+                                    <label class="block text-sm font-medium text-gray-500">Notes</label>
+                                    <p id="modal-notes-{{ $booking->id }}" class="text-sm font-semibold text-gray-900 break-words">{{ $booking->notes }}</p>
+                                </div>
+                                @endif
+            </div>
+            <div class="p-6 border-t border-gray-200 flex justify-end">
+                <button type="button" onclick="closeBookingModal()" class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 transition-colors">Close</button>
+            </div>
+        </div>
     </div>
+
+    <script>
+        function openBookingModal(id, name, email, phone, package, interviewType, date, time, paymentStatus, status, amount, reference) {
+            document.getElementById('modal-name').textContent = name;
+            document.getElementById('modal-email').textContent = email;
+            document.getElementById('modal-phone').textContent = phone || '-';
+            document.getElementById('modal-package').textContent = package;
+            document.getElementById('modal-interview-type').textContent = interviewType;
+            document.getElementById('modal-date').textContent = date;
+            document.getElementById('modal-time').textContent = time || '-';
+            document.getElementById('modal-payment-status').textContent = paymentStatus;
+            document.getElementById('modal-status').textContent = status;
+            document.getElementById('modal-amount').textContent = '$' + (amount || '0.00');
+            document.getElementById('modal-reference').textContent = reference || '-';
+
+            const modal = document.getElementById('booking-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeBookingModal() {
+            const modal = document.getElementById('booking-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+    </script>
 @endsection
 
 @push('scripts')
