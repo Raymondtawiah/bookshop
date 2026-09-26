@@ -14,7 +14,6 @@
         <div class="panel">
             <div class="panel-header">
                 <h2 class="panel-title">{{ $webinar->title }}</h2>
-                <p class="text-sm text-gray-500 mt-1">Webinar reminder form</p>
             </div>
             <div class="panel-body">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
