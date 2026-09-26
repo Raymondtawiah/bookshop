@@ -167,9 +167,12 @@ class WebinarAccessService
             if ($scheduledDate->isFuture()) {
                 return $scheduledDate->addDays(1)->setTime(23, 59, 59);
             }
+
+            // Webinar date has passed - expire immediately
+            return now()->subDay();
         }
 
-        // No scheduled date or webinar already passed - default to 7 days
+        // No scheduled date - default to 7 days
         return now()->addDays(7)->setTime(23, 59, 59);
     }
 
@@ -197,6 +200,10 @@ class WebinarAccessService
         }
 
         if ($this->hasExceededAccessLimit($registration)) {
+            return null;
+        }
+
+        if ($registration->webinar->scheduled_at && $registration->webinar->scheduled_at->isPast()) {
             return null;
         }
 
