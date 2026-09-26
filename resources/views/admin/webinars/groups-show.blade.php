@@ -120,8 +120,14 @@
                                 <td class="px-4 py-3 text-gray-600">{{ $registration->phone ?? '-' }}</td>
                                 <td class="px-4 py-3 text-gray-600">{{ $registration->webinar->title ?? '-' }}</td>
                                 <td class="px-4 py-3">
-                                    @if($registration->payment_status === 'paid')
+                                    @php
+                                        $amountPaid = (float) ($registration->amount_paid ?? 0);
+                                        $isPaid = $registration->payment_status === 'paid';
+                                    @endphp
+                                    @if($isPaid && $amountPaid > 0)
                                         <span class="inline-flex items-center gap-1.5 text-emerald-700 bg-emerald-50 border border-emerald-100 rounded-full px-2.5 py-1 text-xs font-medium">Paid</span>
+                                    @elseif($isPaid && $amountPaid <= 0)
+                                        <span class="inline-flex items-center gap-1.5 text-blue-700 bg-blue-50 border border-blue-100 rounded-full px-2.5 py-1 text-xs font-medium">Free</span>
                                     @else
                                         <span class="inline-flex items-center gap-1.5 text-amber-700 bg-amber-50 border border-amber-100 rounded-full px-2.5 py-1 text-xs font-medium">Pending</span>
                                     @endif

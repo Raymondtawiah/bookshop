@@ -133,12 +133,30 @@ class WebinarController extends Controller
         $webinars = WebinarSession::all();
 
         $groups = $webinars->groupBy('title')->map(function ($items) {
+            $webinar = $items->first();
+            $webinarIds = $items->pluck('id');
+
+            $totalRegistrations = WebinarRegistration::whereIn('webinar_id', $webinarIds)->count();
+            $paidRegistrations = WebinarRegistration::whereIn('webinar_id', $webinarIds)->where('payment_status', 'paid')->where('amount_paid', '>', 0)->count();
+            $freeRegistrations = WebinarRegistration::whereIn('webinar_id', $webinarIds)->where('payment_status', 'paid')->where('amount_paid', 0)->count();
+
+            if ($paidRegistrations > $freeRegistrations) {
+                $groupStatus = 'paid';
+            } elseif ($freeRegistrations > $paidRegistrations) {
+                $groupStatus = 'free';
+            } else {
+                $groupStatus = null;
+            }
+
             return [
-                'title' => $items->first()->title,
-                'description' => $items->first()->description,
+                'title' => $webinar->title,
+                'description' => $webinar->description,
                 'count' => $items->count(),
-                'total_registrations' => WebinarRegistration::whereIn('webinar_id', $items->pluck('id'))->count(),
-                'total_paid' => WebinarRegistration::whereIn('webinar_id', $items->pluck('id'))->where('payment_status', 'paid')->count(),
+                'total_registrations' => $totalRegistrations,
+                'total_paid' => $paidRegistrations,
+                'total_free' => $freeRegistrations,
+                'is_free' => $groupStatus === 'free',
+                'group_status' => $groupStatus,
                 'webinars' => $items,
             ];
         })->sortBy('title');
