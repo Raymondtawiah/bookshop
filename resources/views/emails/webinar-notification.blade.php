@@ -8,11 +8,11 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: #111827;
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f4f4f4;
+            background-color: #ffffff;
         }
         .container {
             background-color: #ffffff;
@@ -35,11 +35,11 @@
         .title {
             font-size: 20px;
             font-weight: 600;
-            color: #1f2937;
+            color: #111827;
             margin-bottom: 5px;
         }
         .subtitle {
-            color: #6b7280;
+            color: #374151;
             font-size: 16px;
         }
         .notification-box {
@@ -50,33 +50,33 @@
         }
         .urgent {
             background-color: #fef2f2;
-            border-left-color: #ef4444;
+            border-left-color: #dc2626;
         }
         .schedule {
-            background-color: #eff6ff;
-            border-left-color: #3b82f6;
+            background-color: #eef2ff;
+            border-left-color: #4f46e5;
         }
         .zoom_update {
-            background-color: #faf5ff;
-            border-left-color: #a855f7;
+            background-color: #eef2ff;
+            border-left-color: #4f46e5;
         }
         .info {
             background-color: #f9fafb;
-            border-left-color: #6b7280;
+            border-left-color: #374151;
         }
         .notification-title {
             font-size: 18px;
             font-weight: 600;
             margin-bottom: 10px;
-            color: #1f2937;
+            color: #111827;
         }
         .notification-message {
             white-space: pre-line;
-            color: #374151;
+            color: #111827;
             line-height: 1.6;
         }
         .webinar-info {
-            background-color: #f8fafc;
+            background-color: #f9fafb;
             padding: 20px;
             border-radius: 8px;
             margin: 25px 0;
@@ -84,7 +84,7 @@
         .webinar-title {
             font-size: 16px;
             font-weight: 600;
-            color: #1f2937;
+            color: #111827;
             margin-bottom: 15px;
         }
         .webinar-details {
@@ -97,14 +97,14 @@
         }
         .detail-label {
             font-size: 12px;
-            color: #6b7280;
+            color: #374151;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             margin-bottom: 3px;
         }
         .detail-value {
             font-size: 14px;
-            color: #1f2937;
+            color: #111827;
             font-weight: 500;
         }
         .cta-button {
@@ -126,12 +126,12 @@
             padding-top: 20px;
             border-top: 1px solid #e5e7eb;
             text-align: center;
-            color: #6b7280;
+            color: #374151;
             font-size: 14px;
         }
         .expiration {
             font-size: 12px;
-            color: #6b7280;
+            color: #374151;
             margin-top: 10px;
             font-style: italic;
         }
@@ -161,10 +161,16 @@
          <div class="webinar-info">
              <div class="webinar-title">{{ $webinar->title }}</div>
              <div class="webinar-details">
-                 <div class="detail-item">
-                     <div class="detail-label">When:</div>
-                     <div class="detail-value">Your webinar will be held on Friday</div>
-                 </div>
+                  <div class="detail-item">
+                      <div class="detail-label">When:</div>
+                      <div class="detail-value">
+                          @if($webinar->scheduled_at)
+                              {{ \Carbon\Carbon::parse($webinar->scheduled_at)->format('l, F j, Y \a\t g:i A') }}
+                          @else
+                              Your webinar will be held on Friday
+                          @endif
+                      </div>
+                  </div>
                  <div class="detail-item">
                      <div class="detail-label">Price</div>
                      <div class="detail-value">${{ number_format($webinar->current_price, 2) }}</div>

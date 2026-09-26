@@ -13,7 +13,9 @@ Payment Deadline: {{ \Carbon\Carbon::parse($deadlineDatetime)->format('l, F j, Y
 Please make sure to complete your payment before this deadline.
 @endif
 
-[Complete Your Payment]({{ $paymentLink }})
+@component('mail::button', ['url' => $paymentLink])
+Complete Your Payment
+@endcomponent
 
 We look forward to seeing you.
 

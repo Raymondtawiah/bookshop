@@ -6,16 +6,17 @@
     <title>Order Confirmation</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: #111827;
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
+            background-color: #ffffff;
         }
         .header {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            color: white;
+            background: #4f46e5;
+            color: #ffffff;
             padding: 30px;
             border-radius: 10px 10px 0 0;
             text-align: center;
@@ -36,7 +37,7 @@
             border-radius: 0 0 10px 10px;
         }
         .order-details {
-            background: white;
+            background: #ffffff;
             padding: 20px;
             border-radius: 8px;
             margin: 20px 0;
@@ -61,13 +62,13 @@
         .footer {
             text-align: center;
             margin-top: 20px;
-            color: #6b7280;
+            color: #374151;
             font-size: 14px;
         }
         .btn {
             display: inline-block;
             background: #4f46e5;
-            color: white;
+            color: #ffffff;
             padding: 12px 24px;
             text-decoration: none;
             border-radius: 6px;

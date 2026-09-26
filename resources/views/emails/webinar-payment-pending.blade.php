@@ -11,7 +11,9 @@ Your registration is currently pending because payment has not been completed ye
 Please complete your payment by: {{ \Illuminate\Support\Carbon::parse($reminderDate)->format('F j, Y') }}
 @endif
 
-[Complete Your Payment]({{ $paymentLink }})
+@component('mail::button', ['url' => $paymentLink])
+Complete Your Payment
+@endcomponent
 
 We look forward to seeing you at the webinar.
 

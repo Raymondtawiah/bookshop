@@ -6,16 +6,17 @@
     <title>Payment Reminder</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: #111827;
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
+            background-color: #ffffff;
         }
         .header {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
-            color: white;
+            background: #4f46e5;
+            color: #ffffff;
             padding: 30px;
             border-radius: 10px 10px 0 0;
             text-align: center;
@@ -36,7 +37,7 @@
             border-radius: 0 0 10px 10px;
         }
         .order-details {
-            background: white;
+            background: #ffffff;
             padding: 20px;
             border-radius: 8px;
             margin: 20px 0;
@@ -52,20 +53,20 @@
         .footer {
             text-align: center;
             margin-top: 20px;
-            color: #6b7280;
+            color: #374151;
             font-size: 14px;
         }
         .btn {
             display: inline-block;
             background: #4f46e5;
-            color: white;
+            color: #ffffff;
             padding: 12px 24px;
             text-decoration: none;
             border-radius: 6px;
             margin-top: 20px;
         }
         .video-box {
-            background: white;
+            background: #ffffff;
             border: 2px dashed #4f46e5;
             border-radius: 8px;
             padding: 20px;
@@ -81,7 +82,7 @@
             font-size: 40px;
             margin-bottom: 10px;
         }
-</style>
+    </style>
 </head>
 <body>
     <div class="header">
@@ -142,16 +143,16 @@
         
         <p>Click the button below to complete your payment:</p>
         
-        <a href="{{ $paymentLink }}" class="btn">Complete Payment</a>
+        <a href="{{ $paymentLink }}" class="btn" style="color: #ffffff !important;">Complete Payment</a>
         
         <p>If the button doesn't work, copy and paste this link into your browser:</p>
-        <p style="word-break: break-all; color: #4f46e5;">{{ $paymentLink }}</p>
+        <p style="word-break: break-all; color: #374151;">{{ $paymentLink }}</p>
 
         <div class="video-box">
             <div class="video-icon">▶️</div>
             <h3 style="margin-top: 0; margin-bottom: 10px;">How to Complete Your Payment</h3>
             <p style="margin-bottom: 15px;">Watch our quick guide to complete your payment using {{ $order->payment_provider === 'paystack' ? 'Paystack' : 'Card' }}.</p>
-            <a href="{{ asset($order->payment_provider === 'paystack' ? 'paystack.mp4' : 'stripe.mp4') }}" class="btn" style="background: #dc2626;">Watch Payment Guide Video</a>
+            <a href="{{ asset($order->payment_provider === 'paystack' ? 'paystack.mp4' : 'stripe.mp4') }}" class="btn" style="background: #dc2626; color: #ffffff !important;">Watch Payment Guide Video</a>
         </div>
         
         <p>If you have already made payment, please disregard this message. If you have any questions, feel free to contact us.</p>

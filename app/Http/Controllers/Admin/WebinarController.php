@@ -126,6 +126,194 @@ class WebinarController extends Controller
     }
 
     /**
+     * Show webinar groups grouped by title.
+     */
+    public function groups(Request $request)
+    {
+        $webinars = WebinarSession::all();
+
+        $groups = $webinars->groupBy('title')->map(function ($items) {
+            return [
+                'title' => $items->first()->title,
+                'description' => $items->first()->description,
+                'count' => $items->count(),
+                'total_registrations' => WebinarRegistration::whereIn('webinar_id', $items->pluck('id'))->count(),
+                'total_paid' => WebinarRegistration::whereIn('webinar_id', $items->pluck('id'))->where('payment_status', 'paid')->count(),
+                'webinars' => $items,
+            ];
+        })->sortBy('title');
+
+        return view('admin.webinars.groups', compact('groups'));
+    }
+
+    /**
+     * Show registrations for a specific webinar title group.
+     */
+    public function groupShow(Request $request, $webinarTitle)
+    {
+        $webinars = WebinarSession::where('title', $webinarTitle)->get();
+
+        if ($webinars->isEmpty()) {
+            return redirect()->route('admin.webinars.groups')->with('error', 'Webinar group not found.');
+        }
+
+        $registrationsQuery = WebinarRegistration::query()
+            ->with(['webinar', 'user'])
+            ->whereIn('webinar_id', $webinars->pluck('id'))
+            ->latest();
+
+        // Apply search
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $registrationsQuery->where(function ($query) use ($searchTerm) {
+                $query->where('full_name', 'like', '%'.$searchTerm.'%')
+                    ->orWhere('email', 'like', '%'.$searchTerm.'%')
+                    ->orWhere('phone', 'like', '%'.$searchTerm.'%');
+            });
+        }
+
+        // Apply attendance filter
+        if ($request->has('attendance') && $request->attendance != '') {
+            if ($request->attendance === 'attended') {
+                $registrationsQuery->whereNotNull('joined_at');
+            } elseif ($request->attendance === 'not_attended') {
+                $registrationsQuery->whereNull('joined_at');
+            }
+        }
+
+        // Apply date range filter
+        if ($request->has('start_date') && $request->start_date != '') {
+            $registrationsQuery->whereDate('created_at', '>=', $request->start_date);
+        }
+
+        if ($request->has('end_date') && $request->end_date != '') {
+            $registrationsQuery->whereDate('created_at', '<=', $request->end_date);
+        }
+
+        $registrations = $registrationsQuery->get();
+
+        // Calculate stats
+        $totalRegistrations = $registrations->count();
+        $totalPaid = $registrations->where('payment_status', 'paid')->count();
+        $totalPending = $registrations->where('payment_status', 'pending')->count();
+        $totalAttended = $registrations->whereNotNull('joined_at')->count();
+
+        return view('admin.webinars.groups-show', compact(
+            'webinarTitle',
+            'webinars',
+            'registrations',
+            'totalRegistrations',
+            'totalPaid',
+            'totalPending',
+            'totalAttended'
+        ));
+    }
+
+    /**
+     * Send bulk reminder to all paid registrations in a webinar group.
+     */
+    public function sendGroupReminder(Request $request, $webinarTitle)
+    {
+        $webinars = WebinarSession::where('title', $webinarTitle)->get();
+
+        if ($webinars->isEmpty()) {
+            return redirect()->route('admin.webinars.groups')->with('error', 'Webinar group not found.');
+        }
+
+        $validated = $request->validate([
+            'reminder_type' => 'required|in:24_hours,1_hour,15_minutes,post_webinar',
+            'message' => 'nullable|string',
+        ]);
+
+        $reminderType = $validated['reminder_type'];
+        $customMessage = $validated['message'] ?? null;
+
+        $webinarIds = $webinars->pluck('id');
+        $paidRegistrations = WebinarRegistration::whereIn('webinar_id', $webinarIds)
+            ->where('payment_status', 'paid')
+            ->get();
+
+        if ($paidRegistrations->isEmpty()) {
+            return redirect()->route('admin.webinars.groups.show', $webinarTitle)->with('error', 'There are no paid registrations to send reminders to.');
+        }
+
+        $sentCount = 0;
+        $failedCount = 0;
+
+        foreach ($paidRegistrations as $registration) {
+            try {
+                $webinar = $registration->webinar;
+                $accessLink = $webinar->webinar_link;
+                $reminderDateTime = $webinar->scheduled_at ? $webinar->scheduled_at->format('Y-m-d H:i') : null;
+
+                Mail::to($registration->email)->send(new WebinarReminderMail($webinar, $registration, $reminderType, $accessLink, $customMessage, $reminderDateTime));
+
+                $registration->update([
+                    'last_reminder_sent' => now(),
+                    'reminder_count' => ($registration->reminder_count ?? 0) + 1,
+                ]);
+
+                $sentCount++;
+            } catch (\Exception $e) {
+                $failedCount++;
+                Log::error('Failed to send webinar reminder to paid registration', [
+                    'webinar_id' => $registration->webinar_id,
+                    'registration_id' => $registration->id,
+                    'email' => $registration->email,
+                    'reminder_type' => $reminderType,
+                    'error' => $e->getMessage(),
+                ]);
+            }
+        }
+
+        $message = "Reminder sent to {$sentCount} paid attendee".($sentCount !== 1 ? 's' : '');
+        if ($failedCount > 0) {
+            $message .= ", {$failedCount} failed";
+
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => $message]);
+            }
+
+            return redirect()->route('admin.webinars.groups.show', $webinarTitle)->with('warning', $message);
+        }
+
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => $message.'.']);
+        }
+
+        return redirect()->route('admin.webinars.groups.show', $webinarTitle)->with('success', $message.'.');
+    }
+
+    /**
+     * Mark all registrations in a webinar group as attended.
+     */
+    public function markAllAttended(Request $request, $webinarTitle)
+    {
+        $webinars = WebinarSession::where('title', $webinarTitle)->get();
+
+        if ($webinars->isEmpty()) {
+            if ($request->wantsJson()) {
+                return response()->json(['success' => false, 'message' => 'Webinar group not found.']);
+            }
+
+            return redirect()->route('admin.webinars.groups')->with('error', 'Webinar group not found.');
+        }
+
+        $webinarIds = $webinars->pluck('id');
+        $updated = WebinarRegistration::whereIn('webinar_id', $webinarIds)
+            ->whereNull('joined_at')
+            ->update(['joined_at' => now()]);
+
+        $message = "Marked {$updated} registration".($updated !== 1 ? 's' : '').' as attended.';
+
+        if ($request->wantsJson()) {
+            return response()->json(['success' => true, 'message' => $message]);
+        }
+
+        return redirect()->route('admin.webinars.groups.show', $webinarTitle)->with('success', $message);
+    }
+
+    /**
      * Show create webinar form.
      */
     public function create()

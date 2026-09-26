@@ -87,6 +87,10 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
 
     // Webinars
     Route::get('webinars', [WebinarController::class, 'index'])->name('webinars.index');
+    Route::get('webinars/groups', [WebinarController::class, 'groups'])->name('webinars.groups');
+    Route::get('webinars/groups/{webinarTitle}', [WebinarController::class, 'groupShow'])->name('webinars.groups.show');
+    Route::post('webinars/groups/{webinarTitle}/send-reminder', [WebinarController::class, 'sendGroupReminder'])->name('webinars.groups.sendReminder');
+    Route::post('webinars/groups/{webinarTitle}/mark-all-attended', [WebinarController::class, 'markAllAttended'])->name('webinars.groups.markAllAttended');
     Route::get('webinars/create', [WebinarController::class, 'create'])->name('webinars.create');
     Route::post('webinars', [WebinarController::class, 'store'])->name('webinars.store');
     Route::get('webinars/{webinar}/edit', [WebinarController::class, 'edit'])->name('webinars.edit')->where('webinar', '[0-9]+');

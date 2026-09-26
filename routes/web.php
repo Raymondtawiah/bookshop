@@ -37,29 +37,16 @@ Route::get('search', [HomeController::class, 'search'])->name('search');
 
 // Customer dashboard (protected by auth middleware)
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', [HomeController::class, 'dashboard'])->name('dashboard');
+    Route::get('welcome', [HomeController::class, 'welcome'])->name('welcome');
 });
 
-Route::get('visa-tip', function () {
-    return view('visa-tip');
-})->name('visa-tip');
-
-// Privacy Policy - Public route (no authentication required)
-// Is for someone having mobile app needing a privacy policy url
-// so pardon the me Thank you.
-Route::get('privacy', function () {
-    return view('privacy');
-})->name('privacy');
 
 // Discount announcement page
 Route::get('discounts', function () {
     return view('discounts');
 })->name('discounts');
 
-// Announcement page
-Route::get('announcement', function () {
-    return view('announcement');
-})->name('announcement');
+
 
 // Discount application
 Route::get('discount/apply', function () {

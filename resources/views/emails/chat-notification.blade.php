@@ -6,16 +6,17 @@
     <title>New Chat Message</title>
     <style>
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             line-height: 1.6;
-            color: #333;
+            color: #52525b;
             max-width: 600px;
             margin: 0 auto;
             padding: 20px;
+            background-color: #fafafa;
         }
         .header {
-            background: linear-gradient(135deg, #6366f1, #22d3ee);
-            color: white;
+            background: #4f46e5;
+            color: #ffffff;
             padding: 30px;
             border-radius: 10px 10px 0 0;
             text-align: center;
@@ -36,11 +37,11 @@
             border-radius: 0 0 10px 10px;
         }
         .message-box {
-            background: white;
+            background: #ffffff;
             padding: 20px;
             border-radius: 8px;
             margin: 20px 0;
-            border-left: 4px solid #6366f1;
+            border-left: 4px solid #4f46e5;
         }
         .footer {
             text-align: center;
@@ -50,8 +51,8 @@
         }
         .btn {
             display: inline-block;
-            background: #6366f1;
-            color: white;
+            background: #4f46e5;
+            color: #ffffff;
             padding: 12px 24px;
             text-decoration: none;
             border-radius: 6px;
@@ -77,7 +78,7 @@
         
         <p>Click the button below to view and respond to the message:</p>
         
-        <a href="{{ $chatUrl }}" class="btn">View Chat</a>
+        <a href="{{ $chatUrl }}" class="btn" style="color: #ffffff !important;">View Chat</a>
         
         <div class="footer">
             <p>&copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.</p>

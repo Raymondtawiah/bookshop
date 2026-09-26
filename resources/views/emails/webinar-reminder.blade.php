@@ -5,29 +5,29 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $reminderType === 'post_webinar' ? 'Thank You' : 'Webinar Reminder' }} - {{ $webinar->title }}</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f3f4f6; margin: 0; padding: 20px; }
-        .container { max-width: 600px; margin: 0 auto; background-color: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .header { background: linear-gradient(to right, #2563eb, #4f46e5); color: white; text-align: center; padding: 40px 30px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; background-color: #ffffff; margin: 0; padding: 20px; color: #111827; }
+        .container { max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header { background: #4f46e5; color: #ffffff; text-align: center; padding: 40px 30px; }
         .content { padding: 30px; }
         .info-box { padding: 15px; margin-bottom: 20px; border-left: 4px solid; border-radius: 4px; }
-        .info-box-blue { background-color: #eff6ff; border-color: #3b82f6; }
+        .info-box-blue { background-color: #eef2ff; border-color: #4f46e5; }
         .info-box-amber { background-color: #fffbeb; border-color: #f59e0b; }
-        .info-box-red { background-color: #fef2f2; border-color: #ef4444; }
-        .info-box-green { background-color: #f0fdf4; border-color: #22c55e; }
-        .info-box-indigo { background-color: #eef2ff; border-color: #6366f1; }
+        .info-box-red { background-color: #fef2f2; border-color: #dc2626; }
+        .info-box-green { background-color: #f0fdf4; border-color: #16a34a; }
+        .info-box-indigo { background-color: #eef2ff; border-color: #4f46e5; }
         .webinar-details { background-color: #f9fafb; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
         .webinar-details h3 { margin: 0 0 15px 0; color: #111827; }
         .webinar-details .row { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 14px; }
-        .webinar-details .label { color: #6b7280; }
-        .webinar-details .value { font-weight: 500; }
-        .button { display: inline-block; padding: 12px 24px; background-color: #2563eb; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 20px 0; }
-        .button:hover { background-color: #1d4ed8; color: #ffffff; }
+        .webinar-details .label { color: #374151; }
+        .webinar-details .value { font-weight: 500; color: #111827; }
+        .button { display: inline-block; padding: 12px 24px; background-color: #4f46e5; color: #ffffff; text-decoration: none; border-radius: 8px; font-weight: 600; margin: 20px 0; }
+        .button:hover { background-color: #4338ca; color: #ffffff; }
         .important-info { background-color: #f9fafb; padding: 20px; border-radius: 8px; margin-bottom: 20px; }
         .important-info h3 { margin: 0 0 15px 0; color: #111827; }
-        .important-info ul { margin: 0; padding-left: 20px; font-size: 14px; color: #374151; }
+        .important-info ul { margin: 0; padding-left: 20px; font-size: 14px; color: #111827; }
         .important-info li { margin-bottom: 8px; }
-        .support { text-align: center; font-size: 14px; color: #6b7280; margin-bottom: 20px; }
-        .footer { background-color: #1f2937; color: #d1d5db; text-align: center; padding: 20px 30px; font-size: 14px; }
+        .support { text-align: center; font-size: 14px; color: #374151; margin-bottom: 20px; }
+        .footer { background-color: #111827; color: #d1d5db; text-align: center; padding: 20px 30px; font-size: 14px; }
         .footer p { margin: 5px 0; }
         .footer .small { font-size: 12px; }
     </style>
@@ -122,7 +122,7 @@
         @if($reminderType !== 'post_webinar')
             <div style="text-align: center; margin-bottom: 20px;">
                 @if($accessLink)
-                    <a href="{{ $accessLink }}" class="button">
+                    <a href="{{ $accessLink }}" class="button" style="color: #ffffff !important;">
                         {{ $reminderType === '15_minutes' ? 'Join Webinar Now' : 'Access Webinar' }}
                     </a>
                 @else

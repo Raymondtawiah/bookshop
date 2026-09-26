@@ -7,9 +7,10 @@
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background-color: #f3f4f6;
+            background-color: #ffffff;
             margin: 0;
             padding: 20px;
+            color: #111827;
         }
         .container {
             max-width: 500px;
@@ -20,7 +21,7 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
         .header {
-            background: linear-gradient(135deg, #4f46e5, #7c3aed);
+            background: #4f46e5;
             padding: 30px;
             text-align: center;
         }
@@ -40,11 +41,11 @@
             letter-spacing: 8px;
             margin: 20px 0;
             padding: 15px;
-            background-color: #f3f4f6;
+            background-color: #f9fafb;
             border-radius: 8px;
         }
         .expiry {
-            color: #6b7280;
+            color: #374151;
             font-size: 14px;
             margin-top: 15px;
         }
@@ -52,7 +53,7 @@
             background-color: #f9fafb;
             padding: 20px;
             text-align: center;
-            color: #6b7280;
+            color: #374151;
             font-size: 12px;
         }
     </style>
