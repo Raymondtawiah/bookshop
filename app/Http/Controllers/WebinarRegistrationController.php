@@ -82,11 +82,6 @@ class WebinarRegistrationController extends Controller
                 $existingRegistration->restore();
             }
 
-            if ($existingRegistration->isPaid()) {
-                return redirect()->route('webinars.index')
-                    ->with('error', 'You are already registered for this webinar. Check your email for the access link.');
-            }
-
             $requiresPayment = $this->paymentToggleService->isPaymentEnabled($webinar) && $webinar->current_price > 0;
 
             if ($requiresPayment) {
