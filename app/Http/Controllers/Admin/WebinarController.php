@@ -443,6 +443,25 @@ class WebinarController extends Controller
     }
 
     /**
+     * Show the send reminder form for a webinar.
+     */
+    public function showSendReminder(WebinarSession $webinar, ?WebinarRegistration $registration = null)
+    {
+        $defaultMessages = [
+            '24_hours' => 'Reminder: Webinar Tomorrow - '.$webinar->title,
+            '1_hour' => 'Starting Soon: Webinar in 1 Hour - '.$webinar->title,
+            '15_minutes' => 'URGENT: Webinar Starting in 15 Minutes - '.$webinar->title,
+            'post_webinar' => 'Thank You for Attending - '.$webinar->title,
+        ];
+
+        return view('admin.webinars.send-reminder', [
+            'webinar' => $webinar,
+            'registration' => $registration,
+            'defaultMessages' => $defaultMessages,
+        ]);
+    }
+
+    /**
      * Send webinar reminder for paid webinar registration.
      */
     public function sendWebinarReminder(Request $request, WebinarSession $webinar, ?WebinarRegistration $registration = null)
