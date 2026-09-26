@@ -331,7 +331,7 @@ class FinanceController extends Controller
                 return [
                     'id' => $order->id,
                     'reference' => $order->order_number ?? '#' . $order->id,
-                    'customer' => $order->customer_name ?? 'Guest',
+                    'customer' => $order->customer_name ?: ($order->user?->name ?: 'Guest'),
                     'amount' => $order->total_amount,
                     'currency' => $order->currency ?? 'USD',
                     'status' => $order->payment_status,
@@ -344,12 +344,12 @@ class FinanceController extends Controller
             ->when($type === 'all' || $type === 'webinars', function ($query) {
                 $query->where('payment_status', WebinarRegistration::STATUS_PAID);
             })
-            ->get(['id', 'amount_paid', 'payment_status', 'created_at'])
+            ->get(['id', 'amount_paid', 'payment_status', 'created_at', 'full_name', 'user_id'])
             ->map(function ($reg) {
                 return [
                     'id' => $reg->id,
                     'reference' => 'WEB-' . $reg->id,
-                    'customer' => $reg->user?->name ?? 'Guest',
+                    'customer' => $reg->full_name ?: ($reg->user?->name ?: 'Guest'),
                     'amount' => $reg->amount_paid,
                     'currency' => 'USD',
                     'status' => $reg->payment_status,
@@ -362,12 +362,12 @@ class FinanceController extends Controller
             ->when($type === 'all' || $type === 'coaching', function ($query) {
                 $query->where('payment_status', 'paid');
             })
-            ->get(['id', 'amount', 'payment_status', 'created_at'])
+            ->get(['id', 'amount', 'payment_status', 'created_at', 'name'])
             ->map(function ($booking) {
                 return [
                     'id' => $booking->id,
                     'reference' => 'COACH-' . $booking->id,
-                    'customer' => $booking->user?->name ?? 'Guest',
+                    'customer' => $booking->name ?: 'Guest',
                     'amount' => $booking->amount,
                     'currency' => 'USD',
                     'status' => $booking->payment_status,

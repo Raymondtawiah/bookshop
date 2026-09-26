@@ -85,6 +85,16 @@
       "createdAt": "2026-08-15T22:13:36.723Z",
       "remote": "origin",
       "branchOwned": true
+    },
+    "wt-1790410128879-1": {
+      "branch": "turquoise-nightshade",
+      "path": "c:\\users\\enter\\herd\\bookshop\\.kilo\\worktrees\\turquoise-nightshade",
+      "parentBranch": "main",
+      "createdAt": "2026-09-26T08:08:48.879Z",
+      "remote": "origin",
+      "branchOwned": true,
+      "autoNameSessionId": "ses_f233d5ce1ffeSjKBcd8HFK4M5x",
+      "autoNamePromptCount": 0
     }
   },
   "sessions": {
@@ -135,11 +145,15 @@
     "ses_ff8832660ffeJJwlzXm0bbPncG": {
       "worktreeId": "wt-1786832016723-2",
       "createdAt": "2026-08-15T22:13:42.935Z"
+    },
+    "ses_f233d5ce1ffeSjKBcd8HFK4M5x": {
+      "worktreeId": "wt-1790410128879-1",
+      "createdAt": "2026-09-26T08:08:58.567Z"
     }
   },
   "tabOrder": {
     "local": [
-      "pending:9fe699a0-95fc-4576-a8a6-b1443dfd2bb9"
+      "pending:7acdcb0c-8da2-4a36-a363-215a990093c2"
     ]
   },
   "worktreeOrder": [
@@ -154,7 +168,8 @@
     "wt-1781904285437-4",
     "wt-1781965365866-1",
     "wt-1786832000724-1",
-    "wt-1786832016723-2"
+    "wt-1786832016723-2",
+    "wt-1790410128879-1"
   ],
   "sessionsCollapsed": false
 }
