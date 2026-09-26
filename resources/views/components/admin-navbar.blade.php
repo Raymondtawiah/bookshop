@@ -224,7 +224,13 @@
                                 }
 
                                 if (link) {
-                                    window.location.href = link;
+                                    let fixedLink = link;
+                                    if (fixedLink.includes('/admin/orders/') || fixedLink === '' || fixedLink === '#') {
+                                        fixedLink = '{{ route('admin.books') }}';
+                                    }
+                                    window.location.href = fixedLink;
+                                } else {
+                                    window.location.href = '{{ route('admin.books') }}';
                                 }
                             });
                         });

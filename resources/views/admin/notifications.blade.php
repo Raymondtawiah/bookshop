@@ -74,8 +74,14 @@
                                     </svg>
                                 @endif
                             </button>
-                            @if($notification->link)
-                                <a href="{{ $notification->link }}" class="p-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer" title="View details">
+                            @php
+                                $notificationLink = $notification->link;
+                                if ($notification->type === 'order' || $notification->type === 'payment') {
+                                    $notificationLink = route('admin.books');
+                                }
+                            @endphp
+                            @if($notificationLink)
+                                <a href="{{ $notificationLink }}" class="p-2 rounded-lg hover:bg-gray-100 transition-colors cursor-pointer" title="View details">
                                     <svg class="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
                                     </svg>
@@ -204,7 +210,13 @@ document.addEventListener('DOMContentLoaded', function() {
             if (e.target.tagName === 'A' || e.target.closest('button')) return;
             const link = this.dataset.link;
             if (link) {
-                window.location.href = link;
+                let fixedLink = link;
+                if (fixedLink.includes('/admin/orders/') || fixedLink === '' || fixedLink === '#') {
+                    fixedLink = '{{ route('admin.books') }}';
+                }
+                window.location.href = fixedLink;
+            } else {
+                window.location.href = '{{ route('admin.books') }}';
             }
         });
     });

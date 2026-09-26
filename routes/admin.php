@@ -57,8 +57,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::get('passages/preview', [OrderController::class, 'previewPassage'])->name('passages.preview');
 
     // Orders
-    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
-    Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
     Route::post('orders/{order}/send-book-pdf', [OrderController::class, 'sendBookPdf'])->name('orders.sendBookPdf');
     Route::post('orders/{order}/send-book-offer', [OrderController::class, 'sendBookOffer'])->name('orders.sendBookOffer');
     Route::post('orders/{order}/send-payment-reminder', [OrderController::class, 'sendPaymentReminder'])->name('orders.sendPaymentReminder');

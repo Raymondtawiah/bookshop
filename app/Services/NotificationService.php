@@ -12,7 +12,7 @@ class NotificationService
             'order',
             'New Order Received',
             "Order #{$order->order_number} - $".number_format($order->total_amount, 2),
-            route('admin.orders.show', $order->id)
+            route('admin.books')
         );
     }
 
@@ -42,7 +42,7 @@ class NotificationService
             'payment',
             'Payment Received',
             "Order #{$order->order_number} has been paid - $".number_format($order->total_amount, 2),
-            route('admin.orders.show', $order->id)
+            route('admin.books')
         );
     }
 

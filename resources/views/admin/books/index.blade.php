@@ -325,6 +325,10 @@
                         <span class="detail-value" id="detail-customer-name"></span>
                     </div>
                     <div class="detail-item">
+                        <span class="detail-label">Email</span>
+                        <span class="detail-value" id="detail-email"></span>
+                    </div>
+                    <div class="detail-item">
                         <span class="detail-label">Total Amount</span>
                         <span class="detail-value" id="detail-total-amount"></span>
                     </div>
@@ -455,6 +459,7 @@
             if (!order) return;
             document.getElementById('detail-order-number').textContent = '#' + (order.order_number || order.id);
             document.getElementById('detail-customer-name').textContent = order.customer_name || 'Guest';
+            document.getElementById('detail-email').textContent = order.email || 'N/A';
             document.getElementById('detail-total-amount').textContent = (order.currency === 'GHS' ? '₵' : '$') + parseFloat(order.total_amount).toFixed(2);
             document.getElementById('detail-status').textContent = order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1) : '';
             document.getElementById('detail-payment-status').textContent = order.payment_status ? order.payment_status.charAt(0).toUpperCase() + order.payment_status.slice(1) : '';
