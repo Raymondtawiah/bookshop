@@ -8,8 +8,6 @@
     <link rel="icon" href="/favicon.ico" sizes="any">
 </head>
 <body class="bg-gray-50 font-sans pt-20">
-<x-admin-navbar />
-
 <main class="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
     <div class="flex items-center gap-4 mb-8">
         <div class="w-12 h-12 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl flex items-center justify-center">

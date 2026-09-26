@@ -232,7 +232,6 @@
             <div class="panel activity">
                 <div class="activity-header">
                     <h2 class="panel-title">Recent activity</h2>
-                    <a href="{{ route('admin.orders') }}" class="view-all">View all</a>
                 </div>
                 <div class="activity-body">
                     @php
@@ -252,7 +251,13 @@
                                 <div class="activity-title">Book order completed</div>
                                 <div class="activity-date">{{ $order->created_at->format('M d, Y · g:i A') }}</div>
                             </div>
-                            <div class="activity-price">${{ number_format($order->total_amount, 2) }}</div>
+                            <div class="activity-price">
+                                @if($order->currency === 'GHS')
+                                    ₵{{ number_format($order->total_amount, 2) }}
+                                @else
+                                    ${{ number_format($order->total_amount, 2) }}
+                                @endif
+                            </div>
                         </div>
                     @empty
                         <div class="activity-item">

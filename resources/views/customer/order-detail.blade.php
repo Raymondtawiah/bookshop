@@ -76,7 +76,13 @@
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Total Amount</dt>
-                                <dd class="text-xl font-bold text-indigo-600">${{ number_format($order->total_amount_usd ?? $order->total_amount, 2) }}</dd>
+                                <dd class="text-xl font-bold text-indigo-600">
+                                    @if($order->currency === 'GHS')
+                                        ₵{{ number_format($order->total_amount, 2) }}
+                                    @else
+                                        ${{ number_format($order->total_amount_usd ?? $order->total_amount, 2) }}
+                                    @endif
+                                </dd>
                             </div>
                             <div>
                                 <dt class="text-sm font-medium text-gray-500">Payment Status</dt>
@@ -121,9 +127,21 @@
                                      <td class="px-2 py-3">
                                          <div class="text-sm font-medium text-gray-900">{{ is_array($item) ? ($item['product_name'] ?? 'Unknown') : 'Unknown' }}</div>
                                      </td>
-                                      <td class="px-2 py-3 text-sm text-gray-900 whitespace-nowrap">${{ number_format(is_array($item) ? ($item['unit_price_usd'] ?? $item['unit_price'] ?? 0) : ($item->unit_price_usd ?? $item->unit_price ?? 0), 2) }}</td>
+                                      <td class="px-2 py-3 text-sm text-gray-900 whitespace-nowrap">
+                                          @if($order->currency === 'GHS')
+                                              ₵{{ number_format(is_array($item) ? ($item['unit_price_ghs'] ?? $item['unit_price'] ?? 0) : ($item->unit_price_ghs ?? $item->unit_price ?? 0), 2) }}
+                                          @else
+                                              ${{ number_format(is_array($item) ? ($item['unit_price_usd'] ?? $item['unit_price'] ?? 0) : ($item->unit_price_usd ?? $item->unit_price ?? 0), 2) }}
+                                          @endif
+                                      </td>
                                      <td class="px-2 py-3 text-sm text-gray-900 whitespace-nowrap">{{ is_array($item) ? ($item['quantity'] ?? 1) : ($item->quantity ?? 1) }}</td>
-                                      <td class="px-2 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">${{ number_format((is_array($item) ? ($item['unit_price_usd'] ?? $item['unit_price'] ?? 0) : ($item->unit_price_usd ?? $item->unit_price ?? 0)) * (is_array($item) ? ($item['quantity'] ?? 1) : ($item->quantity ?? 1)), 2) }}</td>
+                                       <td class="px-2 py-3 text-sm font-medium text-gray-900 whitespace-nowrap">
+                                          @if($order->currency === 'GHS')
+                                              ₵{{ number_format((is_array($item) ? ($item['unit_price_ghs'] ?? $item['unit_price'] ?? 0) : ($item->unit_price_ghs ?? $item->unit_price ?? 0)) * (is_array($item) ? ($item['quantity'] ?? 1) : ($item->quantity ?? 1)), 2) }}
+                                          @else
+                                              ${{ number_format((is_array($item) ? ($item['unit_price_usd'] ?? $item['unit_price'] ?? 0) : ($item->unit_price_usd ?? $item->unit_price ?? 0)) * (is_array($item) ? ($item['quantity'] ?? 1) : ($item->quantity ?? 1)), 2) }}
+                                          @endif
+                                      </td>
                                  </tr>
                                  @endforeach
                             </tbody>
@@ -131,12 +149,24 @@
                                 @if($order->discount_code)
                                 <tr>
                                     <td colspan="3" class="px-2 py-2 text-sm font-medium text-green-600 text-right">Discount ({{ $order->discount_code }}):</td>
-                                    <td class="px-2 py-2 text-sm font-medium text-green-600">-${{ number_format($order->discount_amount ?? 0, 2) }}</td>
+                                    <td class="px-2 py-2 text-sm font-medium text-green-600">
+                                        -@if($order->currency === 'GHS')
+                                            ₵{{ number_format($order->discount_amount ?? 0, 2) }}
+                                        @else
+                                            ${{ number_format($order->discount_amount ?? 0, 2) }}
+                                        @endif
+                                    </td>
                                 </tr>
                                 @endif
                                 <tr>
                                     <td colspan="3" class="px-2 py-3 text-sm font-bold text-gray-700 text-right">Final Total:</td>
-                                    <td class="px-2 py-3 text-sm font-bold text-indigo-600">${{ number_format($order->total_amount_usd ?? 0, 2) }}</td>
+                                    <td class="px-2 py-3 text-sm font-bold text-indigo-600">
+                                        @if($order->currency === 'GHS')
+                                            ₵{{ number_format($order->total_amount, 2) }}
+                                        @else
+                                            ${{ number_format($order->total_amount_usd ?? 0, 2) }}
+                                        @endif
+                                    </td>
                                 </tr>
                             </tfoot>
                         </table>

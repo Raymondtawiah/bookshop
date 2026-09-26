@@ -10,8 +10,6 @@
         <link rel="icon" href="/favicon.ico" sizes="any">
     </head>
     <body class="bg-gray-50 font-sans">
-        <x-admin-navbar />
-        
         <main class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <!-- Header Section -->
             <div class="flex items-center justify-between mb-8">

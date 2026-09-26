@@ -29,48 +29,68 @@
                 @if($orders->count() > 0)
                     <div class="divide-y divide-gray-100">
                         @foreach($orders as $order)
-                            <a href="{{ route('my-order.show', $order->id) }}" class="block p-6 hover:bg-gray-50 transition-colors">
-                                <div class="flex items-center justify-between mb-4">
-                                    <div>
-                                        <h3 class="text-lg font-semibold text-gray-900">Order #{{ $order->id }}</h3>
-                                        <p class="text-sm text-gray-500">{{ $order->created_at->format('M d, Y h:i A') }}</p>
-                                    </div>
-                                    <div class="text-right">
-                                        <p class="text-lg font-bold text-gray-900">${{ number_format($order->total_amount_usd ?? $order->total_amount, 2) }}</p>
-                                        <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
-                                            @if($order->status === 'delivered') bg-green-100 text-green-800
-                                            @elseif($order->status === 'confirmed') bg-blue-100 text-blue-800
-                                            @elseif($order->status === 'processing') bg-purple-100 text-purple-800
-                                            @elseif($order->status === 'shipped') bg-indigo-100 text-indigo-800
-                                            @elseif($order->status === 'cancelled') bg-red-100 text-red-800
-                                            @else bg-yellow-100 text-yellow-800
-                                            @endif">
-                                            {{ ucfirst($order->status) }}
+                        <div class="p-6 hover:bg-gray-50 transition-colors">
+                            <div class="flex items-center justify-between mb-4">
+                                <div>
+                                    <h3 class="text-lg font-semibold text-gray-900">Order #{{ $order->id }}</h3>
+                                    <p class="text-sm text-gray-500">{{ $order->created_at->format('M d, Y h:i A') }}</p>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-lg font-bold text-gray-900">
+                                        @if($order->currency === 'GHS')
+                                            ₵{{ number_format($order->total_amount, 2) }}
+                                        @else
+                                            ${{ number_format($order->total_amount_usd ?? $order->total_amount, 2) }}
+                                        @endif
+                                    </p>
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium 
+                                        @if($order->status === 'delivered') bg-green-100 text-green-800
+                                        @elseif($order->status === 'confirmed') bg-blue-100 text-blue-800
+                                        @elseif($order->status === 'processing') bg-purple-100 text-purple-800
+                                        @elseif($order->status === 'shipped') bg-indigo-100 text-indigo-800
+                                        @elseif($order->status === 'cancelled') bg-red-100 text-red-800
+                                        @else bg-yellow-100 text-yellow-800
+                                        @endif">
+                                        {{ ucfirst($order->status) }}
+                                    </span>
+                                </div>
+                            </div>
+
+                            <!-- Order Items -->
+                            @php
+                                $orderItems = $order->order_items ?? [];
+                                $items = is_array($orderItems) ? collect($orderItems) : collect([]);
+                            @endphp
+                            @if($items->count() > 0)
+                            <div class="mt-4 pt-4 border-t border-gray-100">
+                                <h4 class="text-sm font-medium text-gray-700 mb-2">Ordered Books:</h4>
+                                <div class="space-y-2">
+                                    @foreach($items as $item)
+                                    <div class="flex items-center justify-between text-sm">
+                                        <span class="text-gray-900">{{ is_array($item) ? ($item['product_name'] ?? 'Unknown') : 'Unknown' }}</span>
+                                        <span class="text-gray-500">x{{ is_array($item) ? ($item['quantity'] ?? 1) : 1 }}</span>
+                                        <span class="font-medium text-gray-900">
+                                            @if($order->currency === 'GHS')
+                                                ₵{{ number_format((is_array($item) ? ($item['unit_price_ghs'] ?? $item['unit_price'] ?? 0) : 0) * (is_array($item) ? ($item['quantity'] ?? 1) : 1), 2) }}
+                                            @else
+                                                ${{ number_format((is_array($item) ? ($item['unit_price_usd'] ?? $item['product_price'] ?? $item['unit_price'] ?? 0) : 0) * (is_array($item) ? ($item['quantity'] ?? 1) : 1), 2) }}
+                                            @endif
                                         </span>
                                     </div>
+                                    @endforeach
                                 </div>
+                            </div>
+                            @endif
 
-                                <!-- Order Items -->
-                                @php
-                                    $orderItems = $order->order_items ?? [];
-                                    $items = is_array($orderItems) ? collect($orderItems) : collect([]);
-                                @endphp
-                                @if($items->count() > 0)
-                                <div class="mt-4 pt-4 border-t border-gray-100">
-                                    <h4 class="text-sm font-medium text-gray-700 mb-2">Ordered Books:</h4>
-                                    <div class="space-y-2">
-                                        @foreach($items as $item)
-                                        <div class="flex items-center justify-between text-sm">
-                                            <span class="text-gray-900">{{ is_array($item) ? ($item['product_name'] ?? 'Unknown') : 'Unknown' }}</span>
-                                            <span class="text-gray-500">x{{ is_array($item) ? ($item['quantity'] ?? 1) : 1 }}</span>
-                                            <span class="font-medium text-gray-900">${{ number_format((is_array($item) ? ($item['unit_price_usd'] ?? $item['product_price'] ?? $item['unit_price'] ?? 0) : 0) * (is_array($item) ? ($item['quantity'] ?? 1) : 1), 2) }}</span>
-                                        </div>
-                                        @endforeach
-                                    </div>
-                                </div>
-                                @endif
-
-                            </a>
+                            <div class="mt-4 pt-4 border-t border-gray-100 flex justify-end">
+                                <a href="{{ route('my-order.show', $order->id) }}" class="inline-flex items-center gap-1.5 text-sm font-bold text-indigo-600 hover:text-indigo-700">
+                                    View Details
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </a>
+                            </div>
+                        </div>
                         @endforeach
                     </div>
                     

@@ -140,7 +140,13 @@
                                 <tr class="hover:bg-indigo-50 transition-colors">
                                     <td class="px-4 py-3 text-sm font-medium text-gray-900">#{{ $order->order_number ?? $order->id }}</td>
                                     <td class="px-4 py-3 text-sm text-gray-600">{{ $order->customer_name ?? 'Guest' }}</td>
-                                    <td class="px-4 py-3 text-sm text-gray-900 font-medium">${{ number_format($order->total_amount, 2) }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-900 font-medium">
+                                        @if($order->currency === 'GHS')
+                                            ₵{{ number_format($order->total_amount, 2) }}
+                                        @else
+                                            ${{ number_format($order->total_amount, 2) }}
+                                        @endif
+                                    </td>
                                     <td class="px-4 py-3">
                                         @if($order->status === 'confirmed')
                                             <span class="inline-flex px-2 py-1 text-xs font-bold rounded-full bg-green-100 text-green-700">Confirmed</span>
@@ -165,9 +171,14 @@
                                             <span class="inline-flex px-2 py-1 text-xs font-bold rounded-full bg-red-100 text-red-700">Failed</span>
                                         @endif
                                     </td>
-                                    <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">{{ $order->created_at->format('M d, Y') }}</td>
+                                    <td class="px-4 py-3 text-sm text-gray-500 whitespace-nowrap">{{ $order->created_at->format('M d, Y') }}                                    </td>
                                     <td class="px-4 py-3">
                                         <div class="flex items-center gap-2">
+                                             <button type="button" onclick="openOrderDetailsModal({{ $order->id }})" class="p-2 text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors" title="View order details">
+                                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                                </svg>
+                                            </button>
                                             @if($order->payment_status === 'pending')
                                                 <button type="button" onclick="openReminderModal({{ $order->id }}, '{{ $order->customer_name ?? 'customer' }}')" class="p-2 text-yellow-600 hover:bg-yellow-50 rounded-lg transition-colors" title="Send payment reminder">
                                                     <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -182,7 +193,6 @@
                                                     </svg>
                                                 </button>
                                             @endif
-                                        </div>
                                     </td>
                                 </tr>
                                 @empty
@@ -297,6 +307,47 @@
         @endif
     </div>
 
+    <!-- Order Details Modal -->
+    <div id="order-details-modal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Order Details</h3>
+                <button type="button" onclick="closeOrderDetailsModal()" class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="order-details-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">Order Number</span>
+                        <span class="detail-value" id="detail-order-number"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Customer</span>
+                        <span class="detail-value" id="detail-customer-name"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Total Amount</span>
+                        <span class="detail-value" id="detail-total-amount"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Status</span>
+                        <span class="detail-value" id="detail-status"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Payment Status</span>
+                        <span class="detail-value" id="detail-payment-status"></span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">Date</span>
+                        <span class="detail-value" id="detail-date"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" onclick="closeOrderDetailsModal()" class="modal-btn-cancel">Close</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Payment Reminder Modal -->
     <div id="reminder-modal" class="modal-overlay" style="display: none;">
         <div class="modal-content">
@@ -350,6 +401,8 @@
 
     @push('scripts')
     <script>
+        const orders = @json($orders);
+
         function switchTab(tabName) {
             // Hide all tab contents
             document.querySelectorAll('.tab-content').forEach(content => {
@@ -396,15 +449,36 @@
             document.getElementById('book-form').reset();
         }
 
+        // Order Details Modal
+        function openOrderDetailsModal(orderId) {
+            const order = orders.find(o => o.id == orderId);
+            if (!order) return;
+            document.getElementById('detail-order-number').textContent = '#' + (order.order_number || order.id);
+            document.getElementById('detail-customer-name').textContent = order.customer_name || 'Guest';
+            document.getElementById('detail-total-amount').textContent = (order.currency === 'GHS' ? '₵' : '$') + parseFloat(order.total_amount).toFixed(2);
+            document.getElementById('detail-status').textContent = order.status ? order.status.charAt(0).toUpperCase() + order.status.slice(1) : '';
+            document.getElementById('detail-payment-status').textContent = order.payment_status ? order.payment_status.charAt(0).toUpperCase() + order.payment_status.slice(1) : '';
+            document.getElementById('detail-date').textContent = order.created_at || '';
+            document.getElementById('order-details-modal').style.display = 'flex';
+        }
+
+        function closeOrderDetailsModal() {
+            document.getElementById('order-details-modal').style.display = 'none';
+        }
+
         // Close modals on overlay click
         window.onclick = function(event) {
             const reminderModal = document.getElementById('reminder-modal');
             const bookModal = document.getElementById('book-modal');
+            const orderDetailsModal = document.getElementById('order-details-modal');
             if (event.target === reminderModal) {
                 closeReminderModal();
             }
             if (event.target === bookModal) {
                 closeBookModal();
+            }
+            if (event.target === orderDetailsModal) {
+                closeOrderDetailsModal();
             }
         }
     </script>
@@ -524,6 +598,37 @@
 
         .modal-btn-submit:hover {
             background: #4338ca;
+        }
+
+        .order-details-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .detail-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #6b7280;
+            font-weight: 500;
+        }
+
+        .detail-value {
+            font-size: 14px;
+            color: #111827;
+            font-weight: 500;
+        }
+
+        @media (max-width: 480px) {
+            .order-details-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 

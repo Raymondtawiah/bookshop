@@ -29,9 +29,6 @@
                     <flux:sidebar.item icon="user-group" :href="route('admin.staff.index')" :current="request()->routeIs('admin.staff*')" wire:navigate>
                         {{ __('Staff Management') }}
                     </flux:sidebar.item>
-                    <flux:sidebar.item icon="shopping-cart" :href="route('admin.orders')" :current="request()->routeIs('admin.orders*')" wire:navigate>
-                        {{ __('Orders') }}
-                    </flux:sidebar.item>
                 </flux:sidebar.group>
             </flux:sidebar.nav>
 

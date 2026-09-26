@@ -14,9 +14,8 @@
              <nav class="hidden md:flex items-center gap-6">
                  <a href="{{ route('admin.dashboard') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors {{ request()->routeIs('admin.dashboard') ? 'text-indigo-600' : '' }}">Dashboard</a>
                  <a href="{{ route('admin.books') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors {{ request()->routeIs('admin.books*') ? 'text-indigo-600' : '' }}">Books</a>
-                 <a href="{{ route('admin.customers') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors {{ request()->routeIs('admin.customers*') ? 'text-indigo-600' : '' }}">Customers</a>
-                 <a href="{{ route('admin.orders') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors {{ request()->routeIs('admin.orders*') ? 'text-indigo-600' : '' }}">Orders</a>
-                 <a href="{{ route('admin.free-books') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors {{ request()->routeIs('admin.free-books*') ? 'text-indigo-600' : '' }}">Free Books</a>
+                  <a href="{{ route('admin.customers') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors {{ request()->routeIs('admin.customers*') ? 'text-indigo-600' : '' }}">Customers</a>
+                  <a href="{{ route('admin.free-books') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors {{ request()->routeIs('admin.free-books*') ? 'text-indigo-600' : '' }}">Free Books</a>
                  <a href="{{ route('admin.staff.index') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors {{ request()->routeIs('admin.staff*') ? 'text-indigo-600' : '' }}">Staff</a>
                  <a href="{{ route('admin.coachings.index') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors {{ request()->routeIs('admin.coachings*') ? 'text-indigo-600' : '' }}">Coachings</a>
                   <a href="{{ route('admin.webinars.index') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors {{ request()->routeIs('admin.webinars*') ? 'text-indigo-600' : '' }}">Webinars</a>
@@ -82,7 +81,6 @@
             <a href="{{ route('admin.dashboard') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.dashboard') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Dashboard</a>
             <a href="{{ route('admin.books') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.books*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Books</a>
             <a href="{{ route('admin.customers') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.customers*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Customers</a>
-            <a href="{{ route('admin.orders') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.orders*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Orders</a>
             <a href="{{ route('admin.free-books') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.free-books*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Free Books</a>
                 <a href="{{ route('admin.coachings.index') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.coachings*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Coachings</a>
                 <a href="{{ route('admin.staff.index') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.staff*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Staff</a>
