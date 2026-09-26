@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\CoachingController;
 use App\Http\Controllers\Admin\CustomerController;
 use App\Http\Controllers\Admin\FreeBookLeadsController;
 use App\Http\Controllers\Admin\NotificationController;
+use App\Http\Controllers\Admin\OrderController;
 use App\Http\Controllers\Admin\WebinarController;
 use App\Http\Controllers\Admin\WebinarPaymentController;
 use App\Http\Controllers\ChatController;
@@ -54,6 +55,14 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
 
     // Passage preview API route
     Route::get('passages/preview', [OrderController::class, 'previewPassage'])->name('passages.preview');
+
+    // Orders
+    Route::get('orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::get('orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('orders/{order}/send-book-pdf', [OrderController::class, 'sendBookPdf'])->name('orders.sendBookPdf');
+    Route::post('orders/{order}/send-book-offer', [OrderController::class, 'sendBookOffer'])->name('orders.sendBookOffer');
+    Route::post('orders/{order}/send-payment-reminder', [OrderController::class, 'sendPaymentReminder'])->name('orders.sendPaymentReminder');
+    Route::post('orders/{order}/update-status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
 
     // Coaching bookings
     Route::get('coachings', [CoachingController::class, 'adminIndex'])->name('coachings.index');

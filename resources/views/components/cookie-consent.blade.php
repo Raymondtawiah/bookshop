@@ -9,7 +9,7 @@
                         We use cookies to remember your progress, support your learning experience, and keep your registration information secure. 
                         Your data is saved only to provide these services and is never sold to third parties. 
                         By clicking <strong>"Accept"</strong>, you agree to our use of cookies. 
-                        <a href="{{ route('privacy') ?? '#' }}" class="text-indigo-600 hover:text-indigo-800 underline">Learn more</a>
+                        <a href="#" class="text-indigo-600 hover:text-indigo-800 underline">Learn more</a>
                     </p>
                 </div>
             </div>
