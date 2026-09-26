@@ -3,14 +3,16 @@
 @section('title', 'Notifications')
 
 @section('content')
-<div class="max-w-3xl mx-auto">
-    <div class="flex items-center justify-between mb-6">
+<div class="content">
+    <div class="page-header">
         <div>
-            <h1 class="text-2xl font-bold text-gray-900">Notifications</h1>
-            <p class="text-gray-500 text-sm">Stay updated with orders, bookings, and registrations</p>
+            <h1 class="page-title">Notifications</h1>
+            <p class="page-subtitle">Stay updated with orders, bookings, and registrations.</p>
         </div>
-        <button id="mark-all-read" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
-            Mark all as read
+        <button id="mark-all-read" class="p-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors shadow-sm" title="Mark all as read">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+            </svg>
         </button>
     </div>
 
@@ -25,7 +27,7 @@
 
         @if($chatNotifications->count() > 0)
             @foreach($chatNotifications as $chat)
-                <div class="p-4 rounded-xl border bg-indigo-50 border-indigo-200 hover:shadow-md transition-shadow cursor-pointer" data-chat-id="{{ $chat->id }}">
+                <div class="bg-white rounded-xl border border-gray-200 p-4 hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer" data-chat-id="{{ $chat->id }}">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
                             <h3 class="text-sm font-semibold text-gray-900">New Chat Message</h3>
@@ -40,18 +42,18 @@
         @if($notifications->count() > 0)
             @foreach($notifications as $notification)
                 @php
-                    $typeColors = [
-                        'order' => 'bg-blue-50 border-blue-200',
-                        'coaching' => 'bg-green-50 border-green-200',
-                        'customer' => 'bg-purple-50 border-purple-200',
-                        'payment' => 'bg-emerald-50 border-emerald-200',
-                        'free_book' => 'bg-amber-50 border-amber-200',
-                        'webinar' => 'bg-indigo-50 border-indigo-200',
+                    $typeStyles = [
+                        'order' => 'bg-indigo-50 border-indigo-200 text-indigo-700',
+                        'coaching' => 'bg-emerald-50 border-emerald-200 text-emerald-700',
+                        'customer' => 'bg-purple-50 border-purple-200 text-purple-700',
+                        'payment' => 'bg-amber-50 border-amber-200 text-amber-700',
+                        'free_book' => 'bg-teal-50 border-teal-200 text-teal-700',
+                        'webinar' => 'bg-blue-50 border-blue-200 text-blue-700',
                     ];
-                    $colorClass = $typeColors[$notification->type] ?? 'bg-gray-50 border-gray-200';
-                    $unreadClass = !$notification->is_read ? 'border-l-4' : '';
+                    $badgeStyle = $typeStyles[$notification->type] ?? 'bg-gray-50 border-gray-200 text-gray-700';
+                    $unreadBorder = !$notification->is_read ? 'border-l-4 border-indigo-500' : '';
                 @endphp
-                <div class="p-4 rounded-xl border {{ $colorClass }} {{ $unreadClass }} hover:shadow-md transition-shadow cursor-pointer" data-id="{{ $notification->id }}" data-read="{{ $notification->is_read ? '1' : '0' }}" data-link="{{ $notification->link ?? '' }}">
+                <div class="bg-white rounded-xl border border-gray-200 p-4 {{ $unreadBorder }} hover:border-indigo-300 hover:shadow-md transition-all cursor-pointer" data-id="{{ $notification->id }}" data-read="{{ $notification->is_read ? '1' : '0' }}" data-link="{{ $notification->link ?? '' }}">
                     <div class="flex items-start justify-between">
                         <div class="flex-1">
                             <h3 class="text-sm font-semibold text-gray-900">{{ $notification->title }}</h3>
@@ -153,7 +155,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const isRead = card.dataset.read === '1';
                 if (isRead) {
                     card.dataset.read = '0';
-                    card.classList.add('border-l-4');
+                    card.classList.add('border-l-4', 'border-indigo-500');
                     this.innerHTML = `<svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
@@ -161,7 +163,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     this.title = 'Mark as read';
                 } else {
                     card.dataset.read = '1';
-                    card.classList.remove('border-l-4');
+                    card.classList.remove('border-l-4', 'border-indigo-500');
                     this.innerHTML = `<svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
