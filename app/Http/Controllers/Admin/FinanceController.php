@@ -322,59 +322,62 @@ class FinanceController extends Controller
 
         $type = $request->query('type', 'all');
 
-        $orders = Order::query()
-            ->when($type === 'all' || $type === 'orders', function ($query) {
-                $query->where('payment_status', 'paid');
-            })
-            ->get(['id', 'order_number', 'customer_name', 'total_amount', 'payment_status', 'created_at', 'currency'])
-            ->map(function ($order) {
-                return [
-                    'id' => $order->id,
-                    'reference' => $order->order_number ?? '#' . $order->id,
-                    'customer' => $order->customer_name ?: ($order->user?->name ?: 'Guest'),
-                    'amount' => $order->total_amount,
-                    'currency' => $order->currency ?? 'USD',
-                    'status' => $order->payment_status,
-                    'date' => $order->created_at,
-                    'type' => 'Order',
-                ];
-            });
+        $orders = collect();
+        if ($type === 'all' || $type === 'orders') {
+            $orders = Order::query()
+                ->where('payment_status', 'paid')
+                ->get(['id', 'order_number', 'customer_name', 'total_amount', 'payment_status', 'created_at', 'currency'])
+                ->map(function ($order) {
+                    return [
+                        'id' => $order->id,
+                        'reference' => $order->order_number ?? '#' . $order->id,
+                        'customer' => $order->customer_name ?: ($order->user?->name ?: 'Guest'),
+                        'amount' => $order->total_amount,
+                        'currency' => $order->currency ?? 'USD',
+                        'status' => $order->payment_status,
+                        'date' => $order->created_at,
+                        'type' => 'Order',
+                    ];
+                });
+        }
 
-        $webinars = WebinarRegistration::query()
-            ->when($type === 'all' || $type === 'webinars', function ($query) {
-                $query->where('payment_status', WebinarRegistration::STATUS_PAID);
-            })
-            ->get(['id', 'amount_paid', 'payment_status', 'created_at', 'full_name', 'user_id'])
-            ->map(function ($reg) {
-                return [
-                    'id' => $reg->id,
-                    'reference' => 'WEB-' . $reg->id,
-                    'customer' => $reg->full_name ?: ($reg->user?->name ?: 'Guest'),
-                    'amount' => $reg->amount_paid,
-                    'currency' => 'USD',
-                    'status' => $reg->payment_status,
-                    'date' => $reg->created_at,
-                    'type' => 'Webinar',
-                ];
-            });
+        $webinars = collect();
+        if ($type === 'all' || $type === 'webinars') {
+            $webinars = WebinarRegistration::query()
+                ->where('payment_status', WebinarRegistration::STATUS_PAID)
+                ->get(['id', 'amount_paid', 'payment_status', 'created_at', 'full_name', 'user_id'])
+                ->map(function ($reg) {
+                    return [
+                        'id' => $reg->id,
+                        'reference' => 'WEB-' . $reg->id,
+                        'customer' => $reg->full_name ?: ($reg->user?->name ?: 'Guest'),
+                        'amount' => $reg->amount_paid,
+                        'currency' => 'USD',
+                        'status' => $reg->payment_status,
+                        'date' => $reg->created_at,
+                        'type' => 'Webinar',
+                    ];
+                });
+        }
 
-        $coaching = CoachingBooking::query()
-            ->when($type === 'all' || $type === 'coaching', function ($query) {
-                $query->where('payment_status', 'paid');
-            })
-            ->get(['id', 'amount', 'payment_status', 'created_at', 'name'])
-            ->map(function ($booking) {
-                return [
-                    'id' => $booking->id,
-                    'reference' => 'COACH-' . $booking->id,
-                    'customer' => $booking->name ?: 'Guest',
-                    'amount' => $booking->amount,
-                    'currency' => 'USD',
-                    'status' => $booking->payment_status,
-                    'date' => $booking->created_at,
-                    'type' => 'Coaching',
-                ];
-            });
+        $coaching = collect();
+        if ($type === 'all' || $type === 'coaching') {
+            $coaching = CoachingBooking::query()
+                ->where('payment_status', 'paid')
+                ->get(['id', 'amount', 'payment_status', 'created_at', 'name'])
+                ->map(function ($booking) {
+                    return [
+                        'id' => $booking->id,
+                        'reference' => 'COACH-' . $booking->id,
+                        'customer' => $booking->name ?: 'Guest',
+                        'amount' => $booking->amount,
+                        'currency' => 'USD',
+                        'status' => $booking->payment_status,
+                        'date' => $booking->created_at,
+                        'type' => 'Coaching',
+                    ];
+                });
+        }
 
         $payments = $orders->concat($webinars)->concat($coaching)
             ->sortByDesc('date')

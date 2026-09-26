@@ -65,9 +65,14 @@
             </div>
         </div>
 
+        <div style="margin-top: 24px;"></div>
+
         <div class="panel">
-            <div class="panel-header">
-                <h2 class="panel-title">Payment Transactions</h2>
+            <div class="panel-header" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+                <div>
+                    <h2 class="panel-title">Payment Transactions</h2>
+                    <p class="text-sm text-gray-500 mt-1">Showing {{ $type === 'all' ? 'all types' : ucfirst($type) }} payments</p>
+                </div>
                 <form method="GET" action="{{ route('finance.payments') }}" class="flex flex-col sm:flex-row gap-3">
                     <div class="select-wrapper">
                         <select name="type" onchange="this.form.submit()" class="w-full px-4 py-2 border border-gray-200 rounded-lg focus:ring-2 focus:ring-indigo-500">
