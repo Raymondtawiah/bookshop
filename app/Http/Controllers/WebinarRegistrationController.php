@@ -44,14 +44,6 @@ class WebinarRegistrationController extends Controller
      */
     public function register(Request $request, WebinarSession $webinar)
     {
-        $user = Auth::user();
-
-        // Check if already registered
-        if ($webinar->registrations()->where('user_id', $user->id)->exists()) {
-            return redirect()->route('webinars.show', $webinar)
-                ->with('error', 'You are already registered for this webinar.');
-        }
-
         return view('webinars.register', compact('webinar'));
     }
 
@@ -90,12 +82,38 @@ class WebinarRegistrationController extends Controller
                 $existingRegistration->restore();
             }
 
-            if ($existingRegistration->isPaid() || ! $this->paymentToggleService->isPaymentEnabled($webinar)) {
+            if ($existingRegistration->isPaid()) {
                 return redirect()->route('webinars.index')
                     ->with('error', 'You are already registered for this webinar. Check your email for the access link.');
             }
 
-            return redirect()->route('webinars.payment', [$webinar, $existingRegistration]);
+            $requiresPayment = $this->paymentToggleService->isPaymentEnabled($webinar) && $webinar->current_price > 0;
+
+            if ($requiresPayment) {
+                return redirect()->route('webinars.payment', [$webinar, $existingRegistration]);
+            }
+
+            $existingRegistration->update([
+                'full_name' => $request->full_name,
+                'email' => $request->email,
+                'phone' => $request->phone,
+                'registration_status' => 'registered',
+                'payment_status' => 'paid',
+                'amount_paid' => 0,
+            ]);
+
+            $accessLink = $this->accessService->generateAccessLink($existingRegistration);
+
+            \Mail::to($existingRegistration->email)->send(
+                new WebinarFreeRegistrationSuccess($existingRegistration, $webinar, $webinar->webinar_link, $accessLink)
+            );
+
+            $existingRegistration->update(['email_sent_at' => now()]);
+
+            NotificationService::newWebinarRegistration($existingRegistration);
+
+            return redirect()->route('webinars.index')
+                ->with('success', 'Registration updated successfully! Check your email for details.');
         }
 
         // Create registration - with user_id for logged-in users, null for guests
