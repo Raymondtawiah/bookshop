@@ -34,7 +34,7 @@ We'll send you a reminder email before the webinar starts. That reminder will in
 
 ## Access Limit
 
-This link can be used a maximum of **1 times**.
+This link can be used a maximum of **1 time**.
 
 ## Your Webinar Link
 

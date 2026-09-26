@@ -23,7 +23,7 @@ We'll send you a reminder email before the webinar starts. That reminder will in
 
 ## Access Limit
 
-Your secure access link can be used a maximum of **3 times**. After reaching this limit, you will need to re-register.
+Your secure access link can be used a maximum of **1 time**.
 
 @if($accessLink)
 ## Your Webinar Access Link

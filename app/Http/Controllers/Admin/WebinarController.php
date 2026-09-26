@@ -533,7 +533,7 @@ class WebinarController extends Controller
         $reminderType = $validated['reminder_type'] ?? '24_hours';
         $customMessage = $validated['custom_message'] ?? null;
         $reminderDateTime = null;
-        if ($validated['reminder_date']) {
+        if ($validated['reminder_date'] ?? null) {
             $time = $validated['reminder_time'] ?? '09:00';
             $reminderDateTime = $validated['reminder_date'].' '.$time;
         }
@@ -567,7 +567,7 @@ class WebinarController extends Controller
 
         // Combine date and time for the reminder
         $reminderDateTime = null;
-        if ($validated['reminder_date']) {
+        if ($validated['reminder_date'] ?? null) {
             $time = $validated['reminder_time'] ?? '09:00';
             $reminderDateTime = $validated['reminder_date'].' '.$time;
         }
