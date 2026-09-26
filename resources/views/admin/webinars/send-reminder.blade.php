@@ -116,7 +116,7 @@
                 </button>
                 
                 <div class="text-center">
-                    <a href="{{ route('admin.webinars.registrations') }}" class="text-gray-600 hover:text-gray-700 text-sm">
+                    <a href="{{ route('admin.webinars.index') }}" class="text-gray-600 hover:text-gray-700 text-sm">
                         Cancel
                     </a>
                 </div>
