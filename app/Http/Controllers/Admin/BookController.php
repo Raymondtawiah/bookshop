@@ -214,7 +214,7 @@ class BookController extends Controller
     public function updateBookingSettings(Request $request)
     {
         $request->validate([
-            'booking_times' => 'nullable|array|min:1|max:10',
+            'booking_times' => 'nullable|array|min:1|max:100',
             'booking_times.*' => 'string|max:20',
             'booking_zoom_link' => 'nullable|url|max:255',
         ]);
