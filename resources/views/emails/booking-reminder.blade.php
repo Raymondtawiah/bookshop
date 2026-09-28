@@ -73,7 +73,7 @@
         <div class="order-details">
             <h3 style="margin-top: 0;">Booking Details</h3>
             <p><strong>Booking Date:</strong> {{ \Carbon\Carbon::parse($order->booking_date)->format('l, F j, Y') }}</p>
-            <p><strong>Booking Time:</strong> {{ \Carbon\Carbon::parse($order->booking_time)->format('g:i A') }}</p>
+            <p><strong>Booking Time:</strong> {{ \Carbon\Carbon::parse($order->booking_time)->format('g:i A') }} GMT</p>
             @if($order->booking_note)
                 <p><strong>Note:</strong> {{ $order->booking_note }}</p>
             @endif

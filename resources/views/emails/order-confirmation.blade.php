@@ -130,7 +130,7 @@
           <div class="order-details">
               @if($order->booking_date)
                   <p><strong>Booking Date:</strong> {{ \Carbon\Carbon::parse($order->booking_date)->format('l, F j, Y') }}</p>
-                  <p><strong>Booking Time:</strong> {{ \Carbon\Carbon::parse($order->booking_time)->format('g:i A') }}</p>
+                  <p><strong>Booking Time:</strong> {{ \Carbon\Carbon::parse($order->booking_time)->format('g:i A') }} GMT</p>
               @else
                   <p>No booking scheduled yet.</p>
               @endif
