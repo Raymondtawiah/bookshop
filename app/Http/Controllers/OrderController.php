@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\OrderConfirmation;
 use App\Models\Book;
 use App\Models\Nationality;
 use App\Models\Order;
@@ -10,6 +11,7 @@ use App\Services\PaymentRouter;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use ZipArchive;
 
 class OrderController extends Controller
@@ -31,7 +33,7 @@ class OrderController extends Controller
 
         return view('direct-checkout', [
             'book' => $book,
-            'total' => $book->price,
+            'total' => $book->is_free ? 0 : $book->price,
             'nationalities' => $nationalities,
             'direct' => true,
         ]);
@@ -42,6 +44,8 @@ class OrderController extends Controller
      */
     public function processDirectCheckout(Request $request)
     {
+        $book = Book::findOrFail($request->book_id);
+
         $request->validate([
             'book_id' => 'required|exists:books,id',
             'customer_name' => 'required|string|max:255',
@@ -49,11 +53,12 @@ class OrderController extends Controller
             'residence' => 'required|string|max:500',
             'nationality' => 'required|string|max:100',
             'contact' => 'required|string|max:20',
-            'payment_method' => 'required|in:bank,card,paystack',
             'booking_date' => 'nullable|date|after_or_equal:tomorrow',
             'booking_time' => 'nullable|string|max:20',
             'booking_note' => 'nullable|string|max:1000',
-        ]);
+        ] + (Book::first()?->is_free ? [] : [
+            'payment_method' => 'required|in:bank,card,paystack',
+        ]));
 
         $bookingDate = $request->booking_date;
         if ($bookingDate) {
@@ -63,10 +68,53 @@ class OrderController extends Controller
             }
         }
 
-        $book = Book::findOrFail($request->book_id);
+        if (Book::first()?->is_free) {
+            $reference = 'FREE-'.time().rand(1000, 9999);
 
-        if ($book->is_free && $book->book_pdf) {
-            return redirect()->route('product.show', $book->id)->with('error', 'This is a free book. Please download it directly.');
+            $orderItems = [[
+                'book_id' => $book->id,
+                'product_name' => $book->title,
+                'unit_price_usd' => 0,
+                'quantity' => 1,
+                'total_price_usd' => 0,
+            ]];
+
+            $order = Order::create([
+                'user_id' => Auth::id(),
+                'customer_name' => $request->customer_name,
+                'email' => $request->email,
+                'residence' => $request->residence,
+                'nationality' => $request->nationality,
+                'contact' => $request->contact,
+                'total_amount' => 0,
+                'total_amount_usd' => 0,
+                'currency' => 'USD',
+                'status' => 'paid',
+                'payment_status' => 'paid',
+                'payment_method' => 'free',
+                'payment_provider' => 'free',
+                'order_number' => $reference,
+                'order_items' => $orderItems,
+                'booking_date' => $bookingDate,
+                'booking_time' => $request->booking_time,
+                'booking_note' => $request->booking_note,
+            ]);
+
+            NotificationService::newOrder($order);
+
+            try {
+                $usdAmount = 0;
+                Mail::to($request->email)->send(new OrderConfirmation($order, collect($orderItems), $usdAmount));
+            } catch (\Exception $e) {
+                Log::error('Failed to send free order confirmation email', [
+                    'error' => $e->getMessage(),
+                    'order_id' => $order->id,
+                    'recipient' => $request->email,
+                ]);
+            }
+
+            return redirect()->route('product.show', $book->id)
+                ->with('success', 'Order confirmed! Check your email for the free book details.');
         }
 
         $totalUsd = $book->price;

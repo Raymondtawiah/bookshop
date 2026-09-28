@@ -152,6 +152,15 @@ class BookController extends Controller
             ->with('success', 'Book updated successfully!');
     }
 
+    public function toggleFree(Request $request, Book $book)
+    {
+        $book->update([
+            'is_free' => ! $book->is_free,
+        ]);
+
+        return back()->with('success', $book->is_free ? 'Book is now free.' : 'Book is now paid.');
+    }
+
     public function destroy(Book $book)
     {
         $this->deleteFile($book->cover_image);

@@ -28,11 +28,18 @@
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                         <h2 class="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
                         @if(isset($direct) && $direct && isset($book))
+                            @php $globalFree = \App\Models\Book::first()?->is_free; @endphp
                             <div class="flex justify-between items-center py-3 border-b border-gray-200">
                                 <div>
                                     <p class="font-medium text-gray-900">{{ $book->title }}</p>
                                 </div>
-                                <p class="font-medium">${{ number_format($book->price, 2) }}</p>
+                                <p class="font-medium">
+                                    @if($globalFree)
+                                        <span class="text-emerald-600 font-bold">FREE</span>
+                                    @else
+                                        ${{ number_format($book->price, 2) }}
+                                    @endif
+                                </p>
                             </div>
                         @else
                             <div class="space-y-3">
@@ -50,7 +57,13 @@
 
                         <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-200">
                             <span class="font-semibold text-gray-900">Total</span>
-                            <span class="font-bold text-lg text-indigo-600">${{ number_format($total, 2) }}</span>
+                            <span class="font-bold text-lg text-indigo-600">
+                                @if(isset($direct) && $direct && isset($book) && $globalFree)
+                                    <span class="text-emerald-600">FREE</span>
+                                @else
+                                    ${{ number_format($total, 2) }}
+                                @endif
+                            </span>
                         </div>
                     </div>
                 </div>
@@ -198,6 +211,8 @@
                                     </div>
                                 </div>
 
+                                @php $globalFree = \App\Models\Book::first()?->is_free; @endphp
+                                @if(!isset($book) || !$globalFree)
                                 <div class="mt-6">
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Payment Method *</label>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -222,9 +237,14 @@
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
+                                @endif
 
                                 <button type="submit" class="mt-8 w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-colors" id="submit-btn">
-                                    Confirm Order
+                                    @if(isset($book) && $book->is_free)
+                                        Confirm Free Order
+                                    @else
+                                        Confirm Order
+                                    @endif
                                 </button>
                             </form>
                         @endif

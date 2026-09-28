@@ -45,9 +45,16 @@
                     @endif
 
                     <div class="flex items-baseline gap-2 mb-4 mt-auto">
-                        <span class="text-lg font-extrabold text-emerald-600">${{ number_format($book->price, 2) }}</span>
-                        @if(!empty($book->original_price))
-                            <span class="text-xs text-gray-400 line-through">${{ number_format($book->original_price, 2) }}</span>
+                        @php
+                            $globalFree = \App\Models\Book::first()?->is_free;
+                        @endphp
+                        @if($globalFree)
+                            <span class="text-lg font-extrabold text-emerald-600">FREE</span>
+                        @else
+                            <span class="text-lg font-extrabold text-emerald-600">${{ number_format($book->price, 2) }}</span>
+                            @if(!empty($book->original_price))
+                                <span class="text-xs text-gray-400 line-through">${{ number_format($book->original_price, 2) }}</span>
+                            @endif
                         @endif
                     </div>
 

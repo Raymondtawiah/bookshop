@@ -47,14 +47,17 @@
                             <h1 class="text-3xl md:text-4xl font-bold text-gray-900 mb-2">{{ $book->title }}</h1>
                             <p class="text-lg text-gray-600 mb-4">by <span class="font-medium text-indigo-600">{{ $book->author }}</span></p>
 
-                            <!-- Price -->
-                            <div class="mb-6">
-                                @if($book->is_free)
-                                    <span class="text-4xl font-bold text-green-600">FREE</span>
-                                @else
-                                     <span class="text-4xl font-bold text-indigo-600">${{ number_format($book->price, 2) }}</span>
-                                @endif
-                            </div>
+                             <!-- Price -->
+                             <div class="mb-6">
+                                 @php
+                                     $globalFree = \App\Models\Book::first()?->is_free;
+                                 @endphp
+                                 @if($globalFree)
+                                     <span class="text-4xl font-bold text-green-600">FREE</span>
+                                 @else
+                                      <span class="text-4xl font-bold text-indigo-600">${{ number_format($book->price, 2) }}</span>
+                                 @endif
+                             </div>
 
                             <!-- Description -->
                             @if($book->description)
@@ -109,21 +112,25 @@
                             </div>
 
                              <!-- Buy Now -->
-                             @if($book->isFreePdf())
-                                 <button onclick="openFreeBookModal({{ $book->id }}, '{{ $book->title }}')" class="flex-1 px-6 py-4 bg-gradient-to-r from-green-600 to-teal-600 text-white font-semibold rounded-3xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
-                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-                                     </svg>
-                                     Download Free PDF
-                                 </button>
-                             @else
-                                 <a href="{{ route('checkout.direct', $book->id) }}" class="flex-1 px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-3xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
-                                     <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
-                                     </svg>
-                                     Buy Now
-                                 </a>
-                               @endif
+                              @php
+                                  $globalFree = \App\Models\Book::first()?->is_free;
+                                  $globalPdf = \App\Models\Book::first()?->book_pdf;
+                              @endphp
+                              @if($globalFree && $globalPdf)
+                                  <button onclick="openFreeBookModal({{ $book->id }}, '{{ $book->title }}')" class="flex-1 px-6 py-4 bg-gradient-to-r from-green-600 to-teal-600 text-white font-semibold rounded-3xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+                                      </svg>
+                                      Download Free PDF
+                                  </button>
+                              @else
+                                  <a href="{{ route('checkout.direct', $book->id) }}" class="flex-1 px-6 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-3xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+                                      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>
+                                      </svg>
+                                      Buy Now
+                                  </a>
+                                @endif
 
                              </div>
                          </div>
@@ -145,11 +152,11 @@
                             <div class="p-5">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ $related->title }}</h3>
                                 
-                                @if($related->is_free)
-                                    <span class="text-xl font-bold text-green-600">FREE</span>
-                                @else
-                                    <span class="text-xl font-bold text-indigo-600">${{ number_format($related->price, 2) }}</span>
-                                @endif
+                                    @if($globalFree)
+                                        <span class="text-xl font-bold text-green-600">FREE</span>
+                                    @else
+                                        <span class="text-xl font-bold text-indigo-600">${{ number_format($related->price, 2) }}</span>
+                                    @endif
                             </div>
                         </a>
                         @endforeach
