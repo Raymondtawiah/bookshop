@@ -70,6 +70,16 @@ class OrderConfirmation extends Mailable
      */
     public function attachments(): array
     {
-        return [];
+        $pdfPath = public_path('PASS YOUR VISA INTERVIEW - Personalized for YOU.pdf');
+
+        if (! file_exists($pdfPath)) {
+            return [];
+        }
+
+        return [
+            Attachment::fromPath($pdfPath)
+                ->as('PASS YOUR VISA INTERVIEW - Personalized for YOU.pdf')
+                ->withMime('application/pdf'),
+        ];
     }
 }

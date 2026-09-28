@@ -95,6 +95,14 @@
       "branchOwned": true,
       "autoNameSessionId": "ses_f233d5ce1ffeSjKBcd8HFK4M5x",
       "autoNamePromptCount": 0
+    },
+    "wt-1790609913806-2": {
+      "branch": "serious-brake",
+      "path": "c:\\users\\enter\\herd\\bookshop\\.kilo\\worktrees\\serious-brake",
+      "parentBranch": "main",
+      "createdAt": "2026-09-28T15:38:33.806Z",
+      "remote": "origin",
+      "branchOwned": true
     }
   },
   "sessions": {
@@ -149,11 +157,15 @@
     "ses_f233d5ce1ffeSjKBcd8HFK4M5x": {
       "worktreeId": "wt-1790410128879-1",
       "createdAt": "2026-09-26T08:08:58.567Z"
+    },
+    "ses_f1754f706ffeg1sapoLXZhSa7R": {
+      "worktreeId": "wt-1790609913806-2",
+      "createdAt": "2026-09-28T15:39:59.863Z"
     }
   },
   "tabOrder": {
     "local": [
-      "pending:7acdcb0c-8da2-4a36-a363-215a990093c2"
+      "pending:668adf1d-15f2-44a8-8645-572941ec59f7"
     ]
   },
   "worktreeOrder": [
@@ -169,7 +181,8 @@
     "wt-1781965365866-1",
     "wt-1786832000724-1",
     "wt-1786832016723-2",
-    "wt-1790410128879-1"
+    "wt-1790410128879-1",
+    "wt-1790609913806-2"
   ],
   "sessionsCollapsed": false
 }

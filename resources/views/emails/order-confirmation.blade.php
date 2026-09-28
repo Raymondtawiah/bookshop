@@ -160,6 +160,8 @@
         
         <p>Happy reading! 📚</p>
         
+        <p>We've also attached your personalized visa interview PDF to this email.</p>
+        
     </div>
 </body>
 </html>
