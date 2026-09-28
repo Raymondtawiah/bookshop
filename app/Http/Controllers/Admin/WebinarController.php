@@ -132,7 +132,9 @@ class WebinarController extends Controller
     {
         $webinars = WebinarSession::all();
 
-        $groups = $webinars->groupBy('title')->map(function ($items) {
+        $groups = $webinars->groupBy(function ($item) {
+            return strtolower($item->title);
+        })->map(function ($items) {
             $webinar = $items->first();
             $webinarIds = $items->pluck('id');
 
@@ -169,7 +171,7 @@ class WebinarController extends Controller
      */
     public function groupShow(Request $request, $webinarTitle)
     {
-        $webinars = WebinarSession::where('title', $webinarTitle)->get();
+        $webinars = WebinarSession::whereRaw('LOWER(title) = ?', [strtolower($webinarTitle)])->get();
 
         if ($webinars->isEmpty()) {
             return redirect()->route('admin.webinars.groups')->with('error', 'Webinar group not found.');
@@ -232,7 +234,7 @@ class WebinarController extends Controller
      */
     public function sendGroupReminder(Request $request, $webinarTitle)
     {
-        $webinars = WebinarSession::where('title', $webinarTitle)->get();
+        $webinars = WebinarSession::whereRaw('LOWER(title) = ?', [strtolower($webinarTitle)])->get();
 
         if ($webinars->isEmpty()) {
             return redirect()->route('admin.webinars.groups')->with('error', 'Webinar group not found.');
@@ -307,7 +309,7 @@ class WebinarController extends Controller
      */
     public function markAllAttended(Request $request, $webinarTitle)
     {
-        $webinars = WebinarSession::where('title', $webinarTitle)->get();
+        $webinars = WebinarSession::whereRaw('LOWER(title) = ?', [strtolower($webinarTitle)])->get();
 
         if ($webinars->isEmpty()) {
             if ($request->wantsJson()) {
@@ -336,13 +338,6 @@ class WebinarController extends Controller
      */
     public function create()
     {
-        $webinar = WebinarSession::first();
-
-        if ($webinar) {
-            return redirect()->route('admin.webinars.edit', $webinar)
-                ->with('info', 'A webinar already exists. You can edit it here.');
-        }
-
         return view('admin.webinars.create');
     }
 
