@@ -132,15 +132,10 @@ class WebinarController extends Controller
     {
         $webinars = WebinarSession::all();
 
-        $groups = $webinars->groupBy(function ($item) {
-            return strtolower($item->title);
-        })->map(function ($items) {
-            $webinar = $items->first();
-            $webinarIds = $items->pluck('id');
-
-            $totalRegistrations = WebinarRegistration::whereIn('webinar_id', $webinarIds)->count();
-            $paidRegistrations = WebinarRegistration::whereIn('webinar_id', $webinarIds)->where('payment_status', 'paid')->where('amount_paid', '>', 0)->count();
-            $freeRegistrations = WebinarRegistration::whereIn('webinar_id', $webinarIds)->where('payment_status', 'paid')->where('amount_paid', 0)->count();
+        $groups = $webinars->map(function ($webinar) {
+            $totalRegistrations = WebinarRegistration::where('webinar_id', $webinar->id)->count();
+            $paidRegistrations = WebinarRegistration::where('webinar_id', $webinar->id)->where('payment_status', 'paid')->where('amount_paid', '>', 0)->count();
+            $freeRegistrations = WebinarRegistration::where('webinar_id', $webinar->id)->where('payment_status', 'paid')->where('amount_paid', 0)->count();
 
             if ($paidRegistrations > $freeRegistrations) {
                 $groupStatus = 'paid';
@@ -150,18 +145,13 @@ class WebinarController extends Controller
                 $groupStatus = null;
             }
 
-            return [
-                'title' => $webinar->title,
-                'description' => $webinar->description,
-                'count' => $items->count(),
-                'total_registrations' => $totalRegistrations,
-                'total_paid' => $paidRegistrations,
-                'total_free' => $freeRegistrations,
-                'is_free' => $groupStatus === 'free',
-                'group_status' => $groupStatus,
-                'webinars' => $items,
-            ];
-        })->sortBy('title');
+            $webinar->total_registrations = $totalRegistrations;
+            $webinar->total_paid = $paidRegistrations;
+            $webinar->total_free = $freeRegistrations;
+            $webinar->group_status = $groupStatus;
+
+            return $webinar;
+        });
 
         return view('admin.webinars.groups', compact('groups'));
     }
@@ -169,17 +159,11 @@ class WebinarController extends Controller
     /**
      * Show registrations for a specific webinar title group.
      */
-    public function groupShow(Request $request, $webinarTitle)
+    public function groupShow(Request $request, WebinarSession $webinar)
     {
-        $webinars = WebinarSession::whereRaw('LOWER(title) = ?', [strtolower($webinarTitle)])->get();
-
-        if ($webinars->isEmpty()) {
-            return redirect()->route('admin.webinars.groups')->with('error', 'Webinar group not found.');
-        }
-
         $registrationsQuery = WebinarRegistration::query()
             ->with(['webinar', 'user'])
-            ->whereIn('webinar_id', $webinars->pluck('id'))
+            ->where('webinar_id', $webinar->id)
             ->latest();
 
         // Apply search
@@ -219,8 +203,7 @@ class WebinarController extends Controller
         $totalAttended = $registrations->whereNotNull('joined_at')->count();
 
         return view('admin.webinars.groups-show', compact(
-            'webinarTitle',
-            'webinars',
+            'webinar',
             'registrations',
             'totalRegistrations',
             'totalPaid',
@@ -232,14 +215,8 @@ class WebinarController extends Controller
     /**
      * Send bulk reminder to all paid registrations in a webinar group.
      */
-    public function sendGroupReminder(Request $request, $webinarTitle)
+    public function sendGroupReminder(Request $request, WebinarSession $webinar)
     {
-        $webinars = WebinarSession::whereRaw('LOWER(title) = ?', [strtolower($webinarTitle)])->get();
-
-        if ($webinars->isEmpty()) {
-            return redirect()->route('admin.webinars.groups')->with('error', 'Webinar group not found.');
-        }
-
         $validated = $request->validate([
             'reminder_type' => 'required|in:24_hours,1_hour,15_minutes,post_webinar',
             'message' => 'nullable|string',
@@ -248,13 +225,12 @@ class WebinarController extends Controller
         $reminderType = $validated['reminder_type'];
         $customMessage = $validated['message'] ?? null;
 
-        $webinarIds = $webinars->pluck('id');
-        $paidRegistrations = WebinarRegistration::whereIn('webinar_id', $webinarIds)
+        $paidRegistrations = $webinar->registrations()
             ->where('payment_status', 'paid')
             ->get();
 
         if ($paidRegistrations->isEmpty()) {
-            return redirect()->route('admin.webinars.groups.show', $webinarTitle)->with('error', 'There are no paid registrations to send reminders to.');
+            return redirect()->route('admin.webinars.groups.show', $webinar)->with('error', 'There are no paid registrations to send reminders to.');
         }
 
         $sentCount = 0;
@@ -262,7 +238,6 @@ class WebinarController extends Controller
 
         foreach ($paidRegistrations as $registration) {
             try {
-                $webinar = $registration->webinar;
                 $accessLink = $webinar->webinar_link;
                 $reminderDateTime = $webinar->scheduled_at ? $webinar->scheduled_at->format('Y-m-d H:i') : null;
 
@@ -277,7 +252,7 @@ class WebinarController extends Controller
             } catch (\Exception $e) {
                 $failedCount++;
                 Log::error('Failed to send webinar reminder to paid registration', [
-                    'webinar_id' => $registration->webinar_id,
+                    'webinar_id' => $webinar->id,
                     'registration_id' => $registration->id,
                     'email' => $registration->email,
                     'reminder_type' => $reminderType,
@@ -294,33 +269,22 @@ class WebinarController extends Controller
                 return response()->json(['success' => false, 'message' => $message]);
             }
 
-            return redirect()->route('admin.webinars.groups.show', $webinarTitle)->with('warning', $message);
+            return redirect()->route('admin.webinars.groups.show', $webinar)->with('warning', $message);
         }
 
         if ($request->wantsJson()) {
             return response()->json(['success' => true, 'message' => $message.'.']);
         }
 
-        return redirect()->route('admin.webinars.groups.show', $webinarTitle)->with('success', $message.'.');
+        return redirect()->route('admin.webinars.groups.show', $webinar)->with('success', $message.'.');
     }
 
     /**
      * Mark all registrations in a webinar group as attended.
      */
-    public function markAllAttended(Request $request, $webinarTitle)
+    public function markAllAttended(Request $request, WebinarSession $webinar)
     {
-        $webinars = WebinarSession::whereRaw('LOWER(title) = ?', [strtolower($webinarTitle)])->get();
-
-        if ($webinars->isEmpty()) {
-            if ($request->wantsJson()) {
-                return response()->json(['success' => false, 'message' => 'Webinar group not found.']);
-            }
-
-            return redirect()->route('admin.webinars.groups')->with('error', 'Webinar group not found.');
-        }
-
-        $webinarIds = $webinars->pluck('id');
-        $updated = WebinarRegistration::whereIn('webinar_id', $webinarIds)
+        $updated = $webinar->registrations()
             ->whereNull('joined_at')
             ->update(['joined_at' => now()]);
 
@@ -330,7 +294,7 @@ class WebinarController extends Controller
             return response()->json(['success' => true, 'message' => $message]);
         }
 
-        return redirect()->route('admin.webinars.groups.show', $webinarTitle)->with('success', $message);
+        return redirect()->route('admin.webinars.groups.show', $webinar)->with('success', $message);
     }
 
     /**
