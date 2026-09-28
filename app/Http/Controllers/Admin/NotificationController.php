@@ -137,8 +137,11 @@ class NotificationController extends Controller
             'message' => 'required|string|max:5000',
             'book_update' => 'nullable|string|max:2000',
             'webinar_update' => 'nullable|string|max:2000',
+            'coaching_update' => 'nullable|string|max:2000',
+            'recipient_type' => 'required|in:all,book_buyers,webinar_registrants,coaching_bookings,all_purchasers',
         ]);
 
+        $recipientType = $request->input('recipient_type', 'all');
         $customersQuery = User::where('is_admin', false)
             ->where('is_staff', false)
             ->whereNotNull('email')
@@ -146,6 +149,60 @@ class NotificationController extends Controller
             ->where('email', 'not like', '%invalid%')
             ->whereRaw('LENGTH(TRIM(email)) > 5')
             ->orderByDesc('id');
+
+        if ($recipientType === 'book_buyers') {
+            $bookBuyerEmails = \App\Models\Order::where('payment_status', 'paid')
+                ->whereNotNull('email')
+                ->where('email', '!=', '')
+                ->pluck('email')
+                ->unique()
+                ->toArray();
+
+            $customersQuery->whereIn('email', $bookBuyerEmails);
+        } elseif ($recipientType === 'webinar_registrants') {
+            $webinarEmails = \App\Models\WebinarRegistration::where('payment_status', 'paid')
+                ->whereNotNull('email')
+                ->where('email', '!=', '')
+                ->pluck('email')
+                ->unique()
+                ->toArray();
+
+            $customersQuery->whereIn('email', $webinarEmails);
+        } elseif ($recipientType === 'coaching_bookings') {
+            $coachingEmails = \App\Models\CoachingBooking::where('payment_status', 'paid')
+                ->whereNotNull('email')
+                ->where('email', '!=', '')
+                ->pluck('email')
+                ->unique()
+                ->toArray();
+
+            $customersQuery->whereIn('email', $coachingEmails);
+        } elseif ($recipientType === 'all_purchasers') {
+            $bookBuyerEmails = \App\Models\Order::where('payment_status', 'paid')
+                ->whereNotNull('email')
+                ->where('email', '!=', '')
+                ->pluck('email')
+                ->unique()
+                ->toArray();
+
+            $webinarEmails = \App\Models\WebinarRegistration::where('payment_status', 'paid')
+                ->whereNotNull('email')
+                ->where('email', '!=', '')
+                ->pluck('email')
+                ->unique()
+                ->toArray();
+
+            $coachingEmails = \App\Models\CoachingBooking::where('payment_status', 'paid')
+                ->whereNotNull('email')
+                ->where('email', '!=', '')
+                ->pluck('email')
+                ->unique()
+                ->toArray();
+
+            $allPurchaserEmails = array_unique(array_merge($bookBuyerEmails, $webinarEmails, $coachingEmails));
+
+            $customersQuery->whereIn('email', $allPurchaserEmails);
+        }
 
         $testMode = (bool) $request->input('test_mode');
 
@@ -163,6 +220,7 @@ class NotificationController extends Controller
         $message = $request->input('message');
         $bookUpdate = $request->input('book_update');
         $webinarUpdate = $request->input('webinar_update');
+        $coachingUpdate = $request->input('coaching_update');
         $sentCount = 0;
         $failedCount = 0;
 
@@ -174,6 +232,7 @@ class NotificationController extends Controller
                     'body' => (string) ($message ?? ''),
                     'book_update_text' => (string) ($bookUpdate ?? ''),
                     'webinar_update_text' => (string) ($webinarUpdate ?? ''),
+                    'coaching_update_text' => (string) ($coachingUpdate ?? ''),
                     'url' => url('/'),
                 ];
 
@@ -197,7 +256,7 @@ class NotificationController extends Controller
             'customer',
             'Broadcast Sent',
             "Email broadcast sent to {$sentCount} customers. Failed: {$failedCount}.",
-            route('admin.notifications')
+            route('admin.notifications.index')
         );
 
         return back()->with('success', "Broadcast sent to {$sentCount} customers. Failed: {$failedCount}.");

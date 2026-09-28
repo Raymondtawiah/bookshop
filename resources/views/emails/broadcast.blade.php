@@ -37,6 +37,13 @@
              <p>{!! nl2br(e($webinar_update_text)) !!}</p>
          </div>
          @endif
+
+         @if(!empty($coaching_update_text))
+         <div class="update-box">
+             <h3>Coaching Updates</h3>
+             <p>{!! nl2br(e($coaching_update_text)) !!}</p>
+         </div>
+         @endif
         
         <p>Don't miss these valuable resources. Visit our website now to explore the latest books and register for upcoming webinars!</p>
         

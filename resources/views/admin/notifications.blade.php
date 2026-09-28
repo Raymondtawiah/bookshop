@@ -4,17 +4,24 @@
 
 @section('content')
 <div class="content">
-    <div class="page-header">
-        <div>
-            <h1 class="page-title">Notifications</h1>
-            <p class="page-subtitle">Stay updated with orders, bookings, and registrations.</p>
+        <div class="page-header">
+            <div>
+                <h1 class="page-title">Notifications</h1>
+                <p class="page-subtitle">Stay updated with orders, bookings, and registrations.</p>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="{{ route('admin.notifications.broadcastForm') }}" class="p-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors shadow-sm" title="Send broadcast">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>
+                    </svg>
+                </a>
+                <button id="mark-all-read" class="p-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors shadow-sm" title="Mark all as read">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                    </svg>
+                </button>
+            </div>
         </div>
-        <button id="mark-all-read" class="p-2.5 bg-indigo-600 text-white rounded-xl hover:bg-indigo-700 transition-colors shadow-sm" title="Mark all as read">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
-            </svg>
-        </button>
-    </div>
 
     <div id="notifications-list" class="space-y-3">
         @php

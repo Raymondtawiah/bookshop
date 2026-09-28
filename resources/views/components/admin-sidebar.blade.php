@@ -66,7 +66,7 @@
             </span>
             Customers
         </a>
-        <a href="{{ route('admin.notifications.broadcast') }}" class="nav-item {{ request()->routeIs('admin.notifications.broadcast') ? 'active' : '' }}">
+        <a href="{{ route('admin.notifications.broadcastForm') }}" class="nav-item {{ request()->routeIs('admin.notifications.broadcastForm') ? 'active' : '' }}">
             <span class="nav-icon">
                 <svg viewBox="0 0 24 24">
                     <path d="M22 17H6a2 2 0 01-2-2V5a2 2 0 012-2h16a2 2 0 012 2v10a2 2 0 01-2 2z"></path>
@@ -76,7 +76,7 @@
             </span>
             Broadcast
         </a>
-        <a href="{{ route('admin.notifications') }}" class="nav-item {{ request()->routeIs('admin.notifications') ? 'active' : '' }}">
+        <a href="{{ route('admin.notifications.index') }}" class="nav-item {{ request()->routeIs('admin.notifications.index') ? 'active' : '' }}">
             <span class="nav-icon">
                 <svg viewBox="0 0 24 24">
                     <path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"></path>

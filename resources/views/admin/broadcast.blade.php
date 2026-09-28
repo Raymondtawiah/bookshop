@@ -7,13 +7,28 @@
         <div class="page-header">
             <div>
                 <h1 class="page-title">Send Broadcast</h1>
-                <p class="page-subtitle">Notify all customers about new books, webinars, and website updates.</p>
+                <p class="page-subtitle">Notify customers about updates. You can target book buyers, webinar registrants, coaching bookings, or all purchasers.</p>
             </div>
         </div>
 
         <div class="bg-white rounded-xl border border-gray-200 p-6">
-            <form method="POST" action="{{ route('admin.notifications.sendBroadcast') }}" class="space-y-6">
+            <form method="POST" action="{{ route('admin.notifications.broadcastSend') }}" class="space-y-6">
                 @csrf
+
+                <div>
+                    <label for="recipient_type" class="block text-sm font-medium text-gray-700 mb-1">Send To <span class="text-red-500">*</span></label>
+                    <select name="recipient_type" id="recipient_type" required
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 appearance-none cursor-pointer">
+                        <option value="all">All Customers</option>
+                        <option value="book_buyers">Book Buyers Only</option>
+                        <option value="webinar_registrants">Webinar Registrants Only</option>
+                        <option value="coaching_bookings">Coaching Bookings Only</option>
+                        <option value="all_purchasers">All Purchasers (Books + Webinars + Coaching)</option>
+                    </select>
+                    @error('recipient_type')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
 
                 <div>
                     <label for="subject" class="block text-sm font-medium text-gray-700 mb-1">Subject <span class="text-red-500">*</span></label>
@@ -55,8 +70,25 @@
                     @enderror
                 </div>
 
+                <div>
+                    <label for="coaching_update" class="block text-sm font-medium text-gray-700 mb-1">Coaching Updates <span class="text-gray-400 font-normal">(optional)</span></label>
+                    <textarea name="coaching_update" id="coaching_update" rows="3"
+                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 resize-none"
+                        placeholder="Tell customers about coaching programs...">{{ old('coaching_update') }}</textarea>
+                    @error('coaching_update')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div class="flex items-center gap-3">
+                    <label class="flex items-center gap-2 text-sm text-gray-700">
+                        <input type="checkbox" name="test_mode" value="1" class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                        Send test email to first matched customer only
+                    </label>
+                </div>
+
                 <div class="flex items-center justify-between pt-2">
-                    <p class="text-sm text-gray-500">This will send an email to all customers in the system.</p>
+                    <p class="text-sm text-gray-500">This will send an email to the selected customer group.</p>
                     <button type="submit" class="inline-flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white font-semibold rounded-xl hover:bg-indigo-700 transition-colors shadow-sm">
                         <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"/>

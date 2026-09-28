@@ -19,7 +19,7 @@
                  <a href="{{ route('admin.staff.index') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors {{ request()->routeIs('admin.staff*') ? 'text-indigo-600' : '' }}">Staff</a>
                  <a href="{{ route('admin.coachings.index') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors {{ request()->routeIs('admin.coachings*') ? 'text-indigo-600' : '' }}">Coachings</a>
                   <a href="{{ route('admin.webinars.index') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors {{ request()->routeIs('admin.webinars*') ? 'text-indigo-600' : '' }}">Webinars</a>
-                  <a href="{{ route('admin.notifications.broadcast') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors {{ request()->routeIs('admin.notifications.broadcast') ? 'text-indigo-600' : '' }}">Broadcast</a>
+                   <a href="{{ route('admin.notifications.broadcastForm') }}" class="text-gray-600 hover:text-indigo-600 font-medium transition-colors {{ request()->routeIs('admin.notifications.broadcastForm') ? 'text-indigo-600' : '' }}">Broadcast</a>
 
 
                       <!-- Notifications Bell -->
@@ -35,7 +35,7 @@
                       <div id="notification-dropdown" class="absolute right-0 top-full mt-2 w-80 bg-white rounded-xl shadow-xl border border-gray-200 py-2 z-50 opacity-0 invisible transition-all duration-200">
                           <div class="px-4 py-2 border-b border-gray-100 flex items-center justify-between">
                               <h3 class="text-sm font-semibold text-gray-900">Notifications</h3>
-                              <a href="{{ route('admin.notifications') }}" class="text-xs text-indigo-600 hover:text-indigo-700 font-medium">View All</a>
+                               <a href="{{ route('admin.notifications.index') }}" class="text-xs text-indigo-600 hover:text-indigo-700 font-medium">View All</a>
                           </div>
                           <div id="notification-list" class="max-h-96 overflow-y-auto">
                               <div class="px-4 py-6 text-center text-sm text-gray-500">Loading...</div>
@@ -85,9 +85,9 @@
                 <a href="{{ route('admin.coachings.index') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.coachings*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Coachings</a>
                 <a href="{{ route('admin.staff.index') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.staff*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Staff</a>
                   <a href="{{ route('admin.webinars.index') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.webinars*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Webinars</a>
-             <a href="{{ route('admin.notifications.broadcast') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.notifications.broadcast') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Broadcast</a>
+             <a href="{{ route('admin.notifications.broadcastForm') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.notifications.broadcastForm') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Broadcast</a>
              <a href="{{ route('admin.settings') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.settings*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Settings</a>
-             <a href="{{ route('admin.notifications') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.notifications*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Notifications</a>
+             <a href="{{ route('admin.notifications.index') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.notifications.index') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Notifications</a>
              <a href="{{ route('admin.chat.index') }}" class="block px-4 py-2 rounded-lg text-sm font-medium {{ request()->routeIs('admin.chat*') ? 'bg-indigo-100 text-indigo-700' : 'text-gray-600 hover:bg-gray-100' }}">Chat</a>
         </div>
         <div class="border-t border-gray-200 px-4 py-3">
@@ -154,7 +154,7 @@
             const list = document.getElementById('notification-list');
 
             function loadNotifications() {
-                fetch('{{ route('admin.notifications') }}', {
+                fetch('{{ route('admin.notifications.index') }}', {
                     headers: {
                         'X-Requested-With': 'XMLHttpRequest'
                     }

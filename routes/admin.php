@@ -133,6 +133,15 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::post('staff/attendance/{attendance}/approve', [AttendanceController::class, 'approveAttendance'])->name('staff.approve');
     Route::post('staff/attendance/{attendance}/reject', [AttendanceController::class, 'rejectAttendance'])->name('staff.reject');
 
+    // Notifications
+    Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
+    Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
+    Route::post('notifications/{notification}/toggle-read', [NotificationController::class, 'toggleRead'])->name('notifications.toggleRead');
+    Route::post('notifications/{notification}/delete', [NotificationController::class, 'delete'])->name('notifications.delete');
+    Route::get('notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unreadCount');
+    Route::get('notifications/broadcast', [NotificationController::class, 'broadcastForm'])->name('notifications.broadcastForm');
+    Route::post('notifications/broadcast', [NotificationController::class, 'broadcastSend'])->name('notifications.broadcastSend');
+
     // Chat
     Route::get('chat', [ChatController::class, 'index'])->name('chat.index');
     Route::post('chat', [ChatController::class, 'store'])->name('chat.store');
