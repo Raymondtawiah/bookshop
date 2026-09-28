@@ -38,6 +38,9 @@ class Order extends Model
         'discount_amount',
         'reminder_sent',
         'reminder_sent_at',
+        'booking_date',
+        'booking_time',
+        'booking_note',
     ];
 
     protected $casts = [

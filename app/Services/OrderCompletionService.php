@@ -85,6 +85,10 @@ class OrderCompletionService
             NotificationService::newOrder($order);
             NotificationService::paymentReceived($order);
 
+            if ($order->booking_date && $order->booking_time) {
+                NotificationService::newBooking($order);
+            }
+
             DB::commit();
 
             Log::info('OrderCompletion: Order completed successfully', [

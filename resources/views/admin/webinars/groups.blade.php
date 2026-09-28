@@ -57,6 +57,14 @@
                                 Paid
                             </span>
                         @endif
+                        @if($group['webinars']->first() && $group['webinars']->first()->isExpired())
+                            <span class="inline-flex items-center gap-1.5 bg-red-50 border border-red-100 text-red-700 rounded-full px-2.5 py-1">
+                                <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                                </svg>
+                                Expired
+                            </span>
+                        @endif
                     </div>
                 </a>
             @endforeach

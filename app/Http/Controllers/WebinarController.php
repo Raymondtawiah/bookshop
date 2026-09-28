@@ -49,6 +49,11 @@ class WebinarController extends Controller
      */
     public function registerPage(WebinarSession $webinar)
     {
+        if ($webinar->isExpired()) {
+            return redirect()->route('webinars.index')
+                ->with('error', 'This webinar has expired. Registration is no longer available.');
+        }
+
         return view('webinars.register', compact('webinar'));
     }
 }

@@ -62,6 +62,12 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::post('orders/{order}/send-payment-reminder', [OrderController::class, 'sendPaymentReminder'])->name('orders.sendPaymentReminder');
     Route::post('orders/{order}/update-status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
 
+    // Bookings
+    Route::get('bookings', [BookController::class, 'bookings'])->name('bookings.index');
+    Route::post('bookings/{order}/remind', [BookController::class, 'sendBookingReminder'])->name('bookings.remind');
+    Route::get('booking-settings', [BookController::class, 'bookingSettings'])->name('bookingSettings');
+    Route::put('booking-settings', [BookController::class, 'updateBookingSettings'])->name('bookingSettings.update');
+
     // Coaching bookings
     Route::get('coachings', [CoachingController::class, 'adminIndex'])->name('coachings.index');
     Route::get('coachings/{booking}', [CoachingController::class, 'adminShow'])->name('coachings.show');

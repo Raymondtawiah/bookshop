@@ -126,14 +126,33 @@
               </div>
          </div>
         
-        <h3>Delivery Details</h3>
-        <div class="order-details">
-            <p><strong>Name:</strong> {{ $order->customer_name }}</p>
-            <p><strong>Email:</strong> {{ $order->email }}</p>
-            <p><strong>Contact:</strong> {{ $order->contact }}</p>
-            <p><strong>Nationality:</strong> {{ $order->nationality ?? 'N/A' }}</p>
-            <p><strong>Delivery Address:</strong> {{ $order->residence }}</p>
-        </div>
+          <h3>Booking Details</h3>
+          <div class="order-details">
+              @if($order->booking_date)
+                  <p><strong>Booking Date:</strong> {{ \Carbon\Carbon::parse($order->booking_date)->format('l, F j, Y') }}</p>
+                  <p><strong>Booking Time:</strong> {{ \Carbon\Carbon::parse($order->booking_time)->format('g:i A') }}</p>
+              @else
+                  <p>No booking scheduled yet.</p>
+              @endif
+              @if($order->booking_note)
+                  <p><strong>Note:</strong> {{ $order->booking_note }}</p>
+              @endif
+              @php
+                  $globalZoomLink = \App\Models\SiteSetting::get('booking_zoom_link');
+              @endphp
+              @if($globalZoomLink)
+                  <p><strong>Zoom Link:</strong> <a href="{{ $globalZoomLink }}" target="_blank" style="color: #4f46e5; text-decoration: underline;">Join Session</a></p>
+              @endif
+          </div>
+
+         <h3>Delivery Details</h3>
+         <div class="order-details">
+             <p><strong>Name:</strong> {{ $order->customer_name }}</p>
+             <p><strong>Email:</strong> {{ $order->email }}</p>
+             <p><strong>Contact:</strong> {{ $order->contact }}</p>
+             <p><strong>Nationality:</strong> {{ $order->nationality ?? 'N/A' }}</p>
+             <p><strong>Delivery Address:</strong> {{ $order->residence }}</p>
+         </div>
         
         <p>Your order is being processed and will be delivered soon. We'll send you another email with tracking details once your order is shipped.</p>
         

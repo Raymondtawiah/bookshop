@@ -22,12 +22,15 @@ class Book extends Model
         'pages',
         'published_year',
         'category',
+        'booking_times',
+        'booking_zoom_link',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
         'is_featured' => 'boolean',
         'is_free' => 'boolean',
+        'booking_times' => 'array',
     ];
 
     public function getFormattedPriceAttribute(): string

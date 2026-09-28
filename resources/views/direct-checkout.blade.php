@@ -150,6 +150,54 @@
                                     @enderror
                                 </div>
 
+                                <div class="mt-6 p-5 bg-indigo-50 border border-indigo-200 rounded-xl">
+                                    <div class="mb-4">
+                                        <h2 class="text-lg font-semibold text-gray-900">Booking Form</h2>
+                                        <p class="text-sm text-gray-600 mt-1">This form is to schedule a session with us after your purchase.</p>
+                                    </div>
+                                    <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                                        <div>
+                                            <label for="booking_date" class="block text-sm font-medium text-gray-700 mb-1">Preferred Booking Date *</label>
+                                            <input type="date" name="booking_date" id="booking_date" required
+                                                class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                                min="{{ now()->addDays(1)->toDateString() }}">
+                                            @error('booking_date')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                            <p id="booking-date-error" class="mt-1 text-sm text-red-600 hidden">Please select a Saturday for your booking.</p>
+                                            <p class="mt-1 text-xs text-gray-500">Sessions are available on Saturdays only.</p>
+                                        </div>
+                                        <div>
+                                            <label for="booking_time" class="block text-sm font-medium text-gray-700 mb-1">Preferred Time *</label>
+                                            <select name="booking_time" id="booking_time" required
+                                                class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                                <option value="">Select a time...</option>
+                                                @php
+                                                    $globalTimes = \App\Models\SiteSetting::get('booking_times');
+                                                    $globalTimes = is_string($globalTimes) ? json_decode($globalTimes, true) : $globalTimes;
+                                                @endphp
+                                                @forelse(is_array($globalTimes) ? $globalTimes : [] as $time)
+                                                    <option value="{{ $time }}">{{ $time }}</option>
+                                                @empty
+                                                    <option value="08:30 AM" disabled>No times configured</option>
+                                                @endforelse
+                                            </select>
+                                            @error('booking_time')
+                                                <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                            @enderror
+                                        </div>
+                                    </div>
+                                    <div class="mt-4">
+                                        <label for="booking_note" class="block text-sm font-medium text-gray-700 mb-1">Additional Note</label>
+                                        <textarea name="booking_note" id="booking_note" rows="3"
+                                            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                            placeholder="Any specific topic or question you'd like to cover?"></textarea>
+                                        @error('booking_note')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
+                                </div>
+
                                 <div class="mt-6">
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Payment Method *</label>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -220,6 +268,20 @@
             radio.addEventListener('change', updatePaymentSelection);
         });
         updatePaymentSelection();
+
+        const bookingDateInput = document.getElementById('booking_date');
+        const bookingDateError = document.getElementById('booking-date-error');
+        if (bookingDateInput) {
+            bookingDateInput.addEventListener('change', function() {
+                const date = new Date(this.value);
+                const day = date.getDay();
+                if (this.value && day !== 6) {
+                    bookingDateError.classList.remove('hidden');
+                } else {
+                    bookingDateError.classList.add('hidden');
+                }
+            });
+        }
     </script>
 </body>
 </html>

@@ -162,4 +162,66 @@ class BookController extends Controller
         return redirect()->route('admin.books')
             ->with('success', 'Book deleted successfully!');
     }
+
+    public function bookings(Request $request)
+    {
+        $query = \App\Models\Order::query()
+            ->whereNotNull('booking_date')
+            ->where('booking_date', '!=', '')
+            ->latest('booking_date');
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('customer_name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+                    ->orWhere('order_number', 'like', "%{$search}%");
+            });
+        }
+
+        $bookings = $query->paginate(20)->appends($request->except('page'));
+
+        return view('admin.bookings.index', compact('bookings'));
+    }
+
+    public function sendBookingReminder(\App\Models\Order $order)
+    {
+        if (! $order->booking_date || ! $order->booking_time) {
+            return back()->with('error', 'This booking does not have a valid date and time.');
+        }
+
+        try {
+            \Mail::to($order->email)->send(new \App\Mail\BookingReminderMail($order));
+
+            return back()->with('success', 'Booking reminder sent successfully.');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Failed to send reminder: '.$e->getMessage());
+        }
+    }
+
+    public function bookingSettings()
+    {
+        $bookingTimes = \App\Models\SiteSetting::get('booking_times');
+        $decodedTimes = is_string($bookingTimes) ? json_decode($bookingTimes, true) : $bookingTimes;
+        $bookingZoomLink = \App\Models\SiteSetting::get('booking_zoom_link');
+
+        return view('admin.books.booking-settings', [
+            'bookingTimes' => is_array($decodedTimes) ? $decodedTimes : [],
+            'bookingZoomLink' => $bookingZoomLink,
+        ]);
+    }
+
+    public function updateBookingSettings(Request $request)
+    {
+        $request->validate([
+            'booking_times' => 'nullable|array|min:1|max:10',
+            'booking_times.*' => 'string|max:20',
+            'booking_zoom_link' => 'nullable|url|max:255',
+        ]);
+
+        \App\Models\SiteSetting::set('booking_times', json_encode(array_values(array_filter($request->input('booking_times', [])))));
+        \App\Models\SiteSetting::set('booking_zoom_link', $request->input('booking_zoom_link'));
+
+        return redirect()->route('admin.bookingSettings')->with('success', 'Booking settings updated successfully.');
+    }
 }

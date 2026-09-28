@@ -59,6 +59,15 @@ class WebinarSession extends Model
         return $query->where('is_visible', true);
     }
 
+    public function isExpired(): bool
+    {
+        if (! $this->scheduled_at) {
+            return false;
+        }
+
+        return $this->scheduled_at->isPast();
+    }
+
     public function getTotalPaidRegistrationsAttribute(): int
     {
         return $this->registrations()->where('payment_status', 'paid')->count();

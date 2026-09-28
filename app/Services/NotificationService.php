@@ -16,6 +16,16 @@ class NotificationService
         );
     }
 
+    public static function newBooking($order): void
+    {
+        AdminNotification::createNotification(
+            'booking',
+            'New Booking Created',
+            "Order #{$order->order_number} - {$order->customer_name} booked a session",
+            route('admin.bookings.index')
+        );
+    }
+
     public static function newCoachingBooking($booking): void
     {
         AdminNotification::createNotification(

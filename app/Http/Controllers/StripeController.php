@@ -59,7 +59,7 @@ class StripeController extends Controller
 
         // Payment may not be completed yet; show a pending page
         if ($session->payment_status !== 'paid') {
-            return view('cart.checkout', [
+            return view('direct-checkout', [
                 'paymentPending' => true,
                 'paymentMessage' => 'Your payment is being processed. You will receive a confirmation shortly.',
                 'order' => Order::where('order_number', $session->client_reference_id)->first(),

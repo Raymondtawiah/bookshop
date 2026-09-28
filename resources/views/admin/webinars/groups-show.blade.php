@@ -70,8 +70,8 @@
                                         {{ $webinar->scheduled_at ? \Carbon\Carbon::parse($webinar->scheduled_at)->format('l, F j, Y \a\t g:i A') : 'No date set' }}
                                     </p>
                                 </div>
-                                @if($webinar->scheduled_at && $webinar->scheduled_at->isPast())
-                                    <span class="shrink-0 text-[11px] font-medium text-gray-600 bg-gray-100 border border-gray-200 rounded-full px-2 py-1">Past</span>
+                                @if($webinar->isExpired())
+                                    <span class="shrink-0 text-[11px] font-medium text-gray-600 bg-gray-100 border border-gray-200 rounded-full px-2 py-1">Expired</span>
                                 @endif
                             </div>
                             <div class="grid grid-cols-2 gap-3 text-xs text-gray-600">

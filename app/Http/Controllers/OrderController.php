@@ -29,7 +29,7 @@ class OrderController extends Controller
         $book = Book::findOrFail($book_id);
         $nationalities = Nationality::select('name')->distinct()->orderBy('name')->get();
 
-        return view('cart.checkout', [
+        return view('direct-checkout', [
             'book' => $book,
             'total' => $book->price,
             'nationalities' => $nationalities,
@@ -50,7 +50,18 @@ class OrderController extends Controller
             'nationality' => 'required|string|max:100',
             'contact' => 'required|string|max:20',
             'payment_method' => 'required|in:bank,card,paystack',
+            'booking_date' => 'nullable|date|after_or_equal:tomorrow',
+            'booking_time' => 'nullable|string|max:20',
+            'booking_note' => 'nullable|string|max:1000',
         ]);
+
+        $bookingDate = $request->booking_date;
+        if ($bookingDate) {
+            $date = \Carbon\Carbon::parse($bookingDate);
+            if ($date->dayOfWeek !== \Carbon\Carbon::SATURDAY) {
+                return back()->withInput()->with('error', 'Please select a Saturday for your booking.');
+            }
+        }
 
         $book = Book::findOrFail($request->book_id);
 
@@ -82,6 +93,9 @@ class OrderController extends Controller
             'status' => 'pending',
             'order_number' => $reference,
             'order_items' => $orderItems,
+            'booking_date' => $bookingDate,
+            'booking_time' => $request->booking_time,
+            'booking_note' => $request->booking_note,
         ]);
 
         NotificationService::newOrder($order);
@@ -94,7 +108,7 @@ class OrderController extends Controller
                 'status' => 'pending_payment',
             ]);
 
-            return view('cart.checkout', [
+            return view('direct-checkout', [
                 'order' => $order,
                 'total' => $totalUsd,
                 'bankTransfer' => true,

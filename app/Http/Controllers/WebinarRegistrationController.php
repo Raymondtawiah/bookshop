@@ -44,6 +44,11 @@ class WebinarRegistrationController extends Controller
      */
     public function register(Request $request, WebinarSession $webinar)
     {
+        if ($webinar->isExpired()) {
+            return redirect()->route('webinars.index')
+                ->with('error', 'This webinar has expired. Registration is no longer available.');
+        }
+
         return view('webinars.register', compact('webinar'));
     }
 
@@ -52,6 +57,11 @@ class WebinarRegistrationController extends Controller
      */
     public function storeRegistration(Request $request, WebinarSession $webinar)
     {
+        if ($webinar->isExpired()) {
+            return redirect()->route('webinars.index')
+                ->with('error', 'This webinar has expired. Registration is no longer available.');
+        }
+
         $user = Auth::user();
 
         $request->validate([
