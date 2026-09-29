@@ -28,17 +28,12 @@
                     <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                         <h2 class="text-lg font-semibold text-gray-900 mb-4">Order Summary</h2>
                         @if(isset($direct) && $direct && isset($book))
-                            @php $globalFree = \App\Models\Book::first()?->is_free; @endphp
                             <div class="flex justify-between items-center py-3 border-b border-gray-200">
                                 <div>
                                     <p class="font-medium text-gray-900">{{ $book->title }}</p>
                                 </div>
                                 <p class="font-medium">
-                                    @if($globalFree)
-                                        <span class="text-emerald-600 font-bold">FREE</span>
-                                    @else
                                         ${{ number_format($book->price, 2) }}
-                                    @endif
                                 </p>
                             </div>
                         @else
@@ -58,9 +53,7 @@
                         <div class="flex justify-between items-center mt-4 pt-4 border-t border-gray-200">
                             <span class="font-semibold text-gray-900">Total</span>
                             <span class="font-bold text-lg text-indigo-600">
-                                @if(isset($direct) && $direct && isset($book) && $globalFree)
-                                    <span class="text-emerald-600">FREE</span>
-                                @else
+                                @if(isset($direct) && $direct && isset($book))
                                     ${{ number_format($total, 2) }}
                                 @endif
                             </span>
@@ -93,19 +86,8 @@
                                 @if(isset($book))
                                     <input type="hidden" name="book_id" value="{{ $book->id }}">
                                 @endif
-                                <input type="hidden" name="email" value="{{ auth()->user()->email ?? '' }}">
 
                                 <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                                    <div>
-                                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address *</label>
-                                        <input type="email" name="email" id="email" required
-                                            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                            placeholder="Enter email address" value="{{ auth()->user()->email ?? '' }}">
-                                        @error('email')
-                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                        @enderror
-                                    </div>
-
                                     <div>
                                         <label for="customer_name" class="block text-sm font-medium text-gray-700 mb-1">Customer Name *</label>
                                         <input type="text" name="customer_name" id="customer_name" required
@@ -115,17 +97,25 @@
                                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                         @enderror
                                     </div>
+
+                                    <div>
+                                        <label for="email" class="block text-sm font-medium text-gray-700 mb-1">Email Address *</label>
+                                        <input type="email" name="email" id="email" required
+                                            class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                            placeholder="Enter email address" value="{{ auth()->user()->email ?? '' }}">
+                                        @error('email')
+                                            <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                        @enderror
+                                    </div>
                                 </div>
 
-                                <div class="mt-5">
-                                    <label for="residence" class="block text-sm font-medium text-gray-700 mb-1">Residence *</label>
-                                    <input type="text" name="residence" id="residence" required
-                                        class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                        placeholder="Enter your residence address">
-                                    @error('residence')
-                                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                                    @enderror
+                                <div class="flex items-center gap-2 mt-2">
+                                    <input type="checkbox" name="confirm_email" id="confirm_email" required class="w-4 h-4 text-indigo-600 border-gray-300 rounded focus:ring-indigo-500">
+                                    <label for="confirm_email" class="text-sm text-gray-700">I confirm that the email address entered is correct</label>
                                 </div>
+                                @error('confirm_email')
+                                    <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                                @enderror
 
                                 <div class="mt-5">
                                     <label for="nationality" class="block text-sm font-medium text-gray-700 mb-1">Nationality *</label>
@@ -157,7 +147,7 @@
                                     <label for="contact" class="block text-sm font-medium text-gray-700 mb-1">Contact Number *</label>
                                     <input type="tel" name="contact" id="contact" required
                                         class="w-full px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                                        placeholder="Enter contact number">
+                                        placeholder="E.g +1xxxxxxxxxx">
                                     @error('contact')
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
@@ -165,8 +155,8 @@
 
                                 <div class="mt-6 p-5 bg-indigo-50 border border-indigo-200 rounded-xl">
                                     <div class="mb-4">
-                                        <h2 class="text-lg font-semibold text-gray-900">Booking Form</h2>
-                                        <p class="text-sm text-gray-600 mt-1">This form is to schedule a session with us after your purchase.</p>
+                                        <h2 class="text-lg font-semibold text-gray-900">FREE 1 0N 1 with Nathaniel</h2>
+                                        <p class="text-sm text-gray-600 mt-1">This form is to schedule a free 10 minute session after your purchase.</p>
                                     </div>
                                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
                                         <div>
@@ -210,9 +200,6 @@
                                         @enderror
                                     </div>
                                 </div>
-
-                                @php $globalFree = \App\Models\Book::first()?->is_free; @endphp
-                                @if(!isset($book) || !$globalFree)
                                 <div class="mt-6">
                                     <label class="block text-sm font-medium text-gray-700 mb-2">Payment Method *</label>
                                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -237,12 +224,9 @@
                                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                                     @enderror
                                 </div>
-                                @endif
 
                                 <button type="submit" class="mt-8 w-full bg-indigo-600 text-white py-3 rounded-xl font-semibold hover:bg-indigo-700 transition-colors" id="submit-btn">
-                                    @if(isset($book) && $book->is_free)
-                                        Confirm Free Order
-                                    @else
+                                    @if(isset($book))
                                         Confirm Order
                                     @endif
                                 </button>

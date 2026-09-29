@@ -15,8 +15,7 @@ class OrderFactory extends Factory
         return [
             'user_id' => User::factory(),
             'customer_name' => $this->faker->name(),
-            'email' => $this->faker->email(),
-            'residence' => $this->faker->city(),
+            'email' => $this->faker->unique()->safeEmail(),
             'nationality' => $this->faker->country(),
             'contact' => $this->faker->phoneNumber(),
             'payment_method' => 'card',

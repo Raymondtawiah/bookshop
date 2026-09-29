@@ -45,10 +45,7 @@
                     @endif
 
                     <div class="flex items-baseline gap-2 mb-4 mt-auto">
-                        @php
-                            $globalFree = \App\Models\Book::first()?->is_free;
-                        @endphp
-                        @if($globalFree)
+                        @if($book->is_free)
                             <span class="text-lg font-extrabold text-emerald-600">FREE</span>
                         @else
                             <span class="text-lg font-extrabold text-emerald-600">${{ number_format($book->price, 2) }}</span>

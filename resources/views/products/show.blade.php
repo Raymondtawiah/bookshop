@@ -49,10 +49,7 @@
 
                              <!-- Price -->
                              <div class="mb-6">
-                                 @php
-                                     $globalFree = \App\Models\Book::first()?->is_free;
-                                 @endphp
-                                 @if($globalFree)
+                                 @if($book->is_free)
                                      <span class="text-4xl font-bold text-green-600">FREE</span>
                                  @else
                                       <span class="text-4xl font-bold text-indigo-600">${{ number_format($book->price, 2) }}</span>
@@ -112,11 +109,7 @@
                             </div>
 
                              <!-- Buy Now -->
-                              @php
-                                  $globalFree = \App\Models\Book::first()?->is_free;
-                                  $globalPdf = \App\Models\Book::first()?->book_pdf;
-                              @endphp
-                              @if($globalFree && $globalPdf)
+                              @if($book->isFreePdf())
                                   <button onclick="openFreeBookModal({{ $book->id }}, '{{ $book->title }}')" class="flex-1 px-6 py-4 bg-gradient-to-r from-green-600 to-teal-600 text-white font-semibold rounded-3xl hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
                                       <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
@@ -152,7 +145,7 @@
                             <div class="p-5">
                                 <h3 class="text-lg font-semibold text-gray-900 mb-1">{{ $related->title }}</h3>
                                 
-                                    @if($globalFree)
+                                    @if($related->is_free)
                                         <span class="text-xl font-bold text-green-600">FREE</span>
                                     @else
                                         <span class="text-xl font-bold text-indigo-600">${{ number_format($related->price, 2) }}</span>

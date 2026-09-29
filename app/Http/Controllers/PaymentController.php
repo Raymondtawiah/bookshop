@@ -38,7 +38,6 @@ class PaymentController extends Controller
                 'email' => 'nullable|email',
                 'contact' => 'required|string',
                 'customer_name' => 'required|string',
-                'residence' => 'required|string',
                 'nationality' => 'nullable|string',
             ]);
 
@@ -218,7 +217,6 @@ class PaymentController extends Controller
             'customer_name' => $request->customer_name ?? ($user?->name ?? ''),
             'email' => $request->email ?? ($user?->email ?? ''),
             'contact' => $request->contact ?? ($user?->phone ?? ''),
-            'residence' => $request->residence ?? '',
             'nationality' => $request->nationality ?? '',
             'payment_method' => $this->mapProviderToMethod($paymentResult['provider']),
             'payment_provider' => $paymentResult['provider'],

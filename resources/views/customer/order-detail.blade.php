@@ -50,10 +50,6 @@
                                 <dt class="text-sm font-medium text-gray-500">Nationality</dt>
                                 <dd class="text-gray-900">{{ $order->nationality ?? 'N/A' }}</dd>
                             </div>
-                            <div>
-                                <dt class="text-sm font-medium text-gray-500">Delivery Address</dt>
-                                <dd class="text-gray-900">{{ $order->residence ?? 'N/A' }}</dd>
-                            </div>
                         </dl>
                     </div>
 

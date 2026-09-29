@@ -33,7 +33,7 @@ class OrderController extends Controller
 
         return view('direct-checkout', [
             'book' => $book,
-            'total' => $book->is_free ? 0 : $book->price,
+            'total' => $book->price,
             'nationalities' => $nationalities,
             'direct' => true,
         ]);
@@ -44,21 +44,18 @@ class OrderController extends Controller
      */
     public function processDirectCheckout(Request $request)
     {
-        $book = Book::findOrFail($request->book_id);
-
         $request->validate([
             'book_id' => 'required|exists:books,id',
             'customer_name' => 'required|string|max:255',
             'email' => 'required|email|max:255',
-            'residence' => 'required|string|max:500',
+            'confirm_email' => 'required|accepted',
             'nationality' => 'required|string|max:100',
             'contact' => 'required|string|max:20',
+            'payment_method' => 'required|in:bank,card,paystack',
             'booking_date' => 'nullable|date|after_or_equal:tomorrow',
             'booking_time' => 'nullable|string|max:20',
             'booking_note' => 'nullable|string|max:1000',
-        ] + (Book::first()?->is_free ? [] : [
-            'payment_method' => 'required|in:bank,card,paystack',
-        ]));
+        ]);
 
         $bookingDate = $request->booking_date;
         if ($bookingDate) {
@@ -68,54 +65,7 @@ class OrderController extends Controller
             }
         }
 
-        if (Book::first()?->is_free) {
-            $reference = 'FREE-'.time().rand(1000, 9999);
-
-            $orderItems = [[
-                'book_id' => $book->id,
-                'product_name' => $book->title,
-                'unit_price_usd' => 0,
-                'quantity' => 1,
-                'total_price_usd' => 0,
-            ]];
-
-            $order = Order::create([
-                'user_id' => Auth::id(),
-                'customer_name' => $request->customer_name,
-                'email' => $request->email,
-                'residence' => $request->residence,
-                'nationality' => $request->nationality,
-                'contact' => $request->contact,
-                'total_amount' => 0,
-                'total_amount_usd' => 0,
-                'currency' => 'USD',
-                'status' => 'paid',
-                'payment_status' => 'paid',
-                'payment_method' => 'free',
-                'payment_provider' => 'free',
-                'order_number' => $reference,
-                'order_items' => $orderItems,
-                'booking_date' => $bookingDate,
-                'booking_time' => $request->booking_time,
-                'booking_note' => $request->booking_note,
-            ]);
-
-            NotificationService::newOrder($order);
-
-            try {
-                $usdAmount = 0;
-                Mail::to($request->email)->send(new OrderConfirmation($order, collect($orderItems), $usdAmount));
-            } catch (\Exception $e) {
-                Log::error('Failed to send free order confirmation email', [
-                    'error' => $e->getMessage(),
-                    'order_id' => $order->id,
-                    'recipient' => $request->email,
-                ]);
-            }
-
-            return redirect()->route('product.show', $book->id)
-                ->with('success', 'Order confirmed! Check your email for the free book details.');
-        }
+        $book = Book::findOrFail($request->book_id);
 
         $totalUsd = $book->price;
         $reference = 'ORD-'.time().rand(1000, 9999);
@@ -133,7 +83,6 @@ class OrderController extends Controller
             'user_id' => Auth::id(),
             'customer_name' => $request->customer_name,
             'email' => $request->email,
-            'residence' => $request->residence,
             'nationality' => $request->nationality,
             'contact' => $request->contact,
             'total_amount' => $totalUsd,

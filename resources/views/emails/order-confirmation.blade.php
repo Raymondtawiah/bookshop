@@ -151,7 +151,6 @@
              <p><strong>Email:</strong> {{ $order->email }}</p>
              <p><strong>Contact:</strong> {{ $order->contact }}</p>
              <p><strong>Nationality:</strong> {{ $order->nationality ?? 'N/A' }}</p>
-             <p><strong>Delivery Address:</strong> {{ $order->residence }}</p>
          </div>
         
         <p>Your order is being processed and will be delivered soon. We'll send you another email with tracking details once your order is shipped.</p>

@@ -39,7 +39,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::post('books', [BookController::class, 'store'])->name('books.store');
     Route::get('books/{book}/edit', [BookController::class, 'edit'])->name('books.edit');
     Route::put('books/{book}', [BookController::class, 'update'])->name('books.update');
-    Route::post('books/{book}/toggle-free', [BookController::class, 'toggleFree'])->name('books.toggleFree');
     Route::delete('books/{book}', [BookController::class, 'destroy'])->name('books.destroy');
 
     // Free Book Leads

@@ -104,10 +104,7 @@
                                     <h3 class="text-sm font-bold text-gray-900 leading-snug line-clamp-2 mb-1 group-hover:text-indigo-600 transition-colors">{{ $book->title }}</h3>
                                     <p class="text-xs text-gray-500 truncate mb-2">{{ $book->author }}</p>
                                     <div class="flex items-baseline gap-1 mb-3">
-                                        @php
-                                            $globalFree = \App\Models\Book::first()?->is_free;
-                                        @endphp
-                                        @if($globalFree)
+                                        @if($book->is_free)
                                             <span class="text-base font-extrabold text-emerald-600">FREE</span>
                                         @else
                                             <span class="text-base font-extrabold text-emerald-600">${{ number_format($book->price, 2) }}</span>
