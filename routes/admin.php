@@ -148,5 +148,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     Route::get('chat/conversations', [ChatController::class, 'getConversations'])->name('chat.conversations');
     Route::get('chat/conversation/{conversationId}', [ChatController::class, 'getConversationMessages'])->name('chat.conversation.messages');
     Route::post('chat/reply', [ChatController::class, 'adminReply'])->name('chat.reply');
+    Route::post('chat/conversation/{conversationId}/read', [ChatController::class, 'adminMarkConversationAsRead'])->name('chat.conversation.read');
     Route::post('chat/read', [ChatController::class, 'markAsRead'])->name('chat.read');
 });

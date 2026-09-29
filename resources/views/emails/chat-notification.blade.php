@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>New Chat Message</title>
+    <title>Chat Notification</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
@@ -62,8 +62,8 @@
 </head>
 <body>
     <div class="header">
-        <h1>New Chat Message</h1>
-        <p>You have received a new message from a customer</p>
+        <h1>Chat Notification</h1>
+        <p>You have received a new chat message</p>
     </div>
     
     <div class="content">
@@ -71,9 +71,13 @@
         
         <p>You have received a new chat message from <strong>{{ $senderName }}</strong>.</p>
         
+        @if(!empty($senderEmail))
+            <p><strong>Email:</strong> <a href="mailto:{{ $senderEmail }}">{{ $senderEmail }}</a></p>
+        @endif
+        
         <div class="message-box">
             <h3 style="margin-top: 0;">Message:</h3>
-            <p>{{ $message }}</p>
+            <p>{{ $chatMessage }}</p>
         </div>
         
         <p>Click the button below to view and respond to the message:</p>

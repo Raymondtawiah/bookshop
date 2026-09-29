@@ -14,7 +14,7 @@
         <div class="bg-white rounded-xl border border-gray-200 overflow-hidden">
             <div class="flex h-[calc(100vh-220px)]">
                 <!-- Conversations List (Left Side) -->
-                <div class="w-80 border-r border-gray-200 flex flex-col bg-gray-50">
+                <div id="conversations-panel" class="w-80 border-r border-gray-200 flex flex-col bg-gray-50 md:flex">
                     <div class="p-4 border-b border-gray-200 bg-white">
                         <h2 class="text-sm font-semibold text-gray-900">Conversations</h2>
                         <p class="text-xs text-gray-500 mt-0.5">Select a conversation to reply</p>
@@ -25,10 +25,17 @@
                 </div>
 
                 <!-- Chat Area (Right Side) -->
-                <div class="flex-1 flex flex-col">
+                <div id="chat-panel" class="flex-1 flex flex-col md:flex">
                     <div id="chat-header" class="p-4 border-b border-gray-200 bg-white hidden">
-                        <h3 id="chat-title" class="text-sm font-semibold text-gray-900">Select a conversation</h3>
-                        <p id="chat-subtitle" class="text-xs text-gray-500 mt-0.5"></p>
+                        <div class="flex items-center gap-2">
+                            <button id="mobile-chat-back-btn" class="md:hidden p-1 rounded-lg hover:bg-gray-100" type="button">
+                                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+                            </button>
+                            <div>
+                                <h3 id="chat-title" class="text-sm font-semibold text-gray-900">Select a conversation</h3>
+                                <p id="chat-subtitle" class="text-xs text-gray-500 mt-0.5"></p>
+                            </div>
+                        </div>
                     </div>
 
                     <div id="chat-messages" class="flex-1 overflow-y-auto p-4 space-y-3">
@@ -44,9 +51,7 @@
                         <form id="reply-form" class="flex gap-2">
                             <input type="hidden" id="conversation-id" value="">
                             <textarea id="reply-input" rows="1" placeholder="Type your reply..." class="flex-1 px-3 py-2 text-sm border border-gray-300 rounded-xl focus:outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100 resize-none"></textarea>
-                            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-xl hover:bg-indigo-700 transition-colors">
-                                Send
-                            </button>
+                            <x-button-loading id="reply-submit-btn" label="Send" />
                         </form>
                     </div>
                 </div>
@@ -65,9 +70,42 @@
         const replyForm = document.getElementById('reply-form');
         const conversationIdInput = document.getElementById('conversation-id');
         const replyInput = document.getElementById('reply-input');
+        const conversationsPanel = document.getElementById('conversations-panel');
+        const chatPanel = document.getElementById('chat-panel');
+        const mobileBackBtn = document.getElementById('mobile-back-btn');
+        const mobileChatBackBtn = document.getElementById('mobile-chat-back-btn');
 
         let selectedConversationId = null;
         let pollTimer = null;
+
+        function showChatPanel() {
+            if (window.innerWidth < 768) {
+                if (conversationsPanel) conversationsPanel.classList.add('hidden-mobile');
+                if (chatPanel) chatPanel.classList.add('open');
+            }
+        }
+
+        function showConversationsPanel() {
+            if (window.innerWidth < 768) {
+                if (conversationsPanel) conversationsPanel.classList.remove('hidden-mobile');
+                if (chatPanel) chatPanel.classList.remove('open');
+            }
+        }
+
+        if (mobileBackBtn) {
+            mobileBackBtn.addEventListener('click', showConversationsPanel);
+        }
+
+        if (mobileChatBackBtn) {
+            mobileChatBackBtn.addEventListener('click', showConversationsPanel);
+        }
+
+        window.addEventListener('resize', function() {
+            if (window.innerWidth >= 768) {
+                if (conversationsPanel) conversationsPanel.classList.remove('hidden-mobile');
+                if (chatPanel) chatPanel.classList.remove('open');
+            }
+        });
 
         function loadConversations() {
             fetch('{{ route('admin.chat.conversations') }}')
@@ -110,14 +148,25 @@
             selectedConversationId = conversationId;
             conversationIdInput.value = conversationId;
 
-            document.querySelectorAll('.conversation-item').forEach(item => {
-                item.classList.remove('bg-white', 'border-l-4', 'border-l-indigo-600');
-                if (item.dataset.id === conversationId) {
-                    item.classList.add('bg-white', 'border-l-4', 'border-l-indigo-600');
+            fetch('{{ route('admin.chat.conversation.read', ['conversationId' => 'CONVERSATION_ID']) }}'.replace('CONVERSATION_ID', conversationId), {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
-            });
+            }).finally(() => {
+                document.querySelectorAll('.conversation-item').forEach(item => {
+                    item.classList.remove('bg-white', 'border-l-4', 'border-l-indigo-600');
+                    if (item.dataset.id === conversationId) {
+                        item.classList.add('bg-white', 'border-l-4', 'border-l-indigo-600');
+                    }
+                });
 
-            loadConversationMessages(conversationId);
+                loadConversationMessages(conversationId);
+                loadConversations();
+                showChatPanel();
+            });
         }
 
         function loadConversationMessages(conversationId) {
@@ -171,6 +220,17 @@
 
                 if (!message || !conversationId) return;
 
+                const submitBtn = document.getElementById('reply-submit-btn');
+                const btnText = document.getElementById('reply-submit-btn-btn-text');
+                const btnLoader = document.getElementById('reply-submit-btn-btn-loader');
+
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.classList.add('opacity-75', 'cursor-not-allowed');
+                }
+                if (btnText) btnText.textContent = 'Sending...';
+                if (btnLoader) btnLoader.classList.remove('hidden');
+
                 try {
                     const response = await fetch('{{ route('admin.chat.reply') }}', {
                         method: 'POST',
@@ -188,13 +248,29 @@
                     const data = await response.json();
                     if (data.success) {
                         replyInput.value = '';
-                        loadConversationMessages(conversationId);
-                        loadConversations();
+                        fetch('{{ route('admin.chat.conversation.read', ['conversationId' => 'CONVERSATION_ID']) }}'.replace('CONVERSATION_ID', conversationId), {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        }).finally(() => {
+                            loadConversationMessages(conversationId);
+                            loadConversations();
+                        });
                     } else {
                         alert(data.message || 'Failed to send reply');
                     }
                 } catch (e) {
                     alert('Something went wrong. Please try again.');
+                } finally {
+                    if (submitBtn) {
+                        submitBtn.disabled = false;
+                        submitBtn.classList.remove('opacity-75', 'cursor-not-allowed');
+                    }
+                    if (btnText) btnText.textContent = 'Send';
+                    if (btnLoader) btnLoader.classList.add('hidden');
                 }
             });
         }
@@ -222,6 +298,29 @@
         background: #f9fafb;
         color: #111827;
         border-bottom-left-radius: 4px;
+    }
+
+    @keyframes spin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+    .animate-spin {
+        animation: spin 1s linear infinite;
+    }
+
+    @media (max-width: 767px) {
+        #conversations-panel {
+            width: 100%;
+        }
+        #chat-panel {
+            display: none;
+        }
+        #chat-panel.open {
+            display: flex;
+        }
+        #conversations-panel.hidden-mobile {
+            display: none;
+        }
     }
     </style>
 @endsection

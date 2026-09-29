@@ -45,7 +45,11 @@ class ChatController extends Controller
 
         $messages = $query->orderBy('created_at', 'asc')->get();
 
-        $response = response()->view('chat.index', compact('messages', 'user'));
+        if ($user && $user->is_admin) {
+            $response = response()->view('admin.chat.index', compact('messages', 'user'));
+        } else {
+            $response = response()->view('chat.index', compact('messages', 'user'));
+        }
 
         if (! $user && $chatSession && ! $request->cookie('chat_session')) {
             $response->withCookie(cookie('chat_session', $chatSession, 60 * 24 * 30)); // 30 days
@@ -59,6 +63,7 @@ class ChatController extends Controller
         $request->validate([
             'message' => 'required|string|max:2000',
             'sender_name' => 'nullable|string|max:255',
+            'sender_email' => 'nullable|email|max:255',
             'replied_to_message_id' => 'nullable|exists:chat_messages,id',
         ]);
 
@@ -76,6 +81,7 @@ class ChatController extends Controller
             'user_id' => $user ? $user->id : null,
             'chat_session' => $user ? null : $chatSession,
             'sender_name' => $request->input('sender_name') ?: ($user ? $user->name : 'Guest'),
+            'sender_email' => $user ? $user->email : $request->input('sender_email'),
             'message' => $request->input('message'),
             'sender_type' => $user ? 'customer' : 'guest',
             'status' => 'unread',
@@ -91,14 +97,16 @@ class ChatController extends Controller
             );
 
             try {
-                Mail::to('raymondtawiah23@gmail.com')->send(
-                    new ChatNotification($user->name, $request->input('message'), route('admin.chat.index'))
+                Mail::to(config('mail.from.address'))->send(
+                    new ChatNotification($user->name, $request->input('message'), route('admin.chat.index'), $user->email)
                 );
             } catch (\Throwable $e) {
                 \Log::error('Chat notification email failed: '.$e->getMessage());
             }
         } else {
             $senderName = $request->input('sender_name') ?: 'Guest';
+            $senderEmail = $request->input('sender_email');
+
             AdminNotification::createNotification(
                 'chat',
                 'New Chat Message',
@@ -107,8 +115,8 @@ class ChatController extends Controller
             );
 
             try {
-                Mail::to('raymondtawiah23@gmail.com')->send(
-                    new ChatNotification($senderName, $request->input('message'), route('admin.chat.index'))
+                Mail::to(config('mail.from.address'))->send(
+                    new ChatNotification($senderName, $request->input('message'), route('admin.chat.index'), $senderEmail)
                 );
             } catch (\Throwable $e) {
                 \Log::error('Chat notification email failed: '.$e->getMessage());
@@ -303,6 +311,26 @@ class ChatController extends Controller
             'replied_to_message_id' => $request->input('replied_to_message_id'),
         ]);
 
+        $customerEmail = null;
+        if ($userId) {
+            $customerEmail = \App\Models\User::where('id', $userId)->value('email');
+        } elseif ($chatSession) {
+            $customerEmail = \App\Models\ChatMessage::where('chat_session', $chatSession)
+                ->whereNotNull('sender_email')
+                ->latest()
+                ->value('sender_email');
+        }
+
+        if ($customerEmail) {
+            try {
+                Mail::to($customerEmail)->send(
+                    new \App\Mail\ChatNotification($admin->name, $request->input('message'), route('chat.index'), null, 'Chat Reply')
+                );
+            } catch (\Throwable $e) {
+                \Log::error('Chat reply notification email failed: '.$e->getMessage());
+            }
+        }
+
         return response()->json([
             'success' => true,
             'message' => $message,
@@ -324,6 +352,27 @@ class ChatController extends Controller
 
         $query->where('sender_type', 'customer')
             ->orWhere('sender_type', 'guest')
+            ->where('status', 'unread')
+            ->update(['status' => 'read', 'read_at' => now()]);
+
+        return response()->json([
+            'success' => true,
+        ]);
+    }
+
+    public function adminMarkConversationAsRead(Request $request, $conversationId)
+    {
+        $query = ChatMessage::query();
+
+        if (str_starts_with($conversationId, 'user_')) {
+            $userId = (int) str_replace('user_', '', $conversationId);
+            $query->where('user_id', $userId);
+        } elseif (str_starts_with($conversationId, 'guest_')) {
+            $chatSession = str_replace('guest_', '', $conversationId);
+            $query->where('chat_session', $chatSession);
+        }
+
+        $query->whereIn('sender_type', ['customer', 'guest'])
             ->where('status', 'unread')
             ->update(['status' => 'read', 'read_at' => now()]);
 

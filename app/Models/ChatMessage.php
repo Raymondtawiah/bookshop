@@ -14,6 +14,7 @@ class ChatMessage extends Model
         'user_id',
         'chat_session',
         'sender_name',
+        'sender_email',
         'message',
         'sender_type',
         'status',

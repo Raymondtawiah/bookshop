@@ -143,6 +143,7 @@
                                                 </svg>
                                                 <span class="text-[10px] font-bold text-gray-700 uppercase tracking-wide">Seats filling fast</span>
                                             </span>
+                                            <p class="text-lg font-bold text-emerald-600">Free</p>
                                         </div>
                                     @endif
                                     

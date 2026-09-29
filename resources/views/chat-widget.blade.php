@@ -37,6 +37,21 @@
         </button>
     </div>
 
+    <div id="chat-email-prompt" class="chat-email-prompt" style="display: none;">
+        <div class="chat-email-prompt-message">
+            <p>Please enter your email to receive chat notifications when agent replies:</p>
+            <div class="chat-email-prompt-inputs">
+                <input type="email" id="chatEmailPromptInput" placeholder="Your email address">
+                <button type="button" class="send-btn" id="sendEmailPromptBtn" disabled>
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="22" y1="2" x2="11" y2="13"/>
+                        <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
     <div id="chat-reply-preview" class="chat-reply-preview" style="display: none;">
         <div class="reply-preview-header">
             <span>Replying to:</span>
@@ -531,32 +546,68 @@
   @media (max-width: 480px) {
     .chat-card { left: 16px; right: 16px; bottom: 90px; max-width: none; }
   }
+
+  .chat-email-prompt {
+    align-self: flex-start;
+    background: #ffffff;
+    color: #374151;
+    border: 1px dashed #6366f1;
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-size: 13px;
+    margin: 0 0 10px 0;
+    max-width: 85%;
+  }
+  .chat-email-prompt p {
+    margin: 0 0 8px 0;
+  }
+  .chat-email-prompt-inputs {
+    display: flex;
+    gap: 8px;
+  }
+  .chat-email-prompt-inputs input {
+    flex: 1;
+    padding: 8px 10px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+  }
+  .chat-email-prompt-inputs input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99,102,241,0.12);
+  }
 </style>
 
 <script>
 (function() {
     const fab = document.getElementById('chatFab');
-    const overlay = document.getElementById('overlay');
-    const chatCard = document.getElementById('chatCard');
-    const closeBtn = document.getElementById('closeBtn');
-    const chatMessages = document.getElementById('chatMessages');
-    const chatForm = document.getElementById('chatForm');
-    const chatInput = document.getElementById('chatInput');
-    const chatNameInput = document.getElementById('chatNameInput');
-    const chatNameArea = document.getElementById('chat-name-area');
-    const sendBtn = document.getElementById('sendBtn');
-    const sendNameBtn = document.getElementById('sendNameBtn');
-    const iconChat = fab.querySelector('.icon-chat');
-    const iconClose = fab.querySelector('.icon-close');
-    const chatPopup = document.getElementById('chatPopup');
-    const chatPopupClose = document.getElementById('chatPopupClose');
+        const overlay = document.getElementById('overlay');
+        const chatCard = document.getElementById('chatCard');
+        const closeBtn = document.getElementById('closeBtn');
+        const chatMessages = document.getElementById('chatMessages');
+        const chatForm = document.getElementById('chatForm');
+        const chatInput = document.getElementById('chatInput');
+        const chatNameInput = document.getElementById('chatNameInput');
+        const chatNameArea = document.getElementById('chat-name-area');
+        const sendBtn = document.getElementById('sendBtn');
+        const sendNameBtn = document.getElementById('sendNameBtn');
+        const iconChat = fab ? fab.querySelector('.icon-chat') : null;
+        const iconClose = fab ? fab.querySelector('.icon-close') : null;
+        const chatPopup = document.getElementById('chatPopup');
+        const chatPopupClose = document.getElementById('chatPopupClose');
+        const chatEmailPrompt = document.getElementById('chat-email-prompt');
+        const chatEmailPromptInput = document.getElementById('chatEmailPromptInput');
+        const sendEmailPromptBtn = document.getElementById('sendEmailPromptBtn');
 
-    let messagesLoaded = false;
-    let pollTimer = null;
-    let userName = '';
-    let shouldScrollToBottom = true;
+        let messagesLoaded = false;
+        let pollTimer = null;
+        let userName = '';
+        let shouldScrollToBottom = true;
 
-    function updateSendButton() {
+        function updateSendButton() {
+        if (!chatInput || !sendBtn) return;
         const hasText = chatInput.value.trim().length > 0;
         sendBtn.disabled = !hasText;
     }
@@ -564,48 +615,90 @@
     function showNameInput() {
         if (chatNameArea) chatNameArea.style.display = 'flex';
         if (chatForm) chatForm.style.display = 'none';
-        chatNameInput.style.display = 'block';
-        chatNameInput.focus();
-        chatInput.style.display = 'none';
-        sendBtn.disabled = true;
+        if (chatNameInput) chatNameInput.style.display = 'block';
+        if (chatNameInput) chatNameInput.focus();
+        if (chatInput) chatInput.style.display = 'none';
+        if (sendBtn) sendBtn.disabled = true;
     }
 
     function hideNameInput() {
         if (chatNameArea) chatNameArea.style.display = 'none';
         if (chatForm) chatForm.style.display = 'flex';
-        chatNameInput.style.display = 'none';
-        chatInput.style.display = 'block';
-        chatInput.focus();
+        if (chatNameInput) chatNameInput.style.display = 'none';
+        if (chatInput) chatInput.style.display = 'block';
+        if (chatInput) chatInput.focus();
         updateSendButton();
     }
 
     function saveUserName() {
+        if (!chatNameInput) return;
         const name = chatNameInput.value.trim();
         if (name) {
             userName = name;
             localStorage.setItem('chat_user_name', name);
             hideNameInput();
             appendNamePrompt(name);
-            appendReplyInstruction();
+            checkEmailAndProceed();
+        }
+    }
+
+    function showEmailPrompt() {
+        if (chatEmailPrompt) {
+            chatEmailPrompt.style.display = 'block';
+            if (chatEmailPromptInput) chatEmailPromptInput.focus();
+        }
+        if (chatInput) chatInput.disabled = true;
+        if (sendBtn) sendBtn.disabled = true;
+    }
+
+    function hideEmailPrompt() {
+        if (chatEmailPrompt) {
+            chatEmailPrompt.style.display = 'none';
+        }
+    }
+
+    function saveUserEmail() {
+        const email = chatEmailPromptInput?.value?.trim() || '';
+        if (email) {
+            localStorage.setItem('chat_user_email', email);
+            hideEmailPrompt();
+            appendHelpPrompt();
+            if (chatInput) chatInput.disabled = false;
+            updateSendButton();
+            if (chatInput) chatInput.focus();
+        }
+    }
+
+    function checkEmailAndProceed() {
+        const savedEmail = localStorage.getItem('chat_user_email');
+        if (!savedEmail) {
+            showEmailPrompt();
         }
     }
 
     function loadUserName() {
         const savedName = localStorage.getItem('chat_user_name');
-        if (savedName) {
+        const savedEmail = localStorage.getItem('chat_user_email');
+        if (savedName && savedEmail) {
             userName = savedName;
             hideNameInput();
+            hideEmailPrompt();
+        } else if (savedName) {
+            userName = savedName;
+            hideNameInput();
+            checkEmailAndProceed();
         } else {
             showNameInput();
         }
     }
 
     function openCard() {
+        if (!chatCard || !overlay) return;
         chatCard.classList.add('show');
         overlay.classList.add('show');
-        fab.classList.add('active');
-        iconChat.style.display = 'none';
-        iconClose.style.display = 'block';
+        if (fab) fab.classList.add('active');
+        if (iconChat) iconChat.style.display = 'none';
+        if (iconClose) iconClose.style.display = 'block';
         if (chatPopup) chatPopup.classList.remove('show');
         if (!messagesLoaded) {
             loadMessages();
@@ -616,11 +709,12 @@
     }
 
     function closeCard() {
+        if (!chatCard || !overlay) return;
         chatCard.classList.remove('show');
         overlay.classList.remove('show');
-        fab.classList.remove('active');
-        iconChat.style.display = 'block';
-        iconClose.style.display = 'none';
+        if (fab) fab.classList.remove('active');
+        if (iconChat) iconChat.style.display = 'block';
+        if (iconClose) iconClose.style.display = 'none';
         stopPolling();
     }
 
@@ -686,6 +780,7 @@
     }
 
     function scrollToBottom() {
+        if (!chatMessages) return;
         chatMessages.scrollTo({
             top: chatMessages.scrollHeight,
             behavior: 'smooth'
@@ -768,11 +863,42 @@
         }
     }
 
+    function appendHelpPrompt() {
+        const existing = document.getElementById('welcome-message');
+        if (existing) existing.remove();
+        document.querySelectorAll('.chat-message.chat-welcome').forEach(el => el.remove());
+
+        const div = document.createElement('div');
+        div.className = 'chat-message chat-welcome';
+        div.id = 'welcome-message';
+        div.innerHTML = `
+            How can we help you?
+            <div class="chat-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+        `;
+        chatMessages.appendChild(div);
+        if (shouldScrollToBottom) {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        const instruction = document.createElement('div');
+        instruction.className = 'chat-message chat-welcome';
+        instruction.id = 'chat-reply-instruction';
+        instruction.innerHTML = `
+            Please type your message in the box below and press the send button to start chatting with an agent.
+            And you can reply to a specific message by clicking the reply button or tab on that message.
+            <div class="chat-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
+        `;
+        chatMessages.appendChild(instruction);
+        if (shouldScrollToBottom) {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+    }
+
     function appendNamePrompt(name) {
         const div = document.createElement('div');
         div.className = 'chat-message chat-welcome';
         div.innerHTML = `
-            Hi ${escapeHtml(name)}, proceed with what you want to ask.
+            Hi ${escapeHtml(name)}, enter your email
             <div class="chat-time">${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}</div>
         `;
         chatMessages.appendChild(div);
@@ -813,7 +939,13 @@
             if (data.success) {
                 chatMessages.innerHTML = '';
                 if (data.messages.length === 0) {
-                    appendWelcomeMessage();
+                    const savedName = localStorage.getItem('chat_user_name');
+                    const savedEmail = localStorage.getItem('chat_user_email');
+                    if (!savedName) {
+                        appendWelcomeMessage();
+                    } else if (savedEmail) {
+                        appendHelpPrompt();
+                    }
                 } else {
                     data.messages.forEach(function(msg) {
                         appendMessage(msg.message, msg.sender_type, msg.id, msg.reply_to_message);
@@ -824,9 +956,14 @@
                 }
             }
         } catch (e) {
-            console.error('Failed to load messages:', e);
             chatMessages.innerHTML = '';
-            appendWelcomeMessage();
+            const savedName = localStorage.getItem('chat_user_name');
+            const savedEmail = localStorage.getItem('chat_user_email');
+            if (!savedName) {
+                appendWelcomeMessage();
+            } else if (savedEmail) {
+                appendHelpPrompt();
+            }
         }
     }
 
@@ -888,10 +1025,34 @@
         });
     }
 
+    if (chatEmailPromptInput) {
+        chatEmailPromptInput.addEventListener('input', function() {
+            sendEmailPromptBtn.disabled = !this.value.trim();
+        });
+
+        chatEmailPromptInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter' && this.value.trim()) {
+                e.preventDefault();
+                saveUserEmail();
+            }
+        });
+    }
+
+    if (sendEmailPromptBtn) {
+        sendEmailPromptBtn.addEventListener('click', function() {
+            saveUserEmail();
+        });
+    }
+
     if (fab) {
         fab.addEventListener('click', () => {
             hidePopup();
-            chatCard.classList.contains('show') ? closeCard() : openCard();
+            const willOpen = !chatCard.classList.contains('show');
+            if (chatCard.classList.contains('show')) {
+                closeCard();
+            } else {
+                openCard();
+            }
         });
     }
 
@@ -958,19 +1119,20 @@
     if (chatForm) {
         chatForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const message = chatInput.value.trim();
-            const senderName = chatNameInput.value.trim() || userName;
+            const message = chatInput?.value?.trim() || '';
+            const senderName = chatNameInput?.value?.trim() || userName;
+            const senderEmail = localStorage.getItem('chat_user_email')?.trim() || '';
             const repliedToMessageId = document.getElementById('repliedToMessageId')?.value || null;
 
             if (!message) return;
 
-            if (!userName && chatNameInput.style.display !== 'none') {
+            if (!userName && chatNameInput && chatNameInput.style.display !== 'none') {
                 saveUserName();
                 return;
             }
 
-            sendBtn.disabled = true;
-            chatInput.value = '';
+            if (sendBtn) sendBtn.disabled = true;
+            if (chatInput) chatInput.value = '';
 
             try {
                 const response = await fetch('{{ route('chat.store') }}', {
@@ -983,6 +1145,7 @@
                     body: JSON.stringify({ 
                         message: message, 
                         sender_name: senderName,
+                        sender_email: senderEmail,
                         replied_to_message_id: repliedToMessageId
                     })
                 });
@@ -1001,5 +1164,5 @@
             }
         });
     }
-})();
+    })();
 </script>

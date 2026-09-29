@@ -18,17 +18,23 @@ class ChatNotification extends Mailable
 
     public string $chatUrl;
 
-    public function __construct(string $senderName, string $message, string $chatUrl)
+    public ?string $senderEmail = null;
+
+    private ?string $mailSubject = null;
+
+    public function __construct(string $senderName, string $message, string $chatUrl, ?string $senderEmail = null, ?string $subject = null)
     {
         $this->senderName = $senderName;
         $this->message = $message;
         $this->chatUrl = $chatUrl;
+        $this->senderEmail = $senderEmail;
+        $this->mailSubject = $subject;
     }
 
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'New Chat Message',
+            subject: $this->mailSubject ?? 'New Chat Message',
         );
     }
 
@@ -38,7 +44,8 @@ class ChatNotification extends Mailable
             view: 'emails.chat-notification',
             with: [
                 'senderName' => $this->senderName,
-                'message' => $this->message,
+                'senderEmail' => $this->senderEmail,
+                'chatMessage' => $this->message,
                 'chatUrl' => $this->chatUrl,
             ],
         );
