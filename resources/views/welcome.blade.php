@@ -131,7 +131,7 @@
                                     <h3 class="text-sm font-bold text-gray-900 leading-snug line-clamp-2 mb-1 group-hover:text-indigo-600 transition-colors">{{ $webinar->title ?? 'Live Webinar' }}</h3>
                                     <p class="text-xs text-gray-500 truncate mb-2">{{ $webinar->description ?? 'Learn with Nathaniel and ask your questions live.' }}</p>
                                     
-                                    @if($webinar && ($webinar->payment_enabled ?? false) !== false && ($webinar->current_price ?? 0) > 0)
+                                    @if($webinar && $webinar->current_price > 0 && $webinar->payment_enabled)
                                         <div class="flex items-baseline gap-1 mb-3">
                                             <span class="text-base font-extrabold text-emerald-600">${{ number_format($webinar->current_price, 2) }}</span>
                                         </div>
