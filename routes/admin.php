@@ -135,7 +135,6 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
 
     // Notifications
     Route::get('notifications', [NotificationController::class, 'index'])->name('notifications.index');
-    Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllRead'])->name('notifications.markAllRead');
     Route::post('notifications/{notification}/toggle-read', [NotificationController::class, 'toggleRead'])->name('notifications.toggleRead');
     Route::post('notifications/{notification}/delete', [NotificationController::class, 'delete'])->name('notifications.delete');
     Route::get('notifications/unread-count', [NotificationController::class, 'unreadCount'])->name('notifications.unreadCount');
