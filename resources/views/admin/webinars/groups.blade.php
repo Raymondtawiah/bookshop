@@ -9,7 +9,7 @@
                 <h1 class="page-title">Webinar Groups</h1>
                 <p class="page-subtitle">Each webinar has its own group card. Past webinars do not affect new ones.</p>
             </div>
-            <a href="{{ route('admin.webinars.index') }}" class="p-2.5 bg-white text-indigo-600 border border-gray-200 rounded-xl hover:bg-indigo-50 transition-colors shadow-sm" title="Back to webinars">
+            <a href="{{ route('admin.webinars.folders') }}" class="p-2.5 bg-white text-indigo-600 border border-gray-200 rounded-xl hover:bg-indigo-50 transition-colors shadow-sm" title="Back">
                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
                 </svg>

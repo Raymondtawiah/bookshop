@@ -626,7 +626,6 @@ class WebinarController extends Controller
             'scheduled_at' => 'nullable|date',
             'duration_minutes' => 'nullable|integer|min:1',
             'custom_email_message' => 'nullable|string',
-            'payment_provider' => 'nullable|in:stripe,paystack,both',
         ];
 
         $validator = Validator::make($request->all(), $rules);
@@ -1014,5 +1013,13 @@ class WebinarController extends Controller
 
         return redirect()->route('admin.webinars.index', ['webinar_id' => $webinar->id])
             ->with('success', "Notification sent to {$sentCount} users".($failedCount > 0 ? " ({$failedCount} failed)" : ''));
+    }
+
+    public function folders()
+    {
+        $webinars = WebinarSession::orderBy('scheduled_at', 'desc')->get();
+        $registrationFormEnabled = SiteSetting::get('webinar_registration_form_enabled', 'true') === 'true';
+
+        return view('admin.webinars.folders', compact('webinars', 'registrationFormEnabled'));
     }
 }
