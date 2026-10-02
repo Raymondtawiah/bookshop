@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\FinanceController;
 use App\Http\Controllers\Admin\IncomeController;
 use App\Http\Controllers\Admin\PaymentController;
 use App\Http\Controllers\Api\AnnouncementController;
+use App\Http\Controllers\Api\WebinarSurveyController;
 use Illuminate\Support\Facades\Route;
 
 Route::name('api.')->group(function () {
@@ -36,4 +37,5 @@ Route::name('api.')->group(function () {
     Route::post('announcements/{announcement}/comments/{comment}/reply', [AnnouncementController::class, 'replyComment'])->name('announcements.comments.reply');
     Route::get('announcements/{announcement}/comments/{comment}/replies', [AnnouncementController::class, 'replies'])->name('announcements.comments.replies');
     Route::post('announcements/{announcement}/share', [AnnouncementController::class, 'share'])->name('announcements.share');
+    Route::post('webinars/{webinar}/surveys', [WebinarSurveyController::class, 'store'])->name('webinars.surveys.store');
 });

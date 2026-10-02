@@ -56,4 +56,17 @@ class WebinarController extends Controller
 
         return view('webinars.register', compact('webinar'));
     }
+
+    /**
+     * Show webinar survey page.
+     */
+    public function survey(WebinarSession $webinar)
+    {
+        if ($webinar->isExpired()) {
+            return redirect()->route('webinars.index')
+                ->with('error', 'This webinar has expired. The survey is no longer available.');
+        }
+
+        return view('webinar.survey', compact('webinar'));
+    }
 }

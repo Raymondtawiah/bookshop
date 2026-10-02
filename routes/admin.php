@@ -93,6 +93,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     // Webinars
     Route::get('webinars', [WebinarController::class, 'index'])->name('webinars.index');
     Route::get('webinars/folders', [WebinarController::class, 'folders'])->name('webinars.folders');
+    Route::get('webinars/surveys', [WebinarController::class, 'surveys'])->name('webinars.surveys');
+    Route::get('webinars/surveys/export', [WebinarController::class, 'exportSurveys'])->name('webinars.surveys.export');
     Route::get('webinars/groups', [WebinarController::class, 'groups'])->name('webinars.groups');
     Route::get('webinars/groups/{webinar}', [WebinarController::class, 'groupShow'])->name('webinars.groups.show');
     Route::post('webinars/groups/{webinar}/send-reminder', [WebinarController::class, 'sendGroupReminder'])->name('webinars.groups.sendReminder');
