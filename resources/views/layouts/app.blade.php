@@ -48,5 +48,6 @@
         <x-free-book-modal />
         <x-install-pwa />
         @include('components.cookie-consent')
+        @stack('scripts')
     </body>
 </html>

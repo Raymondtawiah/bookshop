@@ -12,6 +12,7 @@ use App\Models\SiteSetting;
 use App\Models\WebinarNotification;
 use App\Models\WebinarRegistration;
 use App\Models\WebinarSession;
+use App\Models\WebinarSurvey;
 use App\Services\StripeService;
 use App\Services\WebinarAccessService;
 use Illuminate\Http\Request;
@@ -1021,5 +1022,74 @@ class WebinarController extends Controller
         $registrationFormEnabled = SiteSetting::get('webinar_registration_form_enabled', 'true') === 'true';
 
         return view('admin.webinars.folders', compact('webinars', 'registrationFormEnabled'));
+    }
+
+    public function surveys(Request $request)
+    {
+        $query = WebinarSurvey::query()
+            ->with('webinar')
+            ->latest();
+
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('source', 'like', '%'.$searchTerm.'%')
+                  ->orWhere('additional_comments', 'like', '%'.$searchTerm.'%')
+                  ->orWhereHas('webinar', function ($query) use ($searchTerm) {
+                      $query->where('title', 'like', '%'.$searchTerm.'%');
+                  });
+            });
+        }
+
+        $surveys = $query->paginate(50);
+
+        return view('admin.webinars.survey', compact('surveys'));
+    }
+
+    public function exportSurveys(Request $request)
+    {
+        $query = WebinarSurvey::query()
+            ->with('webinar')
+            ->latest();
+
+        if ($request->filled('search')) {
+            $searchTerm = $request->search;
+            $query->where(function ($q) use ($searchTerm) {
+                $q->where('source', 'like', '%'.$searchTerm.'%')
+                  ->orWhere('additional_comments', 'like', '%'.$searchTerm.'%')
+                  ->orWhereHas('webinar', function ($query) use ($searchTerm) {
+                      $query->where('title', 'like', '%'.$searchTerm.'%');
+                  });
+            });
+        }
+
+        $surveys = $query->get();
+
+        $fileName = 'webinar-surveys-' . now()->format('Y-m-d-His') . '.csv';
+
+        $headers = [
+            'Content-Type' => 'text/csv',
+            'Content-Disposition' => 'attachment; filename="' . $fileName . '"',
+        ];
+
+        $callback = function () use ($surveys) {
+            $handle = fopen('php://output', 'w');
+
+            fputcsv($handle, ['Webinar', 'Source', 'Additional Comments', 'IP Address', 'Submitted At']);
+
+            foreach ($surveys as $survey) {
+                fputcsv($handle, [
+                    $survey->webinar->title ?? 'Deleted Webinar',
+                    ucfirst($survey->source),
+                    $survey->additional_comments ?? '',
+                    $survey->ip_address ?? '',
+                    $survey->created_at ? $survey->created_at->timezone('Africa/Accra')->format('d M Y, h:i A') : '',
+                ]);
+            }
+
+            fclose($handle);
+        };
+
+        return response()->stream($callback, 200, $headers);
     }
 }
