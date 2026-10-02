@@ -46,6 +46,125 @@ Route::get('discounts', function () {
     return view('discounts');
 })->name('discounts');
 
+Route::get('announcements', function () {
+    return view('announcement.announcement');
+})->name('announcements');
+
+Route::post('announcements/{announcement}/share', function (\App\Models\Announcement $announcement) {
+    return response()->json([
+        'success' => true,
+        'message' => 'Share recorded',
+    ]);
+})->name('announcements.share');
+
+Route::post('announcements/{announcement}/like', function (\Illuminate\Http\Request $request, \App\Models\Announcement $announcement) {
+    $request->validate([
+        'user_name' => 'required|string|max:255',
+        'user_initials' => 'required|string|max:10',
+    ]);
+
+    $like = \App\Models\Like::create([
+        'announcement_id' => $announcement->id,
+        'user_name' => $request->user_name,
+        'user_initials' => $request->user_initials,
+        'created_at' => now(),
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'data' => $like,
+        'likes_count' => $announcement->likes()->count(),
+    ]);
+})->name('announcements.like');
+
+Route::get('announcements/{announcement}/comments', function (\App\Models\Announcement $announcement) {
+    $comments = $announcement->comments()
+        ->whereNull('parent_id')
+        ->withCount('replies')
+        ->withCount('likes')
+        ->orderByDesc('created_at')
+        ->get();
+
+    return response()->json([
+        'success' => true,
+        'data' => $comments,
+    ]);
+})->name('announcements.comments.index');
+
+Route::post('announcements/{announcement}/comments', function (\Illuminate\Http\Request $request, \App\Models\Announcement $announcement) {
+    $request->validate([
+        'user_name' => 'required|string|max:255',
+        'user_initials' => 'required|string|max:10',
+        'text' => 'required|string|max:2000',
+    ]);
+
+    $comment = \App\Models\Comment::create([
+        'announcement_id' => $announcement->id,
+        'user_name' => $request->user_name,
+        'user_initials' => $request->user_initials,
+        'text' => $request->text,
+        'created_at' => now(),
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'data' => $comment,
+    ]);
+})->name('announcements.comments');
+
+Route::post('announcements/{announcement}/comments/{comment}/like', function (\Illuminate\Http\Request $request, \App\Models\Announcement $announcement, \App\Models\Comment $comment) {
+    $request->validate([
+        'user_name' => 'required|string|max:255',
+        'user_initials' => 'required|string|max:10',
+    ]);
+
+    $like = \App\Models\CommentLike::create([
+        'comment_id' => $comment->id,
+        'user_name' => $request->user_name,
+        'user_initials' => $request->user_initials,
+        'created_at' => now(),
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'data' => $like,
+        'likes_count' => $comment->likes()->count(),
+    ]);
+})->name('announcements.comments.like');
+
+Route::post('announcements/{announcement}/comments/{comment}/reply', function (\Illuminate\Http\Request $request, \App\Models\Announcement $announcement, \App\Models\Comment $comment) {
+    $request->validate([
+        'user_name' => 'required|string|max:255',
+        'user_initials' => 'required|string|max:10',
+        'text' => 'required|string|max:2000',
+    ]);
+
+    $reply = \App\Models\Comment::create([
+        'announcement_id' => $announcement->id,
+        'parent_id' => $comment->id,
+        'user_name' => $request->user_name,
+        'user_initials' => $request->user_initials,
+        'text' => $request->text,
+        'created_at' => now(),
+    ]);
+
+    return response()->json([
+        'success' => true,
+        'data' => $reply,
+    ]);
+})->name('announcements.comments.reply');
+
+Route::get('announcements/{announcement}/comments/{comment}/replies', function (\App\Models\Announcement $announcement, \App\Models\Comment $comment) {
+    $replies = $comment->replies()
+        ->orderByDesc('created_at')
+        ->get();
+
+    return response()->json([
+        'success' => true,
+        'data' => $replies,
+    ]);
+})->name('announcements.comments.replies');
+
 
 
 // Discount application

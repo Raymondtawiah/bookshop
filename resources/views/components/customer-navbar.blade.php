@@ -9,11 +9,24 @@
                 </div>
             </a>
 
-            <!-- Desktop Navigation -->
-            <div class="hidden md:flex items-center gap-6">
-                <a href="{{ route('home') }}#home" class="nav-link text-gray-600 hover:text-indigo-600 font-medium transition-colors">Home</a>
-                <a href="{{ route('webinars.index') }}" class="nav-link text-gray-600 hover:text-indigo-600 font-medium transition-colors">Webinars</a>
-                <a href="{{ route('coaching.booking') }}" class="nav-link text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Coaching</a>
+            <a href="{{ route('announcements') }}" class="md:hidden text-gray-600 hover:text-indigo-600 transition-colors relative p-2 rounded-full bg-gray-100 hover:bg-gray-200" title="Announcements">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 3 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                </svg>
+                <span class="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-green-500 z-10 shadow-lg" style="animation: notificationPulse 1.5s ease-in-out infinite;"></span>
+            </a>
+
+             <!-- Desktop Navigation -->
+             <div class="hidden md:flex items-center gap-6">
+                 <a href="{{ route('home') }}#home" class="nav-link text-gray-600 hover:text-indigo-600 font-medium transition-colors">Home</a>
+                 <a href="{{ route('webinars.index') }}" class="nav-link text-gray-600 hover:text-indigo-600 font-medium transition-colors">Webinars</a>
+                 <a href="{{ route('coaching.booking') }}" class="nav-link text-gray-600 hover:text-indigo-600 font-medium transition-colors">Visa Coaching</a>
+                  <a href="{{ route('announcements') }}" class="text-gray-600 hover:text-indigo-600 transition-colors relative p-2 rounded-full bg-gray-100 hover:bg-gray-200" title="Announcements">
+                      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 3 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                      </svg>
+                      <span class="absolute -top-1 -right-1 h-3 w-3 rounded-full bg-green-500 hidden md:block z-50 border-2 border-white" style="animation: notificationPulse 1.5s ease-in-out infinite;"></span>
+                  </a>
                 
                 @auth
                     <div class="relative group">
@@ -62,6 +75,12 @@
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422A12.083 12.083 0 0120 17.944L12 22l-8-4.056a12.083 12.083 0 011.84-7.366L12 14z"/>
             </svg>
             <span class="text-[11px] font-medium">Coaching</span>
+        </a>
+        <a href="{{ route('announcements') }}" class="flex flex-col items-center gap-0.5 px-4 py-1.5 rounded-full text-white hover:bg-white/20 transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 3 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+            <span class="text-[11px] font-medium">Updates</span>
         </a>
     </div>
 </div>

@@ -5,6 +5,7 @@ use App\Http\Controllers\Admin\ExpenseController;
 use App\Http\Controllers\Admin\FinanceController;
 use App\Http\Controllers\Admin\IncomeController;
 use App\Http\Controllers\Admin\PaymentController;
+use App\Http\Controllers\Api\AnnouncementController;
 use Illuminate\Support\Facades\Route;
 
 Route::name('api.')->group(function () {
@@ -25,4 +26,14 @@ Route::name('api.')->group(function () {
         Route::apiResource('finance/expenses', ExpenseController::class);
         Route::apiResource('finance/payments', PaymentController::class);
     });
+
+    Route::get('announcements', [AnnouncementController::class, 'index'])->name('announcements.index');
+    Route::get('announcements/{announcement}', [AnnouncementController::class, 'show'])->name('announcements.show');
+    Route::post('announcements/{announcement}/like', [AnnouncementController::class, 'like'])->name('announcements.like');
+    Route::post('announcements/{announcement}/comments', [AnnouncementController::class, 'comment'])->name('announcements.comment');
+    Route::get('announcements/{announcement}/comments', [AnnouncementController::class, 'comments'])->name('announcements.comments');
+    Route::post('announcements/{announcement}/comments/{comment}/like', [AnnouncementController::class, 'likeComment'])->name('announcements.comments.like');
+    Route::post('announcements/{announcement}/comments/{comment}/reply', [AnnouncementController::class, 'replyComment'])->name('announcements.comments.reply');
+    Route::get('announcements/{announcement}/comments/{comment}/replies', [AnnouncementController::class, 'replies'])->name('announcements.comments.replies');
+    Route::post('announcements/{announcement}/share', [AnnouncementController::class, 'share'])->name('announcements.share');
 });

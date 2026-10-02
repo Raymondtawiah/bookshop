@@ -20,7 +20,7 @@ class DatabaseSeeder extends Seeder
             DiscountSeeder::class,
             BookSeeder::class,
             FinanceSeeder::class,
-
+            AnnouncementSeeder::class,
         ]);
     }
 }
