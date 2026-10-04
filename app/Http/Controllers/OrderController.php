@@ -65,6 +65,11 @@ class OrderController extends Controller
             }
         }
 
+        $bookingTime = null;
+        if ($request->filled('booking_time')) {
+            $bookingTime = \Carbon\Carbon::createFromFormat('g:i A', $request->booking_time)->format('H:i:s');
+        }
+
         $book = Book::findOrFail($request->book_id);
 
         $totalUsd = $book->price;
@@ -91,7 +96,7 @@ class OrderController extends Controller
             'order_number' => $reference,
             'order_items' => $orderItems,
             'booking_date' => $bookingDate,
-            'booking_time' => $request->booking_time,
+            'booking_time' => $bookingTime,
             'booking_note' => $request->booking_note,
         ]);
 
