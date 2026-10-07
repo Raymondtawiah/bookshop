@@ -81,6 +81,8 @@ Route::prefix('admin')->name('admin.')->middleware(['auth:web', 'admin'])->group
     // Notifications
     Route::get('notifications', [NotificationController::class, 'index'])->name('notifications');
     Route::post('notifications/mark-read', [NotificationController::class, 'markAsRead'])->name('notifications.markRead');
+    Route::post('notifications/toggle-read', [NotificationController::class, 'toggleRead'])->name('notifications.toggleRead');
+    Route::delete('notifications/delete', [NotificationController::class, 'delete'])->name('notifications.delete');
     Route::post('notifications/mark-all-read', [NotificationController::class, 'markAllAsRead'])->name('notifications.markAllRead');
     Route::post('notifications/cleanup', [NotificationController::class, 'cleanup'])->name('notifications.cleanup');
     Route::get('notifications/broadcast', [NotificationController::class, 'broadcastForm'])->name('notifications.broadcast');

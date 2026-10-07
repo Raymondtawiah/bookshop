@@ -206,7 +206,7 @@
                                 const link = this.dataset.link;
 
                                 if (!isRead) {
-                                    fetch('{{ route('admin.notifications.toggleRead') }}', {
+                                    fetch('/admin/notifications/' + id + '/toggle-read', {
                                         method: 'POST',
                                         headers: {
                                             'X-CSRF-TOKEN': '{{ csrf_token() }}',

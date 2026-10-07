@@ -152,7 +152,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const id = this.dataset.id;
             const card = this.closest('[data-id]');
 
-            fetch('{{ route('admin.notifications.toggleRead') }}', {
+            fetch('/admin/notifications/' + id + '/toggle-read', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
@@ -193,7 +193,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
 
-            fetch('{{ route('admin.notifications.delete') }}', {
+            fetch('/admin/notifications/' + id + '/delete', {
                 method: 'POST',
                 headers: {
                     'X-CSRF-TOKEN': '{{ csrf_token() }}',
